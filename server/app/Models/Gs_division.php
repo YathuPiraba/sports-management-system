@@ -21,4 +21,14 @@ class Gs_Division extends Model
     {
         return $this->hasMany(Club::class, 'gs_id');
     }
+
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'gs_id');
+    }
+
+    public function clubmanagers()
+    {
+        return $this->hasMany(Club_Manager::class, 'gs_id');
+    }
 }
