@@ -20,6 +20,6 @@ class Club extends Model
     // Relationships
     public function gsDivision()
     {
-        return $this->belongsTo(Gs_division::class, 'gs_id');
+        return $this->belongsTo(Gs_Division::class, 'gs_id');
     }
 }

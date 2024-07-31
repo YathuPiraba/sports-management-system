@@ -16,7 +16,7 @@ class Skills extends Model
      */
     public function sportCategory()
     {
-        return $this->belongsTo(Sports_categories::class, 'sports_id');
+        return $this->belongsTo(Sports_Categories::class, 'sports_id');
     }
 
     /**

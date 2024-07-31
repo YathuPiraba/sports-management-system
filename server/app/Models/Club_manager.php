@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Club_manager extends Model
+class Club_Manager extends Model
 {
     use HasFactory;
 
@@ -36,6 +36,6 @@ class Club_manager extends Model
 
     public function gsDivision()
     {
-        return $this->belongsTo(Gs_division::class, 'gs_id');
+        return $this->belongsTo(Gs_Division::class, 'gs_id');
     }
 }

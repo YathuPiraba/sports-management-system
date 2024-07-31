@@ -23,7 +23,7 @@ class Member_Sports extends Model
 
     public function sportsCategory()
     {
-        return $this->belongsTo(Sports_categories::class, 'sports_id');
+        return $this->belongsTo(Sports_Categories::class, 'sports_id');
     }
 
     public function member()

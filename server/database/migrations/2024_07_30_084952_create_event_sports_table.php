@@ -17,10 +17,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sports_id');
             $table->unsignedBigInteger('event_id');
+            $table->string('name');
+            $table->date('event_date');
+            $table->string('place');
             $table->timestamps();
 
             $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->foreign('sports_id')->references('id')->on('sports_categories')->onDelete('cascade');
+           
         });
     }
 

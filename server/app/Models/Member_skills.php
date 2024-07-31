@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Member_skills extends Model
+class Member_Skills extends Model
 {
     use HasFactory;
     protected $fillable = ['member_sport_id', 'skill_id'];

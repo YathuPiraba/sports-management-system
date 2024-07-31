@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Gs_division extends Model
+class Gs_Division extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'divisionName',
         'divisionNo',

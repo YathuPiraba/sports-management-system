@@ -15,16 +15,15 @@ return new class extends Migration
     {
         Schema::create('event_participants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('event_sports_id');
-            $table->unsignedBigInteger('member_sports_id')->nullable();
-            $table->unsignedBigInteger('club_id')->nullable();
+            $table->unsignedBigInteger('event_clubs_id');
+            $table->unsignedBigInteger('member_sports_id');
             $table->date('participatedDate');
             $table->string('rank');
             $table->timestamps();
 
-            $table->foreign('event_sports_id')->references('id')->on('event_sports')->onDelete('cascade');
-            $table->foreign('member_sports_id')->references('id')->on('member__sports')->onDelete('cascade');
-            $table->foreign('club_id')->references('id')->on('clubs')->onDelete('cascade');
+            $table->foreign('event_clubs_id')->references('id')->on('event_clubs')->onDelete('cascade');
+            $table->foreign('member_sports_id')->references('id')->on('member_sports')->onDelete('cascade');
+
         });
     }
 

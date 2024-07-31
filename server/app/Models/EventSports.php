@@ -11,7 +11,12 @@ class EventSports extends Model
     protected $fillable = [
         'sports_id',
         'event_id',
+        'name',
+        'event_date',
+        'place',
     ];
+
+
 
     /**
      * Get the event that owns the EventSport.
@@ -26,6 +31,12 @@ class EventSports extends Model
      */
     public function sportsCategory()
     {
-        return $this->belongsTo(Sports_categories::class, 'sports_id');
+        return $this->belongsTo(Sports_Categories::class, 'sports_id');
+    }
+
+
+    public function eventClubs()
+    {
+        return $this->hasMany(EventClub::class);
     }
 }
