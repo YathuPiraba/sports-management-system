@@ -5,15 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Services\TokenService;
 
 class UserController extends Controller
 {
-    /**
-     * Log in a user.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+    protected $tokenService;
+
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -21,13 +23,17 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Retrieve user
         $user = User::where('userName', $request->userName)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
+            // Generate and store a token
+            $token = $this->tokenService->generateToken();
+            $this->tokenService->storeToken($user->id, $token);
+
             return response()->json([
                 'message' => 'Login successful',
                 'user' => $user,
+                'token' => $token,
             ], 200);
         } else {
             return response()->json([
@@ -35,6 +41,4 @@ class UserController extends Controller
             ], 401);
         }
     }
-
-
 }
