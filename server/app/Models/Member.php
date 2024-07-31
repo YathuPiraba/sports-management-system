@@ -12,6 +12,7 @@ class Member extends Model
         'user_id',
         'club_id',
         'gs_id',
+        'manager_id',
         'firstName',
         'lastName',
         'date_of_birth',
@@ -36,5 +37,9 @@ class Member extends Model
     public function gsDivision()
     {
         return $this->belongsTo(Gs_Division::class, 'gs_id');
+    }
+    public function manager()
+    {
+        return $this->belongsTo(Club_Manager::class, 'manager_id');
     }
 }

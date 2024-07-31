@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('club_id');
             $table->unsignedBigInteger('gs_id');
+            $table->unsignedBigInteger('manager_id');
             $table->string('firstName');
             $table->string('lastName');
             $table->date('date_of_birth');
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('club_id')->references('id')->on('clubs')->onDelete('cascade');
             $table->foreign('gs_id')->references('id')->on('gs_divisions')->onDelete('cascade');
+            $table->foreign('manager_id')->references('id')->on('club_managers')->onDelete('cascade');
         });
     }
 
