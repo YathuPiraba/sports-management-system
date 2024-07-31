@@ -9,17 +9,11 @@ class Member_Sports extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'club_id',
         'sports_id',
         'member_id',
 
     ];
 
-    // Relationships
-    public function club()
-    {
-        return $this->belongsTo(Club::class, 'club_id');
-    }
 
     public function sportsCategory()
     {
@@ -30,4 +24,25 @@ class Member_Sports extends Model
     {
         return $this->belongsTo(Member::class, 'member_id');
     }
+
+
+        // One-to-many relationship with MemberAchievement
+    public function achievements()
+    {
+      return $this->hasMany(MemberAchievement::class);
+    }
+
+      // One-to-many relationship with Event participants
+      public function events()
+      {
+        return $this->hasMany(Event_Participants::class);
+      }
+
+       // Many-to-many relationship with Skills
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'member_sports_skills', 'member_sports_id', 'skill_id');
+    }
+
+
 }

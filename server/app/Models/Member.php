@@ -42,4 +42,10 @@ class Member extends Model
     {
         return $this->belongsTo(Club_Manager::class, 'manager_id');
     }
+
+      // Many-to-many relationship with Sports
+      public function sports()
+      {
+          return $this->belongsToMany(Sport::class, 'member_sports');
+      }
 }

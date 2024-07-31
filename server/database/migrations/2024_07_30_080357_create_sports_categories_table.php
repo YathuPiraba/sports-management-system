@@ -16,10 +16,9 @@ return new class extends Migration
         Schema::create('sports_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('number_of_members')->nullable();
             $table->string('type')->nullable();
             $table->text('description')->nullable();
-            $table->string('image')->nullable(); 
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
