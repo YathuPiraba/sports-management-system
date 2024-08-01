@@ -114,6 +114,10 @@ button {
   margin-left: auto;
 }
 
+button:hover{
+    background-color: #499cc0;
+}
+
 .forgot-btn {
   display: flex;
   gap: 50px;
