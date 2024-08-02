@@ -2,19 +2,29 @@
 
 namespace App\Services;
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key; // Import Key class if you need to specify algorithms
 use Illuminate\Support\Str;
 
 class TokenService
 {
-    public function generateToken()
+    private $secretKey = 'abscd';
+
+    public function generateToken($userId)
     {
-        // Generate a new token
-        return Str::random(60);
+        $payload = [
+            'iss' => 'vsds',
+            'sub' => $userId,
+            'iat' => time(),
+            'exp' => time() +  86400
+        ];
+
+
+        return JWT::encode($payload, $this->secretKey, 'HS256');
     }
 
     public function storeToken($userId, $token)
     {
-        // Store the token in a file (or use database storage)
         $filePath = storage_path('tokens/' . $userId . '.txt');
         file_put_contents($filePath, $token);
     }

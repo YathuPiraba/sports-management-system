@@ -1,0 +1,99 @@
+@keyframes vibrate {
+    0% {
+      transform: rotate(0deg);
+    }
+    0% {
+      transform: rotate(0deg);
+    }
+    20% {
+      transform: rotate(-20deg);
+    }
+    40% {
+      transform: rotate(20deg);
+    }
+    60% {
+      transform: rotate(-20deg);
+    }
+    80% {
+      transform: rotate(20deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  
+  .bell {
+    display: inline-block;
+    animation: vibrate 0.6s infinite;
+  }
+
+  .header-container {
+    background-color: #f8f9fa; /* Replace with appropriate color */
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .container {
+    width: 100%;
+  }
+
+  .dropdown-content {
+    background-color: #f9fafb; /* Replace with appropriate color */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 13rem;
+  }
+  
+  .dropdown-menu {
+    background-color: #f9fafb; /* Replace with appropriate color */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 13rem;
+  }
+  
+  .dropdown-item {
+    padding: 0.75rem 1rem;
+    color: #4b5563; /* Replace with appropriate color */
+  }
+  
+  .dropdown-item:hover {
+    background-color: #e5e7eb; /* Replace with appropriate color */
+  }
+  
+  .user-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%;
+    background-color: #e5e7eb; /* Replace with appropriate color */
+  }
+  
+  .user-icon-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%;
+  }
+  
+  .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .text-container {
+    flex: 1;
+    color: #4b5563; /* Replace with appropriate color */
+    text-overflow: ellipsis;
+  }
+  
+  .mobile-menu-button {
+    background-color: #f3f4f6; /* Replace with appropriate color */
+    padding: 0.5rem;
+    color: #4b5563; /* Replace with appropriate color */
+    border-radius: 0.375rem;
+    transition: color 0.2s;
+  }

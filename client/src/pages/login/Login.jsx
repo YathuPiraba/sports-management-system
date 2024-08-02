@@ -1,5 +1,6 @@
-import React from "react";
+import React,{useState} from "react";
 import "./login.css";
+import { Modal, Button } from "antd";
 import cover from "../../assets/sample-removebg.png";
 import logo from "../../assets/log.png";
 import toast from "react-hot-toast";
@@ -7,9 +8,11 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAdmin, login } from "../../features/authslice";
-import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
+// import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
 const Login = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -19,18 +22,15 @@ const Login = () => {
     reset,
   } = useForm();
 
-
-
   // Login User
   const onSubmit = async (data) => {
     try {
-      const result = dispatch(loginAdmin(data));
+      const result = await dispatch(loginAdmin(data));
       if (loginAdmin.fulfilled.match(result)) {
         const resdata = result.payload;
         dispatch(login(resdata));
         toast.success("Login Successfully!..");
         reset();
-
         const roleID = resdata.user.role_id;
 
         if (roleID == 1) {
@@ -47,6 +47,15 @@ const Login = () => {
       toast.error("Login failed. Please try again.");
     }
   };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
 
   return (
     <div className="body-container">
@@ -98,12 +107,30 @@ const Login = () => {
               </> */}
               <div className="signup">
                 <p>
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account? <a href="#" onClick={showModal}>Sign up</a>
                 </p>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div className="SignUp">
+      <Modal
+        title={<div style={{ textAlign: 'center' }}>Sign Up</div>}
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+        width={400}
+      >
+        <div className="signup-options">
+          <Button onClick={() => navigate("/signup/manager")} type="primary" block  style={{ width: '150px', margin: '10px auto 0' }} >
+            Manager
+          </Button>
+          <Button onClick={() => navigate("/signup/member")} type="primary" block  style={{ width: '150px', margin: '10px auto 0' }} >
+            Member
+          </Button>
+        </div>
+      </Modal>
       </div>
     </div>
   );

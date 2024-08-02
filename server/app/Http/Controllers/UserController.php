@@ -26,8 +26,9 @@ class UserController extends Controller
         $user = User::where('userName', $request->userName)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
+
             // Generate and store a token
-            $token = $this->tokenService->generateToken();
+            $token = $this->tokenService->generateToken($user->id);
             $this->tokenService->storeToken($user->id, $token);
 
             return response()->json([

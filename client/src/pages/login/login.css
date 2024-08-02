@@ -2,7 +2,6 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  
 }
 
 .body-container {
@@ -116,7 +115,7 @@ form {
   margin-left: auto;
 }
 
-.forgot-btn  button:hover {
+.forgot-btn button:hover {
   background-color: #499cc0;
 }
 
@@ -158,7 +157,7 @@ input:focus {
   height: 32px;
 }
 
-.ex-login button{
+.ex-login button {
   cursor: pointer;
   border: none;
   background-color: rgba(34, 52, 76);
@@ -193,3 +192,11 @@ input:focus {
   color: #51b2e2;
   font-weight: bold;
 }
+
+.signup-options {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+
