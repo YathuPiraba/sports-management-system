@@ -116,7 +116,7 @@ form {
   margin-left: auto;
 }
 
-button:hover {
+.forgot-btn  button:hover {
   background-color: #499cc0;
 }
 
@@ -156,6 +156,12 @@ input:focus {
 .ex-login img {
   width: 32px;
   height: 32px;
+}
+
+.ex-login button{
+  cursor: pointer;
+  border: none;
+  background-color: rgba(34, 52, 76);
 }
 
 .intersect {

@@ -2,13 +2,12 @@ import React from "react";
 import "./login.css";
 import cover from "../../assets/sample-removebg.png";
 import logo from "../../assets/log.png";
-import fb from "../../assets/Facebook.png";
-import google from "../../assets/google.svg";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAdmin, login } from "../../features/authslice";
+import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -20,10 +19,12 @@ const Login = () => {
     reset,
   } = useForm();
 
+
+
   // Login User
   const onSubmit = async (data) => {
     try {
-      const result = await dispatch(loginAdmin(data));
+      const result = dispatch(loginAdmin(data));
       if (loginAdmin.fulfilled.match(result)) {
         const resdata = result.payload;
         dispatch(login(resdata));
@@ -92,11 +93,9 @@ const Login = () => {
                 <p id="or">Or</p>
                 <p>_______________</p>
               </div>
-              <div className="ex-login">
-                <img src={fb} alt="Facebook" />
-                <img src={google} alt="Google" />
-              </div>
-
+              < >
+               <FbGmailSignin/>
+              </>
               <div className="signup">
                 <p>
                   Don&apos;t have an account? <a href="#">Sign up</a>
