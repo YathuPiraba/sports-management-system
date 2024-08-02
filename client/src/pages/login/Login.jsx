@@ -88,14 +88,14 @@ const Login = () => {
                 </div>
               </form>
 
-              <div className="intersect">
+              {/* <div className="intersect">
                 <p>_______________</p>
                 <p id="or">Or</p>
                 <p>_______________</p>
               </div>
               < >
                <FbGmailSignin/>
-              </>
+              </> */}
               <div className="signup">
                 <p>
                   Don&apos;t have an account? <a href="#">Sign up</a>

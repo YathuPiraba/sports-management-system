@@ -11,7 +11,7 @@ export const loginAdmin = createAsyncThunk("/login", async (data) => {
 export const logOutAdmin = createAsyncThunk("/logout", async () => {
   await axios.post(`http://127.0.0.1:8000/api/logout`);
   localStorage.removeItem("token");
-  localStorage.removeItem("accessToken");
+  localStorage.removeItem("userName");
   return {};
 });
 
