@@ -29,5 +29,16 @@
     animation: vibrate 0.6s infinite;
   }
 
+  .icon-container{
+    background-color: white;
+    border-radius: 20px;
+    border: none;
+    width: 44px;
+    height:42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 
   

@@ -8,12 +8,22 @@ export default {
         roboto: '"Roboto", sans-serif',
         acme: '"Acme", sans-serif',
       },
-      letterSpacing: {
-        wider: '0.5px',
-      },
     },
   },
   plugins: [
     require('daisyui'),
+    function ({ addUtilities }) {
+      const newUtilties = {
+        ".no-scrollbar::-webkit-scrollbar": {
+          display: "none",
+        },
+        ".no-scrollbar": {
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+        },
+      };
+
+      addUtilities(newUtilties);
+    },
   ],
 };

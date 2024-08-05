@@ -1,0 +1,41 @@
+.custom-title {
+  padding: 5px;
+}
+
+.logo-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.logo-name {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.title {
+  color: #2779b3;
+}
+
+.title1 {
+  color: #f2a404;
+}
+
+.logo-name .title4 {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.list {
+  color: black;
+  margin-left: 20px;
+}
+
+.list:focus,
+.list:hover {
+  background-color:#45aa40;
+  color: white;
+  width: 170px;
+  border: none;
+  border-radius: 20px;
+}

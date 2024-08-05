@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Navbar.css";
+import "../../Layout/RootLayout.css";
 // import io from "socket.io-client";
-import { IoNotifications } from "react-icons/io5";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import { Dropdown, Space, Badge } from "antd";
+import { Dropdown, Space, Badge, Switch } from "antd";
 import { ImProfile } from "react-icons/im";
 import { TbLogout2 } from "react-icons/tb";
 import { jwtDecode } from "jwt-decode";
@@ -19,6 +20,13 @@ import logo from "../../assets/log.png";
 const Navbar = () => {
   const [notifications, setNotifications] = useState([]);
   const [animate, setAnimate] = useState(false);
+  const [permission, setPermission] = useState({ enabled: true });
+
+  const onPermissionChanged = (checked, permission) => {
+    setPermission({ ...permission, enabled: checked });
+    console.log(permission.enabled);
+  };
+
   const notificationCount = notifications.length;
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
@@ -197,89 +205,104 @@ const Navbar = () => {
 
   return (
     <header>
-      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 bg-gray-200 w-full font-poppins">
-        <div className="flex pt-4 items-center justify-end">
-          <div className="flex items-center justify-end gap-4">
-            <div className="sm:flex sm:gap-4 space-x-6 flex justify-end">
-              <Badge
-                count={notificationCount}
-                overflowCount={99}
-                className="mt-3"
-              >
-                <Dropdown
-                  menu={{
-                    items,
-                  }}
-                  overlayClassName="h-60 overflow-auto"
+      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 custom w-full font-poppins">
+        <div className="flex pt-4 items-center">
+          <Space direction="vertical">
+            <Switch
+              style={{
+                backgroundColor: permission.enabled ? "black" : "gray",
+                color: permission.enabled ? "black" : "white",
+              }}
+              checked={permission.enabled}
+              onChange={(checked) => onPermissionChanged(checked, permission)}
+              checkedChildren="Dark"
+              unCheckedChildren="Light"
+              defaultChecked
+            />
+          </Space>
+          <div className="flex items-center justify-end gap-4 ml-auto">
+            <div className="sm:flex sm:gap-4 space-x-6 flex">
+              <div className="icon-container">
+                <Badge
+                  count={notificationCount}
+                  overflowCount={99}
+                  className="mt-1"
                 >
-                  <a onClick={(e) => e.preventDefault()}>
-                    <Space className={animate ? "bell" : ""}>
-                      <IoNotifications size={22} className="text-sky-800" />
-                    </Space>
-                  </a>
-                </Dropdown>
-              </Badge>
-
-              {user ? (
-                <div className="dropdown dropdown-end">
-                  <div tabIndex={0} role="button" className="text-black">
-                    <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white">
-                      <img
-                        src={logo}
-                        // src={`${baseUrl}/${user.profileImage}`}
-                        alt="user"
-                        title="user name"
-                        width="80"
-                        height="80"
-                        className="max-w-full rounded-full"
-                      />
-                    </span>
-                  </div>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content menu bg-gray-50 rounded-md z-[1] w-52 shadow"
+                  <Dropdown
+                    menu={{
+                      items,
+                    }}
+                    overlayClassName="h-60 overflow-auto"
                   >
-                    <li className="px-3">
-                      <Link
-                        to="/profile"
-                        className="flex items-center gap-2 rounded"
-                      >
-                        <div className="flex items-center self-center ">
-                          <ImProfile size={20} />
-                        </div>
-                        <div className="flex w-full flex-1 text-md font-normal text-gray-600 tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate">
-                          Profile
-                        </div>
-                      </Link>
-                    </li>
-                    <li className="px-3">
-                      <div>
-                        <button
-                          onClick={handleLogout}
-                          href="#"
-                          className="text-gray-600 font-bold"
+                    <a onClick={(e) => e.preventDefault()}>
+                      <Space className={animate ? "bell" : ""}>
+                        <IoMdNotificationsOutline size={22} className="text-black" />
+                      </Space>
+                    </a>
+                  </Dropdown>
+                </Badge>
+              </div>
+              {user ? (
+                <div className="icon-container">
+                  <div className="dropdown dropdown-end">
+                    <div tabIndex={0} role="button" className="text-black">
+                      <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white">
+                        <img
+                          src={logo}
+                          // src={`${baseUrl}/${user.profileImage}`}
+                          alt="user"
+                          title="user name"
+                          width="80"
+                          height="80"
+                          className="max-w-full rounded-full mt-1"
+                        />
+                      </span>
+                    </div>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu bg-gray-50 rounded-md z-[1] w-52 shadow"
+                    >
+                      <li className="px-3">
+                        <Link
+                          to="/profile"
+                          className="flex items-center gap-2 rounded"
                         >
-                          <Link
-                            to="#"
-                            className="flex items-center gap-2 rounded "
+                          <div className="flex items-center self-center ">
+                            <ImProfile size={20} />
+                          </div>
+                          <div className="flex w-full flex-1 text-md font-normal text-gray-600 tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate">
+                            Profile
+                          </div>
+                        </Link>
+                      </li>
+                      <li className="px-3">
+                        <div>
+                          <button
+                            onClick={handleLogout}
+                            href="#"
+                            className="text-gray-600 font-bold"
                           >
-                            <div className="flex items-center self-center ">
-                              <TbLogout2 size={20} />
-                            </div>
-                            <div className="flex w-full flex-1 text-md font-normal text-gray-600 tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate">
-                              Logout
-                            </div>
-                          </Link>
-                        </button>
-                      </div>
-                    </li>
-                  </ul>
+                            <Link
+                              to="#"
+                              className="flex items-center gap-2 rounded "
+                            >
+                              <div className="flex items-center self-center ">
+                                <TbLogout2 size={20} />
+                              </div>
+                              <div className="flex w-full flex-1 text-md font-normal text-gray-600 tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate">
+                                Logout
+                              </div>
+                            </Link>
+                          </button>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               ) : (
                 <LoginScreen />
               )}
             </div>
-          
           </div>
         </div>
       </div>

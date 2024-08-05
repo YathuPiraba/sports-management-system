@@ -64,15 +64,15 @@
 }
 
 .logo h1 {
-  color: #f78139;
   margin-left: 2px;
-  margin-top: 7px;
+  margin-top: 19px;
   font-size: xx-large;
   font-weight: bold;
 }
+
 .logo img {
-  width: 70px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
   animation: fadeIn 1.5s ease-in forwards;
 }
 
@@ -91,11 +91,29 @@
 }
 
 .sep h2 {
-  margin-top: 60px;
+  margin-top: 75px;
   margin-left: 20px;
   letter-spacing: 0.5px;
   font-size: x-large;
   font-weight: bold;
+}
+
+.logo h1 .title{
+  color: #2779b3;
+  margin-right: 0;
+}
+
+.logo h1 .title1{
+  color: #f2a404;
+}
+
+.logo h1 .title3{
+  background: linear-gradient(to bottom, #778796, #fffefc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: xx-large;
+  font-weight: bold;
+  margin-left: 0;
 }
 
 form {
@@ -143,9 +161,11 @@ form input {
   color: white;
 }
 
-form input:focus {
+form input:focus,form input:hover{
+  background-color:white;
   outline: 2px solid #5fc4ee;
   border: none;
+  color: black;
 }
 
 .ex-login {
@@ -202,4 +222,22 @@ form input:focus {
   margin-top: 20px;
 }
 
+.pass{
+  background-color: rgba(32, 42, 62);
+  border: none;
+  padding: 12px;
+  border-radius: 7px;
+  width: 310px;
+
+}
+
+.pass:hover {
+  outline: 2px solid #5fc4ee;
+  border: none;
+}
+
+.pass:focus {
+  outline: 2px solid #5fc4ee;
+  border: none;
+}
 

@@ -1,21 +1,25 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import "./login.css";
 import { Modal, Button } from "antd";
 import cover from "../../assets/sample-removebg.png";
-import logo from "../../assets/log.png";
+import logo from "../../assets/logo2.png";
 import toast from "react-hot-toast";
-import { useForm } from "react-hook-form";
+import { useForm, Controller  } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAdmin, login } from "../../features/authslice";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import { Input, Space } from "antd";
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [passwordVisible, setPasswordVisible] = React.useState(false);
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -56,7 +60,6 @@ const Login = () => {
     setIsModalVisible(false);
   };
 
-
   return (
     <div className="body-container">
       <div className="outter">
@@ -65,7 +68,12 @@ const Login = () => {
             <div className="topic">
               <div className="logo">
                 <img src={logo} alt="Club Connect Logo" />
-                <h1>Club Connect</h1>
+                <h1>
+                  <span className="title">C</span>
+                  <span className="title3">lub </span>
+                  <span className="title1">C</span>
+                  <span className="title3">onnect</span>
+                </h1>
               </div>
               <p>Unite Every Club, Connect Every Player...!</p>
             </div>
@@ -84,13 +92,27 @@ const Login = () => {
                   {...register("userName", { required: true })}
                 />
                 {errors.username && <span>Username is required</span>}
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  {...register("password", { required: true })}
-                />
-                {errors.password && <span>Password is required</span>}
+                <Space direction="vertical">
+                  <Space direction="horizontal">
+                    <Controller
+                      name="password"
+                      control={control}
+                      rules={{ required: true }}
+                      render={({ field }) => (
+                        <Input.Password
+                          {...field}
+                          placeholder="Enter your password"
+                          visibilityToggle={{
+                            visible: passwordVisible,
+                            onVisibleChange: setPasswordVisible,
+                          }}
+                          className="pass"
+                        />
+                      )}
+                    />
+                  </Space>
+                  {errors.password && <span>Password is required</span>}
+                </Space>
                 <div className="forgot-btn">
                   <p>Forgot password?</p>
                   <button>Login</button>
@@ -107,7 +129,10 @@ const Login = () => {
               </> */}
               <div className="signup">
                 <p>
-                  Don&apos;t have an account? <a href="#" onClick={showModal}>Sign up</a>
+                  Don&apos;t have an account?{" "}
+                  <a href="#" onClick={showModal}>
+                    Sign up
+                  </a>
                 </p>
               </div>
             </div>
@@ -115,22 +140,32 @@ const Login = () => {
         </div>
       </div>
       <div className="SignUp">
-      <Modal
-        title={<div style={{ textAlign: 'center' }}>Sign Up</div>}
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-        width={400}
-      >
-        <div className="signup-options">
-          <Button onClick={() => navigate("/signup/manager")} type="primary" block  style={{ width: '150px', margin: '10px auto 0' }} >
-            Manager
-          </Button>
-          <Button onClick={() => navigate("/signup/member")} type="primary" block  style={{ width: '150px', margin: '10px auto 0' }} >
-            Member
-          </Button>
-        </div>
-      </Modal>
+        <Modal
+          title={<div style={{ textAlign: "center" }}>Sign Up</div>}
+          open={isModalVisible}
+          onCancel={handleCancel}
+          footer={null}
+          width={400}
+        >
+          <div className="signup-options">
+            <Button
+              onClick={() => navigate("/signup/manager")}
+              type="primary"
+              block
+              style={{ width: "150px", margin: "10px auto 0" }}
+            >
+              Manager
+            </Button>
+            <Button
+              onClick={() => navigate("/signup/member")}
+              type="primary"
+              block
+              style={{ width: "150px", margin: "10px auto 0" }}
+            >
+              Member
+            </Button>
+          </div>
+        </Modal>
       </div>
     </div>
   );
