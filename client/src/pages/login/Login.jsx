@@ -74,7 +74,7 @@ const Login = () => {
             </div>
           </div>
           <div className="login">
-            <h2>Login</h2>
+            <h2 className=" ">Login</h2>
             <div>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <input

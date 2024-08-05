@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const ManagerSignIn = () => {
-  return (
-    <div>ManagerSignIn</div>
-  )
-}
+  return <div className=" text-center">ManagerSignIn</div>;
+};
 
-export default ManagerSignIn
+export default ManagerSignIn;

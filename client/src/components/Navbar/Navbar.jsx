@@ -5,17 +5,14 @@ import "./Navbar.css";
 import { IoNotifications } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { Dropdown, Space, Badge } from "antd";
-// import alert from "../assets/alert.gif";
-// import warn from "../assets/warning01.gif";
-// import recycle from "../assets/recycle01.gif";
 import { ImProfile } from "react-icons/im";
 import { TbLogout2 } from "react-icons/tb";
-// import "../App.css";
 import { jwtDecode } from "jwt-decode";
-import { logout, logOutAdmin } from "../features/authslice";
+import { logout, logOutAdmin } from "../../features/authslice";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import LoginScreen from "../pages/login/Login";
+import LoginScreen from "../../pages/login/Login";
+import logo from "../../assets/log.png";
 
 // const socket = io("http://localhost:5000");
 
@@ -227,14 +224,15 @@ const Navbar = () => {
                 <div className="dropdown dropdown-end">
                   <div tabIndex={0} role="button" className="text-black">
                     <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white">
-                      {/* <img
+                      <img
+                        src={logo}
                         // src={`${baseUrl}/${user.profileImage}`}
-                        alt="user name"
+                        alt="user"
                         title="user name"
                         width="80"
                         height="80"
                         className="max-w-full rounded-full"
-                      /> */}
+                      />
                     </span>
                   </div>
                   <ul
