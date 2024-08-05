@@ -1,0 +1,9 @@
+.add1 {
+    color: #000000; /* Light theme text color */
+    background-color: #ffffff; /* Light theme background color */
+  }
+  
+  .add2 {
+    color: #ffffff; /* Dark theme text color */
+    background-color: #000000; /* Dark theme background color */
+  }

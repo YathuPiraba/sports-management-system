@@ -14,19 +14,14 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import LoginScreen from "../../pages/login/Login";
 import logo from "../../assets/log.png";
+import { useTheme } from "../../context/ThemeContext";
 
 // const socket = io("http://localhost:5000");
 
 const Navbar = () => {
   const [notifications, setNotifications] = useState([]);
   const [animate, setAnimate] = useState(false);
-  const [permission, setPermission] = useState({ enabled: true });
-
-  const onPermissionChanged = (checked, permission) => {
-    setPermission({ ...permission, enabled: checked });
-    console.log(permission.enabled);
-  };
-
+  const { theme, toggleTheme } = useTheme();
   const notificationCount = notifications.length;
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
@@ -210,14 +205,14 @@ const Navbar = () => {
           <Space direction="vertical">
             <Switch
               style={{
-                backgroundColor: permission.enabled ? "black" : "gray",
-                color: permission.enabled ? "black" : "white",
+                backgroundColor: theme === "light" ? "black" : "gray",
+                color: theme === "light" ? "white" : "black",
               }}
-              checked={permission.enabled}
-              onChange={(checked) => onPermissionChanged(checked, permission)}
+              checked={theme === "light"}
+              onChange={toggleTheme}
               checkedChildren="Dark"
               unCheckedChildren="Light"
-              defaultChecked
+              defaultChecked={theme === "light"}
             />
           </Space>
           <div className="flex items-center justify-end gap-4 ml-auto">
@@ -236,7 +231,10 @@ const Navbar = () => {
                   >
                     <a onClick={(e) => e.preventDefault()}>
                       <Space className={animate ? "bell" : ""}>
-                        <IoMdNotificationsOutline size={22} className="text-black" />
+                        <IoMdNotificationsOutline
+                          size={22}
+                          className="text-black"
+                        />
                       </Space>
                     </a>
                   </Dropdown>
