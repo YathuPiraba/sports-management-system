@@ -29,13 +29,13 @@
 .list {
   color: black;
   margin-left: 20px;
+  width: 170px;
 }
 
 
 .list:hover {
   background-color:#45aa40;
   color: white;
-  width: 170px;
   border: none;
   border-radius: 20px;
 }

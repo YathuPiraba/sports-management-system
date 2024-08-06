@@ -22,11 +22,14 @@ const Navbar = () => {
   const [animate, setAnimate] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const notificationCount = notifications.length;
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.userdata);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // const baseUrl = "http://localhost:5000/public/profile";
+
+  console.log("user", user);
+  
 
   useEffect(() => {
     if (!user) {

@@ -42,4 +42,12 @@ class UserController extends Controller
             ], 401);
         }
     }
+
+    public function logout(Request $request)
+{
+
+    return response()->json([
+        'message' => 'Logout successful',
+    ], 200);
+}
 }

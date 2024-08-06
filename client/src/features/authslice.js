@@ -11,12 +11,11 @@ export const loginAdmin = createAsyncThunk("/login", async (data) => {
 export const logOutAdmin = createAsyncThunk("/logout", async () => {
   await axios.post(`http://127.0.0.1:8000/api/logout`);
   localStorage.removeItem("token");
-  localStorage.removeItem("userName");
   return {};
 });
 
 const initialState = {
-  user: null,
+  userdata: null,
 };
 
 const authSlice = createSlice({
@@ -24,10 +23,10 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     login: (state, action) => {
-      state.user = action.payload;
+      state.userdata = action.payload;
     },
     logout: (state, action) => {
-      state.user = null;
+      state.userdata = null;
     },
   },
 });
