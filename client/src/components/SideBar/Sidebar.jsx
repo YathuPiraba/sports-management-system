@@ -5,18 +5,21 @@ import { Link } from "react-router-dom";
 import { RiTeamFill } from "react-icons/ri";
 import { BiSolidReport, BiCategoryAlt } from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
-import { LuGanttChartSquare } from "react-icons/lu";
 import { MdEmojiEvents } from "react-icons/md";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function Sidebar() {
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <>
       <button
         title="Side navigation"
         type="button"
-        className={`visible fixed flex justify-end right-8 top-6 z-40 order-10 h-10 w-10 self-center rounded bg-gray-300 opacity-100 lg:hidden ${
+        className={`visible fixed flex justify-end right-2 custom-navi  z-40 order-10 h-10 w-10 self-center rounded  ${
+          theme === "light" ? "bg-white text-black" : "bg-gray-200 text-white"
+        } opacity-100 lg:hidden ${
           isSideNavOpen
             ? "visible opacity-100 [&_span:nth-child(1)]:w-6 [&_span:nth-child(1)]:translate-y-0 [&_span:nth-child(1)]:rotate-45 [&_span:nth-child(3)]:w-0 [&_span:nth-child(2)]:-rotate-45 "
             : ""
@@ -46,7 +49,9 @@ export default function Sidebar() {
       <aside
         id="nav-menu-4"
         aria-label="Side navigation"
-        className={`fixed z-50 font-poppins bg-white text-white top-0 bottom-0 left-0 flex w-72 flex-col border-r border-t-0 border-y-0 border-r-slate-200 transition-transform lg:translate-x-0 ${
+        className={`fixed z-50 font-poppins  ${
+          theme === "light" ? "bg-white text-black" : "bg-gray-200 text-white"
+        } top-0 bottom-0 left-0 flex w-72 flex-col border-r border-t-0 border-y-0 border-r-slate-200 transition-transform lg:translate-x-0 ${
           isSideNavOpen ? "translate-x-0" : " -translate-x-full"
         }`}
       >
@@ -61,9 +66,9 @@ export default function Sidebar() {
         </div>
         <nav
           aria-label="side navigation"
-          className="flex-1 text-white overflow-y-scroll no-scrollbar"
+          className="flex-1  overflow-y-scroll no-scrollbar"
         >
-          <div >
+          <div>
             <ul className="flex flex-1 flex-col gap-2 pt-0">
               <div className="list">
                 <li className="px-3 ">

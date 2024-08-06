@@ -8,6 +8,10 @@ export default {
         roboto: '"Roboto", sans-serif',
         acme: '"Acme", sans-serif',
       },
+      colors:{
+        customGreen:'#cfead1',
+        customDark:'rgba(34, 52, 76)'
+      }
     },
   },
   plugins: [

@@ -1,14 +1,19 @@
-import React from 'react'
-import { useTheme } from "../../context/ThemeContext"
-import "./Admin.css"
+import React from "react";
+import { useTheme } from "../../context/ThemeContext";
+
 
 const Admin = () => {
   const { theme } = useTheme();
-  const themeClass = theme === 'light' ? 'add1' : 'add2';
-  return (
-    
-    <div className={themeClass}>Admin</div>
-  )
-}
 
-export default Admin
+  return (
+    <div
+      className={
+        theme === "light" ? "bg-customGreen text-black" : "bg-customDark text-white"
+      }
+    >
+      Admin
+    </div>
+  );
+};
+
+export default Admin;

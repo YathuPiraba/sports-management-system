@@ -31,11 +31,15 @@
   margin-left: 20px;
 }
 
-.list:focus,
+
 .list:hover {
   background-color:#45aa40;
   color: white;
   width: 170px;
   border: none;
   border-radius: 20px;
+}
+
+.custom-navi{
+  top: 17px;
 }

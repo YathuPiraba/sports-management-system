@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Navbar.css";
-import "../../Layout/RootLayout.css";
 // import io from "socket.io-client";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
@@ -200,7 +199,13 @@ const Navbar = () => {
 
   return (
     <header>
-      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 custom w-full font-poppins">
+      <div
+        className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 ${
+          theme === "light"
+            ? "bg-customGreen text-black"
+            : "bg-customDark text-white"
+        } w-full font-poppins`}
+      >
         <div className="flex pt-4 items-center">
           <Space direction="vertical">
             <Switch
@@ -215,9 +220,15 @@ const Navbar = () => {
               defaultChecked={theme === "light"}
             />
           </Space>
-          <div className="flex items-center justify-end gap-4 ml-auto">
-            <div className="sm:flex sm:gap-4 space-x-6 flex">
-              <div className="icon-container">
+          <div className="flex items-center gap-4 ml-auto">
+            <div className="sm:flex sm:gap-4 space-x-6 flex mb-2">
+              <div
+                className={`${
+                  theme === "light"
+                    ? "bg-white text-black"
+                    : "bg-gray-200 text-white"
+                } icon-container`}
+              >
                 <Badge
                   count={notificationCount}
                   overflowCount={99}
@@ -241,7 +252,13 @@ const Navbar = () => {
                 </Badge>
               </div>
               {user ? (
-                <div className="icon-container">
+                <div
+                  className={`${
+                    theme === "light"
+                      ? "bg-white text-black"
+                      : "bg-gray-200 text-white"
+                  } icon-container`}
+                >
                   <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="text-black">
                       <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white">
