@@ -44,10 +44,10 @@ class UserController extends Controller
     }
 
     public function logout(Request $request)
-{
+    {
 
-    return response()->json([
-        'message' => 'Logout successful',
-    ], 200);
-}
+        return response()->json([
+            'message' => 'Logout successful',
+        ], 200);
+    }
 }
