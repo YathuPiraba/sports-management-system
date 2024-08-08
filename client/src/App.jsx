@@ -4,8 +4,8 @@ import Login from "./pages/login/Login";
 import Home from "./pages/Home/Home";
 import ManagerSignIn from "./pages/signup/ManagerSignIn";
 import MemberSignIn from "./pages/signup/MemberSignIn";
-
 import CommonRoute from "./Routers/CommonRoute";
+import ProtectedRoute from "./Routers/ProtectedRoute";
 
 const App = () => {
   return (
@@ -13,7 +13,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/*" element={<CommonRoute />} />
+          <Route path="/*" element={<ProtectedRoute element={CommonRoute} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup/manager" element={<ManagerSignIn />} />
           <Route path="/signup/member" element={<MemberSignIn />} />

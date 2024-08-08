@@ -18,9 +18,7 @@ export default function Sidebar() {
       <button
         title="Side navigation"
         type="button"
-        className={`visible fixed flex justify-end right-2 custom-navi  z-40 order-10 h-10 w-10 self-center rounded  ${
-          theme === "light" ? "bg-white text-black" : "bg-gray-200 text-white"
-        } opacity-100 lg:hidden ${
+        className={`visible fixed flex justify-end right-2 custom-navi  z-40 order-10 h-10 w-10 self-center rounded opacity-100 lg:hidden ${
           isSideNavOpen
             ? "visible opacity-100 [&_span:nth-child(1)]:w-6 [&_span:nth-child(1)]:translate-y-0 [&_span:nth-child(1)]:rotate-45 [&_span:nth-child(3)]:w-0 [&_span:nth-child(2)]:-rotate-45 "
             : ""
@@ -32,9 +30,7 @@ export default function Sidebar() {
         onClick={() => setIsSideNavOpen(!isSideNavOpen)}
       >
         <div
-          className={`absolute top-1/2 ${
-            theme === "light" ? "bg-white text-black" : "bg-gray-200 text-white"
-          } left-1/2 w-6 -translate-x-1/2 -translate-y-1/2 transform`}
+          className={`absolute top-1/2 left-1/2 w-6 -translate-x-1/2 -translate-y-1/2 transform`}
         >
           <span
             aria-hidden="true"

@@ -16,7 +16,7 @@ const ManagerSideBar = () => {
           <div className="list">
             <li className="px-3 ">
               <Link
-                to="/"
+                to="/manager/dashboard"
                 className="flex items-center gap-3 rounded p-3 transition-colors"
               >
                 <div className="flex items-center self-center">
@@ -31,7 +31,7 @@ const ManagerSideBar = () => {
           <div className="list ">
             <li className="px-3">
               <Link
-                to="/category"
+                to="/manager/club"
                 className="flex items-center gap-3 rounded p-3 transition-colors"
               >
                 <div className="flex items-center self-center ">
@@ -46,7 +46,7 @@ const ManagerSideBar = () => {
           <div className="list">
             <li className="px-3">
               <Link
-                to="/products"
+                to="/manager/events"
                 className="flex items-center gap-3 rounded p-3 transition-color"
               >
                 <div className="flex items-center self-center ">
@@ -61,7 +61,7 @@ const ManagerSideBar = () => {
           <div className="list">
             <li className="px-3">
               <Link
-                to="/profile"
+                to="/settings"
                 className="flex items-center gap-3 rounded p-3 transition-colors"
               >
                 <div className="flex items-center self-center ">

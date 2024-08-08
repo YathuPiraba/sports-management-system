@@ -5,6 +5,7 @@ import AdminRoute from "./AdminRoute";
 import ManagerRoute from "./ManagerRoute";
 import MemberRoute from "./MemberRoute";
 import RootLayout from "../Layout/RootLayout";
+import Settings from "../pages/settings/Settings";
 
 const CommonRoute = () => {
   const role_id = useSelector((state) => state.auth.userdata.user.role_id);
@@ -14,9 +15,8 @@ const CommonRoute = () => {
       <Route path="/" element={<RootLayout />}>
         {role_id === 1 && <Route path="/*" element={<AdminRoute />} />}
         {role_id === 2 && <Route path="/*" element={<ManagerRoute />} />}
-        {role_id && role_id !== 1 && role_id !== 2 && (
-          <Route path="/*" element={<MemberRoute />} />
-        )}
+        {role_id === 3 && <Route path="/*" element={<MemberRoute />} />}
+        <Route path="/settings" element={<Settings />}/>
       </Route>
     </Routes>
   );
