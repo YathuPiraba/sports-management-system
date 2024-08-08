@@ -60,7 +60,11 @@ const ManagerSignIn = () => {
     <div className="p-6 bg-gray-100 min-h-screen">
       <form onSubmit={handleSubmit} className="bg-white p-8 shadow-md rounded">
         <h2 className="text-2xl font-bold mb-6">Club Details</h2>
-        <ClubDetails details={clubDetails} handleChange={handleClubChange} divisions={divisions} />
+        <ClubDetails
+          details={clubDetails}
+          handleChange={handleClubChange}
+          divisions={divisions}
+        />
 
         <h2 className="text-2xl font-bold mt-8 mb-6">Manager Details</h2>
         <ManagerDetails
@@ -79,7 +83,7 @@ const ManagerSignIn = () => {
   );
 };
 
-const ClubDetails = ({ details, handleChange,divisions }) => (
+const ClubDetails = ({ details, handleChange, divisions }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label className="block text-gray-700">Club Name</label>
