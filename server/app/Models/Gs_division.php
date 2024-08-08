@@ -9,6 +9,8 @@ class Gs_Division extends Model
 {
     use HasFactory;
 
+    protected $table = 'gs_divisions'; 
+
     protected $fillable = [
         'divisionName',
         'divisionNo',

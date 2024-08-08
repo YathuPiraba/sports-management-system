@@ -17,6 +17,7 @@ class UserController extends Controller
         $this->tokenService = $tokenService;
     }
 
+    //POST => http://127.0.0.1:8000/api/login
     public function login(Request $request)
     {
         $request->validate([
@@ -44,6 +45,7 @@ class UserController extends Controller
         }
     }
 
+   //POST => http://127.0.0.1:8000/api/logout
     public function logout(Request $request)
     {
 
