@@ -52,7 +52,7 @@ const managerData = [
 
 const AdminApprovals = () => {
   const [expanded, setExpanded] = useState(null);
-  const { theme, toggleTheme } = useTheme();
+  const { theme} = useTheme();
 
   const handleToggle = (name) => {
     setExpanded(expanded === name ? null : name);
@@ -60,28 +60,38 @@ const AdminApprovals = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Approval Requests</h1>
+      <h1 className="text-xl font-bold mb-4 font-roboto">Approval Requests</h1>
       <ul className="space-y-4">
         <li>
-          <div className={`${theme === "light" ? "bg-white" : "bg-gray-200 "}`}>
+          <div>
             <div
               className={`flex flex-row ${
-                theme === "light"
-                  ? "bg-white  hover:bg-gray-300"
-                  : "bg-gray-200 hover:bg-white"
-              }  rounded-sm shadow-md border-b border-gray-200 `}
+                theme === "light" ? "bg-white hover:bg-blue-400 " : "bg-gray-200 hover:bg-blue-400 hover:text-white"
+              }  rounded-sm shadow-md border-b  `}
             >
-              <div className="w-1/2">
+              <div className="w-3/4">
                 <button
-                  className={`w-full text-left  text-black p-4 mb-0 rounded-sm mt-0`}
+                  className={`w-full text-left text-xl border-0 text-black hover:text-white font-semibold p-4 mb-0 rounded-sm mt-0`}
                   onClick={() => handleToggle("clubs")}
                 >
                   Club Name
                 </button>
               </div>
-              <div className="ml-auto flex flex-row mt-5 gap-4 mr-7">
-                <FcApproval className="text-xl cursor-pointer hover:text-gray-700" />
-                <TiDelete className="text-xl cursor-pointer text-black hover:text-gray-700" />
+              <div className="ml-auto flex flex-row gap-4 mr-7">
+                <button>
+                  {" "}
+                  <FcApproval
+                    size={24}
+                    className="text-xl cursor-pointer"
+                  />{" "}
+                </button>
+                <button>
+                  {" "}
+                  <TiDelete
+                    size={28}
+                    className="text-xl cursor-pointer text-red-500 hover:text-red-600"
+                  />{" "}
+                </button>
               </div>
             </div>
             {expanded === "clubs" && (
