@@ -15,6 +15,7 @@ class Club extends Model
         'address',
         'club_history',
         'contactNo',
+        'is_verified',
     ];
 
     // Relationships

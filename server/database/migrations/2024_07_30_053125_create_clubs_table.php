@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('address');
             $table->text('club_history')->nullable();
             $table->string('contactNo');
+            $table->boolean('is_verified')->default(false);
             $table->timestamps();
 
             $table->foreign('gs_id')->references('id')->on('gs_divisions')->onDelete('cascade');
