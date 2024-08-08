@@ -138,11 +138,7 @@ const Navbar = () => {
   return (
     <header>
       <div
-        className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 ${
-          theme === "light"
-            ? "bg-customGreen text-black"
-            : "bg-customDark text-white"
-        } w-full font-poppins`}
+        className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8  w-full font-poppins`}
       >
         <div className="flex pt-4 items-center">
           <Space direction="vertical">
