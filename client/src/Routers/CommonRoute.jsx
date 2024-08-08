@@ -8,6 +8,7 @@ import RootLayout from "../Layout/RootLayout";
 import Settings from "../pages/Settings/Settings";
 import Events from "../pages/Events/Events";
 import Club from "../pages/Club/Club";
+import PageNotFound from "../pages/PageNotFound";
 
 const CommonRoute = () => {
   const role_id = useSelector((state) => state.auth.userdata.user.role_id);
@@ -21,6 +22,7 @@ const CommonRoute = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/events" element={<Events />} />
         <Route path="/club" element={<Club />} />
+        <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
   );

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { RiTeamFill } from "react-icons/ri";
 import { BiSolidReport, BiCategoryAlt } from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
-import { MdEmojiEvents } from "react-icons/md";
+import { MdEmojiEvents, MdApproval } from "react-icons/md";
 
 const AdminSideBar = () => {
   return (
@@ -61,6 +61,21 @@ const AdminSideBar = () => {
           <div className="list">
             <li className="px-3">
               <Link
+                to="/admin/approvals"
+                className="flex items-center gap-3 rounded p-3 transition-colors"
+              >
+                <div className="flex items-center self-center ">
+                  <MdApproval size={20} />
+                </div>
+                <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
+                  Approvals
+                </div>
+              </Link>
+            </li>
+          </div>
+          <div className="list">
+            <li className="px-3">
+              <Link
                 to="/settings"
                 className="flex items-center gap-3 rounded p-3 transition-colors"
               >
@@ -73,22 +88,6 @@ const AdminSideBar = () => {
               </Link>
             </li>
           </div>
-          {/*  
-              <div className="list">
-              <li className="px-3">
-                <Link
-                  to="/reports"
-                  className="flex items-center gap-3 rounded p-3 transition-colors"
-                >
-                  <div className="flex items-center self-center ">
-                    <BiSolidReport size={20} />
-                  </div>
-                  <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
-                    Reports
-                  </div>
-                </Link>
-              </li>
-                </div> */}
         </ul>
       </div>
     </nav>

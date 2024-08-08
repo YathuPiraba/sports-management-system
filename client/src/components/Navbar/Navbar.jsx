@@ -23,6 +23,7 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const notificationCount = notifications.length;
   const user = useSelector((state) => state.auth.userdata);
+  const role_id = useSelector((state) => state.auth.userdata.user.role_id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -77,72 +78,7 @@ const Navbar = () => {
     }
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   const fetchNotifications = async () => {
-  //     try {
-  //       const lowStockResponse = await axios.get(
-  //         "http://localhost:5000/api/v1/notification/low-stock"
-  //       );
-
-  //       const lowStockNotifications = lowStockResponse.data.data.map(
-  //         (product) => {
-  //           let type;
-  //           if (product.totalQuantity == 0) {
-  //             type = "outOfStock";
-  //           } else if (product.totalQuantity <= 10) {
-  //             type = "lowStock";
-  //           } else if (
-  //             product.totalQuantity > 10 &&
-  //             product.totalQuantity <= product.reOrderLevel
-  //           ) {
-  //             type = "reOrder";
-  //           }
-  //           return {
-  //             message: product.message,
-  //             type,
-  //           };
-  //         }
-  //       );
-  //       setNotifications([...lowStockNotifications]);
-  //       setAnimate(true);
-  //     } catch (error) {
-  //       console.error("Error fetching notifications:", error);
-  //     }
-  //   };
-
-  //   const handleLowStockUpdate = (lowStockProducts) => {
-  //     console.log("Low stock update received:", lowStockProducts);
-  //     const newNotifications = lowStockProducts.data.map((product) => {
-  //       let type;
-  //       if (product.totalQuantity == 0) {
-  //         type = "outOfStock";
-  //       } else if (product.totalQuantity <= 10) {
-  //         type = "lowStock";
-  //       } else if (
-  //         product.totalQuantity > 10 &&
-  //         product.totalQuantity <= product.reOrderLevel
-  //       ) {
-  //         type = "reOrder";
-  //       }
-  //       return {
-  //         message: product.message,
-  //         type,
-  //       };
-  //     });
-  //     setNotifications(newNotifications);
-  //     setAnimate(true);
-  //   };
-
-  //   fetchNotifications();
-
-  //   socket.on("lowStockUpdated", handleLowStockUpdate);
-
-  //   return () => {
-  //     socket.off("lowStockUpdated", handleLowStockUpdate);
-  //   };
-  // }, []);
-
-  useEffect(() => {
+    useEffect(() => {
     if (notificationCount > 0) {
       setAnimate(true);
     }

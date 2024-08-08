@@ -6,6 +6,7 @@ import ManagerSignIn from "./pages/Signup/ManagerSignIn";
 import MemberSignIn from "./pages/Signup/MemberSignIn";
 import CommonRoute from "./Routers/CommonRoute";
 import ProtectedRoute from "./Routers/ProtectedRoute";
+import PageNotFound from "./pages/PageNotFound";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup/manager" element={<ManagerSignIn />} />
           <Route path="/signup/member" element={<MemberSignIn />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>
     </>

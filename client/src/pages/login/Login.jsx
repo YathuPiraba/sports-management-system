@@ -41,7 +41,9 @@ const Login = () => {
           navigate("/admin/dashboard");
         } else if (roleID == 2) {
           navigate("/manager/dashboard");
-        } else {
+        } else if (roleID == 3) {
+          navigate("/member/dashboard");
+        }else {
           navigate("/");
         }
       } else {

@@ -98,18 +98,19 @@
   font-weight: bold;
 }
 
-.logo h1 .title{
+.logo h1 .title {
   color: #2779b3;
   margin-right: 0;
 }
 
-.logo h1 .title1{
+.logo h1 .title1 {
   color: #f2a404;
 }
 
-.logo h1 .title3{
+.logo h1 .title3 {
   background: linear-gradient(to bottom, #778796, #fffefc);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: xx-large;
   font-weight: bold;
@@ -152,7 +153,7 @@ form {
   margin-left: 9px;
 }
 
-form input {
+.login form input {
   background-color: rgba(32, 42, 62);
   border: none;
   padding: 12px;
@@ -161,8 +162,9 @@ form input {
   color: white;
 }
 
-form input:focus,form input:hover{
-  background-color:white;
+form input:focus,
+form input:hover {
+  background-color: white;
   outline: 2px solid #5fc4ee;
   border: none;
   color: black;
@@ -222,13 +224,12 @@ form input:focus,form input:hover{
   margin-top: 20px;
 }
 
-.pass{
+.pass {
   background-color: rgba(32, 42, 62);
   border: none;
   padding: 12px;
   border-radius: 7px;
   width: 310px;
-
 }
 
 .pass:hover {
@@ -240,4 +241,3 @@ form input:focus,form input:hover{
   outline: 2px solid #5fc4ee;
   border: none;
 }
-
