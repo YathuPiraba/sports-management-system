@@ -3,8 +3,9 @@ import logo from "../../assets/logo2.png";
 import "./Sidebar.css";
 import { useTheme } from "../../context/ThemeContext";
 import { useSelector } from "react-redux";
-import AdminSideBar from "./admin_manager/AdminSideBar";
-import ManagerSideBar from "./admin_manager/ManagerSideBar";
+import AdminSideBar from "./admin_manager_member/AdminSideBar";
+import ManagerSideBar from "./admin_manager_member/ManagerSideBar";
+import MemberSideBar from "./admin_manager_member/MemberSideBar";
 
 export default function Sidebar() {
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
@@ -67,6 +68,7 @@ export default function Sidebar() {
         </div>
         {role_id === 1 && <AdminSideBar />}
         {role_id === 2 && <ManagerSideBar />}
+        {role_id === 3 && <MemberSideBar />}
       </aside>
       <div
         className={`fixed top-0 bottom-0 left-0 right-0 z-30 bg-slate-900/20 transition-colors sm:hidden ${

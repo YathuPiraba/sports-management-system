@@ -46,7 +46,7 @@ const AdminSideBar = () => {
           <div className="list">
             <li className="px-3">
               <Link
-                to="/admin/events"
+                to="/events"
                 className="flex items-center gap-3 rounded p-3 transition-color"
               >
                 <div className="flex items-center self-center ">

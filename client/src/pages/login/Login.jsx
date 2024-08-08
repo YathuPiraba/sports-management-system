@@ -38,9 +38,9 @@ const Login = () => {
         const roleID = resdata.user.role_id;
 
         if (roleID == 1) {
-          navigate("/admin");
+          navigate("/admin/dashboard");
         } else if (roleID == 2) {
-          navigate("/manager");
+          navigate("/manager/dashboard");
         } else {
           navigate("/");
         }

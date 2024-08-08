@@ -11,7 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import { logout, logOutAdmin } from "../../features/authslice";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import LoginScreen from "../../pages/login/Login";
+import LoginScreen from "../../pages/Login/Login";
 import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -29,7 +29,6 @@ const Navbar = () => {
   // const baseUrl = "http://localhost:5000/public/profile";
 
   console.log("user", user);
-  
 
   useEffect(() => {
     if (!user) {

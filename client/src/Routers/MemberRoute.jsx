@@ -1,14 +1,15 @@
-import React from 'react'
+import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Manager from '../pages/manager/Manager';
+import MemberDashboard from "../pages/Member/MemberDashboard";
 
 const MemberRoute = () => {
   return (
     <Routes>
-   
-    <Route path="/member" element={<Manager />} />
-  </Routes>
-  )
-}
+      <Route path="/member">
+        <Route path="dashboard" element={<MemberDashboard />} />
+      </Route>
+    </Routes>
+  );
+};
 
-export default MemberRoute
+export default MemberRoute;
