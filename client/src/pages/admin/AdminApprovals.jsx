@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { TiDelete } from "react-icons/ti";
 import { FcApproval } from "react-icons/fc";
 import AdminApprovalTable from "../../components/Approvals/AdminApprovalTable";
@@ -22,38 +22,13 @@ const managerColumns = [
   "Address",
   "NIC",
   "Contact No",
-  "Whatsapp No",
-];
-
-const clubData = [
-  // Replace with actual data
-  {
-    clubName: "Club A",
-    gsDivisionName: "Division A",
-    address: "Address A",
-    clubHistory: "History A",
-    contactNo: "1234567890",
-  },
-];
-
-const managerData = [
-  // Replace with actual data
-  {
-    firstName: "First",
-    lastName: "Last",
-    email: "manager@example.com",
-    image: "image_url",
-    dateOfBirth: "1990-01-01",
-    address: "Address",
-    nic: "NIC123",
-    contactNo: "1234567890",
-    whatsappNo: "0987654321",
-  },
 ];
 
 const AdminApprovals = () => {
   const [expanded, setExpanded] = useState(null);
-  const { theme} = useTheme();
+  const { theme } = useTheme();
+  const [clubData, setClubData] = useState([]);
+  const [managerData, setManagerData] = useState([]);
 
   const handleToggle = (name) => {
     setExpanded(expanded === name ? null : name);
@@ -61,34 +36,39 @@ const AdminApprovals = () => {
 
   const fetchManagerData = async () => {
     try {
-      const res = await axios.get(
-        "http://127.0.0.1:8000/api/manager/list"
-      );
+      const res = await axios.get("http://127.0.0.1:8000/api/manager/list");
       const managers = res.data.data;
-      managers.forEach(manager => {
-        console.log('First Name:', manager.firstName);
-        console.log('Last Name:', manager.lastName);
-        console.log('Image:', manager.image);
-        console.log('Date of Birth:', manager.date_of_birth);
-        console.log('Address:', manager.address);
-        console.log('NIC:', manager.nic);
-        console.log('Contact No:', manager.contactNo);
-        console.log('WhatsApp No:', manager.whatsappNo);
-        
-  
-        // Accessing club details
-        console.log('Club Name:', manager.club.clubName);
-        console.log('Club GS ID:', manager.club.gs_id);
-        console.log('Club Address:', manager.club.clubAddress);
-        console.log('Club History:', manager.club.club_history);
-        console.log('Club Contact No:', manager.club.clubContactNo);
-        console.log('Club Verification:', manager.club.isVerified);
-  
-        // Accessing user details
-        console.log('User Email:', manager.user.email);
-        console.log('User verificiation:', manager.user.is_verified);
 
-      });
+      // Separate verified and unverified managers
+      const unverifiedManagers = managers.filter(
+        (manager) => manager.user.is_verified === 0
+      );
+
+      const filteredManagers = unverifiedManagers.map((manager) => ({
+        firstName: manager.firstName,
+        lastName: manager.lastName,
+        email: manager.user.email,
+        image: manager.image,
+        dateOfBirth: manager.date_of_birth,
+        address: manager.address,
+        nic: manager.nic,
+        contactNo: manager.contactNo,
+      }));
+
+      setManagerData(filteredManagers);
+
+      // Filter clubs based on the verification status
+      const unverifiedClubs = unverifiedManagers.map((manager) => ({
+        clubName: manager.club.clubName,
+        gsDivisionName: manager.club.gs_id,
+        address: manager.club.clubAddress,
+        clubHistory: manager.club.club_history,
+        contactNo: manager.club.clubContactNo,
+      }));
+
+      setClubData(unverifiedClubs);
+
+      console.log("hi", unverifiedManagers);
     } catch (error) {
       console.error("Error fetching Gs divisions data:", error);
     }
@@ -106,7 +86,9 @@ const AdminApprovals = () => {
           <div>
             <div
               className={`flex flex-row ${
-                theme === "light" ? "bg-white hover:bg-blue-400 " : "bg-gray-200 hover:bg-blue-400 hover:text-white"
+                theme === "light"
+                  ? "bg-white hover:bg-blue-400 "
+                  : "bg-gray-200 hover:bg-blue-400 hover:text-white"
               }  rounded-sm shadow-md border-b  `}
             >
               <div className="w-3/4">
