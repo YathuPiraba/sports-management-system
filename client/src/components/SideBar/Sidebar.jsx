@@ -12,14 +12,16 @@ export default function Sidebar() {
   const { theme } = useTheme();
   const role_id = useSelector((state) => state.auth.userdata.user.role_id);
 
-  console.log("role id",role_id);
+  console.log("role id", role_id);
 
   return (
     <>
       <button
         title="Side navigation"
         type="button"
-        className={`visible fixed flex justify-end right-2 custom-navi  z-40 order-10 h-10 w-10 self-center rounded opacity-100 lg:hidden ${
+        className={`visible fixed flex justify-end right-2 ${
+          theme === "light" ? "bg-white" : "bg-gray-200"
+        } custom-navi  z-40 order-10 h-10 w-10 self-center rounded opacity-100 lg:hidden ${
           isSideNavOpen
             ? "visible opacity-100 [&_span:nth-child(1)]:w-6 [&_span:nth-child(1)]:translate-y-0 [&_span:nth-child(1)]:rotate-45 [&_span:nth-child(3)]:w-0 [&_span:nth-child(2)]:-rotate-45 "
             : ""
@@ -31,19 +33,19 @@ export default function Sidebar() {
         onClick={() => setIsSideNavOpen(!isSideNavOpen)}
       >
         <div
-          className={`absolute top-1/2 left-1/2 w-6 -translate-x-1/2 -translate-y-1/2 transform`}
+          className={`absolute top-1/2 left-1/2 w-6 text-black -translate-x-1/2 -translate-y-1/2 transform`}
         >
           <span
             aria-hidden="true"
-            className="absolute block h-0.5 w-9/12 -translate-y-2 transform rounded-full  transition-all duration-300"
+            className="absolute block h-0.5 w-9/12 -translate-y-2 transform rounded-full bg-slate-700 transition-all duration-300"
           ></span>
           <span
             aria-hidden="true"
-            className="absolute block h-0.5 w-6 transform rounded-full  transition duration-300"
+            className="absolute block h-0.5 w-6 transform rounded-full bg-slate-900 transition duration-300"
           ></span>
           <span
             aria-hidden="true"
-            className="absolute block h-0.5 w-1/2 origin-top-left translate-y-2 transform rounded-full transition-all duration-300"
+            className="absolute block h-0.5 w-1/2 origin-top-left translate-y-2 transform rounded-full bg-slate-900 transition-all duration-300"
           ></span>
         </div>
       </button>

@@ -9,6 +9,8 @@ class Club_Manager extends Model
 {
     use HasFactory;
 
+    protected $table = 'club_managers';
+
     protected $fillable = [
         'user_id',
         'club_id',

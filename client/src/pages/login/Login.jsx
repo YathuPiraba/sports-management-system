@@ -4,7 +4,7 @@ import { Modal, Button } from "antd";
 import cover from "../../assets/sample-removebg.png";
 import logo from "../../assets/logo2.png";
 import toast from "react-hot-toast";
-import { useForm, Controller  } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAdmin, login } from "../../features/authslice";
@@ -15,7 +15,7 @@ import { Input, Space } from "antd";
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [passwordVisible, setPasswordVisible] = React.useState(false);
-  
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -37,14 +37,20 @@ const Login = () => {
         reset();
         const roleID = resdata.user.role_id;
 
-        if (roleID == 1) {
-          navigate("/admin/dashboard");
-        } else if (roleID == 2) {
-          navigate("/manager/dashboard");
-        } else if (roleID == 3) {
-          navigate("/member/dashboard");
-        }else {
-          navigate("/");
+        const isVerified = resdata.user.is_verified;
+
+        if (isVerified === 0) {
+          navigate("/home");
+        } else {
+          if (roleID === 1) {
+            navigate("/admin/dashboard");
+          } else if (roleID === 2) {
+            navigate("/manager/dashboard");
+          } else if (roleID === 3) {
+            navigate("/member/dashboard");
+          } else {
+            navigate("/");
+          }
         }
       } else {
         toast.error("Invalid credentials. Please try again.");

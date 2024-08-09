@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('clubName');
             $table->unsignedBigInteger('gs_id');
-            $table->text('address');
+            $table->text('clubAddress');
             $table->text('club_history')->nullable();
-            $table->string('contactNo');
-            $table->boolean('is_verified')->default(false);
+            $table->string('clubContactNo');
+            $table->boolean('isVerified')->default(false);
             $table->timestamps();
 
             $table->foreign('gs_id')->references('id')->on('gs_divisions')->onDelete('cascade');

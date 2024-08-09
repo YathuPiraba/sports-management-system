@@ -16,8 +16,8 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
       <label className="block text-gray-700">Address</label>
       <input
         type="text"
-        name="address"
-        value={details.address}
+        name="clubAddress"
+        value={details.clubAddress}
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
       />
@@ -25,8 +25,8 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
     <div className="md:col-span-2">
       <label className="block text-gray-700">Club History</label>
       <textarea
-        name="clubHistory"
-        value={details.clubHistory}
+        name="club_history"
+        value={details.club_history}
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
       ></textarea>
@@ -35,8 +35,8 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
       <label className="block text-gray-700">Contact Number</label>
       <input
         type="text"
-        name="contactNo"
-        value={details.contactNo}
+        name="clubContactNo"
+        value={details.clubContactNo}
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
       />
@@ -44,8 +44,8 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
     <div>
       <label className="block text-gray-700">Division Name</label>
       <select
-        name="divisionName"
-        value={details.divisionName}
+        name="clubDivisionName"
+        value={details.clubDivisionName}
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
       >

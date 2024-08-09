@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import ManagerDetails from "../../components/Signup/ManagerDetails";
 import ClubDetails from "../../components/Signup/ClubDetails";
+import { apply, applyManager } from "../../features/authslice";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 const ManagerSignIn = () => {
   const [divisions, setDivisions] = useState([]);
-
   const [clubDetails, setClubDetails] = useState({
     clubName: "",
-    address: "",
-    clubHistory: "",
-    contactNo: "",
-    divisionName: "",
+    clubAddress: "",
+    club_history: "",
+    clubContactNo: "",
+    clubDivisionName: "",
   });
-
   const [managerDetails, setManagerDetails] = useState({
     userName: "",
     email: "",
@@ -21,7 +23,8 @@ const ManagerSignIn = () => {
     image: "",
     firstName: "",
     lastName: "",
-    dateOfBirth: "",
+    date_of_birth: "",
+    divisionName: "",
     age: "",
     address: "",
     nic: "",
@@ -29,9 +32,34 @@ const ManagerSignIn = () => {
     whatsappNo: "",
   });
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const applyRequest = async () => {
+    const formData = {
+      ...clubDetails,
+      ...managerDetails,
+    };
+
+    try {
+      const result = await dispatch(applyManager(formData));
+      if (applyManager.fulfilled.match(result)) {
+        const resdata = result.payload;
+        console.log(resdata);   
+        // Dispatch login action with the result data
+        dispatch(apply(resdata));
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Error creating request", error);
+    }
+  };
+
   const fetchGsData = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/gs-divisions");
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/gs-divisions/list"
+      );
       setDivisions(res.data.data);
       console.log(res.data.data);
     } catch (error) {
@@ -55,7 +83,7 @@ const ManagerSignIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+    applyRequest();
   };
 
   return (
@@ -72,13 +100,14 @@ const ManagerSignIn = () => {
         <ManagerDetails
           details={managerDetails}
           handleChange={handleManagerChange}
+          divisions={divisions}
         />
 
         <button
           type="submit"
           className="mt-6 w-full bg-blue-500 text-white py-2 rounded shadow-md hover:bg-blue-600"
         >
-          Submit
+          Apply
         </button>
       </form>
     </div>

@@ -7,13 +7,15 @@ import MemberSignIn from "./pages/Signup/MemberSignIn";
 import CommonRoute from "./Routers/CommonRoute";
 import ProtectedRoute from "./Routers/ProtectedRoute";
 import PageNotFound from "./pages/PageNotFound";
+import Welcome from "./pages/Welcome";
 
 const App = () => {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Welcome />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/*" element={<ProtectedRoute element={CommonRoute} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup/manager" element={<ManagerSignIn />} />

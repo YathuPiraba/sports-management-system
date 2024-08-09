@@ -3,9 +3,16 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const ProtectedRoute = ({ element: Component, ...rest }) => {
-  const isAuthenticated = useSelector((state) => state.auth.userdata);
+  const verified = useSelector((state) => state.auth.userdata.user.is_verified);
 
-  return isAuthenticated ? <Component {...rest} /> : <Navigate to="/login" />;
+
+  if (verified === 0) {
+    // Not verified, redirect to home
+    return <Navigate to="/" />;
+  }
+
+  // Authenticated render the protected component
+  return <Component {...rest} />;
 };
 
 export default ProtectedRoute;

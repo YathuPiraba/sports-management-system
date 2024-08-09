@@ -8,7 +8,7 @@ use App\Models\Gs_Division;
 
 class GsDivisionController extends Controller
 {
-    //GET => http://127.0.0.1:8000/api/gs-divisions
+    //GET => http://127.0.0.1:8000/api/gs-divisions/list
     public function getAllGsDivisions()
     {
         try {

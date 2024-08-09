@@ -1,6 +1,6 @@
 import React from "react";
 
-const ManagerDetails = ({ details, handleChange }) => (
+const ManagerDetails = ({ details, handleChange, divisions }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label className="block text-gray-700">Username</label>
@@ -67,8 +67,8 @@ const ManagerDetails = ({ details, handleChange }) => (
       <label className="block text-gray-700">Date of Birth</label>
       <input
         type="date"
-        name="dateOfBirth"
-        value={details.dateOfBirth}
+        name="date_of_birth"
+        value={details.date_of_birth}
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
       />
@@ -92,6 +92,22 @@ const ManagerDetails = ({ details, handleChange }) => (
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
       />
+    </div>
+    <div>
+      <label className="block text-gray-700">Division Name</label>
+      <select
+        name="divisionName"
+        value={details.divisionName}
+        onChange={handleChange}
+        className="mt-1 p-2 w-full border rounded"
+      >
+        <option value="">Select Division</option>
+        {divisions.map((division) => (
+          <option key={division.id} value={division.divisionName}>
+            {division.divisionName}
+          </option>
+        ))}
+      </select>
     </div>
     <div>
       <label className="block text-gray-700">NIC</label>

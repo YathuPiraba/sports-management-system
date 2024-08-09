@@ -17,10 +17,14 @@ class User extends Model
         'is_verified',
         'image',
     ];
-    
+
     // Relationships
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+    public function clubManagers()
+    {
+        return $this->hasMany(Club_Manager::class, 'user_id');
     }
 }
