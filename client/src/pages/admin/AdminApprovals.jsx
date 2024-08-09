@@ -25,13 +25,13 @@ const managerColumns = [
 ];
 
 const AdminApprovals = () => {
-  const [expanded, setExpanded] = useState(null);
+  const [expandedClub, setExpandedClub] = useState(null);
   const { theme } = useTheme();
   const [clubData, setClubData] = useState([]);
   const [managerData, setManagerData] = useState([]);
 
-  const handleToggle = (name) => {
-    setExpanded(expanded === name ? null : name);
+  const handleToggle = (clubName) => {
+    setExpandedClub(expandedClub === clubName ? null : clubName);
   };
 
   const fetchManagerData = async () => {
@@ -53,18 +53,28 @@ const AdminApprovals = () => {
         address: manager.address,
         nic: manager.nic,
         contactNo: manager.contactNo,
+        club: manager.club,
       }));
 
       setManagerData(filteredManagers);
 
-      // Filter clubs based on the verification status
-      const unverifiedClubs = unverifiedManagers.map((manager) => ({
-        clubName: manager.club.clubName,
-        gsDivisionName: manager.club.gs_id,
-        address: manager.club.clubAddress,
-        clubHistory: manager.club.club_history,
-        contactNo: manager.club.clubContactNo,
-      }));
+      const unverifiedClubs = [
+        ...new Set(filteredManagers.map((manager) => manager.club.clubName)),
+      ].map((clubName) => {
+        const club = filteredManagers.find(
+          (manager) => manager.club.clubName === clubName
+        ).club;
+        return {
+          clubName: club.clubName,
+          gsDivisionName: club.gs_id,
+          address: club.clubAddress,
+          clubHistory: club.club_history,
+          contactNo: club.club_contactNo,
+          managers: filteredManagers.filter(
+            (manager) => manager.club.clubName === clubName
+          ),
+        };
+      });
 
       setClubData(unverifiedClubs);
 
@@ -81,54 +91,28 @@ const AdminApprovals = () => {
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4 font-roboto">Approval Requests</h1>
-      <ul className="space-y-4">
-        <li>
-          <div>
-            <div
-              className={`flex flex-row ${
-                theme === "light"
-                  ? "bg-white hover:bg-blue-400 "
-                  : "bg-gray-200 hover:bg-blue-400 hover:text-white"
-              }  rounded-sm shadow-md border-b  `}
+      <div className="space-y-4">
+      {clubData.map((club) => (
+          <div key={club.clubName}>
+            <button
+              className={`w-full text-left text-xl border-0 text-black hover:text-white font-semibold p-4 mb-0 rounded-sm mt-0 ${
+                expandedClub === club.clubName ? 'bg-blue-400' : 'bg-gray-200'
+              }`}
+              onClick={() => handleToggle(club.clubName)}
             >
-              <div className="w-3/4">
-                <button
-                  className={`w-full text-left text-xl border-0 text-black hover:text-white font-semibold p-4 mb-0 rounded-sm mt-0`}
-                  onClick={() => handleToggle("clubs")}
-                >
-                  Club Name
-                </button>
-              </div>
-              <div className="ml-auto flex flex-row gap-4 mr-7">
-                <button>
-                  {" "}
-                  <FcApproval
-                    size={24}
-                    className="text-xl cursor-pointer"
-                  />{" "}
-                </button>
-                <button>
-                  {" "}
-                  <TiDelete
-                    size={28}
-                    className="text-xl cursor-pointer text-red-500 hover:text-red-600"
-                  />{" "}
-                </button>
-              </div>
-            </div>
-            {expanded === "clubs" && (
-              <>
-                <AdminApprovalTable
-                  clubData={clubData}
-                  clubColumns={clubColumns}
-                  managerData={managerData}
-                  managerColumns={managerColumns}
-                />
-              </>
+              {club.clubName}
+            </button>
+            {expandedClub === club.clubName && (
+              <AdminApprovalTable
+                clubData={[club]}
+                clubColumns={clubColumns}
+                managerData={club.managers}
+                managerColumns={managerColumns}
+              />
             )}
           </div>
-        </li>
-      </ul>
+        ))}
+      </div>
     </div>
   );
 };
