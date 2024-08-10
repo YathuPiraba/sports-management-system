@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import AdminDashboard from "../pages/Admin/AdminDashboard";
-import AdminClubs from "../pages/Admin/AdminClubs";
-import AdminApprovals from "../pages/Admin/AdminApprovals";
-import PageNotFound from "../pages/PageNotFound";
+import AdminDashboard from "../Pages/Admin/AdminDashboard";
+import AdminClubs from "../Pages/Admin/AdminClubs";
+import AdminApprovals from "../Pages/Admin/AdminApprovals";
+import PageNotFound from "../Pages/PageNotFound";
 
 const AdminRoute = () => {
   return (

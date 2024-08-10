@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import ManagerDashboard from "../pages/Manager/ManagerDashboard";
-import PageNotFound from "../pages/PageNotFound";
+import ManagerDashboard from "../Pages/Manager/ManagerDashboard";
+import PageNotFound from "../Pages/PageNotFound";
 
 const ManagerRoute = () => {
   return (

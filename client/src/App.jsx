@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login/Login";
-import Home from "./pages/Home/Home";
-import ManagerSignIn from "./pages/Signup/ManagerSignIn";
-import MemberSignIn from "./pages/Signup/MemberSignIn";
+import Login from "./Pages/Login/Login";
+import Home from "./Pages/Home/Home";
+import ManagerSignIn from "./Pages/Signup/ManagerSignIn";
+import MemberSignIn from "./Pages/Signup/MemberSignIn";
 import CommonRoute from "./Routers/CommonRoute";
 import ProtectedRoute from "./Routers/ProtectedRoute";
-import PageNotFound from "./pages/PageNotFound";
-import Welcome from "./pages/Welcome";
+import PageNotFound from "./Pages/PageNotFound";
+import Welcome from "./Pages/Welcome";
 
 const App = () => {
   return (

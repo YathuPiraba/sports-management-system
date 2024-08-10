@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import MemberDashboard from "../pages/Member/MemberDashboard";
-import PageNotFound from "../pages/PageNotFound";
+import MemberDashboard from "../Pages/Member/MemberDashboard";
+import PageNotFound from "../Pages/PageNotFound";
 
 const MemberRoute = () => {
   return (

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('clubs', function (Blueprint $table) {
             $table->id();
-            $table->string('clubName');
+            $table->string('clubName')>unique();
             $table->unsignedBigInteger('gs_id');
             $table->text('clubAddress');
             $table->text('club_history')->nullable();

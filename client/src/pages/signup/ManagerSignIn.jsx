@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import ManagerDetails from "../../components/Signup/ManagerDetails";
-import ClubDetails from "../../components/Signup/ClubDetails";
+import ManagerDetails from "../../Components/Signup/ManagerDetails";
+import ClubDetails from "../../Components/Signup/ClubDetails";
 import { apply, applyManager } from "../../features/authslice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";

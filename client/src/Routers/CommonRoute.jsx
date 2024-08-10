@@ -5,10 +5,10 @@ import AdminRoute from "./AdminRoute";
 import ManagerRoute from "./ManagerRoute";
 import MemberRoute from "./MemberRoute";
 import RootLayout from "../Layout/RootLayout";
-import Settings from "../pages/Settings/Settings";
-import Events from "../pages/Events/Events";
-import Club from "../pages/Club/Club";
-import PageNotFound from "../pages/PageNotFound";
+import Settings from "../Pages/Settings/Settings";
+import Events from "../Pages/Events/Events";
+import Club from "../Pages/Club/Club";
+import PageNotFound from "../Pages/PageNotFound";
 
 const CommonRoute = () => {
   const role_id = useSelector((state) => state.auth.userdata.user.role_id);

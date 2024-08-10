@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TiDelete } from "react-icons/ti";
 import { FcApproval } from "react-icons/fc";
-import AdminApprovalTable from "../../components/Approvals/AdminApprovalTable";
+import AdminApprovalTable from "../../Components/Approvals/AdminApprovalTable";
 import { useTheme } from "../../context/ThemeContext";
 import axios from "axios";
 

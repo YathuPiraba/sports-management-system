@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import ChangePassword from "../Components/admin/ChangePassword";
-import UpdateProfile from "../Components/admin/UpdateProfile";
+import ChangePassword from "../Components/Admin/ChangePassword";
+import UpdateProfile from "../Components/Admin/UpdateProfile";
 import axios from "axios";
 import GridLoader from "react-spinners/GridLoader";
 
