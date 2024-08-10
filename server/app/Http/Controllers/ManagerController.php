@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Events\ManagerApplied;
 
 
 class ManagerController extends Controller
@@ -101,6 +102,8 @@ class ManagerController extends Controller
             ]);
 
             DB::commit();
+
+            event(new ManagerApplied($manager));
 
             return response()->json([
                 'message' => 'Request created successfully',
@@ -285,15 +288,103 @@ class ManagerController extends Controller
     {
         try {
             $managers = Club_Manager::with(['user', 'club'])->get();
-            
+
+            // Map the division names by matching gs_id for both manager and club
+            $managersWithDivision = $managers->map(function ($manager) {
+                $managerDivision = Gs_Division::where('id', $manager->gs_id)->first();
+                $clubDivision = Gs_Division::where('id', $manager->club->gs_id)->first();
+
+                return [
+                    'managerId'=>$manager->id,
+                    'firstName' => $manager->firstName,
+                    'lastName' => $manager->lastName,
+                    'date_of_birth' => $manager->date_of_birth,
+                    'address' => $manager->address,
+                    'nic' => $manager->nic,
+                    'contactNo' => $manager->contactNo,
+                    'whatsappNo' => $manager->whatsappNo,
+                    'gs_id'=>$manager->gs_id,
+                    'divisionName' => $managerDivision ? $managerDivision->divisionName : null,
+                    'user' => [
+                        'user_id' => $manager->user->id,
+                        'email' => $manager->user->email,
+                        'userName' => $manager->user->userName,
+                        'image' => $manager->user->image,
+                        "is_verified" => $manager->user->is_verified
+                    ],
+                    'club' => [
+                        'club_id' => $manager->club->id,
+                        'clubName' => $manager->club->clubName,
+                        'clubDivisionName' => $clubDivision ? $clubDivision->divisionName : null,
+                        'clubAddress' => $manager->club->clubAddress,
+                        'club_history' => $manager->club->club_history,
+                        'clubContactNo' => $manager->club->clubContactNo,
+                        "isVerified" => $manager->club->isVerified,
+                        'club_gs_id'=>$manager->club->gs_id,
+                    ],
+                ];
+            });
+
             return response()->json([
                 'success' => true,
-                'data' => $managers
+                'data' => $managersWithDivision
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching Managers: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // PUT => http://127.0.0.1:8000/api/manager/update-verification/{managerId}
+    public function updateVerificationStatus($managerId)
+    {
+        try {
+            // Find the manager record by its ID
+            $manager = Club_Manager::with(['user', 'club'])->find($managerId);
+
+            if (!$manager) {
+                return response()->json(['error' => 'Manager not found'], 404);
+            }
+
+            // Update the user's is_verified field to true
+            $manager->user->is_verified = true;
+            $manager->user->save();
+
+            // Update the club's isVerified field to true
+            $manager->club->isVerified = true;
+            $manager->club->save();
+
+            // Retrieve the division name for the club and manager
+            $clubDivision = Gs_Division::where('id', $manager->club->gs_id)->first();
+            $managerDivision = Gs_Division::where('id', $manager->gs_id)->first();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Verification status updated successfully',
+                'data' => [
+                    'user' => [
+                        'email' => $manager->user->email,
+                        'userName' => $manager->user->userName,
+                        'image' => $manager->user->image,
+                        'is_verified' => $manager->user->is_verified,
+                    ],
+                    'club' => [
+                        'clubName' => $manager->club->clubName,
+                        'clubDivisionName' => $clubDivision ? $clubDivision->divisionName : null,
+                        'clubAddress' => $manager->club->clubAddress,
+                        'club_history' => $manager->club->club_history,
+                        'clubContactNo' => $manager->club->clubContactNo,
+                        'isVerified' => $manager->club->isVerified,
+                    ],
+                    'manager' => $manager
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating verification status: ' . $e->getMessage(),
             ], 500);
         }
     }

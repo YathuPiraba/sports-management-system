@@ -33,6 +33,7 @@ Route::delete('clubs/{id}', [ClubController::class, 'clubDelete']);
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::post('/manager/create', [ManagerController::class, 'managerCreate']);
 Route::get('/manager/list', [ManagerController::class, 'getAllManagers']);
+Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
 
 
 Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
