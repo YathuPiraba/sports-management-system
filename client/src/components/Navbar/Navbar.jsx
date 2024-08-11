@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Navbar.css";
-// import io from "socket.io-client";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { Dropdown, Space, Badge, Switch } from "antd";
@@ -14,8 +13,17 @@ import { useDispatch, useSelector } from "react-redux";
 import LoginScreen from "../../Pages/Login/Login";
 import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
-// const socket = io("http://localhost:5000");
+window.Pusher = Pusher;
+const echo = new Echo({
+  broadcaster: "pusher",
+  key: import.meta.env.VITE_PUSHER_APP_KEY,
+  cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+  forceTLS: true,
+  encrypted: true,
+});
 
 const Navbar = () => {
   const [notifications, setNotifications] = useState([]);
@@ -78,7 +86,7 @@ const Navbar = () => {
     }
   }, [dispatch]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (notificationCount > 0) {
       setAnimate(true);
     }
@@ -93,39 +101,55 @@ const Navbar = () => {
     return () => clearTimeout(timer);
   }, [notifications]);
 
-  const items = notifications.map((notification, index) => {
-    let iconSrc;
-    let iconAlt;
-    let className;
-
-    switch (notification.type) {
-      case "lowStock":
-        iconSrc = alert;
-        iconAlt = "Low Stock";
-        className = "low-stock";
-        break;
-      case "outOfStock":
-        iconSrc = warn;
-        iconAlt = "Out of Stock";
-        className = "out-of-stock";
-        break;
-      case "reOrder":
-        iconSrc = recycle;
-        iconAlt = "Reorder";
-        className = "reorder";
-        break;
+  const filterNotificationsByRole = () => {
+    switch (role_id) {
+      case 1:
+        // Admin-specific notifications
+        return notifications.filter(
+          (notification) => notification.type === "admin"
+        );
+      case 2:
+        // Manager-specific notifications
+        return notifications.filter(
+          (notification) => notification.type === "manager"
+        );
+      case 3:
+        // Member-specific notifications
+        return notifications.filter(
+          (notification) => notification.type === "member"
+        );
+      default:
+        return [];
     }
+  };
 
+  const handleNotificationClick = (notification) => {
+    // Navigation based on role_id
+    switch (role_id) {
+      case 1:
+        navigate("/admin/approvals"); // Admin-specific route
+        break;
+      case 2:
+        navigate("/manager/approvals"); 
+        break;
+      // case 3:
+      //   navigate("/member/notifications"); // Member-specific route
+      //   break;
+      default:
+        navigate("/"); 
+    }
+  };
+
+  const items = filterNotificationsByRole().map((notification, index) => {
     return {
       key: index,
       label: (
         <div
-          className={`flex flex-row ${className} font-serif`}
+          className={`flex flex-row  font-serif`}
           style={{ padding: "8px", borderRadius: "5px" }}
+          onClick={() => handleNotificationClick(notification)}
         >
           <img
-            src={iconSrc}
-            alt={iconAlt}
             className="rounded-full"
             style={{ width: 28, marginRight: 7 }}
           />
@@ -134,6 +158,58 @@ const Navbar = () => {
       ),
     };
   });
+
+  const fetchManagerData = async () => {
+    try {
+      const res = await axios.get("http://127.0.0.1:8000/api/manager/list");
+      const managers = res.data.data;
+
+      // Separate verified and unverified managers
+      const unverifiedManagers = managers.filter(
+        (manager) => manager.user.is_verified === 0
+      );
+      
+      // Map filtered managers to notifications
+      const newNotifications = unverifiedManagers.map((manager) => ({
+        type: "admin", 
+        message: `Manager ${manager.firstName} ${manager.lastName} applied for joining request from club ${manager.club.clubName}`,
+      }));
+
+      setNotifications( [ ...newNotifications]);
+
+    } catch (error) {
+      console.error("Error fetching manager data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const subscribeToChannel = async () => {
+      try {
+        console.log("Attempting to subscribe to channel...");
+
+        // Fetch initial manager data
+        await fetchManagerData();
+
+        // Listen for real-time updates on the "managers" channel
+        echo.channel("managers").listen(".ManagerApplied", (event) => {
+          console.log("New manager applied:", event.manager);
+          fetchManagerData();
+        });
+        console.log("Successfully subscribed to channel.");
+      } catch (error) {
+        console.error("Error during subscription or data fetching:", error);
+      }
+    };
+
+    subscribeToChannel();
+
+    // Cleanup on component unmount
+    return () => {
+      console.log("Leaving channel...");
+      echo.leaveChannel("managers");
+    };
+  }, []);
+
 
   return (
     <header>

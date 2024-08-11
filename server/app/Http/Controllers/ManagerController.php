@@ -101,9 +101,11 @@ class ManagerController extends Controller
                 'whatsappNo' => $request->whatsappNo,
             ]);
 
+            $clubName = $club->clubName;
+
             DB::commit();
 
-            event(new ManagerApplied($manager));
+            event(new ManagerApplied($manager, $clubName));
 
             return response()->json([
                 'message' => 'Request created successfully',
@@ -225,6 +227,12 @@ class ManagerController extends Controller
             $lastName = $manager->lastName;
             $clubName = $club->clubName;
 
+            try {
+                event(new ManagerApplied($manager, $clubName));
+            } catch (\Exception $e) {
+                Log::error('Event failed: ' . $e->getMessage());
+            }
+
             // Delete the manager record
             $manager->delete();
 
@@ -235,6 +243,8 @@ class ManagerController extends Controller
             $club->delete();
 
             DB::commit();
+
+
 
             return response()->json([
                 'message' => "Manager $firstName $lastName and associated club $clubName deleted successfully",
@@ -295,7 +305,7 @@ class ManagerController extends Controller
                 $clubDivision = Gs_Division::where('id', $manager->club->gs_id)->first();
 
                 return [
-                    'managerId'=>$manager->id,
+                    'managerId' => $manager->id,
                     'firstName' => $manager->firstName,
                     'lastName' => $manager->lastName,
                     'date_of_birth' => $manager->date_of_birth,
@@ -303,7 +313,7 @@ class ManagerController extends Controller
                     'nic' => $manager->nic,
                     'contactNo' => $manager->contactNo,
                     'whatsappNo' => $manager->whatsappNo,
-                    'gs_id'=>$manager->gs_id,
+                    'gs_id' => $manager->gs_id,
                     'divisionName' => $managerDivision ? $managerDivision->divisionName : null,
                     'user' => [
                         'user_id' => $manager->user->id,
@@ -320,7 +330,7 @@ class ManagerController extends Controller
                         'club_history' => $manager->club->club_history,
                         'clubContactNo' => $manager->club->clubContactNo,
                         "isVerified" => $manager->club->isVerified,
-                        'club_gs_id'=>$manager->club->gs_id,
+                        'club_gs_id' => $manager->club->gs_id,
                     ],
                 ];
             });
@@ -358,7 +368,9 @@ class ManagerController extends Controller
 
             // Retrieve the division name for the club and manager
             $clubDivision = Gs_Division::where('id', $manager->club->gs_id)->first();
-            $managerDivision = Gs_Division::where('id', $manager->gs_id)->first();
+            $clubName = $manager->club->clubName;
+
+            event(new ManagerApplied($manager, $clubName));
 
             return response()->json([
                 'success' => true,

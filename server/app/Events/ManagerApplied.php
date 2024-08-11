@@ -16,10 +16,12 @@ class ManagerApplied implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $manager;
+    public $clubName;
 
-    public function __construct(Club_Manager $manager)
+    public function __construct(Club_Manager $manager, $clubName)
     {
         $this->manager = $manager;
+        $this->clubName = $clubName;
         Log::info('ManagerApplied event fired.', ['manager' => $manager]);
     }
 
