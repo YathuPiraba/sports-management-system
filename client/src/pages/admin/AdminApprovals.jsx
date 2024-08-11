@@ -8,12 +8,15 @@ import toast from "react-hot-toast";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
+
+
 window.Pusher = Pusher;
 const echo = new Echo({
   broadcaster: "pusher",
   key: import.meta.env.VITE_PUSHER_APP_KEY,
   cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
   forceTLS: true,
+  encrypted: true,
 });
 
 const clubColumns = [
@@ -100,12 +103,21 @@ const AdminApprovals = () => {
   useEffect(() => {
     console.log('Attempting to subscribe to channel...');
     fetchManagerData();
-    // Listen for real-time updates
-    echo.channel("managers").listen(".ManagerApplied", (event) => {
-      console.log("New manager applied:", event.manager);
-      // Fetch the updated manager data
-      fetchManagerData();
-    });
+
+     // Listen for real-time updates
+  echo.channel('managers')
+  .listen('.ManagerApplied', (event) => {
+    console.log('New manager applied:', event.manager);
+    // Fetch the updated manager data
+    fetchManagerData();
+  })
+  .on('subscription_succeeded', () => {
+    console.log('Subscribed to the managers channel');
+  })
+  .on('subscription_error', (error) => {
+    console.error('Subscription error:', error);
+  });
+
     return () => {
       echo.leaveChannel("managers");
     };

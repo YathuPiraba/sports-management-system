@@ -26,7 +26,7 @@ class ManagerApplied implements ShouldBroadcast
     public function broadcastOn()
     {
         Log::info('ManagerApplied event broadcast on channel.', ['manager' => $this->manager]);
-        return new Channel('managers');
+        return ['managers'];
     }
 
     public function broadcastAs()
