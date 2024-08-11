@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loginAdmin, login } from "../../features/authslice";
+import { loginAdmin, fetchUserDetails} from "../../features/authslice";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { Input, Space } from "antd";
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
@@ -26,18 +26,21 @@ const Login = () => {
     reset,
   } = useForm();
 
-  // Login User
-  const onSubmit = async (data) => {
-    try {
-      const result = await dispatch(loginAdmin(data));
-      if (loginAdmin.fulfilled.match(result)) {
-        const resdata = result.payload;
-        dispatch(login(resdata));
-        toast.success("Login Successfully!..");
-        reset();
-        const roleID = resdata.user.role_id;
+ // Login User
+const onSubmit = async (data) => {
+  try {
+    const loginResult = await dispatch(loginAdmin(data));
+    if (loginAdmin.fulfilled.match(loginResult)) {
 
-        const isVerified = resdata.user.is_verified;
+      // Now fetch the user details
+      const userDetailsResult = await dispatch(fetchUserDetails());
+
+      if (fetchUserDetails.fulfilled.match(userDetailsResult)) {
+        const userDetails = userDetailsResult.payload;
+
+        // Handle role-based navigation
+        const roleID = userDetails.role_id;
+        const isVerified = userDetails.is_verified;
 
         if (isVerified === 0) {
           navigate("/home");
@@ -52,13 +55,21 @@ const Login = () => {
             navigate("/");
           }
         }
+        toast.success("Login Successfully!..");
+        reset();
       } else {
-        toast.error("Invalid credentials. Please try again.");
+        toast.error("Failed to retrieve user details. Please try again.");
       }
-    } catch (error) {
-      toast.error("Login failed. Please try again.");
+    } else {
+      toast.error("Invalid credentials. Please try again.");
     }
-  };
+  } catch (error) {
+    toast.error("Login failed. Please try again.");
+    console.log('error', error);
+    
+  }
+};
+
 
   const showModal = () => {
     setIsModalVisible(true);

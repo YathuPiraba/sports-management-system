@@ -24,20 +24,25 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/login', [UserController::class, 'login']);
+Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/logout', [UserController::class, 'logout']);
 
-Route::post('/clubs/create', [ClubController::class, 'clubCreate']);
-Route::delete('clubs/{id}', [ClubController::class, 'clubDelete']);
+
+Route::middleware('auth.token')->group(function () {
+    Route::get('/user/details', [UserController::class, 'getUserDetails']);
+
+    Route::post('/clubs/create', [ClubController::class, 'clubCreate']);
+    Route::delete('clubs/{id}', [ClubController::class, 'clubDelete']);
+
+    Route::post('/manager/create', [ManagerController::class, 'managerCreate']);
+    Route::get('/manager/list', [ManagerController::class, 'getAllManagers']);
+
+    Route::delete('manager/deleteManager/{user_id}', [ManagerController::class, 'deleteManager']);
+    Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
+
+    Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
+});
+
 
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
-Route::post('/manager/create', [ManagerController::class, 'managerCreate']);
-Route::get('/manager/list', [ManagerController::class, 'getAllManagers']);
-Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
-
-
 Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
-Route::delete('manager/deleteManager/{user_id}', [ManagerController::class, 'deleteManager']);
-
-Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
-

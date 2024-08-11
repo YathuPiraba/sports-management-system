@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Services\TokenService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -15,7 +16,10 @@ class UserController extends Controller
     public function __construct(TokenService $tokenService)
     {
         $this->tokenService = $tokenService;
+
+        $this->middleware('auth:api')->except(['login']);
     }
+
 
     //POST => http://127.0.0.1:8000/api/login
     public function login(Request $request)
@@ -35,7 +39,6 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'Login successful',
-                'user' => $user,
                 'token' => $token,
             ], 200);
         } else {
@@ -45,12 +48,32 @@ class UserController extends Controller
         }
     }
 
-   //POST => http://127.0.0.1:8000/api/logout
+    //POST => http://127.0.0.1:8000/api/logout
     public function logout(Request $request)
     {
 
         return response()->json([
             'message' => 'Logout successful',
         ], 200);
+    }
+
+    // GET => http://127.0.0.1:8000/api/user/details
+    public function getUserDetails(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            return response()->json([
+                'userName' => $user->userName,
+                'email' => $user->email,
+                'role_id' => $user->role_id,
+                'is_verified' => $user->is_verified,
+                'image' => $user->image,
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
     }
 }
