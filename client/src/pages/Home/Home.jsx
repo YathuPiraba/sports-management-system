@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Home = () => {
   const authenticate = useSelector((state) => state.auth.userdata);
   
-  const verified =authenticate.user.is_verified;
+  const verified =authenticate.is_verified;
   return (
     <div>
       <h1>Welcome to Our Club</h1>

@@ -3,17 +3,21 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const ProtectedRoute = ({ element: Component, ...rest }) => {
-  const verified = useSelector((state) => state.auth.userdata.is_verified);
+  const auth = useSelector((state) => state.auth);
+  const isAuthenticated = !!auth.token;
+  const isVerified = auth.userdata.is_verified === 1;
 
-  console.log(verified);
-  
+  console.log('Is Authenticated:', isAuthenticated);
+  console.log('Is Verified:', isVerified);
 
-  if (verified === 0) {
-    // Not verified, redirect to home
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!isVerified) {
     return <Navigate to="/" />;
   }
 
-  // Authenticated render the protected component
   return <Component {...rest} />;
 };
 

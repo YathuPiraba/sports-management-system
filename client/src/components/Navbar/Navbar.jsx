@@ -13,20 +13,13 @@ import { useDispatch, useSelector } from "react-redux";
 import LoginScreen from "../../Pages/Login/Login";
 import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
-import Echo from "laravel-echo";
-import Pusher from "pusher-js";
+import echo from "../../utils/pusher";
+import useManagerNotifications from "../../hooks/useManagerNotification";
 
-window.Pusher = Pusher;
-const echo = new Echo({
-  broadcaster: "pusher",
-  key: import.meta.env.VITE_PUSHER_APP_KEY,
-  cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-  forceTLS: true,
-  encrypted: true,
-});
+
 
 const Navbar = () => {
-  const [notifications, setNotifications] = useState([]);
+  const { notifications } = useManagerNotifications();
   const [animate, setAnimate] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const notificationCount = notifications.length;
@@ -158,58 +151,6 @@ const Navbar = () => {
       ),
     };
   });
-
-  const fetchManagerData = async () => {
-    try {
-      const res = await axios.get("http://127.0.0.1:8000/api/manager/list");
-      const managers = res.data.data;
-
-      // Separate verified and unverified managers
-      const unverifiedManagers = managers.filter(
-        (manager) => manager.user.is_verified === 0
-      );
-      
-      // Map filtered managers to notifications
-      const newNotifications = unverifiedManagers.map((manager) => ({
-        type: "admin", 
-        message: `Manager ${manager.firstName} ${manager.lastName} applied for joining request from club ${manager.club.clubName}`,
-      }));
-
-      setNotifications( [ ...newNotifications]);
-
-    } catch (error) {
-      console.error("Error fetching manager data:", error);
-    }
-  };
-
-  useEffect(() => {
-    const subscribeToChannel = async () => {
-      try {
-        console.log("Attempting to subscribe to channel...");
-
-        // Fetch initial manager data
-        await fetchManagerData();
-
-        // Listen for real-time updates on the "managers" channel
-        echo.channel("managers").listen(".ManagerApplied", (event) => {
-          console.log("New manager applied:", event.manager);
-          fetchManagerData();
-        });
-        console.log("Successfully subscribed to channel.");
-      } catch (error) {
-        console.error("Error during subscription or data fetching:", error);
-      }
-    };
-
-    subscribeToChannel();
-
-    // Cleanup on component unmount
-    return () => {
-      console.log("Leaving channel...");
-      echo.leaveChannel("managers");
-    };
-  }, []);
-
 
   return (
     <header>
