@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import echo from "../utils/echo";
 
 const useManagerData = () => {
   const [managerData, setManagerData] = useState([]);
@@ -68,7 +69,29 @@ const useManagerData = () => {
   };
 
   useEffect(() => {
+    console.log("Attempting to subscribe to channel...");
     fetchManagerData();
+
+    const channel = echo.channel("managers");
+
+    // Listen for real-time updates
+    channel.listen(".ManagerApplied", (event) => {
+      console.log("New manager applied:", event.manager);
+      // Fetch the updated manager data
+      fetchManagerData();
+    });
+
+    channel.subscribed(() => {
+      console.log("Subscribed to the managers channel");
+    });
+
+    channel.error((error) => {
+      console.error("Subscription error:", error);
+    });
+
+    return () => {
+      echo.leaveChannel("managers");
+    };
   }, []);
 
   return { managerData, clubData, fetchManagerData };

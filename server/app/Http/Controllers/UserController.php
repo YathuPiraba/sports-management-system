@@ -63,6 +63,7 @@ class UserController extends Controller
 
     if ($user) {
         return response()->json([
+            'userId'=>$user->id,
             'userName' => $user->userName,
             'email' => $user->email,
             'role_id' => $user->role_id,

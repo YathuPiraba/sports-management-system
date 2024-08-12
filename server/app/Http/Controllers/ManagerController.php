@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Events\ManagerApplied;
+use App\Events\UserVerified;
+use App\Events\UserRejected;
 
 
 class ManagerController extends Controller
@@ -109,7 +111,8 @@ class ManagerController extends Controller
 
             return response()->json([
                 'message' => 'Request created successfully',
-                'userName' =>$request->userName,
+                'userId' => $user->id,
+                'userName' => $request->userName,
                 'email' => $request->email,
                 'role_id' => $role->id,
                 'is_verified' => false,
@@ -231,8 +234,10 @@ class ManagerController extends Controller
             $lastName = $manager->lastName;
             $clubName = $club->clubName;
 
+
             try {
                 event(new ManagerApplied($manager, $clubName));
+                event(new UserRejected($user_id));
             } catch (\Exception $e) {
                 Log::error('Event failed: ' . $e->getMessage());
             }
@@ -373,8 +378,11 @@ class ManagerController extends Controller
             // Retrieve the division name for the club and manager
             $clubDivision = Gs_Division::where('id', $manager->club->gs_id)->first();
             $clubName = $manager->club->clubName;
+            $user_id = $manager->user->id;
 
             event(new ManagerApplied($manager, $clubName));
+
+            event(new UserVerified($user_id));
 
             return response()->json([
                 'success' => true,

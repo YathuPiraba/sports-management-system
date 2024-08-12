@@ -8,7 +8,6 @@ import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAdmin, fetchUserDetails} from "../../features/authslice";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { Input, Space } from "antd";
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 

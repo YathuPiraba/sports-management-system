@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import echo from "../utils/pusher";
+import echo from "../utils/echo";
 
 const useManagerNotifications = () => {
   const [notifications, setNotifications] = useState([]);

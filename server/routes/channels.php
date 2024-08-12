@@ -20,3 +20,11 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('managers', function () {
     return true;
 });
+
+Broadcast::channel('users', function () {
+    return true;
+});
+
+Broadcast::channel('reject', function () {
+    return true;
+});

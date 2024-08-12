@@ -5,8 +5,8 @@ import AdminApprovalTable from "../../Components/Approvals/AdminApprovalTable";
 import { useTheme } from "../../context/ThemeContext";
 import axios from "axios";
 import toast from "react-hot-toast";
-import echo from "../../utils/pusher";
 import useManagerData from "../../hooks/useManagerData";
+
 
 const clubColumns = [
   "Club Name",
@@ -37,31 +37,7 @@ const AdminApprovals = () => {
     setExpandedClub(expandedClub === clubName ? null : clubName);
   };
 
-  useEffect(() => {
-    console.log("Attempting to subscribe to channel...");
-    fetchManagerData();
 
-    const channel = echo.channel("managers");
-
-    // Listen for real-time updates
-    channel.listen(".ManagerApplied", (event) => {
-      console.log("New manager applied:", event.manager);
-      // Fetch the updated manager data
-      fetchManagerData();
-    });
-
-    channel.subscribed(() => {
-      console.log("Subscribed to the managers channel");
-    });
-
-    channel.error((error) => {
-      console.error("Subscription error:", error);
-    });
-
-    return () => {
-      echo.leaveChannel("managers");
-    };
-  }, []);
 
   const updateVerification = async (managerId) => {
     try {
