@@ -10,11 +10,6 @@ const echo = new Echo({
   cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
   forceTLS: true,
   encrypted: true,
-  auth: {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('authToken')}`
-    }
-  }
 });
 
 export default echo;

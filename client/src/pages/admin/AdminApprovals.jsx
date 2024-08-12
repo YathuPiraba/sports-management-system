@@ -5,9 +5,8 @@ import AdminApprovalTable from "../../Components/Approvals/AdminApprovalTable";
 import { useTheme } from "../../context/ThemeContext";
 import axios from "axios";
 import toast from "react-hot-toast";
-import echo from '../../utils/pusher';
+import echo from "../../utils/pusher";
 import useManagerData from "../../hooks/useManagerData";
-
 
 const clubColumns = [
   "Club Name",
@@ -38,39 +37,45 @@ const AdminApprovals = () => {
     setExpandedClub(expandedClub === clubName ? null : clubName);
   };
 
-
   useEffect(() => {
-    console.log('Attempting to subscribe to channel...');
+    console.log("Attempting to subscribe to channel...");
     fetchManagerData();
 
-    const channel = echo.channel('managers');
-    
-     // Listen for real-time updates
-     channel.listen('.ManagerApplied', (event) => {
-      console.log('New manager applied:', event.manager);
+    const channel = echo.channel("managers");
+
+    // Listen for real-time updates
+    channel.listen(".ManagerApplied", (event) => {
+      console.log("New manager applied:", event.manager);
       // Fetch the updated manager data
       fetchManagerData();
     });
- 
+
     channel.subscribed(() => {
-      console.log('Subscribed to the managers channel');
+      console.log("Subscribed to the managers channel");
     });
 
     channel.error((error) => {
-      console.error('Subscription error:', error);
+      console.error("Subscription error:", error);
     });
 
     return () => {
-      echo.leaveChannel('managers');
+      echo.leaveChannel("managers");
     };
   }, []);
 
- 
-
   const updateVerification = async (managerId) => {
     try {
+      const token = localStorage.getItem("token");
+      console.log("token", token);
+
       await axios.put(
-        `http://127.0.0.1:8000/api/manager/update-verification/${managerId}`
+        `http://127.0.0.1:8000/api/manager/update-verification/${managerId}`,
+        {},  
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       toast.success("Request Approved Successfully!..");
       fetchManagerData();
@@ -81,9 +86,16 @@ const AdminApprovals = () => {
 
   const rejectRequest = async (clubId, userId) => {
     try {
+      const token = localStorage.getItem("token");
       await axios.delete(
-        `http://127.0.0.1:8000/api/manager/reject/${clubId}/${userId}`
+        `http://127.0.0.1:8000/api/manager/reject/${clubId}/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       toast.success("Request Deleted Successfully!..");
       fetchManagerData();
     } catch (error) {

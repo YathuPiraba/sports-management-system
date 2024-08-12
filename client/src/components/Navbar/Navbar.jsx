@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import LoginScreen from "../../Pages/Login/Login";
 import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
-import echo from "../../utils/pusher";
 import useManagerNotifications from "../../hooks/useManagerNotification";
 
 

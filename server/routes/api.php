@@ -40,9 +40,9 @@ Route::middleware('auth.token')->group(function () {
     Route::delete('manager/deleteManager/{user_id}', [ManagerController::class, 'deleteManager']);
     Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
 
+
     Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
+    Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
 });
 
-
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
-Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
