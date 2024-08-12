@@ -61,7 +61,7 @@ const AdminApprovals = () => {
     });
 
     return () => {
-      channel.leave('managers');
+      echo.leaveChannel('managers');
     };
   }, []);
 

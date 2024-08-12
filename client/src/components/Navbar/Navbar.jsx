@@ -30,7 +30,6 @@ const Navbar = () => {
 
   // const baseUrl = "http://localhost:5000/public/profile";
 
-  console.log("user", user);
 
   useEffect(() => {
     if (!user) {

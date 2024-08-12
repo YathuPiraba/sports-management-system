@@ -1,15 +1,13 @@
-// hooks/useManagerNotifications.js
 import { useState, useEffect } from "react";
 import axios from "axios";
-import echo from "../utils/pusher"; // Make sure this path is correct
+import echo from "../utils/pusher";
 
 const useManagerNotifications = () => {
   const [notifications, setNotifications] = useState([]);
 
   const fetchManagerData = async () => {
-    const token = localStorage.getItem("token");
-    console.log("res", token);
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.get("http://127.0.0.1:8000/api/manager/list", {
         headers: {
           Authorization: `Bearer ${token}`,
