@@ -11,11 +11,11 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
   console.log('Is Verified:', isVerified);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login"/>;
   }
 
   if (!isVerified) {
-    return <Navigate to="/" />;
+    return <Navigate to="/home" />;
   }
 
   return <Component {...rest} />;

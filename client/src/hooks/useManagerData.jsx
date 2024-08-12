@@ -22,6 +22,9 @@ const useManagerData = () => {
         (manager) => manager.user.is_verified === 0
       );
 
+      console.log(unverifiedManagers);
+      
+
       const filteredManagers = unverifiedManagers.map((manager) => ({
         managerId: manager.managerId,
         firstName: manager.firstName,

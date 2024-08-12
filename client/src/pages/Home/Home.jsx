@@ -6,11 +6,12 @@ const Home = () => {
   const authenticate = useSelector((state) => state.auth.userdata);
   
   const verified =authenticate.is_verified;
+
   return (
     <div>
       <h1>Welcome to Our Club</h1>
       <p>Some static information here.</p>
-      {verified === false ? (
+      {verified === 0 ? (
         <p>You are still under verification.</p>
       ) : (
         <p>

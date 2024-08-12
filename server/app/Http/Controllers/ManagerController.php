@@ -109,7 +109,11 @@ class ManagerController extends Controller
 
             return response()->json([
                 'message' => 'Request created successfully',
-                'user' => $user,
+                'userName' =>$request->userName,
+                'email' => $request->email,
+                'role_id' => $role->id,
+                'is_verified' => false,
+                'image' => $request->image,
                 'manager' => $manager,
                 'club' => $club
             ], 201);
