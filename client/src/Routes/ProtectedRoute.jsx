@@ -5,20 +5,22 @@ import { useSelector } from "react-redux";
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   const auth = useSelector((state) => state.auth);
   const isAuthenticated = !!auth.token;
-  const isVerified = auth.userdata.is_verified === 1;
 
-  console.log('Is Authenticated:', isAuthenticated);
-  console.log('Is Verified:', isVerified);
+  console.log("Is Authenticated:", isAuthenticated);
+
 
   if (!isAuthenticated) {
-    return <Navigate to="/login"/>;
+    return <Navigate to="/login" />;
   }
 
-  if (!isVerified) {
-    return <Navigate to="/home" />;
-  }
+  if (isAuthenticated) {
+    const isVerified = auth.userdata.is_verified;
+    if (isVerified == 0) {
+      return <Navigate to="/home" />;
+    }
 
-  return <Component {...rest} />;
+    return <Component {...rest} />;
+  }
 };
 
 export default ProtectedRoute;
