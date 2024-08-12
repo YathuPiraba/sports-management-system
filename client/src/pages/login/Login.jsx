@@ -37,7 +37,7 @@ const onSubmit = async (data) => {
 
       if (fetchUserDetails.fulfilled.match(userDetailsResult)) {
         const userDetails = userDetailsResult.payload;
-
+        
         // Handle role-based navigation
         const roleID = userDetails.role_id;
         const isVerified = userDetails.is_verified;

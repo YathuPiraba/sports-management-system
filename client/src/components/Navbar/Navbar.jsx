@@ -31,7 +31,7 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const notificationCount = notifications.length;
   const user = useSelector((state) => state.auth.userdata);
-  const role_id = useSelector((state) => state.auth.userdata.user.role_id);
+  const role_id = useSelector((state) => state.auth.userdata.role_id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

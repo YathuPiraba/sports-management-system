@@ -17,7 +17,6 @@ class UserController extends Controller
     {
         $this->tokenService = $tokenService;
 
-        $this->middleware('auth:api')->except(['login']);
     }
 
 
@@ -36,6 +35,7 @@ class UserController extends Controller
             // Generate and store a token
             $token = $this->tokenService->generateToken($user->id);
             $this->tokenService->storeToken($user->id, $token);
+
 
             return response()->json([
                 'message' => 'Login successful',
@@ -57,23 +57,22 @@ class UserController extends Controller
         ], 200);
     }
 
-    // GET => http://127.0.0.1:8000/api/user/details
     public function getUserDetails(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = $request->user;
 
-        if ($user) {
-            return response()->json([
-                'userName' => $user->userName,
-                'email' => $user->email,
-                'role_id' => $user->role_id,
-                'is_verified' => $user->is_verified,
-                'image' => $user->image,
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'User not found'
-            ], 404);
-        }
+    if ($user) {
+        return response()->json([
+            'userName' => $user->userName,
+            'email' => $user->email,
+            'role_id' => $user->role_id,
+            'is_verified' => $user->is_verified,
+            'image' => $user->image,
+        ], 200);
+    } else {
+        return response()->json([
+            'message' => 'User not found'
+        ], 404);
     }
+}
 }

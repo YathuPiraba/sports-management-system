@@ -4,8 +4,8 @@ import Login from "./Pages/Login/Login";
 import Home from "./Pages/Home/Home";
 import ManagerSignIn from "./Pages/Signup/ManagerSignIn";
 import MemberSignIn from "./Pages/Signup/MemberSignIn";
-import CommonRoute from "./Routers/CommonRoute";
-import ProtectedRoute from "./Routers/ProtectedRoute";
+import CommonRoute from "./Routes/CommonRoute";
+import ProtectedRoute from "./Routes/ProtectedRoute";
 import PageNotFound from "./Pages/PageNotFound";
 import Welcome from "./Pages/Welcome";
 

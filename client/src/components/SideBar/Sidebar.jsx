@@ -10,7 +10,7 @@ import MemberSideBar from "./admin_manager_member/MemberSideBar";
 export default function Sidebar() {
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const { theme } = useTheme();
-  const role_id = useSelector((state) => state.auth.userdata.user.role_id);
+  const role_id = useSelector((state) => state.auth.userdata.role_id);
 
   console.log("role id", role_id);
 

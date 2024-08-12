@@ -11,8 +11,8 @@ import Club from "../Pages/Club/Club";
 import PageNotFound from "../Pages/PageNotFound";
 
 const CommonRoute = () => {
-  const role_id = useSelector((state) => state.auth.userdata.user.role_id);
-  console.log("role id", role_id);
+  const role_id = useSelector((state) => state.auth.userdata.role_id);
+
   return (
     <Routes>
       <Route path="/" element={<RootLayout />}>
