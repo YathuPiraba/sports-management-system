@@ -61,10 +61,6 @@ const useManagerData = () => {
       setClubData(unverifiedClubs);
     } catch (error) {
       console.error("Error fetching Apply data:", error);
-      if (error.response && error.response.status === 401) {
-        console.log("Unauthorized access. Redirecting to login...");
-        // Implement your redirect logic here
-      }
     }
   };
 
