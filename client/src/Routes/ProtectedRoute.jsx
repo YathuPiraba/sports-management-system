@@ -15,6 +15,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
 
   if (isAuthenticated) {
     const isVerified = auth.userdata.is_verified;
+    
     if (isVerified == 0) {
       return <Navigate to="/home" />;
     }
