@@ -24,7 +24,6 @@ const useManagerData = () => {
       );
 
       console.log(unverifiedManagers);
-      
 
       const filteredManagers = unverifiedManagers.map((manager) => ({
         managerId: manager.managerId,

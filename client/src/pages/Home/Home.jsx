@@ -20,7 +20,6 @@ const Home = () => {
     channel.listen(".user-rejection", (event) => {
       console.log("New user applied:", event.userId);
 
-  
       if (authenticate.userId == event.userId) {
         navigate("/");
         toast.error("Sorry your request is rejected");

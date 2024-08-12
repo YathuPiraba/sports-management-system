@@ -12,7 +12,6 @@ export default function Sidebar() {
   const { theme } = useTheme();
   const role_id = useSelector((state) => state.auth.userdata.role_id);
 
-
   return (
     <>
       <button

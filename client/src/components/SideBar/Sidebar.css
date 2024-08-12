@@ -32,18 +32,17 @@
   width: 170px;
 }
 
-
 .list:hover {
-  background-color:#45aa40;
+  background-color: #45aa40;
   color: white;
   border: none;
   border-radius: 20px;
 }
 
-.custom-navi{
+.custom-navi {
   top: 18px;
 }
 
-.customApprove{
-  width:860px
+.customApprove {
+  width: 860px;
 }

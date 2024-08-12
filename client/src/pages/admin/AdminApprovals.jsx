@@ -7,7 +7,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import useManagerData from "../../hooks/useManagerData";
 
-
 const clubColumns = [
   "Club Name",
   "GS Division Name",
@@ -37,8 +36,6 @@ const AdminApprovals = () => {
     setExpandedClub(expandedClub === clubName ? null : clubName);
   };
 
-
-
   const updateVerification = async (managerId) => {
     try {
       const token = localStorage.getItem("token");
@@ -46,7 +43,7 @@ const AdminApprovals = () => {
 
       await axios.put(
         `http://127.0.0.1:8000/api/manager/update-verification/${managerId}`,
-        {},  
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,

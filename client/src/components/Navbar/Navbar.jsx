@@ -15,8 +15,6 @@ import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
 import useManagerNotifications from "../../hooks/useManagerNotification";
 
-
-
 const Navbar = () => {
   const { notifications } = useManagerNotifications();
   const [animate, setAnimate] = useState(false);
@@ -28,7 +26,6 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   // const baseUrl = "http://localhost:5000/public/profile";
-
 
   useEffect(() => {
     if (!user) {
@@ -121,13 +118,13 @@ const Navbar = () => {
         navigate("/admin/approvals"); // Admin-specific route
         break;
       case 2:
-        navigate("/manager/approvals"); 
+        navigate("/manager/approvals");
         break;
       // case 3:
       //   navigate("/member/notifications"); // Member-specific route
       //   break;
       default:
-        navigate("/"); 
+        navigate("/");
     }
   };
 
@@ -140,10 +137,7 @@ const Navbar = () => {
           style={{ padding: "8px", borderRadius: "5px" }}
           onClick={() => handleNotificationClick(notification)}
         >
-          <img
-            className="rounded-full"
-            style={{ width: 28, marginRight: 7 }}
-          />
+          <img className="rounded-full" style={{ width: 28, marginRight: 7 }} />
           {notification.message}
         </div>
       ),
