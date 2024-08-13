@@ -24,7 +24,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const baseUrl = "http://localhost:5000/public/profile";
+  const image = user.image;
 
   useEffect(() => {
     if (!user) {
@@ -171,7 +171,7 @@ const Navbar = () => {
                 className={`${
                   theme === "light"
                     ? "bg-white text-black"
-                    : "bg-gray-200 text-white"
+                    : "bg-gray-300 text-white"
                 } icon-container`}
               >
                 <Badge
@@ -201,15 +201,14 @@ const Navbar = () => {
                   className={`${
                     theme === "light"
                       ? "bg-white text-black"
-                      : "bg-gray-200 text-white"
+                      : "bg-gray-300 text-white"
                   } icon-container`}
                 >
-                  <div className="dropdown dropdown-end">
+                  <div className="dropdown dropdown-end mt-1">
                     <div tabIndex={0} role="button" className="text-black">
                       <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white">
                         <img
-                          src={logo}
-                          // src={`${baseUrl}/${user.profileImage}`}
+                          src={image ? `${image}` : logo}
                           alt="user"
                           title="user name"
                           width="80"

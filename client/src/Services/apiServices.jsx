@@ -34,3 +34,21 @@ export const rejectRequestApi = (clubId, userId) => {
 export const fetchManagerDataApi = () => {
   return authApiClient.get("/manager/list");
 };
+ 
+export const fetchManagerQueryDataApi = (page = 1, perPage = 10) => {
+  return authApiClient.get("/manager/query", {
+    params: {
+      page: page,
+      per_page: perPage
+    }
+  });
+};
+
+export const fetchManagerPendingDataApi = (page = 1, perPage = 10) => {
+  return authApiClient.get("/manager/pending", {
+    params: {
+      page: page,
+      per_page: perPage
+    }
+  });
+};

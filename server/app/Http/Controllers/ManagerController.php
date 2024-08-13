@@ -306,6 +306,7 @@ class ManagerController extends Controller
     public function getAllManagers()
     {
         try {
+
             $managers = Club_Manager::with(['user', 'club'])->get();
 
             // Map the division names by matching gs_id for both manager and club
@@ -409,6 +410,145 @@ class ManagerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error updating verification status: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // GET => http://127.0.0.1:8000/api/manager/query
+    public function queryManagers(Request $request)
+    {
+        try {
+            // Get the page number and items per page from the request, or use defaults
+            $page = $request->input('page', 1);
+            $perPage = $request->input('per_page', 12);
+            $sortDirection = $request->input('sort_direction', 'asc');
+
+            $managers = Club_Manager::with(['user', 'club'])
+                ->orderBy('firstName', $sortDirection)
+                ->paginate($perPage, ['*'], 'page', $page);
+
+            $managersWithDivision = collect($managers->items())->map(function ($manager) {
+                $managerDivision = Gs_Division::where('id', $manager->gs_id)->first();
+                $clubDivision = Gs_Division::where('id', $manager->club->gs_id)->first();
+
+                return [
+                    'managerId' => $manager->id,
+                    'firstName' => $manager->firstName,
+                    'lastName' => $manager->lastName,
+                    'date_of_birth' => $manager->date_of_birth,
+                    'address' => $manager->address,
+                    'nic' => $manager->nic,
+                    'contactNo' => $manager->contactNo,
+                    'whatsappNo' => $manager->whatsappNo,
+                    'gs_id' => $manager->gs_id,
+                    'divisionName' => $managerDivision ? $managerDivision->divisionName : null,
+                    'user' => [
+                        'user_id' => $manager->user->id,
+                        'email' => $manager->user->email,
+                        'userName' => $manager->user->userName,
+                        'image' => $manager->user->image,
+                        "is_verified" => $manager->user->is_verified
+                    ],
+                    'club' => [
+                        'club_id' => $manager->club->id,
+                        'clubName' => $manager->club->clubName,
+                        'clubDivisionName' => $clubDivision ? $clubDivision->divisionName : null,
+                        'clubAddress' => $manager->club->clubAddress,
+                        'club_history' => $manager->club->club_history,
+                        'clubContactNo' => $manager->club->clubContactNo,
+                        "isVerified" => $manager->club->isVerified,
+                        'club_gs_id' => $manager->club->gs_id,
+                    ],
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $managersWithDivision,
+                'pagination' => [
+                    'total' => $managers->total(),
+                    'per_page' => $managers->perPage(),
+                    'current_page' => $managers->currentPage(),
+                    'last_page' => $managers->lastPage(),
+                    'from' => $managers->firstItem(),
+                    'to' => $managers->lastItem()
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching Managers: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching Managers: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // GET => http://127.0.0.1:8000/api/manager/pending
+    public function pendingManagers(Request $request)
+    {
+        try {
+            // Get the page number and items per page from the request, or use defaults
+            $page = $request->input('page', 1);
+            $perPage = $request->input('per_page', 12);
+
+            $managers = Club_Manager::with(['user', 'club'])
+                ->whereHas('user', function ($query) {
+                    $query->where('is_verified', 0);
+                })
+                ->paginate($perPage, ['*'], 'page', $page);
+
+            $managersWithDivision = collect($managers->items())->map(function ($manager) {
+                $managerDivision = Gs_Division::where('id', $manager->gs_id)->first();
+                $clubDivision = Gs_Division::where('id', $manager->club->gs_id)->first();
+
+                return [
+                    'managerId' => $manager->id,
+                    'firstName' => $manager->firstName,
+                    'lastName' => $manager->lastName,
+                    'date_of_birth' => $manager->date_of_birth,
+                    'address' => $manager->address,
+                    'nic' => $manager->nic,
+                    'contactNo' => $manager->contactNo,
+                    'whatsappNo' => $manager->whatsappNo,
+                    'gs_id' => $manager->gs_id,
+                    'divisionName' => $managerDivision ? $managerDivision->divisionName : null,
+                    'user' => [
+                        'user_id' => $manager->user->id,
+                        'email' => $manager->user->email,
+                        'userName' => $manager->user->userName,
+                        'image' => $manager->user->image,
+                        "is_verified" => $manager->user->is_verified
+                    ],
+                    'club' => [
+                        'club_id' => $manager->club->id,
+                        'clubName' => $manager->club->clubName,
+                        'clubDivisionName' => $clubDivision ? $clubDivision->divisionName : null,
+                        'clubAddress' => $manager->club->clubAddress,
+                        'club_history' => $manager->club->club_history,
+                        'clubContactNo' => $manager->club->clubContactNo,
+                        "isVerified" => $manager->club->isVerified,
+                        'club_gs_id' => $manager->club->gs_id,
+                    ],
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $managersWithDivision,
+                'pagination' => [
+                    'total' => $managers->total(),
+                    'per_page' => $managers->perPage(),
+                    'current_page' => $managers->currentPage(),
+                    'last_page' => $managers->lastPage(),
+                    'from' => $managers->firstItem(),
+                    'to' => $managers->lastItem()
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching Managers: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching Managers: ' . $e->getMessage()
             ], 500);
         }
     }

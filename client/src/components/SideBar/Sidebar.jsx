@@ -18,7 +18,7 @@ export default function Sidebar() {
         title="Side navigation"
         type="button"
         className={`visible fixed flex justify-end right-2 ${
-          theme === "light" ? "bg-white" : "bg-gray-200"
+          theme === "light" ? "bg-white" : "bg-gray-300"
         } custom-navi  z-40 order-10 h-11 w-11 self-center rounded opacity-100 lg:hidden ${
           isSideNavOpen
             ? "visible opacity-100 [&_span:nth-child(1)]:w-6 [&_span:nth-child(1)]:translate-y-0 [&_span:nth-child(1)]:rotate-45 [&_span:nth-child(3)]:w-0 [&_span:nth-child(2)]:-rotate-45 "

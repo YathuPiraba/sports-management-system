@@ -63,13 +63,16 @@ class UserController extends Controller
         $user = $request->user;
 
         if ($user) {
+
+            $imageUrl = $user->image ? url('storage/public/images/' . $user->image) : null;
+
             return response()->json([
                 'userId' => $user->id,
                 'userName' => $user->userName,
                 'email' => $user->email,
                 'role_id' => $user->role_id,
                 'is_verified' => $user->is_verified,
-                'image' => $user->image,
+                'image' =>  $imageUrl,
             ], 200);
         } else {
             return response()->json([
@@ -144,7 +147,7 @@ class UserController extends Controller
         $user->save();
 
         // Construct the full image URL using baseURL
-        $imageUrl = $user->image ? url('storage/images/' . $user->image) : null;
+        $imageUrl = $user->image ? url('storage/public/images/' . $user->image) : null;
 
 
         return response()->json([
