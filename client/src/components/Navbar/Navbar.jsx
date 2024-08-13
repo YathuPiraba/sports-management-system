@@ -19,7 +19,6 @@ const Navbar = () => {
   const { notifications } = useManagerNotifications();
   const [animate, setAnimate] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const notificationCount = notifications.length;
   const user = useSelector((state) => state.auth.userdata);
   const role_id = useSelector((state) => state.auth.userdata.role_id);
   const navigate = useNavigate();
@@ -74,21 +73,6 @@ const Navbar = () => {
     }
   }, [dispatch]);
 
-  useEffect(() => {
-    if (notificationCount > 0) {
-      setAnimate(true);
-    }
-  }, [notificationCount]);
-
-  useEffect(() => {
-    console.log("Notifications state updated:", notifications);
-    const timer = setTimeout(() => {
-      setAnimate(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [notifications]);
-
   const filterNotificationsByRole = () => {
     switch (role_id) {
       case 1:
@@ -110,6 +94,24 @@ const Navbar = () => {
         return [];
     }
   };
+
+  const filteredNotifications = filterNotificationsByRole();
+  const notificationCount = filteredNotifications.length;
+
+  useEffect(() => {
+    if (notificationCount > 0) {
+      setAnimate(true);
+    }
+  }, [notificationCount]);
+
+  useEffect(() => {
+    console.log("Notifications state updated:", notifications);
+    const timer = setTimeout(() => {
+      setAnimate(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [notifications]);
 
   const handleNotificationClick = (notification) => {
     // Navigation based on role_id
