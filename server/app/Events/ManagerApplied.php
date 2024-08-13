@@ -22,12 +22,10 @@ class ManagerApplied implements ShouldBroadcast
     {
         $this->manager = $manager;
         $this->clubName = $clubName;
-        Log::info('ManagerApplied event fired.', ['manager' => $manager]);
     }
 
     public function broadcastOn()
     {
-        Log::info('ManagerApplied event broadcast on channel.', ['manager' => $this->manager]);
         return ['managers'];
     }
 

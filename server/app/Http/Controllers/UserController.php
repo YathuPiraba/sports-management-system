@@ -7,7 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Services\TokenService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -16,7 +17,6 @@ class UserController extends Controller
     public function __construct(TokenService $tokenService)
     {
         $this->tokenService = $tokenService;
-
     }
 
 
@@ -57,23 +57,106 @@ class UserController extends Controller
         ], 200);
     }
 
+    //GET => http://127.0.0.1:8000/api//user/details
     public function getUserDetails(Request $request)
-{
-    $user = $request->user;
+    {
+        $user = $request->user;
 
-    if ($user) {
-        return response()->json([
-            'userId'=>$user->id,
-            'userName' => $user->userName,
-            'email' => $user->email,
-            'role_id' => $user->role_id,
-            'is_verified' => $user->is_verified,
-            'image' => $user->image,
-        ], 200);
-    } else {
-        return response()->json([
-            'message' => 'User not found'
-        ], 404);
+        if ($user) {
+            return response()->json([
+                'userId' => $user->id,
+                'userName' => $user->userName,
+                'email' => $user->email,
+                'role_id' => $user->role_id,
+                'is_verified' => $user->is_verified,
+                'image' => $user->image,
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
     }
-}
+
+    // PUT => http://127.0.0.1:8000/api/user/admin-update/{id}
+    public function updateAdminDetails(Request $request, $id)
+    {
+        // Fetch the user by ID
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $request->validate([
+            'userName' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('users')->ignore($user->id)
+            ],
+            'email' => [
+                'sometimes',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($user->id)
+            ],
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
+            'password' => 'sometimes|string',
+        ]);
+
+        // Update userName and email if provided
+        if ($request->has('userName')) {
+            $user->userName = $request->userName;
+        }
+
+        if ($request->has('email')) {
+            $user->email = $request->email;
+        }
+
+        // Update password if provided
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Handle image upload if provided
+        if ($request->hasFile('image')) {
+
+            if ($user->image) {
+                $oldImagePath = 'public/images/' . $user->image;
+
+                if (Storage::exists($oldImagePath)) {
+
+                    Storage::delete($oldImagePath);
+                } else {
+                    Log::warning('Old image not found for deletion', ['path' => $oldImagePath]);
+                }
+            }
+
+            $imagePath = $request->file('image')->store('public/images');
+            $user->image = basename($imagePath);
+        }
+
+        // Save the updated user information
+        $user->save();
+
+        // Construct the full image URL using baseURL
+        $imageUrl = $user->image ? url('storage/images/' . $user->image) : null;
+
+
+        return response()->json([
+            'message' => 'User details updated successfully',
+            'user' => [
+                'userId' => $user->id,
+                'userName' => $user->userName,
+                'email' => $user->email,
+                'role_id' => $user->role_id,
+                'is_verified' => $user->is_verified,
+                'image' => $imageUrl,
+            ],
+        ], 200);
+    }
 }

@@ -46,3 +46,5 @@ Route::middleware('auth.token')->group(function () {
 });
 
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
+
+Route::put('/user/admin-update/{id}', [UserController::class, 'updateAdminDetails']);
