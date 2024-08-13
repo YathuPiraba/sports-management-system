@@ -2,7 +2,7 @@ import React from 'react'
 
 const AdminClubs = () => {
   return (
-    <div>AdminClubs</div>
+    <div className='px-6'>AdminClubs</div>
   )
 }
 

@@ -34,7 +34,7 @@ class ManagerController extends Controller
             'userName' => 'required|string|max:255|unique:users,userName',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'divisionName' => 'required|string|max:255',
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
@@ -70,6 +70,13 @@ class ManagerController extends Controller
                 return response()->json(['error' => 'Invalid club division name'], 404);
             }
 
+            // Handle image upload if provided
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('public/images');
+                $imageName = basename($imagePath);
+            }
+
             // Create a new club
             $club = Club::create([
                 'clubName' => $request->clubName,
@@ -85,7 +92,7 @@ class ManagerController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role_id' => $role->id,
-                'image' => $request->image,
+                'image' => $imageName ?? null,
                 "is_verified" => false
             ]);
 
@@ -109,6 +116,8 @@ class ManagerController extends Controller
 
             event(new ManagerApplied($manager, $clubName));
 
+            $imageUrl = $imageName ? url('storage/images/' . $imageName) : null;
+
             return response()->json([
                 'message' => 'Request created successfully',
                 'userId' => $user->id,
@@ -116,7 +125,7 @@ class ManagerController extends Controller
                 'email' => $request->email,
                 'role_id' => $role->id,
                 'is_verified' => false,
-                'image' => $request->image,
+                'image' => $imageUrl,
                 'manager' => $manager,
                 'club' => $club
             ], 201);

@@ -10,7 +10,7 @@ import {
   updateVerificationApi,
   rejectRequestApi,
 } from "../../Services/apiServices";
-
+import { Popconfirm, message } from "antd";
 import GridLoader from "react-spinners/GridLoader";
 
 const clubColumns = [
@@ -69,6 +69,11 @@ const AdminApprovals = () => {
     }
   };
 
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
+
   return (
     <>
       {loading ? (
@@ -112,17 +117,23 @@ const AdminApprovals = () => {
                     >
                       <FcApproval size={22} />
                     </button>
-                    <button
-                      className="text-red-400 hover:text-red-500"
-                      onClick={() =>
+                    <Popconfirm
+                      title="Delete the task"
+                      description="Are you sure to delete this Request?"
+                      onConfirm={() =>
                         rejectRequest(
                           club.managers[0].clubId,
                           club.managers[0].userId
                         )
                       }
+                      onCancel={cancel}
+                      okText="Yes"
+                      cancelText="No"
                     >
-                      <TiDelete size={25} />
-                    </button>
+                      <button className="text-red-400 hover:text-red-500">
+                        <TiDelete size={25} />
+                      </button>
+                    </Popconfirm>
                   </div>
                 </div>
                 {expandedClub === club.clubName && (

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 const Events = () => {
   const role_id = useSelector((state) => state.auth.userdata.role_id);
   return (
-    <div>Events </div>
+    <div className='px-6'>Events </div>
   )
 }
 

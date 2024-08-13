@@ -14,6 +14,7 @@ import LoginScreen from "../../Pages/Login/Login";
 import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
 import useManagerNotifications from "../../hooks/useManagerNotification";
+import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 
 const Navbar = () => {
   const { notifications } = useManagerNotifications();
@@ -152,19 +153,21 @@ const Navbar = () => {
         className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8  w-full font-poppins`}
       >
         <div className="flex pt-4 items-center">
-          <Space direction="vertical">
-            <Switch
-              style={{
-                backgroundColor: theme === "light" ? "black" : "gray",
-                color: theme === "light" ? "white" : "black",
-              }}
-              checked={theme === "light"}
-              onChange={toggleTheme}
-              checkedChildren="Dark"
-              unCheckedChildren="Light"
-              defaultChecked={theme === "light"}
-            />
-          </Space>
+          <div className="flex gap-3">
+            <MdDarkMode size={19} className="mt-1"/>
+            <Space direction="vertical" >
+              <Switch
+                style={{
+                  backgroundColor: theme === "light" ? "gray" : "skyblue",
+                  padding:"8px"
+                }}
+                checked={theme === "light"}
+                onChange={toggleTheme}
+                defaultChecked={false}
+              />
+            </Space>
+            <MdOutlineLightMode size={19} className="text-yellow-600 mt-1" />
+          </div>
           <div className="flex items-center gap-4 ml-auto">
             <div className="sm:flex sm:gap-4 space-x-6 flex mb-2">
               <div
