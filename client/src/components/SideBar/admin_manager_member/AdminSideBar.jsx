@@ -76,7 +76,7 @@ const AdminSideBar = () => {
           <div className="list">
             <li className="px-3">
               <Link
-                to="/settings"
+                to="/admin/settings"
                 className="flex items-center gap-3 rounded p-3 transition-colors"
               >
                 <div className="flex items-center self-center ">

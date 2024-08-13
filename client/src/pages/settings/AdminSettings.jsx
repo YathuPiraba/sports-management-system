@@ -1,16 +1,20 @@
 import { Button, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ChangePassword from "../Components/Admin/ChangePassword";
-import UpdateProfile from "../Components/admin/UpdateProfile";
-import GridLoader from "react-spinners/GridLoader";
-import { fetchUserDetails } from "../features/authslice"; 
+import ChangePassword from "../../Components/admin/ChangePassword";
+import UpdateProfile from "../../Components/admin/UpdateProfile";
+import { fetchUserDetails } from "../../features/authslice";
+import logo from "../../assets/log.png";
+import { useTheme } from "../../context/ThemeContext";
 
-const ProfileSettingsScreen = () => {
+const AdminSettings = () => {
   const dispatch = useDispatch();
-  const user  = useSelector((state) => state.userdata); 
+  const user = useSelector((state) => state.auth.userdata);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const { theme } = useTheme();
+
+  const image = user.image;
 
   const showPasswordModal = () => {
     setIsPasswordModalOpen(true);
@@ -38,19 +42,13 @@ const ProfileSettingsScreen = () => {
 
   return (
     <>
-      {loading ? (
-        <div className="flex justify-center items-center w-full h-[75vh]">
-          <GridLoader
-            loading={loading}
-            size={15}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-            color="#4682B4"
-          />
-        </div>
-      ) : (
-        <div className="max-w-screen-xl lg:px-8 lg:py-12 h-screen font-poppins">
-          <div className="overflow-hidden rounded pb-12 mx-auto bg-gray-300 text-center text-slate-500">
+
+        <div className="max-w-screen-xl lg:px-8 lg:py-2 h-screen font-poppins">
+          <div className={`overflow-hidden rounded pb-12 mx-auto ${
+                    theme === "light"
+                      ? "bg-white text-black"
+                      : "bg-gray-300 text-white"
+                  } text-center text-slate-500`}>
             <figure className="p-6 pb-0">
               <h1 className="text-3xl text-center font-medium py-8 text-cyan-600">
                 Admin Profile
@@ -93,7 +91,10 @@ const ProfileSettingsScreen = () => {
                 footer={null}
                 className="lg:mr-72"
               >
-                <ChangePassword setIsModalOpen={setIsPasswordModalOpen} userId={user.userId} />
+                <ChangePassword
+                  setIsModalOpen={setIsPasswordModalOpen}
+                  userId={user.userId}
+                />
               </Modal>
 
               <Button
@@ -123,9 +124,8 @@ const ProfileSettingsScreen = () => {
             </div>
           </div>
         </div>
-      )}
     </>
   );
 };
 
-export default ProfileSettingsScreen;
+export default AdminSettings;

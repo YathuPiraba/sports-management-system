@@ -34,21 +34,32 @@ export const rejectRequestApi = (clubId, userId) => {
 export const fetchManagerDataApi = () => {
   return authApiClient.get("/manager/list");
 };
- 
+
+// Fetch manager data with query
 export const fetchManagerQueryDataApi = (page = 1, perPage = 10) => {
   return authApiClient.get("/manager/query", {
     params: {
       page: page,
-      per_page: perPage
-    }
+      per_page: perPage,
+    },
   });
 };
 
+// Fetch pending request
 export const fetchManagerPendingDataApi = (page = 1, perPage = 10) => {
   return authApiClient.get("/manager/pending", {
     params: {
       page: page,
-      per_page: perPage
-    }
+      per_page: perPage,
+    },
+  });
+};
+
+// Update Admin Details API
+export const updateAdminDetailsApi = (userId, data) => {
+  return authApiClient.put(`/user/admin-update/${userId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 };

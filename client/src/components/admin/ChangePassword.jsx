@@ -1,55 +1,41 @@
-/* eslint-disable react/prop-types */
-import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { updateAdminDetailsApi } from '../../Services/apiServices'; 
 
-const ChangePassword = ({ setIsModalOpen }) => {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+const ChangePassword = ({ setIsModalOpen, userId }) => {
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
+    if (password !== confirmPassword) {
       toast.error("New password and confirm password do not match");
       return;
     }
 
-    if (!newPassword || !confirmPassword || !currentPassword) {
+    if (!password || !confirmPassword) {
       toast.error("Passwords can't be empty");
       return;
     }
-    const token = localStorage.getItem("token");
 
     try {
-      const response = await axios.put(
-        "http://localhost:5000/api/v1/user/change-password",
-        {
-          currentPassword,
-          newPassword,
-        },
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const formData = new FormData();
+      formData.append("password", password);
+
+      const response = await updateAdminDetailsApi(userId, formData);
       toast.success(response.data.message);
-      setCurrentPassword("");
-      setNewPassword("");
+      setPassword("");
       setConfirmPassword("");
       setIsModalOpen(false);
     } catch (err) {
-      toast.error(err.response.data.error);
+      toast.error(err.response?.data?.message || "An error occurred");
     }
   };
 
   const handleClear = (e) => {
     e.preventDefault();
-    setCurrentPassword("");
-    setNewPassword("");
+    setPassword("");
     setConfirmPassword("");
   };
 
@@ -58,36 +44,15 @@ const ChangePassword = ({ setIsModalOpen }) => {
       <form>
         <div className="relative my-6">
           <input
-            id="current_password"
+            id="password"
             type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            name="current_password"
-            placeholder="your name"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            placeholder="New Password"
             className="relative w-full h-10 px-4 text-sm placeholder-transparent transition-all border rounded outline-none focus-visible:outline-none peer border-slate-200 text-slate-500 autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
           />
-          <label
-            htmlFor="current_password"
-            className="cursor-text peer-focus:cursor-default peer-autofill:-top-2 absolute left-2 -top-2 z-[1] px-2 text-xs text-slate-400 transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:bg-white before:transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-emerald-500 peer-invalid:peer-focus:text-pink-500 peer-disabled:cursor-not-allowed peer-disabled:text-slate-400 peer-disabled:before:bg-transparent"
-          >
-            Current Password
-          </label>
-        </div>
-
-        <div className="relative my-6">
-          <input
-            id="new_password"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            name="new_password"
-            placeholder="your name"
-            className="relative w-full h-10 px-4 text-sm placeholder-transparent transition-all border rounded outline-none focus-visible:outline-none peer border-slate-200 text-slate-500 autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-          />
-          <label
-            htmlFor="new_password"
-            className="cursor-text peer-focus:cursor-default peer-autofill:-top-2 absolute left-2 -top-2 z-[1] px-2 text-xs text-slate-400 transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:bg-white before:transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-emerald-500 peer-invalid:peer-focus:text-pink-500 peer-disabled:cursor-not-allowed peer-disabled:text-slate-400 peer-disabled:before:bg-transparent"
-          >
+          <label htmlFor="password" className="cursor-text peer-focus:cursor-default peer-autofill:-top-2 absolute left-2 -top-2 z-[1] px-2 text-xs text-slate-400 transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:bg-white before:transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-emerald-500 peer-invalid:peer-focus:text-pink-500 peer-disabled:cursor-not-allowed peer-disabled:text-slate-400 peer-disabled:before:bg-transparent">
             New Password
           </label>
         </div>
@@ -98,14 +63,11 @@ const ChangePassword = ({ setIsModalOpen }) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             name="confirm_password"
-            placeholder="your name"
+            placeholder="Confirm Password"
             className="relative w-full h-10 px-4 text-sm placeholder-transparent transition-all border rounded outline-none focus-visible:outline-none peer border-slate-200 text-slate-500 autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
           />
-          <label
-            htmlFor="confirm_password"
-            className="cursor-text peer-focus:cursor-default peer-autofill:-top-2 absolute left-2 -top-2 z-[1] px-2 text-xs text-slate-400 transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:bg-white before:transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-emerald-500 peer-invalid:peer-focus:text-pink-500 peer-disabled:cursor-not-allowed peer-disabled:text-slate-400 peer-disabled:before:bg-transparent"
-          >
-            Current Password
+          <label htmlFor="confirm_password" className="cursor-text peer-focus:cursor-default peer-autofill:-top-2 absolute left-2 -top-2 z-[1] px-2 text-xs text-slate-400 transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:bg-white before:transition-all peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-sm peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-emerald-500 peer-invalid:peer-focus:text-pink-500 peer-disabled:cursor-not-allowed peer-disabled:text-slate-400 peer-disabled:before:bg-transparent">
+            Confirm Password
           </label>
         </div>
         <div className="relative my-6 flex flex-row gap-2">

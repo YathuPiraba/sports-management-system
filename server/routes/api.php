@@ -42,10 +42,11 @@ Route::middleware('auth.token')->group(function () {
 
     Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
 
-    Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
+
     Route::get('/manager/pending', [ManagerController::class, 'pendingManagers']);
     Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
     Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
 });
 
+Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 
