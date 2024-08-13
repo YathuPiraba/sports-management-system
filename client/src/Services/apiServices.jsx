@@ -57,7 +57,9 @@ export const fetchManagerPendingDataApi = (page = 1, perPage = 10) => {
 
 // Update Admin Details API
 export const updateAdminDetailsApi = (userId, data) => {
-  return authApiClient.put(`/user/admin-update/${userId}`, data, {
+  data.append('_method', 'PUT');
+
+  return authApiClient.post(`/user/admin-update/${userId}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
