@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { TiDelete } from "react-icons/ti";
 import { FcApproval } from "react-icons/fc";
 import AdminApprovalTable from "../../Components/Approvals/AdminApprovalTable";
 import { useTheme } from "../../context/ThemeContext";
-import axios from "axios";
 import toast from "react-hot-toast";
 import useManagerData from "../../hooks/useManagerData";
+import {
+  updateVerificationApi,
+  rejectRequestApi,
+} from "../../Services/apiServices";
 
 const clubColumns = [
   "Club Name",
@@ -38,18 +41,7 @@ const AdminApprovals = () => {
 
   const updateVerification = async (managerId) => {
     try {
-      const token = localStorage.getItem("token");
-      console.log("token", token);
-
-      await axios.put(
-        `http://127.0.0.1:8000/api/manager/update-verification/${managerId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await updateVerificationApi(managerId);
       toast.success("Request Approved Successfully!..");
       fetchManagerData();
     } catch (error) {
@@ -59,16 +51,7 @@ const AdminApprovals = () => {
 
   const rejectRequest = async (clubId, userId) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(
-        `http://127.0.0.1:8000/api/manager/reject/${clubId}/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      await rejectRequestApi(clubId, userId);
       toast.success("Request Deleted Successfully!..");
       fetchManagerData();
     } catch (error) {

@@ -1,19 +1,13 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import echo from "../utils/echo";
+import { fetchManagerDataApi } from "../Services/apiServices";
 
 const useManagerNotifications = () => {
   const [notifications, setNotifications] = useState([]);
 
   const fetchManagerData = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://127.0.0.1:8000/api/manager/list", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const res = await fetchManagerDataApi();
       const managers = res.data.data;
 
       // Separate verified and unverified managers
