@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { fetchManagerDetailApi } from '../Services/apiServices'; 
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { fetchManagerDetailApi } from "../Services/apiServices";
 
 export const useSingleManagerDetails = () => {
   const userId = useSelector((state) => state.auth.userdata.userId);
@@ -19,12 +19,11 @@ export const useSingleManagerDetails = () => {
         setLoading(true);
         const response = await fetchManagerDetailApi(userId);
         setManagerDetails(response.data.manager);
-        console.log('====================================');
-        console.log(response.data.manager);
-        console.log('====================================');
         setError(null);
       } catch (err) {
-        setError(err.message || 'An error occurred while fetching manager details');
+        setError(
+          err.message || "An error occurred while fetching manager details"
+        );
         setManagerDetails(null);
       } finally {
         setLoading(false);

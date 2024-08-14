@@ -22,7 +22,6 @@ const useManagerData = () => {
       const managers = res.data.data;
       const paginationData = res.data.pagination;
 
-
       // // Separate verified and unverified managers
       // const unverifiedManagers = managers.filter(
       //   (manager) => manager.user.is_verified == 0
@@ -74,7 +73,6 @@ const useManagerData = () => {
         perPage: paginationData.per_page,
         total: paginationData.total,
       });
-
     } catch (error) {
       console.error("Error fetching Apply data:", error);
     } finally {
@@ -112,8 +110,14 @@ const useManagerData = () => {
     fetchManagerData(page, pagination.perPage);
   };
 
-
-  return { managerData, clubData, pagination, loading, goToPage, fetchManagerData };
+  return {
+    managerData,
+    clubData,
+    pagination,
+    loading,
+    goToPage,
+    fetchManagerData,
+  };
 };
 
 export default useManagerData;
