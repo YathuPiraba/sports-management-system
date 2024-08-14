@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { useDispatch } from "react-redux";
 import {
   loginApi,
   fetchUserDetailsApi,
@@ -30,7 +29,8 @@ export const applyManager = createAsyncThunk(
     try {
       const res = await applyManagerApi(data);
       console.log("API response:", res);
-      return res.data;
+        return res.data;
+      
     } catch (error) {
       console.error("Error in applyManager thunk:", error);
       throw error;
@@ -72,7 +72,7 @@ const authSlice = createSlice({
         state.userdata = null;
       })
       .addCase(applyManager.fulfilled, (state, action) => {
-        state.userdata = action.payload.userdata;
+        state.userdata = action.payload;
       });
   },
 });

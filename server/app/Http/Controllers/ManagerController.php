@@ -130,7 +130,7 @@ class ManagerController extends Controller
                 'userName' => $request->userName,
                 'email' => $request->email,
                 'role_id' => $role->id,
-                'is_verified' => false,
+                'is_verified' => 0,
                 'image' => $user->image,
                 'manager' => $manager,
                 'club' => $club

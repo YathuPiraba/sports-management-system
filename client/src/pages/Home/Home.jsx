@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const authenticate = useSelector((state) => state.auth.user);
+  const authenticate = useSelector((state) => state.auth.userdata);
   const navigate = useNavigate();
 
   console.log("aut",authenticate);
@@ -68,7 +68,7 @@ const Home = () => {
     <div>
       <h1>Welcome to Our Club</h1>
       <p>Some static information here.</p>
-      {verified === 0 ? (
+      {verified === 0? (
         <p>You are still under verification.</p>
       ) : (
         <p>
