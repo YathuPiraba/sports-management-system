@@ -593,6 +593,7 @@ class ManagerController extends Controller
             'userName' => 'sometimes|string|max:255|unique:users,userName,' . $userId,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'divisionName' => 'sometimes|string|max:255',
+            'password' => 'sometimes|string',
         ]);
 
         DB::beginTransaction();
@@ -632,6 +633,7 @@ class ManagerController extends Controller
                 $manager->gs_id = $gsDivision->id;
             }
 
+
             $manager->save();
 
             // Update User details
@@ -648,6 +650,11 @@ class ManagerController extends Controller
                 }
                 $imagePath = $request->file('image')->store('public/images');
                 $user->image = basename($imagePath);
+            }
+
+            // Update password if provided
+            if ($request->has('password')) {
+                $user->password = Hash::make($request->password);
             }
 
             $user->save();
