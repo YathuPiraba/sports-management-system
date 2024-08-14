@@ -25,13 +25,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL
   const image = user.image;
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
 
   const handleLogout = async () => {
     try {
@@ -211,7 +206,7 @@ const Navbar = () => {
                     <div tabIndex={0} role="button" className="text-black">
                       <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white">
                         <img
-                          src={image ? `${image}` : logo}
+                          src={image ? `${baseUrl}/${image}` : logo}
                           alt="user"
                           title="user name"
                           width="80"
@@ -226,7 +221,7 @@ const Navbar = () => {
                     >
                       <li className="px-3">
                         <Link
-                          to="/profile"
+                          to="/settings"
                           className="flex items-center gap-2 rounded"
                         >
                           <div className="flex items-center self-center ">

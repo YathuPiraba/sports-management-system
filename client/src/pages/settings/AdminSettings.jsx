@@ -15,6 +15,7 @@ const AdminSettings = () => {
   const { theme } = useTheme();
 
   const image = user.image;
+  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL
 
   const showPasswordModal = () => {
     setIsPasswordModalOpen(true);
@@ -54,9 +55,9 @@ const AdminSettings = () => {
             </h1>
             <span className="relative inline-flex h-20 w-20 items-center justify-center rounded-full text-white">
               <img
-                src={image ? `${image}` : logo}
-                alt="user name"
-                title="user name"
+                src={image ? `${baseUrl}/${image}` : logo}
+                alt="User Profile"
+                title="user profile"
                 width="80"
                 height="80"
                 className="max-w-full rounded-full"

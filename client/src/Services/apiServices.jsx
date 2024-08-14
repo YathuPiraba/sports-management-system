@@ -25,6 +25,11 @@ export const updateVerificationApi = (managerId) => {
   return authApiClient.put(`/manager/update-verification/${managerId}`);
 };
 
+// Fetch GS data
+export const fetchGSDataApi = () => {
+  return apiClient.get("/gs-divisions/list");
+};
+
 // Reject manager request
 export const rejectRequestApi = (clubId, userId) => {
   return authApiClient.delete(`/manager/reject/${clubId}/${userId}`);

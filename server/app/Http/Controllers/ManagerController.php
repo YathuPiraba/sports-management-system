@@ -31,6 +31,7 @@ class ManagerController extends Controller
             'clubAddress' => 'required|string|max:255',
             'club_history' => 'nullable|string',
             'clubContactNo' => 'required|string|max:15',
+            'clubImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'userName' => 'required|string|max:255|unique:users,userName',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8',
@@ -84,6 +85,7 @@ class ManagerController extends Controller
                 'clubAddress' => $request->clubAddress,
                 'club_history' => $request->club_history,
                 'clubContactNo' => $request->clubContactNo,
+                'clubImage' => $request->clubImage,
                 "isVerified" => false,
             ]);
 
@@ -116,7 +118,6 @@ class ManagerController extends Controller
 
             event(new ManagerApplied($manager, $clubName));
 
-            $imageUrl = $imageName ? url('storage/images/' . $imageName) : null;
 
             return response()->json([
                 'message' => 'Request created successfully',
@@ -125,7 +126,7 @@ class ManagerController extends Controller
                 'email' => $request->email,
                 'role_id' => $role->id,
                 'is_verified' => false,
-                'image' => $imageUrl,
+                'image' => $user->image,
                 'manager' => $manager,
                 'club' => $club
             ], 201);
@@ -262,8 +263,6 @@ class ManagerController extends Controller
 
             DB::commit();
 
-
-
             return response()->json([
                 'message' => "Manager $firstName $lastName and associated club $clubName deleted successfully",
             ], 200);
@@ -347,6 +346,7 @@ class ManagerController extends Controller
                         'clubDivisionName' => $clubDivision ? $clubDivision->divisionName : null,
                         'clubAddress' => $manager->club->clubAddress,
                         'club_history' => $manager->club->club_history,
+                        'clubImage' => $manager->club->clubImage,
                         'clubContactNo' => $manager->club->clubContactNo,
                         "isVerified" => $manager->club->isVerified,
                         'club_gs_id' => $manager->club->gs_id,
@@ -465,6 +465,7 @@ class ManagerController extends Controller
                         'clubAddress' => $manager->club->clubAddress,
                         'club_history' => $manager->club->club_history,
                         'clubContactNo' => $manager->club->clubContactNo,
+                        'clubImage' => $manager->club->clubImage,
                         "isVerified" => $manager->club->isVerified,
                         'club_gs_id' => $manager->club->gs_id,
                     ],
@@ -535,6 +536,7 @@ class ManagerController extends Controller
                         'clubAddress' => $manager->club->clubAddress,
                         'club_history' => $manager->club->club_history,
                         'clubContactNo' => $manager->club->clubContactNo,
+                        'clubImage' => $manager->club->clubImage,
                         "isVerified" => $manager->club->isVerified,
                         'club_gs_id' => $manager->club->gs_id,
                     ],
