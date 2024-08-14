@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "./Navbar.css";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,7 +24,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL
+  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
   const image = user.image;
 
   const handleLogout = async () => {
@@ -135,8 +134,13 @@ const Navbar = () => {
           style={{ padding: "8px", borderRadius: "5px" }}
           onClick={() => handleNotificationClick(notification)}
         >
-          <img className="rounded-full" style={{ width: 28, marginRight: 7 }} />
-          {notification.message}
+          <img
+            className="rounded-full"
+            src={`${baseUrl}/${notification.clubImage}`}
+            alt="clubImage"
+            style={{ width: 30, marginRight: 7 }}
+          />
+          <div className="mt-1"> {notification.message}</div>
         </div>
       ),
     };
@@ -149,12 +153,12 @@ const Navbar = () => {
       >
         <div className="flex pt-4 items-center">
           <div className="flex gap-3">
-            <MdDarkMode size={19} className="mt-1"/>
-            <Space direction="vertical" >
+            <MdDarkMode size={19} className="mt-1" />
+            <Space direction="vertical">
               <Switch
                 style={{
                   backgroundColor: theme === "light" ? "gray" : "skyblue",
-                  padding:"8px"
+                  padding: "8px",
                 }}
                 checked={theme === "light"}
                 onChange={toggleTheme}

@@ -6,7 +6,6 @@ import {
   logoutApi,
 } from "../Services/apiServices";
 
-
 // Thunk to handle login and token storage
 export const loginAdmin = createAsyncThunk("/login", async (data) => {
   const res = await loginApi(data);
@@ -29,8 +28,7 @@ export const applyManager = createAsyncThunk(
     try {
       const res = await applyManagerApi(data);
       console.log("API response:", res);
-        return res.data;
-      
+      return res.data;
     } catch (error) {
       console.error("Error in applyManager thunk:", error);
       throw error;
@@ -78,4 +76,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const {logout } = authSlice.actions;
+export const { logout } = authSlice.actions;

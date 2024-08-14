@@ -36,7 +36,6 @@ const AdminApprovals = () => {
   const [expandedClub, setExpandedClub] = useState(null);
   const { theme } = useTheme();
 
-
   const {
     managerData,
     clubData,

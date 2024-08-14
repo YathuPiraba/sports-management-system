@@ -10,6 +10,9 @@ const useManagerNotifications = () => {
       const res = await fetchManagerDataApi();
       const managers = res.data.data;
 
+      console.log(managers);
+      
+
       // Separate verified and unverified managers
       const unverifiedManagers = managers.filter(
         (manager) => manager.user.is_verified === 0
@@ -19,6 +22,7 @@ const useManagerNotifications = () => {
       const newNotifications = unverifiedManagers.map((manager) => ({
         type: "admin",
         message: `Manager ${manager.firstName} ${manager.lastName} applied for joining request from club ${manager.club.clubName}`,
+        clubImage:`${manager.club.clubImage}`
       }));
 
       setNotifications(() => [...newNotifications]);

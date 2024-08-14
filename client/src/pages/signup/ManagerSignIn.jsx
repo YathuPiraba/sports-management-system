@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ManagerDetails from "../../Components/Signup/ManagerDetails";
 import ClubDetails from "../../Components/Signup/ClubDetails";
-import {  applyManager } from "../../features/authslice";
+import { applyManager } from "../../features/authslice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { fetchGSDataApi } from "../../Services/apiServices";
@@ -13,7 +13,7 @@ const ManagerSignIn = () => {
   const [clubDetails, setClubDetails] = useState({
     clubName: "",
     clubAddress: "",
-    club_history:"",
+    club_history: "",
     clubContactNo: "",
     clubImage: "",
     clubDivisionName: "",
@@ -45,7 +45,7 @@ const ManagerSignIn = () => {
 
     try {
       const result = await dispatch(applyManager(formData)).unwrap();
-      console.log("result",result);
+      console.log("result", result);
       navigate("/home");
     } catch (error) {
       console.error("Error creating request", error);
@@ -54,7 +54,7 @@ const ManagerSignIn = () => {
 
   const fetchGsData = async () => {
     try {
-      const res = await fetchGSDataApi()
+      const res = await fetchGSDataApi();
       setDivisions(res.data.data);
       console.log(res.data.data);
     } catch (error) {
