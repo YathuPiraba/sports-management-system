@@ -4,7 +4,7 @@ import { fetchManagerDetailApi } from '../Services/apiServices';
 
 export const useSingleManagerDetails = () => {
   const userId = useSelector((state) => state.auth.userdata.userId);
-  const [managerDetails, setManagerDetails] = useState(null);
+  const [managerDetails, setManagerDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,9 +18,9 @@ export const useSingleManagerDetails = () => {
       try {
         setLoading(true);
         const response = await fetchManagerDetailApi(userId);
-        setManagerDetails(response.data);
+        setManagerDetails(response.data.manager);
         console.log('====================================');
-        console.log(response.data);
+        console.log(response.data.manager);
         console.log('====================================');
         setError(null);
       } catch (err) {
