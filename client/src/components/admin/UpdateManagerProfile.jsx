@@ -1,66 +1,97 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { updateManagerDetailsApi } from "../../Services/apiServices";
+import { useSelector } from "react-redux";
 
-const UpdateManagerProfile = ({ setIsModalOpen, manager, fetchDetails }) => {
-  const [firstName, setFirstName] = useState(manager.firstName);
-  const [lastName, setLastName] = useState(manager.lastName);
-  const [userName, setUserName] = useState(manager.userName);
-  const [email, setEmail] = useState(manager.email);
-  const [phoneNumber, setPhoneNumber] = useState(manager.phoneNumber);
-  const [address, setAddress] = useState(manager.address);
-  const [image, setImage] = useState(null);
+const UpdateManagerProfile = ({ setIsModalOpen, managerDetails }) => {
+  const user = useSelector((state) => state.auth.userdata);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    userName: "",
+    email: "",
+    contactNo: "",
+    whatsappNo: "",
+    address: "",
+    nic: "",
+    date_of_birth: "",
+    divisionName: "",
+    image: null,
+  });
 
   useEffect(() => {
-    fetchDetails();
-  }, [fetchDetails]);
+    if (user && managerDetails) {
+      setFormData({
+        firstName: managerDetails.firstName || "",
+        lastName: managerDetails.lastName || "",
+        userName: user.userName || "",
+        email: user.email || "",
+        contactNo: managerDetails.contactNo || "",
+        whatsappNo: managerDetails.whatsappNo || "",
+        address: managerDetails.address || "",
+        nic: managerDetails.nic || "",
+        date_of_birth: managerDetails.date_of_birth || "",
+        divisionName: managerDetails.gsDivision?.divisionName || "",
+        image: null,
+      });
+    }
+  }, [user, managerDetails]);
+
+  const handleInputChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "file" ? files[0] : value,
+    }));
+  };
 
   const handleClear = (e) => {
     e.preventDefault();
-    setFirstName(manager.firstName);
-    setLastName(manager.lastName);
-    setUserName(manager.userName);
-    setEmail(manager.email);
-    setPhoneNumber(manager.phoneNumber);
-    setAddress(manager.address);
-    setImage(null);
+    setFormData({
+      firstName: managerDetails.firstName || "",
+      lastName: managerDetails.lastName || "",
+      userName: user.userName || "",
+      email: user.email || "",
+      contactNo: managerDetails.contactNo || "",
+      whatsappNo: managerDetails.whatsappNo || "",
+      address: managerDetails.address || "",
+      nic: managerDetails.nic || "",
+      date_of_birth: managerDetails.date_of_birth || "",
+      divisionName: managerDetails.gsDivision?.divisionName || "",
+      image: null,
+    });
   };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
-    if (
-      firstName === manager.firstName &&
-      lastName === manager.lastName &&
-      userName === manager.userName &&
-      email === manager.email &&
-      phoneNumber === manager.phoneNumber &&
-      address === manager.address &&
-      !image
-    ) {
+    const hasChanges = Object.keys(formData).some((key) => {
+      if (key === "image") return formData[key] !== null;
+      if (key === "userName" || key === "email")
+        return formData[key] !== user[key];
+      return formData[key] !== managerDetails[key];
+    });
+
+    if (!hasChanges) {
       toast.error("No changes detected");
       return;
     }
 
     try {
-      const formData = new FormData();
-      if (firstName !== manager.firstName)
-        formData.append("firstName", firstName);
-      if (lastName !== manager.lastName) formData.append("lastName", lastName);
-      if (userName !== manager.userName) formData.append("userName", userName);
-      if (email !== manager.email) formData.append("email", email);
-      if (phoneNumber !== manager.phoneNumber)
-        formData.append("phoneNumber", phoneNumber);
-      if (address !== manager.address) formData.append("address", address);
-      if (image) formData.append("image", image);
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (formData[key] !== null && formData[key] !== undefined) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
 
       const response = await updateManagerDetailsApi(
-        manager.managerId,
-        formData
+        user.userId,
+        formDataToSend
       );
       toast.success(response.data.message);
       setIsModalOpen(false);
-      fetchDetails();
     } catch (err) {
       toast.error(err.response?.data?.message || "An error occurred");
     }
@@ -90,7 +121,7 @@ const UpdateManagerProfile = ({ setIsModalOpen, manager, fetchDetails }) => {
           <input
             id="firstName"
             type="text"
-            value={firstName}
+            value={formData.firstName}
             onChange={(e) => setFirstName(e.target.value)}
             name="firstName"
             placeholder="First Name"
@@ -105,7 +136,7 @@ const UpdateManagerProfile = ({ setIsModalOpen, manager, fetchDetails }) => {
           <input
             id="lastName"
             type="text"
-            value={lastName}
+            value={formData.lastName}
             onChange={(e) => setLastName(e.target.value)}
             name="lastName"
             placeholder="Last Name"
@@ -120,7 +151,7 @@ const UpdateManagerProfile = ({ setIsModalOpen, manager, fetchDetails }) => {
           <input
             id="userName"
             type="text"
-            value={userName}
+            value={formData.userName}
             onChange={(e) => setUserName(e.target.value)}
             name="userName"
             placeholder="Username"
@@ -135,7 +166,7 @@ const UpdateManagerProfile = ({ setIsModalOpen, manager, fetchDetails }) => {
           <input
             id="email"
             type="email"
-            value={email}
+            value={formData.email}
             onChange={(e) => setEmail(e.target.value)}
             name="email"
             placeholder="Email Address"
@@ -148,12 +179,12 @@ const UpdateManagerProfile = ({ setIsModalOpen, manager, fetchDetails }) => {
 
         <div className="relative my-6">
           <input
-            id="phoneNumber"
+            id="contactNo"
             type="tel"
-            value={phoneNumber}
+            value={formData.contactNo}
             onChange={(e) => setPhoneNumber(e.target.value)}
-            name="phoneNumber"
-            placeholder="Phone Number"
+            name="contactNo"
+            placeholder="contactNo"
             className={inputClassName}
           />
           <label htmlFor="phoneNumber" className={labelClassName}>
@@ -164,7 +195,7 @@ const UpdateManagerProfile = ({ setIsModalOpen, manager, fetchDetails }) => {
         <div className="relative my-6">
           <textarea
             id="address"
-            value={address}
+            value={formData.address}
             onChange={(e) => setAddress(e.target.value)}
             name="address"
             placeholder="Address"

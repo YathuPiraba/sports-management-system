@@ -7,7 +7,7 @@ import { fetchUserDetails } from "../../features/authslice";
 import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
 import UpdateManagerProfile from "../../Components/admin/UpdateManagerProfile";
-import { fetchManagerDetailApi } from "../../Services/apiServices";
+import { useSingleManagerDetails } from "../../hooks/useSingleManagerData";
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -16,31 +16,20 @@ const Settings = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
+  const { managerDetails, loading, error } = useSingleManagerDetails();
 
   const image = user.image;
   const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
 
-  console.log("user", roleID);
+  const showPasswordModal = () => setIsPasswordModalOpen(true);
 
-  const showPasswordModal = () => {
-    setIsPasswordModalOpen(true);
-  };
+  const showProfileModal = () => setIsProfileModalOpen(true);
 
-  const showProfileModal = () => {
-    setIsProfileModalOpen(true);
-  };
+  const handleCancelPassword = () => setIsPasswordModalOpen(false);
 
-  const handleCancelPassword = () => {
-    setIsPasswordModalOpen(false);
-  };
+  const handleCancelProfile = () => setIsProfileModalOpen(false);
 
-  const handleCancelProfile = () => {
-    setIsProfileModalOpen(false);
-  };
-
-  const fetchDetails = () => {
-    dispatch(fetchUserDetails());
-  };
+  const fetchDetails = () => dispatch(fetchUserDetails());
 
   useEffect(() => {
     fetchDetails();
@@ -130,8 +119,7 @@ const Settings = () => {
               ) : (
                 <UpdateManagerProfile
                   setIsModalOpen={setIsProfileModalOpen}
-                  user={user}
-                  fetchDetails={fetchDetails}
+                  managerDetails={managerDetails}
                 />
               )}
             </Modal>

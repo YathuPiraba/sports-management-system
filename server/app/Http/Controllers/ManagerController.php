@@ -666,6 +666,7 @@ class ManagerController extends Controller
         }
     }
 
+    // GET => http://127.0.0.1:8000/api/manager/userId
     public function fetchManagerDetails($userId)
     {
         try {
@@ -699,7 +700,6 @@ class ManagerController extends Controller
                         'divisionName' => $manager->gsDivision->divisionName,
                     ],
                 ],
-                'user' => $user->safeAttributes(),
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Manager or User not found'], 404);
