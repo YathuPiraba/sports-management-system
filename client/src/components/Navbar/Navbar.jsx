@@ -134,12 +134,16 @@ const Navbar = () => {
           style={{ padding: "8px", borderRadius: "5px" }}
           onClick={() => handleNotificationClick(notification)}
         >
-          <img
-            className="rounded-full"
-            src={`${baseUrl}/${notification.clubImage}`}
-            alt="clubImage"
-            style={{ width: 30, marginRight: 7 }}
-          />
+          <div
+            className="rounded-full overflow-hidden"
+            style={{ width: 30, height: 30, marginRight: 7, flexShrink: 0 }}
+          >
+            <img
+              src={`${baseUrl}/${notification.clubImage}`}
+              alt="clubImage"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </div>
           <div className="mt-1"> {notification.message}</div>
         </div>
       ),
@@ -208,14 +212,15 @@ const Navbar = () => {
                 >
                   <div className="dropdown dropdown-end mt-1">
                     <div tabIndex={0} role="button" className="text-black">
-                      <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white">
+                      <span
+                        className="relative inline-flex items-center justify-center rounded-full mt-0.5 text-white overflow-hidden"
+                        style={{ width: 40, height: 40 }}
+                      >
                         <img
                           src={image ? `${baseUrl}/${image}` : logo}
                           alt="user"
                           title="user name"
-                          width="80"
-                          height="80"
-                          className="max-w-full rounded-full mt-1"
+                          className="w-full h-full object-cover"
                         />
                       </span>
                     </div>

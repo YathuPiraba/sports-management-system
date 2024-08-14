@@ -27,4 +27,16 @@ class User extends Model
     {
         return $this->hasMany(Club_Manager::class, 'user_id');
     }
+
+    public function safeAttributes()
+    {
+        return [
+            'id' => $this->id,
+            'userName' => $this->userName,
+            'email' => $this->email,
+            'image' => $this->image,
+            'role_id' => $this->role_id,
+            'is_verified' => $this->is_verified,
+        ];
+    }
 }

@@ -38,14 +38,14 @@ Route::middleware('auth.token')->group(function () {
     Route::post('/manager/create', [ManagerController::class, 'managerCreate']);
     Route::get('/manager/list', [ManagerController::class, 'getAllManagers']);
     Route::get('/manager/query', [ManagerController::class, 'queryManagers']);
+    Route::put('/manager/update/personal/{userId}', [ManagerController::class, 'updateManagerDetails']);
     Route::delete('manager/deleteManager/{user_id}', [ManagerController::class, 'deleteManager']);
+    Route::get('/manager/{userId}', [ManagerController::class, 'fetchManagerDetails']);
 
-    // Route::get('/manager/pending', [ManagerController::class, 'pendingManagers']);
+    Route::get('/manager/pending', [ManagerController::class, 'pendingManagers']);
     Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
     Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
 });
 
-Route::get('/manager/pending', [ManagerController::class, 'pendingManagers']);
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
-

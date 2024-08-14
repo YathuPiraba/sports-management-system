@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\DB;
 use App\Events\ManagerApplied;
 use App\Events\UserVerified;
 use App\Events\UserRejected;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
 class ManagerController extends Controller
@@ -40,7 +43,6 @@ class ManagerController extends Controller
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
-            'age' => 'required|integer|min:1|max:150',
             'address' => 'required|string|max:255',
             'nic' => 'required|string|max:20',
             'contactNo' => 'required|string|max:15',
@@ -70,6 +72,10 @@ class ManagerController extends Controller
             if (!$gsDivision1) {
                 return response()->json(['error' => 'Invalid club division name'], 404);
             }
+
+            $dateOfBirth = Carbon::parse($request->date_of_birth)->startOfDay();
+            $today = Carbon::now('UTC')->startOfDay();
+            $age = $today->diffInYears($dateOfBirth);
 
             // Handle image upload if provided
             $imagePath = null;
@@ -110,7 +116,7 @@ class ManagerController extends Controller
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
                 'date_of_birth' => $request->date_of_birth,
-                'age' => $request->age,
+                'age' => $age,
                 'address' => $request->address,
                 'nic' => $request->nic,
                 'contactNo' => $request->contactNo,
@@ -160,7 +166,6 @@ class ManagerController extends Controller
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
-            'age' => 'required|integer|min:1|max:150',
             'address' => 'required|string|max:255',
             'nic' => 'required|string|max:20',
             'contactNo' => 'required|string|max:15',
@@ -184,6 +189,10 @@ class ManagerController extends Controller
                 return response()->json(['error' => 'Invalid division name'], 404);
             }
 
+            $dateOfBirth = Carbon::parse($request->date_of_birth)->startOfDay();
+            $today = Carbon::now('UTC')->startOfDay();
+            $age = $today->diffInYears($dateOfBirth);
+
             $user = User::create([
                 'userName' => $request->userName,
                 'email' => $request->email,
@@ -199,7 +208,7 @@ class ManagerController extends Controller
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
                 'date_of_birth' => $request->date_of_birth,
-                'age' => $request->age,
+                'age' => $age,
                 'address' => $request->address,
                 'nic' => $request->nic,
                 'contactNo' => $request->contactNo,
@@ -566,6 +575,137 @@ class ManagerController extends Controller
                 'success' => false,
                 'message' => 'Error fetching Managers: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    // PUT => http://127.0.0.1:8000/api/manager/update/personal/userId
+    public function updateManagerDetails(Request $request, $userId)
+    {
+        $request->validate([
+            'firstName' => 'sometimes|string|max:255',
+            'lastName' => 'sometimes|string|max:255',
+            'date_of_birth' => 'sometimes|date',
+            'address' => 'sometimes|string|max:255',
+            'nic' => 'sometimes|string|max:20',
+            'contactNo' => 'sometimes|string|max:15',
+            'whatsappNo' => 'nullable|string|max:15',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $userId,
+            'userName' => 'sometimes|string|max:255|unique:users,userName,' . $userId,
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
+            'divisionName' => 'sometimes|string|max:255',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $user = User::findOrFail($userId);
+            $manager = Club_Manager::where('user_id', $userId)->firstOrFail();
+
+            // Update Club_Manager details
+            if ($request->has('firstName')) {
+                $manager->firstName = $request->firstName;
+            }
+            if ($request->has('lastName')) {
+                $manager->lastName = $request->lastName;
+            }
+            if ($request->has('date_of_birth')) {
+                $manager->date_of_birth = $request->date_of_birth;
+                // Recalculate age
+                $dateOfBirth = Carbon::parse($request->date_of_birth)->startOfDay();
+                $today = Carbon::now('UTC')->startOfDay();
+                $manager->age = $today->diffInYears($dateOfBirth);
+            }
+            if ($request->has('address')) {
+                $manager->address = $request->address;
+            }
+            if ($request->has('nic')) {
+                $manager->nic = $request->nic;
+            }
+            if ($request->has('contactNo')) {
+                $manager->contactNo = $request->contactNo;
+            }
+            if ($request->has('whatsappNo')) {
+                $manager->whatsappNo = $request->whatsappNo;
+            }
+            if ($request->has('divisionName')) {
+                $gsDivision = Gs_Division::where('divisionName', $request->divisionName)->firstOrFail();
+                $manager->gs_id = $gsDivision->id;
+            }
+
+            $manager->save();
+
+            // Update User details
+            if ($request->has('email')) {
+                $user->email = $request->email;
+            }
+            if ($request->has('userName')) {
+                $user->userName = $request->userName;
+            }
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($user->image) {
+                    Storage::delete('public/images/' . $user->image);
+                }
+                $imagePath = $request->file('image')->store('public/images');
+                $user->image = basename($imagePath);
+            }
+
+            $user->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Manager details updated successfully',
+                'manager' => $manager,
+                'user' => $user->safeAttributes()
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update manager details: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to update manager details', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+    public function fetchManagerDetails($userId)
+    {
+        try {
+            $user = User::findOrFail($userId);
+            $manager = Club_Manager::where('user_id', $userId)->firstOrFail();
+
+            // Load the club and division relationships
+            $manager->load('club', 'gsDivision');
+
+            return response()->json([
+                'manager' => [
+                    'id' => $manager->id,
+                    'firstName' => $manager->firstName,
+                    'lastName' => $manager->lastName,
+                    'date_of_birth' => $manager->date_of_birth,
+                    'age' => $manager->age,
+                    'address' => $manager->address,
+                    'nic' => $manager->nic,
+                    'contactNo' => $manager->contactNo,
+                    'whatsappNo' => $manager->whatsappNo,
+                    'club' => [
+                        'id' => $manager->club->id,
+                        'clubName' => $manager->club->clubName,
+                        'clubAddress' => $manager->club->clubAddress,
+                        'clubContactNo' => $manager->club->clubContactNo,
+                        'clubImage' => $manager->club->clubImage,
+                        'isVerified' => $manager->club->isVerified,
+                    ],
+                    'gsDivision' => [
+                        'id' => $manager->gsDivision->id,
+                        'divisionName' => $manager->gsDivision->divisionName,
+                    ],
+                ],
+                'user' => $user->safeAttributes(),
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Manager or User not found'], 404);
+        } catch (Exception $e) {
+            Log::error('Failed to fetch manager details: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch manager details', 'details' => $e->getMessage()], 500);
         }
     }
 }

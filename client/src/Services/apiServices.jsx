@@ -39,9 +39,14 @@ export const rejectRequestApi = (clubId, userId) => {
   return authApiClient.delete(`/manager/reject/${clubId}/${userId}`);
 };
 
-// Fetch manager data
+// Fetch all managers data
 export const fetchManagerDataApi = () => {
   return authApiClient.get("/manager/list");
+};
+
+// Fetch A manager data
+export const fetchManagerDetailApi = (userId) => {
+  return authApiClient.get(`/manager/${userId}`);
 };
 
 // Fetch manager data with query
@@ -69,6 +74,17 @@ export const updateAdminDetailsApi = (userId, data) => {
   data.append("_method", "PUT");
 
   return authApiClient.post(`/user/admin-update/${userId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+// Update Manager personal Details API
+export const updateManagerDetailsApi = (userId, data) => {
+  data.append("_method", "PUT");
+
+  return authApiClient.post(`/manager/update/personal/${userId}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

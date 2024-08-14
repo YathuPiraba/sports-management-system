@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ManagerDetails from "../../Components/Signup/ManagerDetails";
 import ClubDetails from "../../Components/Signup/ClubDetails";
 import { applyManager } from "../../features/authslice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { fetchGSDataApi } from "../../Services/apiServices";
+import { fetchGSDataApi} from "../../Services/apiServices";
 
 const ManagerSignIn = () => {
   const [divisions, setDivisions] = useState([]);
@@ -27,7 +26,6 @@ const ManagerSignIn = () => {
     lastName: "",
     date_of_birth: "",
     divisionName: "",
-    age: "",
     address: "",
     nic: "",
     contactNo: "",

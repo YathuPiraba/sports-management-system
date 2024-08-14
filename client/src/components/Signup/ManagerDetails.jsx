@@ -73,16 +73,6 @@ const ManagerDetails = ({ details, handleChange, divisions }) => (
         className="mt-1 p-2 w-full border rounded"
       />
     </div>
-    <div>
-      <label className="block text-gray-700">Age</label>
-      <input
-        type="number"
-        name="age"
-        value={details.age}
-        onChange={handleChange}
-        className="mt-1 p-2 w-full border rounded"
-      />
-    </div>
     <div className="md:col-span-2">
       <label className="block text-gray-700">Address</label>
       <input

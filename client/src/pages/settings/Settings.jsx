@@ -6,16 +6,21 @@ import UpdateProfile from "../../Components/admin/UpdateProfile";
 import { fetchUserDetails } from "../../features/authslice";
 import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
+import UpdateManagerProfile from "../../Components/admin/UpdateManagerProfile";
+import { fetchManagerDetailApi } from "../../Services/apiServices";
 
 const Settings = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.userdata);
+  const roleID = useSelector((state) => state.auth.userdata.role_id);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
 
   const image = user.image;
   const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
+
+  console.log("user", roleID);
 
   const showPasswordModal = () => {
     setIsPasswordModalOpen(true);
@@ -53,14 +58,15 @@ const Settings = () => {
             <h1 className="text-3xl text-center font-medium py-8 text-cyan-600">
               Admin Profile
             </h1>
-            <span className="relative inline-flex h-20 w-20 items-center justify-center rounded-full text-white">
+            <span
+              className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
+              style={{ width: 80, height: 80 }}
+            >
               <img
                 src={image ? `${baseUrl}/${image}` : logo}
                 alt="User Profile"
                 title="user profile"
-                width="80"
-                height="80"
-                className="max-w-full rounded-full"
+                className="w-full h-full object-cover"
               />
             </span>
           </figure>
@@ -115,11 +121,19 @@ const Settings = () => {
               footer={null}
               className="lg:mr-72"
             >
-              <UpdateProfile
-                setIsModalOpen={setIsProfileModalOpen}
-                user={user}
-                fetchDetails={fetchDetails}
-              />
+              {roleID == 1 ? (
+                <UpdateProfile
+                  setIsModalOpen={setIsProfileModalOpen}
+                  user={user}
+                  fetchDetails={fetchDetails}
+                />
+              ) : (
+                <UpdateManagerProfile
+                  setIsModalOpen={setIsProfileModalOpen}
+                  user={user}
+                  fetchDetails={fetchDetails}
+                />
+              )}
             </Modal>
           </div>
         </div>

@@ -41,7 +41,7 @@ const useManagerNotifications = () => {
 
         // Listen for real-time updates on the "managers" channel
         echo.channel("managers").listen(".ManagerApplied", (event) => {
-          console.log("New manager applied:", event.manager);
+          console.log("Notification updated:", event.manager);
           fetchManagerData();
         });
 
