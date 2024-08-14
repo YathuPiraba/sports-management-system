@@ -14,18 +14,18 @@ import { Popconfirm, message } from "antd";
 import GridLoader from "react-spinners/GridLoader";
 
 const clubColumns = [
+  "Club Image",
   "Club Name",
   "GS Division Name",
   "Address",
-  "Club History",
   "Contact No",
 ];
 
 const managerColumns = [
+  "Profile",
   "First Name",
   "Last Name",
   "Email",
-  "Image",
   "D.O.B",
   "Address",
   "NIC",
@@ -35,6 +35,7 @@ const managerColumns = [
 const AdminApprovals = () => {
   const [expandedClub, setExpandedClub] = useState(null);
   const { theme } = useTheme();
+
 
   const {
     managerData,

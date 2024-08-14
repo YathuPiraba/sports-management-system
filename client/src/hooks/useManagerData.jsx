@@ -35,7 +35,7 @@ const useManagerData = () => {
         firstName: manager.firstName,
         lastName: manager.lastName,
         email: manager.user.email,
-        image: manager.image,
+        image: manager.user.image,
         dateOfBirth: manager.date_of_birth,
         address: manager.address,
         nic: manager.nic,
@@ -56,9 +56,9 @@ const useManagerData = () => {
 
         return {
           clubName: club.clubName,
+          clubImage: club.clubImage,
           gsDivisionName: club.clubDivisionName,
           address: club.clubAddress,
-          clubHistory: club.club_history,
           contactNo: club.clubContactNo,
           managers: filteredManagers.filter(
             (manager) => manager.club.clubName === clubName

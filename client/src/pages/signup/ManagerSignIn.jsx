@@ -3,17 +3,19 @@ import axios from "axios";
 import {  useNavigate } from "react-router-dom";
 import ManagerDetails from "../../Components/Signup/ManagerDetails";
 import ClubDetails from "../../Components/Signup/ClubDetails";
-import { apply, applyManager } from "../../features/authslice";
+import {  applyManager } from "../../features/authslice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import { fetchGSDataApi } from "../../Services/apiServices";
 
 const ManagerSignIn = () => {
   const [divisions, setDivisions] = useState([]);
   const [clubDetails, setClubDetails] = useState({
     clubName: "",
     clubAddress: "",
-    clubImage: "",
+    club_history:"",
     clubContactNo: "",
+    clubImage: "",
     clubDivisionName: "",
   });
   const [managerDetails, setManagerDetails] = useState({
@@ -42,14 +44,9 @@ const ManagerSignIn = () => {
     };
 
     try {
-      const result = await dispatch(applyManager(formData));
-      if (applyManager.fulfilled.match(result)) {
-        const resdata = result.payload;
-        console.log(resdata);   
-        // Dispatch login action with the result data
-        dispatch(apply(resdata));
-        navigate("/home");
-      }
+      const result = await dispatch(applyManager(formData)).unwrap();
+      console.log("result",result);
+      navigate("/home");
     } catch (error) {
       console.error("Error creating request", error);
     }
@@ -57,9 +54,7 @@ const ManagerSignIn = () => {
 
   const fetchGsData = async () => {
     try {
-      const res = await axios.get(
-        "http://127.0.0.1:8000/api/gs-divisions/list"
-      );
+      const res = await fetchGSDataApi()
       setDivisions(res.data.data);
       console.log(res.data.data);
     } catch (error) {

@@ -6,10 +6,10 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const authenticate = useSelector((state) => state.auth.userdata);
+  const authenticate = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
 
-  console.log(authenticate);
+  console.log("aut",authenticate);
 
   const [verified, setVerified] = useState(authenticate.is_verified);
 

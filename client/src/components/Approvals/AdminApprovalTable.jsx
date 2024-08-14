@@ -1,6 +1,8 @@
 import React from "react";
 import { useTheme } from "../../context/ThemeContext";
 
+const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL
+
 const AdminApprovalTable = ({
   clubData,
   clubColumns,
@@ -12,9 +14,9 @@ const AdminApprovalTable = ({
 
   const clubColumnMapping = {
     "Club Name": "clubName",
+    "Club Image": "clubImage",
     "GS Division Name": "gsDivisionName",
     Address: "address",
-    "Club History": "clubHistory",
     "Contact No": "contactNo",
   };
 
@@ -22,12 +24,29 @@ const AdminApprovalTable = ({
     "First Name": "firstName",
     "Last Name": "lastName",
     Email: "email",
-    Image: "image",
+    Profile: "image",
     "D.O.B": "dateOfBirth",
     Address: "address",
     NIC: "nic",
     "Contact No": "contactNo",
   };
+
+  const renderCell = (data, column, mapping) => {
+    const key = mapping[column];
+    if (column === "Club Image" || column === "Profile") {
+      return data[key] ? (
+        <img
+          src={`${baseUrl}/${data[key]}`}
+          alt={`${column} for ${data.clubName || data.firstName}`}
+          className="w-16 h-16 object-cover rounded-full"
+        />
+      ) : (
+        "N/A"
+      );
+    }
+    return data[key] || "N/A";
+  };
+
   return (
     <div
       className={`space-y-8 border-gray-300 font-roboto shadow-md text-black ${
@@ -59,7 +78,7 @@ const AdminApprovalTable = ({
               <tr>
                 {clubColumns.map((col) => (
                   <td key={col} className="px-3 py-4 whitespace-nowrap text-sm">
-                    {club[clubColumnMapping[col]] || "N/A"}
+                    {renderCell(club, col, clubColumnMapping)}
                   </td>
                 ))}
               </tr>
@@ -92,7 +111,7 @@ const AdminApprovalTable = ({
               <tr key={index}>
                 {managerColumns.map((col) => (
                   <td key={col} className="px-3 py-4 whitespace-nowrap text-sm">
-                    {row[managerColumnMapping[col]] || "N/A"}
+                    {renderCell(row, col, managerColumnMapping)}
                   </td>
                 ))}
               </tr>

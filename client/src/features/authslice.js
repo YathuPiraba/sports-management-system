@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import {
   loginApi,
   fetchUserDetailsApi,
   applyManagerApi,
   logoutApi,
 } from "../Services/apiServices";
+
 
 // Thunk to handle login and token storage
 export const loginAdmin = createAsyncThunk("/login", async (data) => {
@@ -26,9 +27,14 @@ export const fetchUserDetails = createAsyncThunk(
 export const applyManager = createAsyncThunk(
   "/signup/manager",
   async (data) => {
-    const res = await applyManagerApi(data);
-    console.log({ res });
-    return res.data;
+    try {
+      const res = await applyManagerApi(data);
+      console.log("API response:", res);
+      return res.data;
+    } catch (error) {
+      console.error("Error in applyManager thunk:", error);
+      throw error;
+    }
   }
 );
 
@@ -61,13 +67,15 @@ const authSlice = createSlice({
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.userdata = action.payload;
       })
-      .addCase(applyManager.fulfilled, (state, action) => {})
       .addCase(logOutAdmin.fulfilled, (state) => {
         state.token = null;
         state.userdata = null;
+      })
+      .addCase(applyManager.fulfilled, (state, action) => {
+        state.userdata = action.payload.userdata;
       });
   },
 });
 
 export default authSlice.reducer;
-export const { apply, logout } = authSlice.actions;
+export const {logout } = authSlice.actions;

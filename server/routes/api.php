@@ -40,11 +40,12 @@ Route::middleware('auth.token')->group(function () {
     Route::get('/manager/query', [ManagerController::class, 'queryManagers']);
     Route::delete('manager/deleteManager/{user_id}', [ManagerController::class, 'deleteManager']);
 
-    Route::get('/manager/pending', [ManagerController::class, 'pendingManagers']);
+    // Route::get('/manager/pending', [ManagerController::class, 'pendingManagers']);
     Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
     Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
 });
 
+Route::get('/manager/pending', [ManagerController::class, 'pendingManagers']);
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
 

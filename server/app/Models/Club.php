@@ -15,7 +15,7 @@ class Club extends Model
         'clubAddress',
         'club_history',
         'clubContactNo',
-        'ClubImage',
+        'clubImage',
         'isVerified',
     ];
 

@@ -12,7 +12,11 @@ export const fetchUserDetailsApi = () => {
 
 // Apply as manager API
 export const applyManagerApi = (data) => {
-  return apiClient.post("/manager/apply", data);
+  return apiClient.post("/manager/apply", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 // Logout API
@@ -62,7 +66,7 @@ export const fetchManagerPendingDataApi = (page = 1, perPage = 10) => {
 
 // Update Admin Details API
 export const updateAdminDetailsApi = (userId, data) => {
-  data.append('_method', 'PUT');
+  data.append("_method", "PUT");
 
   return authApiClient.post(`/user/admin-update/${userId}`, data, {
     headers: {

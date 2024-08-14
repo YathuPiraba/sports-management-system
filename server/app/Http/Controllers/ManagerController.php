@@ -34,7 +34,7 @@ class ManagerController extends Controller
             'clubImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'userName' => 'required|string|max:255|unique:users,userName',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'divisionName' => 'required|string|max:255',
             'firstName' => 'required|string|max:255',
@@ -78,16 +78,21 @@ class ManagerController extends Controller
                 $imageName = basename($imagePath);
             }
 
-            // Create a new club
-            $club = Club::create([
+            $clubData = [
                 'clubName' => $request->clubName,
                 'gs_id' => $gsDivision1->id,
                 'clubAddress' => $request->clubAddress,
                 'club_history' => $request->club_history,
                 'clubContactNo' => $request->clubContactNo,
-                'clubImage' => $request->clubImage,
                 "isVerified" => false,
-            ]);
+            ];
+
+            if ($request->hasFile('clubImage')) {
+                $clubImagePath = $request->file('clubImage')->store('public/images');
+                $clubData['clubImage'] = basename($clubImagePath);
+            }
+
+            $club = Club::create($clubData);
 
             $user = User::create([
                 'userName' => $request->userName,

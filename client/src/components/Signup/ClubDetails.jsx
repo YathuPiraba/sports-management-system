@@ -42,6 +42,17 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
       />
     </div>
     <div>
+      <label className="block text-gray-700">Image</label>
+      <input
+        type="file"
+        name="clubImage"
+        onChange={(e) =>
+          handleChange({ target: { name: "clubImage", value: e.target.files[0] } })
+        }
+        className="mt-1 p-2 w-full border rounded"
+      />
+    </div>
+    <div>
       <label className="block text-gray-700">Division Name</label>
       <select
         name="clubDivisionName"
