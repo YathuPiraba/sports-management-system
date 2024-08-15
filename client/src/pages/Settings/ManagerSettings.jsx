@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button, Modal } from "antd";
 import { useSingleManagerDetails } from "../../hooks/useSingleManagerData";
 import { useTheme } from "../../context/ThemeContext";
@@ -7,6 +7,9 @@ import { fetchUserDetails } from "../../features/authslice";
 import GridLoader from "react-spinners/GridLoader";
 import ChangePassword from "../../Components/settings/ChangePassword";
 import UpdateManagerProfile from "../../Components/settings/UpdateManagerProfile";
+import Avatar from "../../assets/default-avatar-profile.png";
+import { updateManagerDetailsApi } from "../../Services/apiServices";
+import toast from "react-hot-toast";
 
 const ManagerSettings = () => {
   const dispatch = useDispatch();
@@ -16,23 +19,76 @@ const ManagerSettings = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
   const { managerDetails, loading, error } = useSingleManagerDetails();
+  const fileInputRef = useRef(null);
 
   const image = user.image;
   const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
 
   const showPasswordModal = () => setIsPasswordModalOpen(true);
-
   const showProfileModal = () => setIsProfileModalOpen(true);
-
   const handleCancelPassword = () => setIsPasswordModalOpen(false);
-
   const handleCancelProfile = () => setIsProfileModalOpen(false);
-
   const fetchDetails = () => dispatch(fetchUserDetails());
 
   useEffect(() => {
     fetchDetails();
   }, [dispatch]);
+
+  const handleChangePicture = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        await updateManagerDetailsApi(user.userId, formData);
+        toast.success("Profile picture updated successfully");
+        fetchDetails();
+      } catch (error) {
+        toast.error("Failed to update profile picture");
+      }
+    }
+  };
+
+  const handleDeletePicture = async () => {
+    try {
+      const response = await fetch(Avatar);
+
+      const blob = await response.blob();
+
+      const formData = new FormData();
+      formData.append("image", blob, "default-avatar-profile.png");
+
+      await updateManagerDetailsApi(user.userId, formData);
+      toast.success("Profile picture deleted successfully");
+      fetchDetails();
+    } catch (error) {
+      toast.error("Failed to delete profile picture");
+      console.error("Error deleting profile picture:", error);
+    }
+  };
+
+  const profileDetails = [
+    {
+      label: "Full Name",
+      value: `${managerDetails.firstName || ""} ${
+        managerDetails.lastName || ""
+      }`,
+    },
+    { label: "Username", value: user.userName },
+    { label: "Email", value: user.email },
+    { label: "Contact No", value: managerDetails.contactNo },
+    { label: "WhatsApp No", value: managerDetails.whatsappNo },
+    { label: "NIC", value: managerDetails.nic },
+    { label: "Date of Birth", value: managerDetails.date_of_birth },
+    { label: "Division Name", value: managerDetails.gsDivision?.divisionName },
+    { label: "Address", value: managerDetails.address },
+  ];
+
   return (
     <div>
       {loading ? (
@@ -46,92 +102,109 @@ const ManagerSettings = () => {
           />
         </div>
       ) : (
-        <div className="max-w-screen-xl lg:px-8 lg:py-2 h-auto  font-poppins">
+        <div className="max-w-screen-xl mx-auto px-4 py-2 font-poppins">
+          <h1 className="text-2xl font-bold mb-3">Manager profile</h1>
           <div
-            className={`overflow-hidden rounded pb-12 mx-auto ${
+            className={`${
               theme === "light"
                 ? "bg-white text-black"
                 : "bg-gray-300 text-white"
-            } text-center text-slate-500 border border-blue-100 shadow-md hover:border-blue-300 rounded-md`}
+            } rounded-lg shadow-md px-6 py-3`}
           >
-            <figure className="p-6 pb-0">
-              <h1 className="text-3xl text-center font-medium py-8 text-cyan-600">
-                Manager Profile
-              </h1>
-              <span
-                className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
-                style={{ width: 80, height: 80 }}
-              >
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
                 <img
-                  src={image ? `${baseUrl}/${image}` : logo}
+                  src={image ? `${baseUrl}/${image}` : "default-avatar.png"}
                   alt="User Profile"
-                  title="user profile"
-                  className="w-full h-full object-cover"
+                  className="w-44 h-44 rounded-full object-cover mb-3"
                 />
-              </span>
-            </figure>
-            <div className="p-6">
-              <header className="mb-4">
-                <h3 className="text-xl font-medium text-slate-700">
-                  {user.userName}
-                </h3>
-                <p className="text-slate-400">{user.email}</p>
-              </header>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                  accept="image/*"
+                />
+                <Button
+                  onClick={handleChangePicture}
+                  className="bg-indigo-900 text-white mb-2 w-full py-1"
+                >
+                  Change picture
+                </Button>
+                <Button
+                  onClick={handleDeletePicture}
+                  className="border border-gray-300 w-full py-1"
+                >
+                  Delete picture
+                </Button>
+              </div>
+              <div className="flex-grow">
+                <ul className="space-y-1">
+                  {profileDetails.map((detail, index) => (
+                    <li
+                      key={index}
+                      className="flex border-b border-gray-200 text-black py-1.5"
+                    >
+                      <span className="font-medium w-1/3">{detail.label}:</span>
+                      <span className="w-2/3">{detail.value || "N/A"}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="flex justify-center gap-2 p-6 pt-0">
+            <div className="flex ml-64 gap-16 mt-4">
               <Button
                 onClick={showPasswordModal}
-                className="h-10 px-5 w-40 bg-emerald-500 text-base text-white hover:bg-emerald-800"
+                className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
               >
                 Change Password
               </Button>
-              <Modal
-                title={
-                  <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
-                    Change Password
-                  </div>
-                }
-                style={{ textAlign: "center" }}
-                open={isPasswordModalOpen}
-                onCancel={handleCancelPassword}
-                footer={null}
-                className="lg:mr-72"
-              >
-                <ChangePassword
-                  setIsModalOpen={setIsPasswordModalOpen}
-                  userId={user.userId}
-                  roleID={roleID}
-                />
-              </Modal>
               <Button
                 onClick={showProfileModal}
-                className="h-10 px-5 w-40 bg-blue-500 text-base text-white hover:bg-emerald-800"
+                className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
               >
                 Update Profile
               </Button>
-              <Modal
-                title={
-                  <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
-                    Update Profile
-                  </div>
-                }
-                style={{ textAlign: "center" }}
-                open={isProfileModalOpen}
-                onCancel={handleCancelProfile}
-                footer={null}
-                className="lg:mr-72"
-              >
-                <UpdateManagerProfile
-                  setIsModalOpen={setIsProfileModalOpen}
-                  managerDetails={managerDetails}
-                  user={user}
-                  fetchDetails={fetchDetails}
-                />
-              </Modal>
             </div>
           </div>
         </div>
       )}
+      <Modal
+        title={
+          <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
+            Change Password
+          </div>
+        }
+        style={{ textAlign: "center" }}
+        open={isPasswordModalOpen}
+        onCancel={handleCancelPassword}
+        footer={null}
+        className="lg:mr-72"
+      >
+        <ChangePassword
+          setIsModalOpen={setIsPasswordModalOpen}
+          userId={user.userId}
+          roleID={roleID}
+        />
+      </Modal>
+      <Modal
+        title={
+          <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
+            Update Profile
+          </div>
+        }
+        style={{ textAlign: "center" }}
+        open={isProfileModalOpen}
+        onCancel={handleCancelProfile}
+        footer={null}
+        className="lg:mr-72"
+      >
+        <UpdateManagerProfile
+          setIsModalOpen={setIsProfileModalOpen}
+          user={user}
+          fetchDetails={fetchDetails}
+        />
+      </Modal>
     </div>
   );
 };

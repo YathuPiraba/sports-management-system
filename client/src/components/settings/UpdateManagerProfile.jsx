@@ -35,7 +35,6 @@ const UpdateManagerProfile = ({ setIsModalOpen, managerDetails }) => {
         nic: managerDetails.nic || "",
         date_of_birth: managerDetails.date_of_birth || "",
         divisionName: managerDetails.gsDivision?.divisionName || "",
-        image: null,
       });
     }
   }, [user, managerDetails]);
@@ -62,25 +61,12 @@ const UpdateManagerProfile = ({ setIsModalOpen, managerDetails }) => {
         nic: managerDetails.nic || "",
         date_of_birth: managerDetails.date_of_birth || "",
         divisionName: managerDetails.gsDivision?.divisionName || "",
-        image: null,
       });
     }
   };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-
-    const hasChanges = Object.keys(formData).some((key) => {
-      if (key === "image") return formData[key] !== null;
-      if (key === "userName" || key === "email")
-        return formData[key] !== user[key];
-      return formData[key] !== managerDetails[key];
-    });
-
-    if (!hasChanges) {
-      toast.error("No changes detected");
-      return;
-    }
 
     try {
       const formDataToSend = new FormData();
@@ -111,20 +97,7 @@ const UpdateManagerProfile = ({ setIsModalOpen, managerDetails }) => {
 
   return (
     <div>
-      <form onSubmit={handleUpdateProfile}>
-        <div className="relative my-6">
-          <input
-            onChange={handleInputChange}
-            id="image"
-            type="file"
-            name="image"
-            className="peer relative w-full rounded border border-slate-200 px-4 py-2.5 text-sm text-slate-500 placeholder-transparent outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-emerald-500 focus:outline-none invalid:focus:border-pink-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 [&::file-selector-button]:hidden"
-          />
-          <label htmlFor="image" className={labelClassName}>
-            Upload an Image
-          </label>
-        </div>
-
+      <form onSubmit={handleUpdateProfile} className="mt-0">
         {[
           { id: "firstName", label: "First Name" },
           { id: "lastName", label: "Last Name" },
@@ -136,7 +109,7 @@ const UpdateManagerProfile = ({ setIsModalOpen, managerDetails }) => {
           { id: "date_of_birth", label: "Date of Birth", type: "date" },
           { id: "divisionName", label: "Division Name" },
         ].map((field) => (
-          <div key={field.id} className="relative my-6">
+          <div key={field.id} className="relative my-3">
             <input
               id={field.id}
               type={field.type || "text"}

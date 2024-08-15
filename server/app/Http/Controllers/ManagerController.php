@@ -591,7 +591,7 @@ class ManagerController extends Controller
             'whatsappNo' => 'nullable|string|max:15',
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $userId,
             'userName' => 'sometimes|string|max:255|unique:users,userName,' . $userId,
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg,webp|max:2048',
             'divisionName' => 'sometimes|string|max:255',
             'currentPassword' => 'required_with:password|string',
             'password' => 'sometimes|string',
@@ -663,7 +663,7 @@ class ManagerController extends Controller
                 if (!Hash::check($request->currentPassword, $user->password)) {
                     return response()->json(['error' => 'Current password is incorrect'], 400);
                 }
-                
+
                 $user->password = Hash::make($request->password);
             }
 

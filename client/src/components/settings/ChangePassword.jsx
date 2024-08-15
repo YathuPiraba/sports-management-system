@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { updateAdminDetailsApi,updateManagerDetailsApi } from "../../Services/apiServices";
+import {
+  updateAdminDetailsApi,
+  updateManagerDetailsApi,
+} from "../../Services/apiServices";
 
 const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -37,7 +40,7 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
       let res;
       if (roleID == 1) {
         res = await updateAdminDetailsApi(userId, formData);
-      }else if (roleID==2){
+      } else if (roleID == 2) {
         res = await updateManagerDetailsApi(userId, formData);
       }
       toast.success(res.data.message);
@@ -73,7 +76,7 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
   return (
     <div>
       <form>
-        <div className="relative my-6">
+        <div className="relative my-2">
           <input
             id="current_password"
             type="password"
@@ -90,7 +93,7 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
             Current Password
           </label>
         </div>
-        <div className="relative my-6">
+        <div className="relative my-2">
           <input
             id="password"
             type="password"
@@ -107,7 +110,7 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
             New Password
           </label>
         </div>
-        <div className="relative my-6">
+        <div className="relative my-2">
           <input
             id="confirm_password"
             type="password"
