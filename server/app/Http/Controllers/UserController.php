@@ -107,6 +107,7 @@ class UserController extends Controller
             ],
             'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'password' => 'sometimes|string',
+            'currentPassword' => 'required_with:password|string',
         ]);
 
         // Update userName and email if provided
@@ -120,6 +121,15 @@ class UserController extends Controller
 
         // Update password if provided
         if ($request->has('password')) {
+
+            if (!$request->has('currentPassword')) {
+                return response()->json(['error' => 'Current password is required to change password'], 400);
+            }
+
+            if (!Hash::check($request->currentPassword, $user->password)) {
+                return response()->json(['error' => 'Current password is incorrect'], 400);
+            }
+
             $user->password = Hash::make($request->password);
         }
 

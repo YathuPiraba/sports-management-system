@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { RiTeamFill } from "react-icons/ri";
 import { BiSolidReport, BiCategoryAlt } from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
-import { MdEmojiEvents, MdApproval  } from "react-icons/md";
+import { MdEmojiEvents, MdApproval } from "react-icons/md";
 
 const ManagerSideBar = () => {
   return (
@@ -76,7 +76,7 @@ const ManagerSideBar = () => {
           <div className="list">
             <li className="px-3">
               <Link
-                to="/settings"
+                to="/manager/settings"
                 className="flex items-center gap-3 rounded p-3 transition-colors"
               >
                 <div className="flex items-center self-center ">

@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import ManagerDashboard from "../Pages/Manager/ManagerDashboard";
 import PageNotFound from "../Pages/PageNotFound";
+import ManagerSettings from "../Pages/Settings/ManagerSettings";
 
 const ManagerRoute = () => {
   return (
@@ -9,6 +10,7 @@ const ManagerRoute = () => {
       <Route path="/manager">
         <Route path="dashboard" element={<ManagerDashboard />} />
         <Route path="approvals" element={<ManagerDashboard />} />
+        <Route path="settings" element={<ManagerSettings />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

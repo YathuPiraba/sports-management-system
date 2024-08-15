@@ -1,18 +1,14 @@
-import { Button, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import ChangePassword from "../../Components/admin/ChangePassword";
-import UpdateProfile from "../../Components/admin/UpdateProfile";
-import { fetchUserDetails } from "../../features/authslice";
-import logo from "../../assets/log.png";
-import { useTheme } from "../../context/ThemeContext";
-import UpdateManagerProfile from "../../Components/admin/UpdateManagerProfile";
+import { Button, Modal } from "antd";
 import { useSingleManagerDetails } from "../../hooks/useSingleManagerData";
+import { useTheme } from "../../context/ThemeContext";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserDetails } from "../../features/authslice";
 import GridLoader from "react-spinners/GridLoader";
-import AdminDisplay from "../../Components/admin/AdminDisplay";
-import OthersDisplay from "../../Components/admin/OthersDisplay";
+import ChangePassword from "../../Components/settings/ChangePassword";
+import UpdateManagerProfile from "../../Components/settings/UpdateManagerProfile";
 
-const Settings = () => {
+const ManagerSettings = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.userdata);
   const roleID = useSelector((state) => state.auth.userdata.role_id);
@@ -37,9 +33,8 @@ const Settings = () => {
   useEffect(() => {
     fetchDetails();
   }, [dispatch]);
-
   return (
-    <>
+    <div>
       {loading ? (
         <div className="flex justify-center items-center w-full h-[75vh]">
           <GridLoader
@@ -59,16 +54,30 @@ const Settings = () => {
                 : "bg-gray-300 text-white"
             } text-center text-slate-500 border border-blue-100 shadow-md hover:border-blue-300 rounded-md`}
           >
-            {roleID == 1 ? (
-              <AdminDisplay user={user} image={image} baseUrl={baseUrl} />
-            ) : (
-              <OthersDisplay
-                user={user}
-                image={image}
-                baseUrl={baseUrl}
-                roleID={roleID}
-              />
-            )}
+            <figure className="p-6 pb-0">
+              <h1 className="text-3xl text-center font-medium py-8 text-cyan-600">
+                Manager Profile
+              </h1>
+              <span
+                className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
+                style={{ width: 80, height: 80 }}
+              >
+                <img
+                  src={image ? `${baseUrl}/${image}` : logo}
+                  alt="User Profile"
+                  title="user profile"
+                  className="w-full h-full object-cover"
+                />
+              </span>
+            </figure>
+            <div className="p-6">
+              <header className="mb-4">
+                <h3 className="text-xl font-medium text-slate-700">
+                  {user.userName}
+                </h3>
+                <p className="text-slate-400">{user.email}</p>
+              </header>
+            </div>
             <div className="flex justify-center gap-2 p-6 pt-0">
               <Button
                 onClick={showPasswordModal}
@@ -91,6 +100,7 @@ const Settings = () => {
                 <ChangePassword
                   setIsModalOpen={setIsPasswordModalOpen}
                   userId={user.userId}
+                  roleID={roleID}
                 />
               </Modal>
               <Button
@@ -111,27 +121,19 @@ const Settings = () => {
                 footer={null}
                 className="lg:mr-72"
               >
-                {roleID == 1 ? (
-                  <UpdateProfile
-                    setIsModalOpen={setIsProfileModalOpen}
-                    user={user}
-                    fetchDetails={fetchDetails}
-                  />
-                ) : (
-                  <UpdateManagerProfile
-                    setIsModalOpen={setIsProfileModalOpen}
-                    managerDetails={managerDetails}
-                    user={user}
-                    fetchDetails={fetchDetails}
-                  />
-                )}
+                <UpdateManagerProfile
+                  setIsModalOpen={setIsProfileModalOpen}
+                  managerDetails={managerDetails}
+                  user={user}
+                  fetchDetails={fetchDetails}
+                />
               </Modal>
             </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
-export default Settings;
+export default ManagerSettings;

@@ -593,6 +593,7 @@ class ManagerController extends Controller
             'userName' => 'sometimes|string|max:255|unique:users,userName,' . $userId,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'divisionName' => 'sometimes|string|max:255',
+            'currentPassword' => 'required_with:password|string',
             'password' => 'sometimes|string',
         ]);
 
@@ -654,6 +655,15 @@ class ManagerController extends Controller
 
             // Update password if provided
             if ($request->has('password')) {
+
+                if (!$request->has('currentPassword')) {
+                    return response()->json(['error' => 'Current password is required to change password'], 400);
+                }
+
+                if (!Hash::check($request->currentPassword, $user->password)) {
+                    return response()->json(['error' => 'Current password is incorrect'], 400);
+                }
+                
                 $user->password = Hash::make($request->password);
             }
 
