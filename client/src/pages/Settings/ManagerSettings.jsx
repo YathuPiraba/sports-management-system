@@ -10,6 +10,11 @@ import UpdateManagerProfile from "../../Components/settings/UpdateManagerProfile
 import Avatar from "../../assets/default-avatar-profile.png";
 import { updateManagerDetailsApi } from "../../Services/apiServices";
 import toast from "react-hot-toast";
+import { MdPermIdentity, MdOutlineDateRange,MdPhoneInTalk } from "react-icons/md";
+import { CgRename } from "react-icons/cg";
+import { FaRegIdCard, FaMapMarkerAlt,FaBuilding } from "react-icons/fa";
+import { HiOutlineMail } from "react-icons/hi";
+import { BsWhatsapp } from "react-icons/bs";
 
 const ManagerSettings = () => {
   const dispatch = useDispatch();
@@ -18,7 +23,8 @@ const ManagerSettings = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
-  const { managerDetails, loading, error } = useSingleManagerDetails();
+  const { managerDetails, loading, refetchManagerDetails } =
+    useSingleManagerDetails();
   const fileInputRef = useRef(null);
 
   const image = user.image;
@@ -78,15 +84,48 @@ const ManagerSettings = () => {
       value: `${managerDetails.firstName || ""} ${
         managerDetails.lastName || ""
       }`,
+      icon: <CgRename size={19} className="mr-5" />,
     },
-    { label: "Username", value: user.userName },
-    { label: "Email", value: user.email },
-    { label: "Contact No", value: managerDetails.contactNo },
-    { label: "WhatsApp No", value: managerDetails.whatsappNo },
-    { label: "NIC", value: managerDetails.nic },
-    { label: "Date of Birth", value: managerDetails.date_of_birth },
-    { label: "Division Name", value: managerDetails.gsDivision?.divisionName },
-    { label: "Address", value: managerDetails.address },
+    {
+      label: "Username",
+      value: user.userName,
+      icon: <MdPermIdentity size={19} className="mr-5" />,
+    },
+    {
+      label: "Email",
+      value: user.email,
+      icon: <HiOutlineMail className="mr-5 text-red-500" />,
+    },
+    {
+      label: "Contact No",
+      value: managerDetails.contactNo,
+      icon: <MdPhoneInTalk className="mr-5" />,
+    },
+    {
+      label: "WhatsApp No",
+      value: managerDetails.whatsappNo,
+      icon: <BsWhatsapp className="mr-5 text-green-600" />,
+    },
+    {
+      label: "NIC",
+      value: managerDetails.nic,
+      icon: <FaRegIdCard className="mr-5" />,
+    },
+    {
+      label: "Date of Birth",
+      value: managerDetails.date_of_birth,
+      icon: <MdOutlineDateRange className="mr-5" />,
+    },
+    {
+      label: "Division Name",
+      value: managerDetails.gsDivision?.divisionName,
+      icon: <FaBuilding className="mr-5" />,
+    },
+    {
+      label: "Address",
+      value: managerDetails.address,
+      icon: <FaMapMarkerAlt className="mr-5" />,
+    },
   ];
 
   return (
@@ -145,7 +184,10 @@ const ManagerSettings = () => {
                       key={index}
                       className="flex border-b border-gray-200 text-black py-1.5"
                     >
-                      <span className="font-medium w-1/3">{detail.label}:</span>
+                      <span className="font-medium w-1/3 flex items-center">
+                        {detail.icon}
+                        {detail.label}:
+                      </span>
                       <span className="w-2/3">{detail.value || "N/A"}</span>
                     </li>
                   ))}
@@ -189,7 +231,7 @@ const ManagerSettings = () => {
       </Modal>
       <Modal
         title={
-          <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
+          <div className="font-poppins tracking-wide w-full pt-1 mb-2 text-2xl text-gray-600">
             Update Profile
           </div>
         }
@@ -203,6 +245,8 @@ const ManagerSettings = () => {
           setIsModalOpen={setIsProfileModalOpen}
           user={user}
           fetchDetails={fetchDetails}
+          managerDetails={managerDetails}
+          fetchManagerDetails={refetchManagerDetails}
         />
       </Modal>
     </div>

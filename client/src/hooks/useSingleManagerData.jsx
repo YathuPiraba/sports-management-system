@@ -8,30 +8,30 @@ export const useSingleManagerDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      if (!userId) {
-        setLoading(false);
-        return;
-      }
+  const fetchManagerDetails = async () => {
+    if (!userId) return;
 
-      try {
-        setLoading(true);
-        const response = await fetchManagerDetailApi(userId);
-        setManagerDetails(response.data.manager);
-        setError(null);
-      } catch (err) {
-        setError(
-          err.message || "An error occurred while fetching manager details"
-        );
-        setManagerDetails(null);
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const response = await fetchManagerDetailApi(userId);
+      setManagerDetails(response.data.manager);
+      setError(null);
+    } catch (err) {
+      setError(
+        err.message || "An error occurred while fetching manager details"
+      );
+      setManagerDetails(null);
+    }
+  };
+
+  useEffect(() => {
+    const fetchDetailsWithLoading = async () => {
+      setLoading(true);
+      await fetchManagerDetails();
+      setLoading(false);
     };
 
-    fetchDetails();
+    fetchDetailsWithLoading();
   }, [userId]);
 
-  return { managerDetails, loading, error };
+  return { managerDetails, loading, error, refetchManagerDetails: fetchManagerDetails };
 };
