@@ -10,9 +10,13 @@ import UpdateManagerProfile from "../../Components/settings/UpdateManagerProfile
 import Avatar from "../../assets/default-avatar-profile.png";
 import { updateManagerDetailsApi } from "../../Services/apiServices";
 import toast from "react-hot-toast";
-import { MdPermIdentity, MdOutlineDateRange,MdPhoneInTalk } from "react-icons/md";
+import {
+  MdPermIdentity,
+  MdOutlineDateRange,
+  MdPhoneInTalk,
+} from "react-icons/md";
 import { CgRename } from "react-icons/cg";
-import { FaRegIdCard, FaMapMarkerAlt,FaBuilding } from "react-icons/fa";
+import { FaRegIdCard, FaMapMarkerAlt, FaBuilding } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import { BsWhatsapp } from "react-icons/bs";
 
