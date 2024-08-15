@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { RiTeamFill } from "react-icons/ri";
-import { BiSolidReport, BiCategoryAlt } from "react-icons/bi";
+import { BiSolidReport, BiGroup, BiCategoryAlt } from "react-icons/bi";
 import { IoIosSettings } from "react-icons/io";
 import { MdEmojiEvents, MdApproval } from "react-icons/md";
+import { BsPeople } from "react-icons/bs";
 
 const ManagerSideBar = () => {
   return (
@@ -13,7 +13,7 @@ const ManagerSideBar = () => {
     >
       <div>
         <ul className="flex flex-1 flex-col gap-2 pt-0">
-          <div className="list">
+          {/* <div className="list">
             <li className="px-3 ">
               <Link
                 to="/manager/dashboard"
@@ -27,18 +27,33 @@ const ManagerSideBar = () => {
                 </div>
               </Link>
             </li>
-          </div>
+          </div> */}
           <div className="list ">
             <li className="px-3">
               <Link
-                to="/club"
+                to="/manager/club"
                 className="flex items-center gap-3 rounded p-3 transition-colors"
               >
                 <div className="flex items-center self-center ">
-                  <RiTeamFill size={20} />
+                  <BiGroup size={20} />
                 </div>
                 <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
                   Club
+                </div>
+              </Link>
+            </li>
+          </div>
+          <div className="list">
+            <li className="px-3">
+              <Link
+                to="/manager/members"
+                className="flex items-center gap-3 rounded p-3 transition-colors"
+              >
+                <div className="flex items-center self-center ">
+                  <BsPeople size={20} />
+                </div>
+                <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
+                  Members
                 </div>
               </Link>
             </li>
@@ -88,22 +103,6 @@ const ManagerSideBar = () => {
               </Link>
             </li>
           </div>
-          {/*  
-        <div className="list">
-        <li className="px-3">
-          <Link
-            to="/reports"
-            className="flex items-center gap-3 rounded p-3 transition-colors"
-          >
-            <div className="flex items-center self-center ">
-              <BiSolidReport size={20} />
-            </div>
-            <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
-              Reports
-            </div>
-          </Link>
-        </li>
-          </div> */}
         </ul>
       </div>
     </nav>

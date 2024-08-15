@@ -9,11 +9,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAdmin, fetchUserDetails } from "../../features/authslice";
 import { Input, Space } from "antd";
+import ForgotPassword from "./ForgotPassword";
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
 const Login = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isForgotPasswordModalVisible, setIsForgotPasswordModalVisible] =
+    useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -75,6 +78,14 @@ const Login = () => {
     setIsModalVisible(false);
   };
 
+  const showForgotPasswordModal = () => {
+    setIsForgotPasswordModalVisible(true);
+  };
+
+  const handleForgotPasswordCancel = () => {
+    setIsForgotPasswordModalVisible(false);
+  };
+
   return (
     <div className="body-container">
       <div className="outter">
@@ -129,7 +140,16 @@ const Login = () => {
                   {errors.password && <span>Password is required</span>}
                 </Space>
                 <div className="forgot-btn">
-                  <p>Forgot password?</p>
+                  <span
+                    onClick={showForgotPasswordModal}
+                   className="white cursor-pointer forgot mt-2 hover:underline ml-2 "
+                  >
+                    Forgot Password?
+                  </span>
+                  <ForgotPassword
+                    isVisible={isForgotPasswordModalVisible}
+                    onClose={handleForgotPasswordCancel}
+                  />
                   <button>Login</button>
                 </div>
               </form>

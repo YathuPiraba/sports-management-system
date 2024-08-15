@@ -83,6 +83,12 @@
   font-style: italic;
 }
 
+.forgot{
+  font-size: small;
+  font-family: "Merriweather", serif;
+  font-style: italic;
+}
+
 .login {
   color: white;
   display: flex;
@@ -125,7 +131,7 @@ form {
 }
 
 .forgot-btn button {
-  margin-top: 10px;
+  
   color: rgba(32, 42, 62);
   background-color: #5fc4ee;
   border: none;
