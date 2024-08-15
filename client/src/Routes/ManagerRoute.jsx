@@ -4,7 +4,7 @@ import ManagerDashboard from "../Pages/Manager/ManagerDashboard";
 import PageNotFound from "../Pages/PageNotFound";
 import ManagerSettings from "../Pages/Settings/ManagerSettings";
 import ClubMembers from "../Pages/Manager/ClubMembers";
-import ManagerClub from "../Pages/Club/ManagerClub"
+import ManagerClub from "../Pages/Club/ManagerClub";
 
 const ManagerRoute = () => {
   return (

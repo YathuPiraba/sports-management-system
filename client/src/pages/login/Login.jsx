@@ -142,7 +142,7 @@ const Login = () => {
                 <div className="forgot-btn">
                   <span
                     onClick={showForgotPasswordModal}
-                   className="white cursor-pointer forgot mt-2 hover:underline ml-2 "
+                    className="white cursor-pointer forgot mt-2 hover:underline ml-2 "
                   >
                     Forgot Password?
                   </span>
