@@ -75,7 +75,7 @@
       <tbody width="100%">
         <tr>
           <td>
-            <table width="866" border="0" cellspacing="0" cellpadding="0">
+            <table width="900" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td class="header" align="center" style="padding: 20px 0">
                   <img
