@@ -30,6 +30,10 @@ const Login = () => {
 
   // Login User
   const onSubmit = async (data) => {
+    if (isForgotPasswordModalVisible) {
+      return;
+    }
+
     try {
       const loginResult = await dispatch(loginAdmin(data));
       if (loginAdmin.fulfilled.match(loginResult)) {
@@ -86,6 +90,13 @@ const Login = () => {
     setIsForgotPasswordModalVisible(false);
   };
 
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    if (!isForgotPasswordModalVisible) {
+      handleSubmit(onSubmit)();
+    }
+  };
+
   return (
     <div className="body-container">
       <div className="outter">
@@ -110,7 +121,7 @@ const Login = () => {
           <div className="login">
             <h2 className=" ">Login</h2>
             <div>
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleFormSubmit}>
                 <input
                   type="text"
                   name="userName"

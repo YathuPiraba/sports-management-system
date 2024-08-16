@@ -90,3 +90,18 @@ export const updateManagerDetailsApi = (userId, data) => {
     },
   });
 };
+
+//Forgot-Password API
+export const forgotPasswordAPI = (data) => {
+  return apiClient.post("/forgot-password", data);
+};
+
+//Verify-OTP API
+export const verifyOtpAPI = (data) => {
+  return apiClient.post("/verify-otp", data);
+};
+
+//Reset-Password API
+export const resetPasswordAPI = (data) => {
+  return apiClient.post("/reset-password", data);
+};

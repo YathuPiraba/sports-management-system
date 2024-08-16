@@ -16,6 +16,8 @@ class User extends Model
         'role_id',
         'is_verified',
         'image',
+        'password_reset_token',
+        'password_reset_expires_at'
     ];
 
     // Relationships
@@ -26,6 +28,11 @@ class User extends Model
     public function clubManagers()
     {
         return $this->hasMany(Club_Manager::class, 'user_id');
+    }
+
+    public function clubMembers()
+    {
+        return $this->hasMany(Member::class, 'user_id');
     }
 
     public function safeAttributes()

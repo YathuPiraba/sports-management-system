@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GsDivisionController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\PasswordResetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,3 +50,7 @@ Route::middleware('auth.token')->group(function () {
 
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
+
+Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
