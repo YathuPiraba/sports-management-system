@@ -18,10 +18,25 @@ use App\Events\UserRejected;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Cloudinary\Cloudinary;
 
 
 class ManagerController extends Controller
 {
+
+    protected $cloudinary;
+
+    public function __construct(Cloudinary $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+
+        // $result now contains the details of the uploaded image
+    }
 
     //POST => http://127.0.0.1:8000/api/manager/apply
     public function managerApply(Request $request)

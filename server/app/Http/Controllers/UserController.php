@@ -9,14 +9,25 @@ use App\Services\TokenService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Cloudinary\Cloudinary;
+
 
 class UserController extends Controller
 {
     protected $tokenService;
+    protected $cloudinary;
 
-    public function __construct(TokenService $tokenService)
+    public function __construct(TokenService $tokenService, Cloudinary $cloudinary)
     {
         $this->tokenService = $tokenService;
+        $this->cloudinary = $cloudinary;
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+
+        // $result now contains the details of the uploaded image
     }
 
 

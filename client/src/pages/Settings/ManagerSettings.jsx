@@ -66,12 +66,11 @@ const ManagerSettings = () => {
 
   const handleDeletePicture = async () => {
     try {
-      const response = await fetch(Avatar);
-
-      const blob = await response.blob();
-
       const formData = new FormData();
-      formData.append("image", blob, "default-avatar-profile.png");
+      formData.append(
+        "image",
+        "https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798615/default-avatar-profile_i6smzy.png"
+      );
 
       await updateManagerDetailsApi(user.userId, formData);
       toast.success("Profile picture deleted successfully");
@@ -157,7 +156,11 @@ const ManagerSettings = () => {
             <div className="flex flex-col md:flex-row gap-8">
               <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
                 <img
-                  src={image ? `${baseUrl}/${image}` : "default-avatar.png"}
+                  src={
+                    image
+                      ? `${baseUrl}/${image}`
+                      : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798615/default-avatar-profile_i6smzy.png"
+                  }
                   alt="User Profile"
                   className="w-44 h-44 rounded-full object-cover mb-3"
                 />

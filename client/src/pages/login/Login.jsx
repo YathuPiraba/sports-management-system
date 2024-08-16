@@ -104,7 +104,10 @@ const Login = () => {
           <div className="heading">
             <div className="topic">
               <div className="logo">
-                <img src={logo} alt="Club Connect Logo" />
+                <img
+                  src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png"
+                  alt="Club Connect Logo"
+                />
                 <h1>
                   <span className="title">C</span>
                   <span className="title3">lub </span>
@@ -115,7 +118,10 @@ const Login = () => {
               <p>Unite Every Club, Connect Every Player...!</p>
             </div>
             <div className="pic">
-              <img src={cover} alt="Cover pic" />
+              <img
+                src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798479/sample-removebg_j1e38u.png"
+                alt="Cover pic"
+              />
             </div>
           </div>
           <div className="login">

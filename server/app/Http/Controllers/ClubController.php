@@ -7,9 +7,25 @@ use App\Models\Club;
 use App\Models\Gs_Division;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Cloudinary\Cloudinary;
+
 
 class ClubController extends Controller
 {
+    protected $cloudinary;
+
+    public function __construct(Cloudinary $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
+    public function uploadImage(Request $request)
+    {
+        $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+
+        // $result now contains the details of the uploaded image
+    }
+
     //POST => http://127.0.0.1:8000/api/clubs/create
     public function clubCreate(Request $request)
     {
