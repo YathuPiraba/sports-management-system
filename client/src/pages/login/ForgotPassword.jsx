@@ -11,7 +11,7 @@ import {
 const ForgotPassword = ({ isVisible, onClose }) => {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState(null);
   const [timer, setTimer] = useState(600);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
@@ -97,7 +97,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
         return (
           <form
             onSubmit={handleSubmit((data) => sendOTP(data.email))}
-            className="space-y-2"
+            className="space-y-1 mt-4"
           >
             <label
               htmlFor="email"
@@ -113,8 +113,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
                   {...field}
                   id="email"
                   placeholder="Enter your email"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  autoComplete="off"
+                  className="w-full mb-2 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 />
               )}
             />
@@ -130,7 +129,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
         );
       case 2:
         return (
-          <form onSubmit={handleSubmit(verifyOTP)} className="space-y-2">
+          <form onSubmit={handleSubmit(verifyOTP)} className="space-y-1 mt-4">
             <label
               htmlFor="otp"
               className="block text-sm font-medium text-gray-700"
@@ -177,7 +176,10 @@ const ForgotPassword = ({ isVisible, onClose }) => {
         );
       case 3:
         return (
-          <form onSubmit={handleSubmit(resetPassword)} className="space-y-2">
+          <form
+            onSubmit={handleSubmit(resetPassword)}
+            className="space-y-1 mt-4"
+          >
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"

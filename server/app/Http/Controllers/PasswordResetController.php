@@ -18,10 +18,8 @@ class PasswordResetController extends Controller
             'email' => 'required|email|exists:users',
         ]);
 
-        Log::info('Forgot password request data:', $request->all());
-
         $user = User::where('email', $request->email)->first();
-        $otp = Str::random(6);
+        $otp = mt_rand(100000, 999999);
 
         $user->update([
             'password_reset_token' => $otp,
