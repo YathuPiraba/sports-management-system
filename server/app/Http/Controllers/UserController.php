@@ -27,7 +27,12 @@ class UserController extends Controller
     {
         $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
 
-        // $result now contains the details of the uploaded image
+        $imageUrl = $result['secure_url'];
+
+        return response()->json([
+            'message' => 'Image uploaded successfully',
+            'image_url' => $imageUrl,
+        ], 200);
     }
 
 
@@ -148,18 +153,12 @@ class UserController extends Controller
         if ($request->hasFile('image')) {
 
             if ($user->image) {
-                $oldImagePath = 'public/images/' . $user->image;
-
-                if (Storage::exists($oldImagePath)) {
-
-                    Storage::delete($oldImagePath);
-                } else {
-                    Log::warning('Old image not found for deletion', ['path' => $oldImagePath]);
-                }
+                 // Optionally delete the old image from Cloudinary
+            $this->cloudinary->uploadApi()->destroy($user->image);
             }
 
-            $imagePath = $request->file('image')->store('public/images');
-            $user->image = basename($imagePath);
+            $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+            $user->image = $result['secure_url'];
         }
 
         // Save the updated user information

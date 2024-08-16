@@ -9,7 +9,7 @@ const UpdateProfile = ({ setIsModalOpen, user, fetchDetails }) => {
 
   useEffect(() => {
     fetchDetails();
-  }, [fetchDetails]);
+  }, []);
 
   const handleClear = (e) => {
     e.preventDefault();

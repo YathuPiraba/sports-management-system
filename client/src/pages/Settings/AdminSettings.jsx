@@ -16,7 +16,8 @@ const AdminSettings = () => {
   const { theme } = useTheme();
 
   const image = user.image;
-  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
+
+  console.log(image);
 
   const showPasswordModal = () => setIsPasswordModalOpen(true);
 
@@ -49,7 +50,7 @@ const AdminSettings = () => {
               style={{ width: 80, height: 80 }}
             >
               <img
-                src={image ? `${baseUrl}/${image}` : logo}
+                src={image ? image : logo}
                 alt="User Profile"
                 title="user profile"
                 className="w-full h-full object-cover"

@@ -24,7 +24,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
   const image = user.image;
 
   const handleLogout = async () => {
@@ -108,7 +107,7 @@ const Navbar = () => {
     return () => clearTimeout(timer);
   }, [notifications]);
 
-  const handleNotificationClick = (notification) => {
+  const handleNotificationClick = () => {
     // Navigation based on role_id
     switch (role_id) {
       case 1:
@@ -139,7 +138,7 @@ const Navbar = () => {
             style={{ width: 30, height: 30, marginRight: 7, flexShrink: 0 }}
           >
             <img
-              src={`${baseUrl}/${notification.clubImage}`}
+              src={notification.clubImage}
               alt="clubImage"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -217,7 +216,7 @@ const Navbar = () => {
                         style={{ width: 40, height: 40 }}
                       >
                         <img
-                          src={image ? `${baseUrl}/${image}` : logo}
+                          src={image}
                           alt="user"
                           title="user name"
                           className="w-full h-full object-cover"

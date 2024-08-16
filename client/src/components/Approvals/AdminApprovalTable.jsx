@@ -1,7 +1,6 @@
 import React from "react";
 import { useTheme } from "../../context/ThemeContext";
 
-const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL
 
 const AdminApprovalTable = ({
   clubData,
@@ -36,7 +35,7 @@ const AdminApprovalTable = ({
     if (column === "Club Image" || column === "Profile") {
       return data[key] ? (
         <img
-          src={`${baseUrl}/${data[key]}`}
+          src={data[key]}
           alt={`${column} for ${data.clubName || data.firstName}`}
           className="w-16 h-16 object-cover rounded-full"
         />

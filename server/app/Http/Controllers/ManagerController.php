@@ -31,13 +31,6 @@ class ManagerController extends Controller
         $this->cloudinary = $cloudinary;
     }
 
-    public function uploadImage(Request $request)
-    {
-        $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-
-        // $result now contains the details of the uploaded image
-    }
-
     //POST => http://127.0.0.1:8000/api/manager/apply
     public function managerApply(Request $request)
     {
@@ -93,11 +86,18 @@ class ManagerController extends Controller
             $age = $today->diffInYears($dateOfBirth);
 
             // Handle image upload if provided
-            $imagePath = null;
+            $userImageUrl = null;
             if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('public/images');
-                $imageName = basename($imagePath);
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $userImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
             }
+
+            $clubImageUrl = null;
+            if ($request->hasFile('clubImage')) {
+                $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
+                $clubImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
+            }
+
 
             $clubData = [
                 'clubName' => $request->clubName,
@@ -108,9 +108,9 @@ class ManagerController extends Controller
                 "isVerified" => false,
             ];
 
-            if ($request->hasFile('clubImage')) {
-                $clubImagePath = $request->file('clubImage')->store('public/images');
-                $clubData['clubImage'] = basename($clubImagePath);
+
+            if ($clubImageUrl) {
+                $clubData['clubImage'] = $clubImageUrl;
             }
 
             $club = Club::create($clubData);
@@ -120,7 +120,7 @@ class ManagerController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role_id' => $role->id,
-                'image' => $imageName ?? null,
+                'image' => $userImageUrl,
                 "is_verified" => false
             ]);
 
