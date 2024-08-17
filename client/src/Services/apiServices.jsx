@@ -61,7 +61,7 @@ export const fetchManagerQueryDataApi = (page = 1, perPage = 10) => {
 
 // Fetch pending request
 export const fetchManagerPendingDataApi = (page = 1, perPage = 10) => {
-  return authApiClient.get("/manager/pending", {
+  return authApiClient.get("/pending", {
     params: {
       page: page,
       per_page: perPage,
