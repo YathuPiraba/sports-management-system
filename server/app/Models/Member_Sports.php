@@ -29,7 +29,7 @@ class Member_Sports extends Model
         // One-to-many relationship with MemberAchievement
     public function achievements()
     {
-      return $this->hasMany(MemberAchievement::class);
+      return $this->hasMany(Member_Achievement::class);
     }
 
       // One-to-many relationship with Event participants
@@ -41,7 +41,7 @@ class Member_Sports extends Model
        // Many-to-many relationship with Skills
     public function skills()
     {
-        return $this->belongsToMany(Skill::class, 'member_sports_skills', 'member_sports_id', 'skill_id');
+        return $this->belongsToMany(Skills::class, 'member_sports_skills', 'member_sports_id', 'skill_id');
     }
 
 

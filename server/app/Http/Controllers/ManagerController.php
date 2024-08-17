@@ -24,11 +24,11 @@ use Cloudinary\Cloudinary;
 class ManagerController extends Controller
 {
 
-    protected $cloudinary;
+    // protected $cloudinary;
 
     public function __construct(Cloudinary $cloudinary)
     {
-        $this->cloudinary = $cloudinary;
+        // $this->cloudinary = $cloudinary;
     }
 
     //POST => http://127.0.0.1:8000/api/manager/apply
@@ -88,14 +88,14 @@ class ManagerController extends Controller
             // Handle image upload if provided
             $userImageUrl = null;
             if ($request->hasFile('image')) {
-                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-                $userImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
+                // $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                // $userImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
             }
 
             $clubImageUrl = null;
             if ($request->hasFile('clubImage')) {
-                $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
-                $clubImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
+                // $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
+                // $clubImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
             }
 
 
@@ -522,7 +522,7 @@ class ManagerController extends Controller
         }
     }
 
-    // GET => http://127.0.0.1:8000/api/manager/pending
+    // GET => http://127.0.0.1:8000/api/pending
     public function pendingManagers(Request $request)
     {
         try {

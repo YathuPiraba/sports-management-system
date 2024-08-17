@@ -18,7 +18,7 @@ class Sports_Categories extends Model
      // One-to-many relationship with Skills
      public function skills()
      {
-         return $this->hasMany(Skill::class, 'sports_category_id');
+         return $this->hasMany(Skills::class, 'sports_category_id');
      }
 
      // Many-to-many relationship with Clubs through ClubSports
@@ -36,6 +36,6 @@ class Sports_Categories extends Model
      // Many-to-many relationship with Events through EventSports
      public function events()
      {
-         return $this->belongsToMany(Event::class, 'event_sports', 'sports_id', 'event_id');
+         return $this->belongsToMany(Events::class, 'event_sports', 'sports_id', 'event_id');
      }
 }
