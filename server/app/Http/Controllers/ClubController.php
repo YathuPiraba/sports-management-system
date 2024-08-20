@@ -90,7 +90,7 @@ class ClubController extends Controller
         }
     }
 
-     //GET => http://127.0.0.1:8000/api/clubs/list
+    //GET => http://127.0.0.1:8000/api/clubs/list
     public function getAllClubs()
     {
         try {
