@@ -106,7 +106,6 @@ export const resetPasswordAPI = (data) => {
   return apiClient.post("/reset-password", data);
 };
 
-
 // create a new sports category
 export const createSportsAPI = (data) => {
   return apiClient.post("/sports/create", data);
@@ -125,16 +124,13 @@ export const createClubSportsAPI = (data) => {
 //Get a specific club sports entry based on clubName
 export const getAClubSportsAPI = (clubName) => {
   return apiClient.get("/clubs-sports/one", {
-    params: { clubName }
+    params: { clubName },
   });
 };
 
 //Get specific Skills by sportsName
 export const getSkillsBySportsAPI = (sportsName) => {
   return apiClient.get("/skills/by-sport", {
-    params: { sportsName }
+    params: { sportsName },
   });
 };
-
-
-
