@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ManagerDetails from "../../Components/Signup/ManagerDetails";
+import PersonalDetails from "../../Components/Signup/PersonalDetails";
 import ClubDetails from "../../Components/Signup/ClubDetails";
 import { applyManager } from "../../features/authslice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { fetchGSDataApi} from "../../Services/apiServices";
+import { fetchGSDataApi } from "../../Services/apiServices";
 
 const ManagerSignIn = () => {
   const [divisions, setDivisions] = useState([]);
@@ -90,7 +90,7 @@ const ManagerSignIn = () => {
         />
 
         <h2 className="text-2xl font-bold mt-8 mb-6">Manager Details</h2>
-        <ManagerDetails
+        <PersonalDetails
           details={managerDetails}
           handleChange={handleManagerChange}
           divisions={divisions}

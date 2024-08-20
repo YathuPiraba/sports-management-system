@@ -19,6 +19,15 @@ export const applyManagerApi = (data) => {
   });
 };
 
+// Apply as member API
+export const applyMemberApi = (data) => {
+  return apiClient.post("/member/apply", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 // Logout API
 export const logoutApi = () => {
   return authApiClient.post("/logout");

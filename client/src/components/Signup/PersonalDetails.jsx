@@ -1,6 +1,6 @@
 import React from "react";
 
-const ManagerDetails = ({ details, handleChange, divisions }) => (
+const PersonalDetails = ({ details, handleChange, divisions }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
       <label className="block text-gray-700">Username</label>
@@ -132,4 +132,4 @@ const ManagerDetails = ({ details, handleChange, divisions }) => (
   </div>
 );
 
-export default ManagerDetails;
+export default PersonalDetails;
