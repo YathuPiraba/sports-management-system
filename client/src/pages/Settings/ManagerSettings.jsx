@@ -7,7 +7,6 @@ import { fetchUserDetails } from "../../features/authslice";
 import GridLoader from "react-spinners/GridLoader";
 import ChangePassword from "../../Components/settings/ChangePassword";
 import UpdateManagerProfile from "../../Components/settings/UpdateManagerProfile";
-import Avatar from "../../assets/default-avatar-profile.png";
 import { updateManagerDetailsApi } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import {
@@ -19,6 +18,7 @@ import { CgRename } from "react-icons/cg";
 import { FaRegIdCard, FaMapMarkerAlt, FaBuilding } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import { BsWhatsapp } from "react-icons/bs";
+import Avatar from "../../assets/default-avatar-profile.png";
 
 const ManagerSettings = () => {
   const dispatch = useDispatch();
@@ -32,7 +32,6 @@ const ManagerSettings = () => {
   const fileInputRef = useRef(null);
 
   const image = user.image;
-  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
 
   const showPasswordModal = () => setIsPasswordModalOpen(true);
   const showProfileModal = () => setIsProfileModalOpen(true);
@@ -66,11 +65,15 @@ const ManagerSettings = () => {
 
   const handleDeletePicture = async () => {
     try {
+      // Fetch the image using its path
+      const response = await fetch(Avatar);
+
+      // Convert the image response to a Blob
+      const blob = await response.blob();
+
+      // Create a FormData object and append the Blob
       const formData = new FormData();
-      formData.append(
-        "image",
-        "https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798615/default-avatar-profile_i6smzy.png"
-      );
+      formData.append("image", blob, "default-avatar-profile.png");
 
       await updateManagerDetailsApi(user.userId, formData);
       toast.success("Profile picture deleted successfully");
@@ -158,7 +161,7 @@ const ManagerSettings = () => {
                 <img
                   src={
                     image
-                      ? `${baseUrl}/${image}`
+                      ? { image }
                       : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798615/default-avatar-profile_i6smzy.png"
                   }
                   alt="User Profile"

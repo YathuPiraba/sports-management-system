@@ -7,7 +7,7 @@ export const loginApi = (data) => {
 
 // Fetch user details API
 export const fetchUserDetailsApi = () => {
-  return authApiClient.get("/user/details");
+  return authApiClient.get("/details");
 };
 
 // Apply as manager API

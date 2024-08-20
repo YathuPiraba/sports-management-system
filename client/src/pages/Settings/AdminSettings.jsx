@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserDetails } from "../../features/authslice";
-import logo from "../../assets/log.png";
 import { useTheme } from "../../context/ThemeContext";
 import UpdateProfile from "../../Components/settings/UpdateProfile";
 import ChangePassword from "../../Components/settings/ChangePassword";
 import { Button, Modal } from "antd";
+import toast from "react-hot-toast";
+import { updateAdminDetailsApi } from "../../Services/apiServices";
+import Avatar from "../../assets/default-avatar-profile.png";
 
 const AdminSettings = () => {
   const dispatch = useDispatch();
@@ -14,10 +16,50 @@ const AdminSettings = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
+  const fileInputRef = useRef(null);
 
   const image = user.image;
 
-  console.log(image);
+  const handleChangePicture = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        await updateAdminDetailsApi(user.userId, formData);
+        toast.success("Profile picture updated successfully");
+        fetchDetails();
+      } catch (error) {
+        toast.error("Failed to update profile picture");
+      }
+    }
+  };
+
+  const handleDeletePicture = async () => {
+    try {
+      // Fetch the image using its path
+      const response = await fetch(Avatar);
+
+      // Convert the image response to a Blob
+      const blob = await response.blob();
+
+      // Create a FormData object and append the Blob
+      const formData = new FormData();
+      formData.append("image", blob, "default-avatar-profile.png");
+
+      await updateAdminDetailsApi(user.userId, formData);
+      toast.success("Profile picture deleted successfully");
+      fetchDetails();
+    } catch (error) {
+      toast.error("Failed to delete profile picture");
+      console.error("Error deleting profile picture:", error);
+    }
+  };
 
   const showPasswordModal = () => setIsPasswordModalOpen(true);
 
@@ -42,20 +84,43 @@ const AdminSettings = () => {
           } text-center text-slate-500 border border-blue-100 shadow-md hover:border-blue-300 rounded-md`}
         >
           <figure className="p-6 pb-0">
-            <h1 className="text-3xl text-center font-medium py-8 text-cyan-600">
+            <h1 className="text-3xl text-center font-medium py-4 text-cyan-600">
               Admin Profile
             </h1>
-            <span
-              className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
-              style={{ width: 80, height: 80 }}
-            >
-              <img
-                src={image ? image : logo}
-                alt="User Profile"
-                title="user profile"
-                className="w-full h-full object-cover"
-              />
-            </span>
+            <div className="flex justify-center gap-3 ml-28">
+              <span
+                className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
+                style={{ width: 100, height: 100 }}
+              >
+                <img
+                  src={image}
+                  alt="User Profile"
+                  title="user profile"
+                  className="w-full h-full object-cover"
+                />
+              </span>
+              <div className="w-28 mt-3">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                  accept="image/*"
+                />
+                <Button
+                  onClick={handleChangePicture}
+                  className="bg-indigo-900 text-white mb-2 w-full py-1"
+                >
+                  Change picture
+                </Button>
+                <Button
+                  onClick={handleDeletePicture}
+                  className="border border-gray-300 w-full py-1"
+                >
+                  Delete picture
+                </Button>
+              </div>
+            </div>
           </figure>
 
           <div className="p-6">

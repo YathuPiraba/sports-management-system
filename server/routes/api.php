@@ -30,7 +30,7 @@ Route::post('/logout', [UserController::class, 'logout']);
 
 
 Route::middleware('auth.token')->group(function () {
-Route::get('/user/details', [UserController::class, 'getUserDetails']);
+Route::get('/details', [UserController::class, 'getUserDetails']);
 Route::put('/user/admin-update/{id}', [UserController::class, 'updateAdminDetails']);
 
 Route::post('/clubs/create', [ClubController::class, 'clubCreate']);

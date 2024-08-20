@@ -73,7 +73,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    //GET => http://127.0.0.1:8000/api//user/details
+    //GET => http://127.0.0.1:8000/api/user/details
     public function getUserDetails(Request $request)
     {
         $user = $request->user;
