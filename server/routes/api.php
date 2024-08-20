@@ -9,6 +9,7 @@ use App\Http\Controllers\GsDivisionController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\SportsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +50,12 @@ Route::middleware('auth.token')->group(function () {
     Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
 });
 
+Route::get('/sports/list', [SportsController::class, 'getSports']);
+Route::post('/sports/create', [SportsController::class, 'createSports']);
+
+Route::get('/clubs-sports/list', [ClubController::class, 'getAllClubSports']);
+Route::post('/clubs-sports/create', [ClubController::class, 'createClubSports']);
+Route::get('/clubs-sports/one', [ClubController::class, 'getAClubSports']);
 
 Route::post('/member/apply', [MemberController::class, 'memberApply']);
 Route::get('/pendingMembers', [MemberController::class, 'pendingMembers']);

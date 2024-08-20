@@ -6,6 +6,7 @@ use App\Models\Club;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Club_Manager;
+use App\Models\Club_Sports;
 use App\Models\Role;
 use App\Models\Gs_Division;
 use Exception;
@@ -41,6 +42,7 @@ class MemberController extends Controller
             'userName' => 'required|string|max:255|unique:users,userName',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string',
+            'position' => 'required|string',
             'divisionName' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'firstName' => 'required|string|max:255',
@@ -103,6 +105,7 @@ class MemberController extends Controller
                 'manager_id' => $managerId,
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
+                'position' => $request->position,
                 'date_of_birth' => $request->date_of_birth,
                 'age' => $age,
                 'address' => $request->address,
@@ -133,14 +136,14 @@ class MemberController extends Controller
             event(new MemberApplied($member, $managerUserId));
 
             return response()->json([
-                'message' => 'Member Applied successfully with sports and skills',
+                'message' => 'Member Applied successfully ',
                 'userId' => $user->id,
                 'userName' => $request->userName,
                 'email' => $request->email,
                 'role_id' => $role->id,
-                'is_verified' => false,
+                'is_verified' => 0,
                 'image' => $user->image,
-                'player' => $member,
+                'member' => $member,
                 'sports' => $request->sports
             ], 201);
         } catch (Exception $e) {

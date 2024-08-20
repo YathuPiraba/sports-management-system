@@ -21,6 +21,7 @@ class Member extends Model
         'nic',
         'contactNo',
         'whatsappNo',
+        'position',
     ];
 
     // Relationships
@@ -43,9 +44,9 @@ class Member extends Model
         return $this->belongsTo(Club_Manager::class, 'manager_id');
     }
 
-      // Many-to-many relationship with Sports
-      public function sports()
-      {
-          return $this->belongsToMany(Sports_Categories::class, 'member_sports', 'member_id', 'sports_id');
-      }
+    // Many-to-many relationship with Sports
+    public function sports()
+    {
+        return $this->belongsToMany(Sports_Categories::class, 'member_sports', 'member_id', 'sports_id');
+    }
 }

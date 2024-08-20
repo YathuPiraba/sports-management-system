@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Club;
+use App\Models\Club_Sports;
+use App\Models\Sports_Categories;
+use App\Models\Sports_Arena;
 use App\Models\Gs_Division;
-use Illuminate\Support\Facades\DB;
 use Exception;
 use Cloudinary\Cloudinary;
 
@@ -19,12 +21,6 @@ class ClubController extends Controller
         $this->cloudinary = $cloudinary;
     }
 
-    public function uploadImage(Request $request)
-    {
-        $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-
-        // $result now contains the details of the uploaded image
-    }
 
     //POST => http://127.0.0.1:8000/api/clubs/create
     public function clubCreate(Request $request)
@@ -36,6 +32,7 @@ class ClubController extends Controller
             'clubAddress' => 'required|string|max:255',
             'club_history' => 'nullable|string',
             'clubContactNo' => 'required|string|max:15',
+            'clubImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
         ]);
 
         try {
@@ -46,6 +43,12 @@ class ClubController extends Controller
                 return response()->json(['error' => 'Invalid division name'], 404);
             }
 
+            $clubImageUrl = null;
+            if ($request->hasFile('clubImage')) {
+                $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
+                $clubImageUrl = $result['secure_url'];
+            }
+
             // Create a new club
             $club = Club::create([
                 'clubName' => $request->clubName,
@@ -53,6 +56,7 @@ class ClubController extends Controller
                 'clubAddress' => $request->clubAddress,
                 'club_history' => $request->club_history,
                 'clubContactNo' => $request->clubContactNo,
+                'clubImage' => $clubImageUrl,
             ]);
 
             return response()->json(['message' => 'Club created successfully', 'club' => $club], 201);
@@ -83,6 +87,100 @@ class ClubController extends Controller
         } catch (Exception $e) {
             // Handle any errors that may occur
             return response()->json(['error' => 'Failed to delete club', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+    //GET => http://127.0.0.1:8000/api/clubs-sports/get
+    public function getAllClubSports()
+    {
+        try {
+            $clubSports = Club_Sports::with(['club', 'sportsCategory'])->get();
+
+            // Transform the data to include the related names
+            $response = $clubSports->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'club_id' => $item->club_id,
+                    'clubName' => $item->club->clubName,
+                    'sports_id' => $item->sports_id,
+                    'sportsName' => $item->sportsCategory->name,
+                    'sports_arena_id' => $item->sports_arena_id,
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at,
+                ];
+            });
+
+            return response()->json($response);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch club sports.', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    //POST => http://127.0.0.1:8000/api/clubs-sports/create
+    public function createClubSports(Request $request)
+    {
+        try {
+            $request->validate([
+                'clubName' => 'required|string|max:255',
+                'sportsName' => 'required|string|max:255',
+                'sportsArenaName' => 'required|string|max:255',
+            ]);
+
+            // Find IDs based on provided names
+            $club = Club::where('clubName', $request->input('clubName'))->firstOrFail();
+            $sportsCategory = Sports_Categories::where('name', $request->input('sportsName'))->firstOrFail();
+            $sportsArena = Sports_Arena::where('name', $request->input('sportsArenaName'))->firstOrFail();
+
+            // Create a new club sports entry
+            $clubSports = Club_Sports::create([
+                'club_id' => $club->id,
+                'sports_id' => $sportsCategory->id,
+                'sports_arena_id' => $sportsArena->id,
+            ]);
+
+            return response()->json($clubSports, 201);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to create club sports entry.', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function getAClubSports(Request $request)
+    {
+        try {
+            // Validate the clubName parameter
+            $request->validate([
+                'clubName' => 'required|string|max:255|exists:clubs,clubName',
+            ]);
+
+            $clubName = $request->input('clubName');
+
+            // Find the club_id based on the provided clubName
+            $club = Club::where('clubName', $clubName)->firstOrFail();
+            $clubId = $club->id;
+
+            // Fetch club sports for the given club_id with related club and sports category
+            $clubSports = Club_Sports::where('club_id', $clubId)
+                ->with(['club', 'sportsCategory'])
+                ->get();
+
+            // Transform the data to include the related names
+            $response = $clubSports->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'club_id' => $item->club_id,
+                    'clubName' => $item->club->clubName,
+                    'sports_id' => $item->sports_id,
+                    'sportsName' => $item->sportsCategory->name,
+                    'sports_arena_id' => $item->sports_arena_id,
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at,
+                ];
+            });
+
+            return response()->json($response);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch club sports.', 'message' => $e->getMessage()], 500);
         }
     }
 }
