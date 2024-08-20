@@ -153,8 +153,8 @@ class UserController extends Controller
         if ($request->hasFile('image')) {
 
             if ($user->image) {
-                 // Optionally delete the old image from Cloudinary
-            $this->cloudinary->uploadApi()->destroy($user->image);
+                // Optionally delete the old image from Cloudinary
+                $this->cloudinary->uploadApi()->destroy($user->image);
             }
 
             $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());

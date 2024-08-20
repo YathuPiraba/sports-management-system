@@ -30,22 +30,22 @@ Route::post('/logout', [UserController::class, 'logout']);
 
 
 Route::middleware('auth.token')->group(function () {
-Route::get('/details', [UserController::class, 'getUserDetails']);
-Route::put('/user/admin-update/{id}', [UserController::class, 'updateAdminDetails']);
+    Route::get('/details', [UserController::class, 'getUserDetails']);
+    Route::put('/user/admin-update/{id}', [UserController::class, 'updateAdminDetails']);
 
-Route::post('/clubs/create', [ClubController::class, 'clubCreate']);
-Route::delete('clubs/{id}', [ClubController::class, 'clubDelete']);
+    Route::post('/clubs/create', [ClubController::class, 'clubCreate']);
+    Route::delete('clubs/{id}', [ClubController::class, 'clubDelete']);
 
-Route::post('/manager/create', [ManagerController::class, 'managerCreate']);
-Route::get('/manager/list', [ManagerController::class, 'getAllManagers']);
-Route::get('/manager/query', [ManagerController::class, 'queryManagers']);
-Route::put('/manager/update/personal/{userId}', [ManagerController::class, 'updateManagerDetails']);
-Route::delete('/manager/deleteManager/{user_id}', [ManagerController::class, 'deleteManager']);
-Route::get('/manager/{userId}', [ManagerController::class, 'fetchManagerDetails']);
-Route::get('/pending', [ManagerController::class, 'pendingManagers']);
+    Route::post('/manager/create', [ManagerController::class, 'managerCreate']);
+    Route::get('/manager/list', [ManagerController::class, 'getAllManagers']);
+    Route::get('/manager/query', [ManagerController::class, 'queryManagers']);
+    Route::put('/manager/update/personal/{userId}', [ManagerController::class, 'updateManagerDetails']);
+    Route::delete('/manager/deleteManager/{user_id}', [ManagerController::class, 'deleteManager']);
+    Route::get('/manager/{userId}', [ManagerController::class, 'fetchManagerDetails']);
+    Route::get('/pending', [ManagerController::class, 'pendingManagers']);
 
-Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
-Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
+    Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
+    Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
 });
 
 
