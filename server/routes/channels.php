@@ -28,3 +28,7 @@ Broadcast::channel('users', function () {
 Broadcast::channel('reject', function () {
     return true;
 });
+
+Broadcast::channel('members', function () {
+    return true;
+});

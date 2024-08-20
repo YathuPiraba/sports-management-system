@@ -46,6 +46,6 @@ class Member extends Model
       // Many-to-many relationship with Sports
       public function sports()
       {
-          return $this->belongsToMany(Sports_Categories::class, 'member_sports');
+          return $this->belongsToMany(Sports_Categories::class, 'member_sports', 'member_id', 'sports_id');
       }
 }

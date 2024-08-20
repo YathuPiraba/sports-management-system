@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GsDivisionController;
 use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PasswordResetController;
 
 /*
@@ -49,7 +50,8 @@ Route::middleware('auth.token')->group(function () {
 });
 
 
-
+Route::post('/member/apply', [MemberController::class, 'memberApply']);
+Route::get('/pendingMembers', [MemberController::class, 'pendingMembers']);
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
 

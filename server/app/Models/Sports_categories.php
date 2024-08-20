@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Sports_Categories extends Model
 {
     use HasFactory;
+
+    protected $table = 'sports_categories';
+
     protected $fillable = [
         'name',
         'type',

@@ -16,7 +16,6 @@ use App\Events\ManagerApplied;
 use App\Events\UserVerified;
 use App\Events\UserRejected;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Cloudinary\Cloudinary;
 
