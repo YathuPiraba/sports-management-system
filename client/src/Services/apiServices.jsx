@@ -111,6 +111,11 @@ export const createSportsAPI = (data) => {
   return apiClient.post("/sports/create", data);
 };
 
+// get all clubs
+export const getAllClubsAPI = () => {
+  return apiClient.get("/clubs/list");
+};
+
 // get all club sports
 export const getAllClubSportsAPI = () => {
   return apiClient.get("/clubs-sports/list");

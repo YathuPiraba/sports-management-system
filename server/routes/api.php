@@ -50,6 +50,8 @@ Route::middleware('auth.token')->group(function () {
     Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
 });
 
+Route::get('/clubs/list', [ClubController::class, 'getAllClubs']);
+
 Route::get('/sports/list', [SportsController::class, 'getSports']);
 Route::post('/sports/create', [SportsController::class, 'createSports']);
 

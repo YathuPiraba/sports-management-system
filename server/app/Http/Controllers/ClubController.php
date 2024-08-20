@@ -90,6 +90,19 @@ class ClubController extends Controller
         }
     }
 
+     //GET => http://127.0.0.1:8000/api/clubs/list
+    public function getAllClubs()
+    {
+        try {
+            // Fetch all club details
+            $clubs = Club::all();
+
+            return response()->json($clubs);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
+        }
+    }
+
     //GET => http://127.0.0.1:8000/api/clubs-sports/get
     public function getAllClubSports()
     {
