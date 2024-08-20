@@ -105,3 +105,27 @@ export const verifyOtpAPI = (data) => {
 export const resetPasswordAPI = (data) => {
   return apiClient.post("/reset-password", data);
 };
+
+
+// create a new sports category
+export const createSportsAPI = (data) => {
+  return apiClient.post("/sports/create", data);
+};
+
+// get all club sports
+export const getAllClubSportsAPI = () => {
+  return apiClient.get("/clubs-sports/list");
+};
+
+//create a new club sports entry
+export const createClubSportsAPI = (data) => {
+  return apiClient.post("/clubs-sports/create", data);
+};
+
+//Get a specific club sports entry based on clubName
+export const getAClubSportsAPI = (clubName) => {
+  return apiClient.get("/clubs-sports/one", {
+    params: { clubName }
+  });
+};
+
