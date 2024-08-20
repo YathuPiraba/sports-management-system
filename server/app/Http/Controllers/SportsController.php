@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Skills;
 use Illuminate\Http\Request;
 use App\Models\Sports_Categories;
 use Cloudinary\Cloudinary;
@@ -16,7 +17,7 @@ class SportsController extends Controller
         $this->cloudinary = $cloudinary;
     }
 
-     //GET => http://127.0.0.1:8000/api/sports/list
+    //GET => http://127.0.0.1:8000/api/sports/list
     public function getSports()
     {
         try {
@@ -59,6 +60,34 @@ class SportsController extends Controller
         } catch (Exception $e) {
             // Handle any errors that occur
             return response()->json(['error' => 'Failed to create sports category.', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    //GET => http://127.0.0.1:8000/api/skills/by-sport
+    public function getSkillsBySport(Request $request)
+    {
+        try {
+            // Validate the sportsName parameter
+            $request->validate([
+                'sportsName' => 'required|string|max:255',
+            ]);
+
+            // Find the sports category by name
+            $sportsCategory = Sports_Categories::where('name', $request->input('sportsName'))->firstOrFail();
+
+            // Fetch skills related to the sports category
+            $skills = Skills::where('sports_id', $sportsCategory->id)->get();
+
+            // Transform the data to include the sports name
+            $response = $skills->map(function ($item) use ($sportsCategory) {
+                return [
+                    'skill' => $item->skill,
+                ];
+            });
+
+            return response()->json($response);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch skills.', 'message' => $e->getMessage()], 500);
         }
     }
 }

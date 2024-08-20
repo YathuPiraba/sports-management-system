@@ -57,6 +57,8 @@ Route::get('/clubs-sports/list', [ClubController::class, 'getAllClubSports']);
 Route::post('/clubs-sports/create', [ClubController::class, 'createClubSports']);
 Route::get('/clubs-sports/one', [ClubController::class, 'getAClubSports']);
 
+Route::get('/skills/by-sport', [SportsController::class, 'getSkillsBySport']);
+
 Route::post('/member/apply', [MemberController::class, 'memberApply']);
 Route::get('/pendingMembers', [MemberController::class, 'pendingMembers']);
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);

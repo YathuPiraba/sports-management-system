@@ -129,3 +129,12 @@ export const getAClubSportsAPI = (clubName) => {
   });
 };
 
+//Get specific Skills by sportsName
+export const getSkillsBySportsAPI = (sportsName) => {
+  return apiClient.get("/skills/by-sport", {
+    params: { sportsName }
+  });
+};
+
+
+
