@@ -24,11 +24,11 @@ use Cloudinary\Cloudinary;
 class ManagerController extends Controller
 {
 
-    // protected $cloudinary;
+    protected $cloudinary;
 
     public function __construct(Cloudinary $cloudinary)
     {
-        // $this->cloudinary = $cloudinary;
+        $this->cloudinary = $cloudinary;
     }
 
     //POST => http://127.0.0.1:8000/api/manager/apply
@@ -88,14 +88,14 @@ class ManagerController extends Controller
             // Handle image upload if provided
             $userImageUrl = null;
             if ($request->hasFile('image')) {
-                // $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-                // $userImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $userImageUrl = $result['secure_url'];
             }
 
             $clubImageUrl = null;
             if ($request->hasFile('clubImage')) {
-                // $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
-                // $clubImageUrl = $result['secure_url']; // Retrieve the secure URL from Cloudinary response
+                $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
+                $clubImageUrl = $result['secure_url'];
             }
 
 
@@ -208,12 +208,18 @@ class ManagerController extends Controller
             $today = Carbon::now('UTC')->startOfDay();
             $age = $today->diffInYears($dateOfBirth);
 
+            $userImageUrl = null;
+            if ($request->hasFile('image')) {
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $userImageUrl = $result['secure_url'];
+            }
+
             $user = User::create([
                 'userName' => $request->userName,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role_id' => $role->id,
-                'image' => $request->image,
+                'image' => $userImageUrl,
             ]);
 
             $manager = Club_Manager::create([
@@ -659,13 +665,16 @@ class ManagerController extends Controller
             if ($request->has('userName')) {
                 $user->userName = $request->userName;
             }
+            // Handle image upload if provided
             if ($request->hasFile('image')) {
-                // Delete old image if exists
+
                 if ($user->image) {
-                    Storage::delete('public/images/' . $user->image);
+                    // Optionally delete the old image from Cloudinary
+                    $this->cloudinary->uploadApi()->destroy($user->image);
                 }
-                $imagePath = $request->file('image')->store('public/images');
-                $user->image = basename($imagePath);
+
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $user->image = $result['secure_url'];
             }
 
             // Update password if provided

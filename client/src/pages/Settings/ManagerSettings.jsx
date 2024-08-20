@@ -159,11 +159,7 @@ const ManagerSettings = () => {
             <div className="flex flex-col md:flex-row gap-8">
               <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
                 <img
-                  src={
-                    image
-                      ? { image }
-                      : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798615/default-avatar-profile_i6smzy.png"
-                  }
+                  src={image}
                   alt="User Profile"
                   className="w-44 h-44 rounded-full object-cover mb-3"
                 />
