@@ -8,6 +8,7 @@ const SportsDetails = ({ clubName, position }) => {
   const [sports, setSports] = useState([]);
   const [skills, setSkills] = useState([]);
   const [selectedSport, setSelectedSport] = useState("");
+  const [selectedSkills, setSelectedSkills] = useState([]);
 
   useEffect(() => {
     if (clubName) {
@@ -33,14 +34,23 @@ const SportsDetails = ({ clubName, position }) => {
       try {
         const response = await getSkillsBySportsAPI(sportName);
         setSkills(response.data);
-
-        console.log("====================================");
-        console.log(response.data);
-        console.log("====================================");
       } catch (error) {
         console.error("Error fetching skills for sport:", error);
       }
     }
+  };
+
+  const handleSkillSelect = (skill) => {
+    // Check if the skill is already selected
+    if (!selectedSkills.includes(skill)) {
+      setSelectedSkills([...selectedSkills, skill]);
+    }
+  };
+
+  const handleSkillRemove = (skillToRemove) => {
+    setSelectedSkills(
+      selectedSkills.filter((skill) => skill !== skillToRemove)
+    );
   };
 
   return (
@@ -64,7 +74,7 @@ const SportsDetails = ({ clubName, position }) => {
       {position === "Player" && skills.length > 0 && (
         <div>
           <label>Skills:</label>
-          <select>
+          <select onChange={(e) => handleSkillSelect(e.target.value)}>
             <option value="">Select a Skill</option>
             {skills.map((skillName) => (
               <option key={skillName.id} value={skillName.skill}>
@@ -72,6 +82,14 @@ const SportsDetails = ({ clubName, position }) => {
               </option>
             ))}
           </select>
+          <div>
+            {selectedSkills.map((skill, index) => (
+              <div key={index}>
+                {skill}
+                <button onClick={() => handleSkillRemove(skill)}>Remove</button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
