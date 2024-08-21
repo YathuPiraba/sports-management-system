@@ -43,7 +43,6 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
     setSelectedSport(sportsId);
 
     console.log(sportsId);
-    
 
     // Fetch skills only if position is Player
     if (position === "Player") {
@@ -71,15 +70,13 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
         const updatedSkills = [...selectedSkills];
         updatedSkills[existingSportIndex] = sportSkill;
         setSelectedSkills(updatedSkills);
-
       } else {
         // Otherwise, add the new sport-skill combination
         setSelectedSkills([...selectedSkills, sportSkill]);
       }
-      
-      console.log([...selectedSkills,sportSkill]);
-      
-      
+
+      console.log([...selectedSkills, sportSkill]);
+
       onSportsDetailsChange({
         clubName,
         position,
@@ -97,7 +94,6 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
     setSelectedSkills(updatedSkills);
 
     console.log(updatedSkills);
-    
 
     onSportsDetailsChange({
       clubName,

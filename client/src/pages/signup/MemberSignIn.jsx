@@ -90,16 +90,19 @@ const MemberSignIn = () => {
       sportsDetails.position === "Coach" ? sportsDetails.experience : ""
     );
 
-  // Construct the sports array and append it to formData
-  if (sportsDetails.selectedSport) {
-    formData.append(
-      "sports[]",
-      JSON.stringify({
-        id: sportsDetails.selectedSport,
-        skills: sportsDetails.selectedSkills.length > 0 ? sportsDetails.selectedSkills : [],
-      })
-    );
-  }
+    // Construct the sports array and append it to formData
+    if (sportsDetails.selectedSport) {
+      formData.append(
+        "sports[]",
+        JSON.stringify({
+          id: sportsDetails.selectedSport,
+          skills:
+            sportsDetails.selectedSkills.length > 0
+              ? sportsDetails.selectedSkills
+              : [],
+        })
+      );
+    }
 
     try {
       const result = await dispatch(applyMember(formData)).unwrap();
