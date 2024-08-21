@@ -170,7 +170,7 @@ const MemberSignIn = () => {
       <form onSubmit={handleSubmit}>
         {currentStep === "personalDetails" && (
           <div className="flex justify-center">
-            <div className="m-6 max-h-screen w-3/4 p-9 z-20 bg-white text-black shadow-md border">
+            <div className="m-6 h-auto w-3/4 px-9 pt-9 pb-4 z-20 bg-white text-black shadow-md border">
               <PersonalDetails
                 details={memberDetails}
                 handleChange={handleMemberChange}

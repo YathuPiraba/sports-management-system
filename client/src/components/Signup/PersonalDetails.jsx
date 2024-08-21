@@ -118,7 +118,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
           />
         </div>
 
-        <div className="md:col-span-2 flex flex-row mx-auto gap-4">
+        <div className="md:col-span-2 flex flex-row mx-auto gap-6">
           <div>
             <label className="block text-gray-700">NIC :</label>
             <input
@@ -126,7 +126,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
               name="nic"
               value={details.nic}
               onChange={handleChange}
-              className="mt-1 p-1 w-60 border rounded"
+              className="mt-1 p-1 w-56 border rounded"
             />
           </div>
           <div>
@@ -136,7 +136,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
               name="contactNo"
               value={details.contactNo}
               onChange={handleChange}
-              className="mt-1 p-1 w-60 border rounded"
+              className="mt-1 p-1 w-56 border rounded"
             />
           </div>
           <div>
@@ -146,7 +146,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
               name="whatsappNo"
               value={details.whatsappNo}
               onChange={handleChange}
-              className="mt-1 p-1 w-60 border rounded"
+              className="mt-1 p-1 w-56 border rounded"
             />
           </div>
         </div>
