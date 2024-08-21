@@ -49,7 +49,7 @@ class MemberController extends Controller
             'lastName' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
             'address' => 'required|string|max:255',
-            'experience' => 'sometimes|string|max:255',
+            'experience' => 'nullable|string|max:255',
             'nic' => 'required|string|max:20',
             'contactNo' => 'required|string|max:15',
             'whatsappNo' => 'nullable|string|max:15',
