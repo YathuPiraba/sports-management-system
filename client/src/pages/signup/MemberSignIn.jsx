@@ -62,14 +62,6 @@ const MemberSignIn = () => {
     setMemberDetails({ ...memberDetails, [name]: value });
   };
 
-  const handleClubNameChange = (e) => {
-    setClubName(e.target.value);
-  };
-
-  const handlePositionChange = (e) => {
-    setPosition(e.target.value);
-  };
-
   const handleNextStep = () => {
     setCurrentStep("sportsDetails");
   };
@@ -79,7 +71,7 @@ const MemberSignIn = () => {
   };
 
   return (
-    <div className="bg-customGreen max-h-screen text-black">
+    <div className="bg-customGreen text-black">
       <h1 className="p-4 font-poppins text-xl font-bold underline text-gray-900">
         {" "}
         Member SignIn Form
@@ -108,36 +100,7 @@ const MemberSignIn = () => {
                 Previous
               </button>
             </div>
-            <div className="mt-2 ">
-              <label>Club Name:</label>
-              <select
-                name="clubName"
-                value={clubName}
-                onChange={handleClubNameChange}
-              >
-                <option value="">Select a Club</option>
-                {clubs.map((club) => (
-                  <option key={club.id} value={club.clubName}>
-                    {club.clubName}
-                  </option>
-                ))}
-              </select>
-              <label>Position:</label>
-              <select
-                name="position"
-                value={position}
-                onChange={handlePositionChange}
-              >
-                <option value="">Select Position</option>
-                <option value="Coach">Coach</option>
-                <option value="Player">Player</option>
-              </select>
-            </div>
-            <div className="mt-2">
-              {clubName && position && (
-                <SportsDetails clubName={clubName} position={position} />
-              )}
-            </div>
+            <SportsDetails clubs={clubs} />
           </div>
         </div>
       )}

@@ -3,8 +3,11 @@ import {
   getAClubSportsAPI,
   getSkillsBySportsAPI,
 } from "../../Services/apiServices";
+import { TiDelete } from "react-icons/ti";
 
-const SportsDetails = ({ clubName, position }) => {
+const SportsDetails = ({ clubs }) => {
+  const [clubName, setClubName] = useState("");
+  const [position, setPosition] = useState("");
   const [sports, setSports] = useState([]);
   const [skills, setSkills] = useState([]);
   const [selectedSport, setSelectedSport] = useState("");
@@ -41,9 +44,24 @@ const SportsDetails = ({ clubName, position }) => {
   };
 
   const handleSkillSelect = (skill) => {
-    // Check if the skill is already selected
-    if (!selectedSkills.includes(skill)) {
-      setSelectedSkills([...selectedSkills, skill]);
+    if (skill) {
+      // Create an object with sport name and skill
+      const sportSkill = { sport: selectedSport, skill };
+
+      // Check if the sport is already in the selectedSkills array
+      const existingSportIndex = selectedSkills.findIndex(
+        (item) => item.sport === selectedSport
+      );
+
+      // If the sport is already selected, replace the skill
+      if (existingSportIndex >= 0) {
+        const updatedSkills = [...selectedSkills];
+        updatedSkills[existingSportIndex] = sportSkill;
+        setSelectedSkills(updatedSkills);
+      } else {
+        // Otherwise, add the new sport-skill combination
+        setSelectedSkills([...selectedSkills, sportSkill]);
+      }
     }
   };
 
@@ -53,9 +71,42 @@ const SportsDetails = ({ clubName, position }) => {
     );
   };
 
+  const handleClubNameChange = (e) => {
+    setClubName(e.target.value);
+  };
+
+  const handlePositionChange = (e) => {
+    setPosition(e.target.value);
+  };
+
   return (
     <div>
-      {/* Render sports dropdown if the position is selected */}
+      <div className="mt-2">
+        <label>Club Name:</label>
+        <select
+          name="clubName"
+          value={clubName}
+          onChange={handleClubNameChange}
+        >
+          <option value="">Select a Club</option>
+          {clubs.map((club) => (
+            <option key={club.id} value={club.clubName}>
+              {club.clubName}
+            </option>
+          ))}
+        </select>
+        <label>Position:</label>
+        <select
+          name="position"
+          value={position}
+          onChange={handlePositionChange}
+        >
+          <option value="">Select Position</option>
+          <option value="Coach">Coach</option>
+          <option value="Player">Player</option>
+        </select>
+      </div>
+
       {position && (
         <div>
           <label>Sports:</label>
@@ -82,13 +133,29 @@ const SportsDetails = ({ clubName, position }) => {
               </option>
             ))}
           </select>
-          <div>
-            {selectedSkills.map((skill, index) => (
-              <div key={index}>
-                {skill}
-                <button onClick={() => handleSkillRemove(skill)}>Remove</button>
-              </div>
-            ))}
+          <div
+            className="mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap"
+            style={{
+              minHeight: "150px",
+              width: "100%",
+              border: "2px solid #ccc",
+            }}
+          >
+            {selectedSkills.length > 0 ? (
+              selectedSkills.map((item, index) => (
+                <div key={index} className="p-2 border-b flex items-center">
+                  {item.sport} - {item.skill} 
+                  <button
+                    className="ml-2 text-red-500"
+                    onClick={() => handleSkillRemove(item)}
+                  >
+                    <TiDelete />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">No skills selected</p>
+            )}
           </div>
         </div>
       )}
