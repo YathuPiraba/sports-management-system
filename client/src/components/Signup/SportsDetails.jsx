@@ -5,13 +5,14 @@ import {
 } from "../../Services/apiServices";
 import { TiDelete } from "react-icons/ti";
 
-const SportsDetails = ({ clubs }) => {
+const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
   const [clubName, setClubName] = useState("");
   const [position, setPosition] = useState("");
   const [sports, setSports] = useState([]);
   const [skills, setSkills] = useState([]);
   const [selectedSport, setSelectedSport] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [experience, setExperience] = useState("");
 
   useEffect(() => {
     if (clubName) {
@@ -19,23 +20,35 @@ const SportsDetails = ({ clubs }) => {
     }
   }, [clubName]);
 
+  useEffect(() => {
+    onSportsDetailsChange({
+      clubName,
+      position,
+      selectedSport,
+      selectedSkills,
+      experience: position === "Coach" ? experience : undefined,
+    });
+  }, []);
+
   const fetchSportsByClub = async (clubName) => {
     try {
       const response = await getAClubSportsAPI(clubName);
       setSports(response.data);
+      console.log(sports);
     } catch (error) {
       console.error("Error fetching sports for club:", error);
     }
   };
 
-  const handleSportChange = async (e) => {
-    const sportName = e.target.value;
-    setSelectedSport(sportName);
+  const handleSportChange = async (sportsId) => {
+    setSelectedSport(sportsId);
+
+    console.log(sportsId);
 
     // Fetch skills only if position is Player
     if (position === "Player") {
       try {
-        const response = await getSkillsBySportsAPI(sportName);
+        const response = await getSkillsBySportsAPI(sportsId);
         setSkills(response.data);
       } catch (error) {
         console.error("Error fetching skills for sport:", error);
@@ -62,13 +75,30 @@ const SportsDetails = ({ clubs }) => {
         // Otherwise, add the new sport-skill combination
         setSelectedSkills([...selectedSkills, sportSkill]);
       }
+
+      onSportsDetailsChange({
+        clubName,
+        position,
+        selectedSport,
+        selectedSkills: [...selectedSkills, sportSkill],
+        experience: position === "Coach" ? experience : undefined,
+      });
     }
   };
 
   const handleSkillRemove = (skillToRemove) => {
-    setSelectedSkills(
-      selectedSkills.filter((skill) => skill !== skillToRemove)
+    const updatedSkills = selectedSkills.filter(
+      (skill) => skill !== skillToRemove
     );
+    setSelectedSkills(updatedSkills);
+
+    onSportsDetailsChange({
+      clubName,
+      position,
+      selectedSport,
+      selectedSkills: updatedSkills,
+      experience: position === "Coach" ? experience : undefined,
+    });
   };
 
   const handleClubNameChange = (e) => {
@@ -77,87 +107,140 @@ const SportsDetails = ({ clubs }) => {
 
   const handlePositionChange = (e) => {
     setPosition(e.target.value);
+    if (e.target.value !== "Coach") {
+      setExperience("");
+    }
+  };
+
+  const handleExperienceChange = (e) => {
+    setExperience(e.target.value);
+
+    onSportsDetailsChange({
+      clubName,
+      position,
+      selectedSport,
+      selectedSkills,
+      experience: e.target.value,
+    });
+  };
+
+  const getSportsName = (id) => {
+    const sport = sports.find((s) => s.id == id);
+    return sport ? sport.sportsName : "Unknown Sport";
   };
 
   return (
-    <div>
-      <div className="mt-2">
-        <label>Club Name:</label>
-        <select
-          name="clubName"
-          value={clubName}
-          onChange={handleClubNameChange}
-        >
-          <option value="">Select a Club</option>
-          {clubs.map((club) => (
-            <option key={club.id} value={club.clubName}>
-              {club.clubName}
-            </option>
-          ))}
-        </select>
-        <label>Position:</label>
-        <select
-          name="position"
-          value={position}
-          onChange={handlePositionChange}
-        >
-          <option value="">Select Position</option>
-          <option value="Coach">Coach</option>
-          <option value="Player">Player</option>
-        </select>
+    <div className="mx-24">
+      <div className="flex flex-row gap-6 mb-2">
+        <div className="mt-2">
+          <label className="mr-3">Club Name:</label>
+          <select
+            name="clubName"
+            value={clubName}
+            onChange={handleClubNameChange}
+            className="border rounded-md p-1.5 w-60"
+          >
+            <option value="">Select a Club</option>
+            {clubs.map((club) => (
+              <option key={club.id} value={club.clubName}>
+                {club.clubName}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mt-2">
+          <label className="mr-3">Position:</label>
+          <select
+            name="position"
+            value={position}
+            onChange={handlePositionChange}
+            className="border rounded-md ml-6 w-72 p-1.5"
+          >
+            <option value="">Select Position</option>
+            <option value="Coach">Coach</option>
+            <option value="Player">Player</option>
+          </select>
+        </div>
       </div>
 
-      {position && (
-        <div>
-          <label>Sports:</label>
-          <select onChange={handleSportChange} value={selectedSport}>
-            <option value="">Select a Sport</option>
-            {sports.map((sport) => (
-              <option key={sport.id} value={sport.sportsName}>
-                {sport.sportsName}
-              </option>
-            ))}
-          </select>
+      <div className="flex gap-6">
+        {position && clubName && (
+          <div className="mt-2">
+            <label className="mr-9">Sports:</label>
+            <select
+              onChange={(e) => handleSportChange(e.target.value)}
+              value={selectedSport}
+              className="border rounded-md ml-2 w-60 p-1.5"
+            >
+              <option value="">Select a Sport</option>
+              {sports.map((sport) => (
+                <option key={sport.id} value={sport.id}>
+                  {sport.sportsName}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+        {position === "Player" && selectedSport && (
+          <div className="mt-2">
+            <label className="mr-5">Skills:</label>
+            <select
+              onChange={(e) => handleSkillSelect(e.target.value)}
+              className="border rounded-md ml-10 w-72 p-1.5"
+            >
+              <option value="">Select a Skill</option>
+              {skills.map((skillName) => (
+                <option key={skillName.id} value={skillName.skill}>
+                  {skillName.skill}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+      {!selectedSport && (
+        <div
+          className="mt-4 p-4 h-40 border rounded-md bg-gray-100 flex flex-wrap"
+          style={{
+            width: "100%",
+            border: "2px solid #ccc",
+          }}
+        ></div>
+      )}
+      {position === "Player" && selectedSport && (
+        <div
+          className="mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap"
+          style={{
+            minHeight: "150px",
+            width: "100%",
+            border: "2px solid #ccc",
+          }}
+        >
+          {selectedSkills.length > 0 ? (
+            selectedSkills.map((item, index) => (
+              <div key={index} className="p-2 border-b flex items-center">
+                {getSportsName(item.sport)} - {item.skill}
+                <button
+                  className="ml-2 text-red-500"
+                  onClick={() => handleSkillRemove(item)}
+                >
+                  <TiDelete />
+                </button>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">No skills selected</p>
+          )}
         </div>
       )}
-
-      {/* Render skills dropdown only if position is Player and skills are available */}
-      {position === "Player" && skills.length > 0 && (
-        <div>
-          <label>Skills:</label>
-          <select onChange={(e) => handleSkillSelect(e.target.value)}>
-            <option value="">Select a Skill</option>
-            {skills.map((skillName) => (
-              <option key={skillName.id} value={skillName.skill}>
-                {skillName.skill}
-              </option>
-            ))}
-          </select>
-          <div
-            className="mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap"
-            style={{
-              minHeight: "150px",
-              width: "100%",
-              border: "2px solid #ccc",
-            }}
-          >
-            {selectedSkills.length > 0 ? (
-              selectedSkills.map((item, index) => (
-                <div key={index} className="p-2 border-b flex items-center">
-                  {item.sport} - {item.skill} 
-                  <button
-                    className="ml-2 text-red-500"
-                    onClick={() => handleSkillRemove(item)}
-                  >
-                    <TiDelete />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No skills selected</p>
-            )}
-          </div>
-        </div>
+      {position === "Coach" && selectedSport && (
+        <textarea
+          className="w-full mt-4 p-4 h-40 border rounded-md bg-gray-100"
+          placeholder="Tell Us About Your Experience Here"
+          value={experience}
+          onChange={handleExperienceChange}
+          name="experience"
+        />
       )}
     </div>
   );

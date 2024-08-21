@@ -67,21 +67,19 @@ class SportsController extends Controller
     public function getSkillsBySport(Request $request)
     {
         try {
-            // Validate the sportsName parameter
+            // Validate the sportsId parameter
             $request->validate([
-                'sportsName' => 'required|string|max:255',
+                'sportsId' => 'required|integer',
             ]);
 
-            // Find the sports category by name
-            $sportsCategory = Sports_Categories::where('name', $request->input('sportsName'))->firstOrFail();
+            // Fetch skills related to the sports ID
+            $skills = Skills::where('sports_id', $request->input('sportsId'))->get();
 
-            // Fetch skills related to the sports category
-            $skills = Skills::where('sports_id', $sportsCategory->id)->get();
-
-            // Transform the data to include the sports name
-            $response = $skills->map(function ($item) use ($sportsCategory) {
+            // Transform the data to include only the skill names
+            $response = $skills->map(function ($item) {
                 return [
                     'skill' => $item->skill,
+                    'skillId' => $item->id,
                 ];
             });
 
@@ -90,4 +88,5 @@ class SportsController extends Controller
             return response()->json(['error' => 'Failed to fetch skills.', 'message' => $e->getMessage()], 500);
         }
     }
+
 }

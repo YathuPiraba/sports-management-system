@@ -49,11 +49,12 @@ class MemberController extends Controller
             'lastName' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
             'address' => 'required|string|max:255',
+            'experience' => 'sometimes|string|max:255',
             'nic' => 'required|string|max:20',
             'contactNo' => 'required|string|max:15',
             'whatsappNo' => 'nullable|string|max:15',
-            'sports' => 'sometimes|array|min:1',
-            'sports.*.id' => 'sometimes|exists:sports,id',
+            'sports' => 'sometimes|array',
+            'sports.*.id' => 'required|exists:sports,id',
             'sports.*.skills' => 'sometimes|array|min:1',
             'sports.*.skills.*' => 'sometimes|exists:skills,id',
             'clubName' => 'required|string|exists:clubs,clubName',
@@ -109,6 +110,7 @@ class MemberController extends Controller
                 'date_of_birth' => $request->date_of_birth,
                 'age' => $age,
                 'address' => $request->address,
+                'experience' => $request->experience,
                 'nic' => $request->nic,
                 'contactNo' => $request->contactNo,
                 'whatsappNo' => $request->whatsappNo,
@@ -122,11 +124,13 @@ class MemberController extends Controller
                         'sports_id' => $sportData['id'],
                     ]);
 
-                    foreach ($sportData['skills'] as $skillId) {
-                        Member_Skills::create([
-                            'member_sport_id' => $playerSport->id,
-                            'skill_id' => $skillId,
-                        ]);
+                    if (isset($sportData['skills']) && !empty($sportData['skills'])) {
+                        foreach ($sportData['skills'] as $skillId) {
+                            Member_Skills::create([
+                                'member_sport_id' => $playerSport->id,
+                                'skill_id' => $skillId,
+                            ]);
+                        }
                     }
                 }
             }

@@ -4,6 +4,7 @@ import {
   fetchUserDetailsApi,
   applyManagerApi,
   logoutApi,
+  applyMemberApi,
 } from "../Services/apiServices";
 
 // Thunk to handle login and token storage
@@ -27,6 +28,20 @@ export const applyManager = createAsyncThunk(
   async (data) => {
     try {
       const res = await applyManagerApi(data);
+      console.log("API response:", res);
+      return res.data;
+    } catch (error) {
+      console.error("Error in applyManager thunk:", error);
+      throw error;
+    }
+  }
+);
+
+export const applyMember = createAsyncThunk(
+  "/signup/member",
+  async (data) => {
+    try {
+      const res = await applyMemberApi(data);
       console.log("API response:", res);
       return res.data;
     } catch (error) {
@@ -70,6 +85,9 @@ const authSlice = createSlice({
         state.userdata = null;
       })
       .addCase(applyManager.fulfilled, (state, action) => {
+        state.userdata = action.payload;
+      })
+      .addCase(applyMember.fulfilled, (state, action) => {
         state.userdata = action.payload;
       });
   },

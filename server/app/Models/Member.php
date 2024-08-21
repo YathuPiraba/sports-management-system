@@ -22,6 +22,7 @@ class Member extends Model
         'contactNo',
         'whatsappNo',
         'position',
+        'experience',
     ];
 
     // Relationships

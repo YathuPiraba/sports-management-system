@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('contactNo');
             $table->string('whatsappNo');
             $table->string('position');
+            $table->string('experience');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

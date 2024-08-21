@@ -143,8 +143,8 @@ export const getAClubSportsAPI = (clubName) => {
 };
 
 //Get specific Skills by sportsName
-export const getSkillsBySportsAPI = (sportsName) => {
+export const getSkillsBySportsAPI = (sportsId) => {
   return apiClient.get("/skills/by-sport", {
-    params: { sportsName },
+    params: { sportsId },
   });
 };
