@@ -179,8 +179,8 @@ const MemberSignIn = () => {
         )}
         {currentStep === "sportsDetails" && (
           <div className="flex justify-center">
-            <div className="m-6 max-h-screen w-3/4 p-9 z-20 bg-white text-black shadow-md border">
-              <div className="flex justify-start mt-3">
+            <div className="m-6 max-h-screen w-3/4 py-9 px-2 z-20 bg-white text-black shadow-md border">
+              <div className="flex justify-start mt-3 ml-4">
                 <button
                   onClick={handlePreviousStep}
                   className="bg-blue-500 text-white px-2 py-1 border rounded-md"
@@ -194,7 +194,7 @@ const MemberSignIn = () => {
                   onSportsDetailsChange={handleSportsDetailsChange}
                 />
               </div>
-              <div className="flex justify-end mt-3 ml-4">
+              <div className="flex justify-end mt-3 ml-4 mr-5">
                 <button
                   className="bg-green-500 text-white px-2 py-1 border rounded-md"
                   type="submit"

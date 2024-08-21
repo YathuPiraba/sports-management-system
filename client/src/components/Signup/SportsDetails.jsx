@@ -34,7 +34,6 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
     try {
       const response = await getAClubSportsAPI(clubName);
       setSports(response.data);
-      console.log(sports);
     } catch (error) {
       console.error("Error fetching sports for club:", error);
     }
@@ -44,6 +43,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
     setSelectedSport(sportsId);
 
     console.log(sportsId);
+    
 
     // Fetch skills only if position is Player
     if (position === "Player") {
@@ -71,11 +71,15 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
         const updatedSkills = [...selectedSkills];
         updatedSkills[existingSportIndex] = sportSkill;
         setSelectedSkills(updatedSkills);
+
       } else {
         // Otherwise, add the new sport-skill combination
         setSelectedSkills([...selectedSkills, sportSkill]);
       }
-
+      
+      console.log([...selectedSkills,sportSkill]);
+      
+      
       onSportsDetailsChange({
         clubName,
         position,
@@ -91,6 +95,9 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
       (skill) => skill !== skillToRemove
     );
     setSelectedSkills(updatedSkills);
+
+    console.log(updatedSkills);
+    
 
     onSportsDetailsChange({
       clubName,
@@ -125,13 +132,13 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
   };
 
   const getSportsName = (id) => {
-    const sport = sports.find((s) => s.id == id);
+    const sport = sports.find((s) => s.sports_id == id);
     return sport ? sport.sportsName : "Unknown Sport";
   };
 
   return (
     <div className="mx-24">
-      <div className="flex flex-row gap-6 mb-2">
+      <div className="flex flex-row gap-7 mb-2">
         <div className="mt-2">
           <label className="mr-3">Club Name:</label>
           <select
@@ -149,12 +156,12 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
           </select>
         </div>
         <div className="mt-2">
-          <label className="mr-3">Position:</label>
+          <label className="mr-1">Position:</label>
           <select
             name="position"
             value={position}
             onChange={handlePositionChange}
-            className="border rounded-md ml-6 w-72 p-1.5"
+            className="border rounded-md ml-3 w-72 p-1.5"
           >
             <option value="">Select Position</option>
             <option value="Coach">Coach</option>
@@ -163,7 +170,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
         </div>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex gap-8">
         {position && clubName && (
           <div className="mt-2">
             <label className="mr-9">Sports:</label>
@@ -174,7 +181,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
             >
               <option value="">Select a Sport</option>
               {sports.map((sport) => (
-                <option key={sport.id} value={sport.id}>
+                <option key={sport.id} value={sport.sports_id}>
                   {sport.sportsName}
                 </option>
               ))}
@@ -183,10 +190,10 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
         )}
         {position === "Player" && selectedSport && (
           <div className="mt-2">
-            <label className="mr-5">Skills:</label>
+            <label className="mr-2">Skills:</label>
             <select
               onChange={(e) => handleSkillSelect(e.target.value)}
-              className="border rounded-md ml-10 w-72 p-1.5"
+              className="border rounded-md ml-7 w-72 p-1.5"
             >
               <option value="">Select a Skill</option>
               {skills.map((skillName) => (
