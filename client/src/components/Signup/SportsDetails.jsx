@@ -160,12 +160,12 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
           </select>
         </div>
         <div className="mt-8 md:mt-2 ">
-          <label className="mr-1">Position:</label>
+          <label className="mr-1 md:mr-0 lg:mr-0">Position:</label>
           <select
             name="position"
             value={position}
             onChange={handlePositionChange}
-            className="border rounded-md ml-7 sm:ml-9 min-w-40 p-1.5"
+            className="border rounded-md ml-7 sm:ml-9 min-w-40 md:w-48 lg:w-48 p-1.5"
           >
             <option value="">Select Position</option>
             <option value="Coach">Coach</option>
@@ -185,7 +185,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
             >
               <option value="">Select a Sport</option>
               {sports.map((sport) => (
-                <option key={sport.id} value={sport.sports_id}>
+                <option key={sport.sports_id} value={sport.sports_id}>
                   {sport.sportsName}
                 </option>
               ))}
