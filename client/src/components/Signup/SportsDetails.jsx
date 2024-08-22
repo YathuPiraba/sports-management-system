@@ -228,14 +228,18 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
         ></div>
       )}
       {position === "Player" && selectedSport && (
-        <div
-          className="mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap"
+        <fieldset
+          className=" mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap"
           style={{
             minHeight: "150px",
             width: "100%",
             border: "2px solid #ccc",
           }}
         >
+          <legend className="text-gray-500 px-2">
+            Add your known sports and skills you have here
+          </legend>
+
           {selectedSkills.length > 0 ? (
             selectedSkills.map((item, index) => (
               <div key={index} className="p-2 border-b flex items-center">
@@ -251,8 +255,9 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
           ) : (
             <p className="text-gray-500">No skills selected</p>
           )}
-        </div>
+        </fieldset>
       )}
+
       {position === "Coach" && selectedSport && (
         <textarea
           className="w-full mt-4 p-4 h-40 border rounded-md bg-gray-100"
