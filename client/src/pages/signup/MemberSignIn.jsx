@@ -88,25 +88,16 @@ const MemberSignIn = () => {
     formData.append("clubName", sportsDetails.clubName);
     formData.append("position", sportsDetails.position);
 
-    console.log(memberDetails);
-
     if (sportsDetails.position === "Coach") {
       formData.append("experience", sportsDetails.experience || "");
       // For coaches, we'll send a single sport with no skills
-      if (sportsDetails.selectedSport) {
-        formData.append("sports[0][id]", sportsDetails.selectedSport);
-      }
+      formData.append("sports[0][id]", sportsDetails.selectedSport);
     } else if (sportsDetails.position === "Player") {
       // For players, we need to construct the sports array
       if (Array.isArray(sportsDetails.selectedSkills)) {
         sportsDetails.selectedSkills.forEach((sportSkill, index) => {
-          if (sportSkill && sportSkill.sport) {
-            formData.append(`sports[${index}][id]`, sportSkill.sport);
-            formData.append(
-              `sports[${index}][skills][]`,
-              sportSkill.skill || ""
-            );
-          }
+          formData.append(`sports[${index}][id]`, sportSkill.sport);
+          formData.append(`sports[${index}][skills][]`, sportSkill.skill || "");
         });
       } else if (sportsDetails.selectedSport && sportsDetails.selectedSkills) {
         // If selectedSkills is not an array, but we have selectedSport and selectedSkills
@@ -141,12 +132,10 @@ const MemberSignIn = () => {
   };
 
   const handleNextStep = () => {
-   
     setCurrentStep("sportsDetails");
   };
 
   const handlePreviousStep = () => {
-   
     setCurrentStep("personalDetails");
   };
 

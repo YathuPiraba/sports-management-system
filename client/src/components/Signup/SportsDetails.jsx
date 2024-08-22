@@ -28,7 +28,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
       selectedSkills,
       experience: position === "Coach" ? experience : undefined,
     });
-  }, [selectedSport]);
+  }, [position, selectedSport]);
 
   const fetchSportsByClub = async (clubName) => {
     try {
@@ -120,10 +120,14 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
     const newPosition = e.target.value;
     setPosition(newPosition);
 
-    if (newPosition !== "Coach") {
+    if (newPosition === "Player") {
       setSelectedSport("");
-  }
-    if (e.target.value !== "Coach") {
+    } else if (newPosition === "Coach") {
+      setSelectedSport("");
+    } else {
+      setSelectedSport("");
+      setSkills([]);
+      setSelectedSkills([]);
       setExperience("");
     }
   };
