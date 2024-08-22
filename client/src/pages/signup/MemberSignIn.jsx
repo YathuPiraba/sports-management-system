@@ -149,8 +149,6 @@ const MemberSignIn = () => {
     }
   }, []);
 
-
-
   const handleNextStep = () => {
     localStorage.setItem(
       "memberSignInData",
