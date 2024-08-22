@@ -120,7 +120,6 @@ const MemberSignIn = () => {
       console.log("result", result);
       navigate("/home");
       toast.success("Successfully Applied for Registration");
-      localStorage.removeItem("memberSignInData");
     } catch (error) {
       console.error("Error creating request", error);
       toast.error("Error while applying Request");
@@ -141,34 +140,13 @@ const MemberSignIn = () => {
     setMemberDetails({ ...memberDetails, [name]: files ? files[0] : value });
   };
 
-  useEffect(() => {
-    // Load data from local storage when component mounts
-    const storedData = JSON.parse(localStorage.getItem("memberSignInData"));
-    if (storedData) {
-      setMemberDetails(storedData.memberDetails || {});
-      setSportsDetails(storedData.sportsDetails || {});
-    }
-  }, []);
-
   const handleNextStep = () => {
-    localStorage.setItem(
-      "memberSignInData",
-      JSON.stringify({
-        memberDetails,
-        sportsDetails,
-      })
-    );
+   
     setCurrentStep("sportsDetails");
   };
 
   const handlePreviousStep = () => {
-    localStorage.setItem(
-      "memberSignInData",
-      JSON.stringify({
-        memberDetails,
-        sportsDetails,
-      })
-    );
+   
     setCurrentStep("personalDetails");
   };
 
@@ -193,7 +171,7 @@ const MemberSignIn = () => {
         )}
         {currentStep === "sportsDetails" && (
           <div className="flex justify-center">
-            <div className="m-6 max-h-screen w-3/4 py-9 px-2 z-20 bg-white text-black shadow-md border">
+            <div className="m-6 h-auto w-3/4 py-9 px-2 z-20 bg-white text-black shadow-md border">
               <div className="flex justify-start mt-3 ml-4">
                 <button
                   onClick={handlePreviousStep}
