@@ -72,28 +72,30 @@ const MemberSignIn = () => {
 
     // Append the filtered memberDetails to formData
     Object.keys(filteredMemberDetails).forEach((key) => {
-      if (filteredMemberDetails[key]) {
+      if (filteredMemberDetails[key] && key !== 'image') {
         formData.append(key, filteredMemberDetails[key]);
       }
     });
 
     // Handle image separately to ensure it's a file object
-    if (memberDetails.image) {
+    if (memberDetails.image instanceof File) {
       formData.append("image", memberDetails.image);
+    } else {
+      console.warn("Image is not a valid file object");
     }
 
     // Append sportsDetails to formData
     formData.append("clubName", sportsDetails.clubName);
     formData.append("position", sportsDetails.position);
 
-    console.log();
+    console.log(memberDetails);
 
     if (sportsDetails.position === "Coach") {
       formData.append("experience", sportsDetails.experience || "");
       // For coaches, we'll send a single sport with no skills
       if (sportsDetails.selectedSport) {
         formData.append("sports[0][id]", sportsDetails.selectedSport);
-        formData.append("sports[0][skills]", JSON.stringify([]));
+      
       }
     } else if (sportsDetails.position === "Player") {
       // For players, we need to construct the sports array
@@ -113,6 +115,7 @@ const MemberSignIn = () => {
         formData.append("sports[0][skills][]", sportsDetails.selectedSkills);
       }
     }
+
 
     try {
       const result = await dispatch(applyMember(formData)).unwrap();

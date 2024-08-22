@@ -54,7 +54,7 @@ class MemberController extends Controller
             'contactNo' => 'required|string|max:15',
             'whatsappNo' => 'nullable|string|max:15',
             'sports' => 'required|array',
-            'sports.*.id' => 'required|exists:sports,id',
+            'sports.*.id' => 'required|exists:sports_categories,id',
             'sports.*.skills' => 'sometimes|array|min:1',
             'sports.*.skills.*' => 'sometimes|exists:skills,id',
             'clubName' => 'required|string|exists:clubs,clubName',
