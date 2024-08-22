@@ -4,7 +4,7 @@ import { FcSportsMode } from "react-icons/fc";
 
 const SignInHeader = ({ currentStep }) => {
   return (
-    <div className=" flex mt-3 justify-center">
+    <div className=" flex p-3 justify-center">
       <ul className="steps flex gap-4">
         <li
           className={`step ${

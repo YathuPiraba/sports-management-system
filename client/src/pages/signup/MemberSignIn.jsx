@@ -7,6 +7,7 @@ import PersonalDetails from "../../Components/Signup/PersonalDetails";
 import SportsDetails from "../../Components/Signup/SportsDetails";
 import SignInHeader from "../../Components/Signup/SignInHeader";
 import { applyMember } from "../../features/authslice";
+import { TbPlayerTrackPrev } from "react-icons/tb";
 
 const MemberSignIn = () => {
   const [divisions, setDivisions] = useState([]);
@@ -90,7 +91,7 @@ const MemberSignIn = () => {
 
     if (sportsDetails.position === "Coach") {
       formData.append("experience", sportsDetails.experience || "");
-      // For coaches, we'll send a single sport with no skills
+      // For coaches, we'll send a single sport
       formData.append("sports[0][id]", sportsDetails.selectedSport);
     } else if (sportsDetails.position === "Player") {
       // For players, we need to construct the sports array
@@ -140,52 +141,54 @@ const MemberSignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-customGreen text-black">
-      <h1 className="p-4 font-poppins text-xl font-bold underline text-gray-900">
-        Member SignIn Form
-      </h1>
+    <div className="min-h-screen bg-customGreen  text-black">
       <SignInHeader currentStep={currentStep} />
-      <form onSubmit={handleSubmit}>
-        {currentStep === "personalDetails" && (
-          <div className="flex justify-center">
-            <div className="m-6 h-auto w-3/4 px-9 pt-9 pb-4 z-20 bg-white text-black shadow-md border">
-              <PersonalDetails
-                details={memberDetails}
-                handleChange={handleMemberChange}
-                divisions={divisions}
-                onNextStep={handleNextStep}
-              />
-            </div>
-          </div>
-        )}
-        {currentStep === "sportsDetails" && (
-          <div className="flex justify-center">
-            <div className="m-6 h-auto w-3/4 py-9 px-2 z-20 bg-white text-black shadow-md border">
-              <div className="flex justify-start mt-3 ml-4">
-                <button
-                  onClick={handlePreviousStep}
-                  className="bg-blue-500 text-white px-2 py-1 border rounded-md"
-                >
-                  Previous
-                </button>
-              </div>
-              <div>
-                <SportsDetails
-                  clubs={clubs}
-                  onSportsDetailsChange={handleSportsDetailsChange}
+      <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">
+        <div className="w-auto mx-auto">
+          <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
+            <h1 className="text-xl font-poppins py-5 font-bold text-center">
+              Member SignIn Form
+            </h1>
+            <div className="px-4 sm:px-6 lg:px-8 pb-8">
+              {currentStep === "personalDetails" && (
+                <PersonalDetails
+                  details={memberDetails}
+                  handleChange={handleMemberChange}
+                  divisions={divisions}
+                  onNextStep={handleNextStep}
                 />
-              </div>
-              <div className="flex justify-end mt-3 ml-4 mr-5">
-                <button
-                  className="bg-green-500 text-white px-2 py-1 border rounded-md"
-                  type="submit"
-                >
-                  Apply
-                </button>
-              </div>
+              )}
+
+              {currentStep === "sportsDetails" && (
+                <>
+                  <div className="flex justify-start mt-3">
+                    <button
+                      onClick={handlePreviousStep}
+                      className="bg-blue-500 text-white px-4 py-2 lg:px-5 lg:py-2 rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                      <TbPlayerTrackPrev size={18} />
+                    </button>
+                  </div>
+                  <div className="mt-4">
+                    <SportsDetails
+                      clubs={clubs}
+                      onSportsDetailsChange={handleSportsDetailsChange}
+                    />
+                  </div>
+
+                  <div className="flex justify-center  mt-6">
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 w-max md:w-56 lg:w-64 rounded-md hover:bg-green-600 transition-colors"
+                      type="submit"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </form>
     </div>
   );

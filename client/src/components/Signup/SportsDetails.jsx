@@ -28,7 +28,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
       selectedSkills,
       experience: position === "Coach" ? experience : undefined,
     });
-  }, [position, selectedSport]);
+  }, [position, selectedSport, selectedSkills, experience]);
 
   const fetchSportsByClub = async (clubName) => {
     try {
@@ -49,15 +49,14 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
       } catch (error) {
         console.error("Error fetching skills for sport:", error);
       }
-    } else if (position === "Coach") {
-      // For coaches, we update the sports details immediately
-      onSportsDetailsChange({
-        clubName,
-        position,
-        sports: sportsId,
-        experience,
-      });
     }
+
+    onSportsDetailsChange({
+      clubName,
+      position,
+      sports: sportsId,
+      experience,
+    });
   };
 
   const handleSkillSelect = (skillId) => {
@@ -119,17 +118,9 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
   const handlePositionChange = (e) => {
     const newPosition = e.target.value;
     setPosition(newPosition);
-
-    if (newPosition === "Player") {
-      setSelectedSport("");
-    } else if (newPosition === "Coach") {
-      setSelectedSport("");
-    } else {
-      setSelectedSport("");
-      setSkills([]);
-      setSelectedSkills([]);
-      setExperience("");
-    }
+    setSelectedSport("");
+    setSelectedSkills([]);
+    setExperience("");
   };
 
   const handleExperienceChange = (e) => {
@@ -150,15 +141,15 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
   };
 
   return (
-    <div className="mx-24">
-      <div className="flex flex-row gap-7 mb-2">
+    <div className="mx-auto">
+      <div className="flex flex-col md:flex-row lg:flex-row md:gap-7">
         <div className="mt-2">
           <label className="mr-3">Club Name:</label>
           <select
             name="clubName"
             value={clubName}
             onChange={handleClubNameChange}
-            className="border rounded-md p-1.5 w-60"
+            className="border rounded-md p-1.5 w-max"
           >
             <option value="">Select a Club</option>
             {clubs.map((club) => (
@@ -168,13 +159,13 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
             ))}
           </select>
         </div>
-        <div className="mt-2">
+        <div className="mt-8 md:mt-2 ">
           <label className="mr-1">Position:</label>
           <select
             name="position"
             value={position}
             onChange={handlePositionChange}
-            className="border rounded-md ml-3 w-72 p-1.5"
+            className="border rounded-md ml-7 sm:ml-9 min-w-40 p-1.5"
           >
             <option value="">Select Position</option>
             <option value="Coach">Coach</option>
@@ -183,14 +174,14 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
         </div>
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex flex-col md:flex-row lg:flex-row md:gap-7">
         {position && clubName && (
-          <div className="mt-2">
+          <div className="mt-8">
             <label className="mr-9">Sports:</label>
             <select
               onChange={(e) => handleSportChange(e.target.value)}
               value={selectedSport}
-              className="border rounded-md ml-2 w-60 p-1.5"
+              className="border rounded-md ml-2 min-w-40 md:w-40 p-1.5"
             >
               <option value="">Select a Sport</option>
               {sports.map((sport) => (
@@ -202,11 +193,11 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
           </div>
         )}
         {position === "Player" && selectedSport && (
-          <div className="mt-2">
-            <label className="mr-2">Skills:</label>
+          <div className="mt-8">
+            <label className="mr-4 sm:mr-5 ">Skills:</label>
             <select
               onChange={(e) => handleSkillSelect(e.target.value)}
-              className="border rounded-md ml-7 w-72 p-1.5"
+              className="border rounded-md ml-9 md:ml-9 sm:ml-16 min-w-40 p-1.5"
             >
               <option value="">Select a Skill</option>
               {skills.map((skillName) => (
