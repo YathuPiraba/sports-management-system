@@ -85,23 +85,33 @@ const MemberSignIn = () => {
     // Append sportsDetails to formData
     formData.append("clubName", sportsDetails.clubName);
     formData.append("position", sportsDetails.position);
-    formData.append(
-      "experience",
-      sportsDetails.position === "Coach" ? sportsDetails.experience : ""
-    );
 
-    // Construct the sports array and append it to formData
-    if (sportsDetails.selectedSport) {
-      formData.append(
-        "sports[]",
-        JSON.stringify({
-          id: sportsDetails.selectedSport,
-          skills:
-            sportsDetails.selectedSkills.length > 0
-              ? sportsDetails.selectedSkills
-              : [],
-        })
-      );
+    console.log();
+
+    if (sportsDetails.position === "Coach") {
+      formData.append("experience", sportsDetails.experience || "");
+      // For coaches, we'll send a single sport with no skills
+      if (sportsDetails.selectedSport) {
+        formData.append("sports[0][id]", sportsDetails.selectedSport);
+        formData.append("sports[0][skills]", JSON.stringify([]));
+      }
+    } else if (sportsDetails.position === "Player") {
+      // For players, we need to construct the sports array
+      if (Array.isArray(sportsDetails.selectedSkills)) {
+        sportsDetails.selectedSkills.forEach((sportSkill, index) => {
+          if (sportSkill && sportSkill.sport) {
+            formData.append(`sports[${index}][id]`, sportSkill.sport);
+            formData.append(
+              `sports[${index}][skills][]`,
+              sportSkill.skill || ""
+            );
+          }
+        });
+      } else if (sportsDetails.selectedSport && sportsDetails.selectedSkills) {
+        // If selectedSkills is not an array, but we have selectedSport and selectedSkills
+        formData.append("sports[0][id]", sportsDetails.selectedSport);
+        formData.append("sports[0][skills][]", sportsDetails.selectedSkills);
+      }
     }
 
     try {
@@ -138,6 +148,8 @@ const MemberSignIn = () => {
       setSportsDetails(storedData.sportsDetails || {});
     }
   }, []);
+
+
 
   const handleNextStep = () => {
     localStorage.setItem(

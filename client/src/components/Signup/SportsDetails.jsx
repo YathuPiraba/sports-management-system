@@ -42,9 +42,6 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
   const handleSportChange = async (sportsId) => {
     setSelectedSport(sportsId);
 
-    console.log(sportsId);
-
-    // Fetch skills only if position is Player
     if (position === "Player") {
       try {
         const response = await getSkillsBySportsAPI(sportsId);
@@ -52,56 +49,67 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
       } catch (error) {
         console.error("Error fetching skills for sport:", error);
       }
+    } else if (position === "Coach") {
+      // For coaches, we update the sports details immediately
+      onSportsDetailsChange({
+        clubName,
+        position,
+        sports: sportsId,
+        experience,
+      });
     }
   };
 
-  const handleSkillSelect = (skill) => {
-    if (skill) {
-      // Create an object with sport name and skill
-      const sportSkill = { sport: selectedSport, skill };
+  const handleSkillSelect = (skillId) => {
+    if (skillId && position === "Player") {
+      const selectedSkill = skills.find((s) => s.skillId == skillId);
+      const skillName = selectedSkill ? selectedSkill.skill : "Unknown Skill";
 
-      // Check if the sport is already in the selectedSkills array
       const existingSportIndex = selectedSkills.findIndex(
         (item) => item.sport === selectedSport
       );
 
-      // If the sport is already selected, replace the skill
+      let updatedSkills;
       if (existingSportIndex >= 0) {
-        const updatedSkills = [...selectedSkills];
-        updatedSkills[existingSportIndex] = sportSkill;
-        setSelectedSkills(updatedSkills);
+        updatedSkills = selectedSkills.map((item, index) =>
+          index === existingSportIndex
+            ? { ...item, skill: skillId, skillName }
+            : item
+        );
       } else {
-        // Otherwise, add the new sport-skill combination
-        setSelectedSkills([...selectedSkills, sportSkill]);
+        updatedSkills = [
+          ...selectedSkills,
+          { sport: selectedSport, skill: skillId, skillName },
+        ];
       }
 
-      console.log([...selectedSkills, sportSkill]);
+      setSelectedSkills(updatedSkills);
+
+      onSportsDetailsChange({
+        clubName,
+        position,
+        sports: updatedSkills,
+      });
+    }
+  };
+
+  const handleSkillRemove = (e, skillToRemove) => {
+    e.preventDefault();
+    if (position === "Player") {
+      const updatedSkills = selectedSkills.filter(
+        (skill) => skill.sport !== skillToRemove.sport
+      );
+      setSelectedSkills(updatedSkills);
+
+      console.log(updatedSkills);
 
       onSportsDetailsChange({
         clubName,
         position,
         selectedSport,
-        selectedSkills: [...selectedSkills, sportSkill],
-        experience: position === "Coach" ? experience : undefined,
+        selectedSkills: updatedSkills,
       });
     }
-  };
-
-  const handleSkillRemove = (skillToRemove) => {
-    const updatedSkills = selectedSkills.filter(
-      (skill) => skill !== skillToRemove
-    );
-    setSelectedSkills(updatedSkills);
-
-    console.log(updatedSkills);
-
-    onSportsDetailsChange({
-      clubName,
-      position,
-      selectedSport,
-      selectedSkills: updatedSkills,
-      experience: position === "Coach" ? experience : undefined,
-    });
   };
 
   const handleClubNameChange = (e) => {
@@ -193,7 +201,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
             >
               <option value="">Select a Skill</option>
               {skills.map((skillName) => (
-                <option key={skillName.id} value={skillName.skill}>
+                <option key={skillName.skillId} value={skillName.skillId}>
                   {skillName.skill}
                 </option>
               ))}
@@ -222,10 +230,10 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
           {selectedSkills.length > 0 ? (
             selectedSkills.map((item, index) => (
               <div key={index} className="p-2 border-b flex items-center">
-                {getSportsName(item.sport)} - {item.skill}
+                {getSportsName(item.sport)} - {item.skillName}
                 <button
                   className="ml-2 text-red-500"
-                  onClick={() => handleSkillRemove(item)}
+                  onClick={(e) => handleSkillRemove(e, item)}
                 >
                   <TiDelete />
                 </button>
