@@ -13,8 +13,21 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
       />
     </div>
     <div>
-      <label className="block text-gray-700">Address</label>
+      <label className="block text-gray-700">Image</label>
       <input
+        type="file"
+        name="clubImage"
+        onChange={(e) =>
+          handleChange({
+            target: { name: "clubImage", value: e.target.files[0] },
+          })
+        }
+        className="mt-1 p-2 w-full border rounded"
+      />
+    </div>
+    <div className="md:col-span-2">
+      <label className="block text-gray-700">Address</label>
+      <textarea
         type="text"
         name="clubAddress"
         value={details.clubAddress}
@@ -29,7 +42,7 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
         value={details.club_history}
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
-      ></textarea>
+      />
     </div>
     <div>
       <label className="block text-gray-700">Contact Number</label>
@@ -41,17 +54,7 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
         className="mt-1 p-2 w-full border rounded"
       />
     </div>
-    <div>
-      <label className="block text-gray-700">Image</label>
-      <input
-        type="file"
-        name="clubImage"
-        onChange={(e) =>
-          handleChange({ target: { name: "clubImage", value: e.target.files[0] } })
-        }
-        className="mt-1 p-2 w-full border rounded"
-      />
-    </div>
+
     <div>
       <label className="block text-gray-700">Division Name</label>
       <select

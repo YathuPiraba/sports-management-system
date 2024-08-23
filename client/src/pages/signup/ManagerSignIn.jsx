@@ -6,6 +6,8 @@ import { applyManager } from "../../features/authslice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { fetchGSDataApi } from "../../Services/apiServices";
+import SignInHeader from "../../Components/Signup/SignInHeader";
+import { TbPlayerTrackPrev } from "react-icons/tb";
 
 const ManagerSignIn = () => {
   const [divisions, setDivisions] = useState([]);
@@ -32,8 +34,17 @@ const ManagerSignIn = () => {
     whatsappNo: "",
   });
 
+  const [currentStep, setCurrentStep] = useState("personalDetails");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const handleNextStep = () => {
+    setCurrentStep("clubDetails");
+  };
+
+  const handlePreviousStep = () => {
+    setCurrentStep("personalDetails");
+  };
 
   const applyRequest = async () => {
     const formData = {
@@ -44,9 +55,11 @@ const ManagerSignIn = () => {
     try {
       const result = await dispatch(applyManager(formData)).unwrap();
       console.log("result", result);
+      toast.success("Successfully Applied for Registration");
       navigate("/home");
     } catch (error) {
       console.error("Error creating request", error);
+      toast.error("Error while applying Request");
     }
   };
 
@@ -76,32 +89,67 @@ const ManagerSignIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (managerDetails.password !== managerDetails.confirm_password) {
+      toast.error("Passwords do not match");
+      return;
+    }
     applyRequest();
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <form onSubmit={handleSubmit} className="bg-white p-8 shadow-md rounded">
-        <h2 className="text-2xl font-bold mb-6">Club Details</h2>
-        <ClubDetails
-          details={clubDetails}
-          handleChange={handleClubChange}
-          divisions={divisions}
-        />
+    <div className="p-6 bg-customGreen min-h-screen">
+      <SignInHeader currentStep={currentStep} />
+      <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">
+        {currentStep === "personalDetails" && (
+          <div className="w-auto mx-auto">
+            <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
+              <h1 className="text-xl font-poppins py-5 font-bold text-center">
+                Personal Details
+              </h1>
+              <div className="px-4 sm:px-6 lg:px-8 pb-8">
+                <PersonalDetails
+                  details={managerDetails}
+                  handleChange={handleManagerChange}
+                  divisions={divisions}
+                  onNextStep={handleNextStep}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
-        <h2 className="text-2xl font-bold mt-8 mb-6">Manager Details</h2>
-        <PersonalDetails
-          details={managerDetails}
-          handleChange={handleManagerChange}
-          divisions={divisions}
-        />
-
-        <button
-          type="submit"
-          className="mt-6 w-full bg-blue-500 text-white py-2 rounded shadow-md hover:bg-blue-600"
-        >
-          Apply
-        </button>
+        {currentStep === "clubDetails" && (
+          <div className="w-auto mx-auto">
+            <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
+              <h1 className="text-xl font-poppins pt-5 font-bold text-center">
+                Club Details
+              </h1>
+              <div className="flex justify-start ml-2 my-3">
+                <button
+                  onClick={handlePreviousStep}
+                  className="bg-blue-500 text-white px-4 py-2 lg:px-5 lg:py-2 rounded-md hover:bg-blue-600 transition-colors"
+                >
+                  <TbPlayerTrackPrev size={18} />
+                </button>
+              </div>
+              <div className="px-4 sm:px-6 w-full lg:px-8 pb-8">
+                <ClubDetails
+                  details={clubDetails}
+                  handleChange={handleClubChange}
+                  divisions={divisions}
+                />
+                <div className="text-center mt-6">
+                  <button
+                    type="submit"
+                    className="bg-green-500 text-white px-4 py-2 w-full rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );
