@@ -1,11 +1,28 @@
-import React from 'react'
+import React, { useState, Suspense, lazy } from "react";
 import { TiDelete } from "react-icons/ti";
 import { FcApproval } from "react-icons/fc";
 
-const ManagerApprovals = () => {
-  return (
-    <div>ManagerApprovals</div>
-  )
-}
+const playerColumns = [
+  "Sport Name",
+  "Position",
+  "GS Division Name",
+  "",
+  "Contact No",
+];
 
-export default ManagerApprovals
+const memberColumns = [
+  "Profile",
+  "First Name",
+  "Last Name",
+  "Email",
+  "D.O.B",
+  "Address",
+  "NIC",
+  "Contact No",
+];
+
+const ManagerApprovals = () => {
+  return <div>ManagerApprovals</div>;
+};
+
+export default ManagerApprovals;

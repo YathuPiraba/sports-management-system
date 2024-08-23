@@ -161,34 +161,55 @@ class MemberController extends Controller
     // GET => http://127.0.0.1:8000/api/pendingMembers
     public function pendingMembers(Request $request)
     {
+
         try {
+            // Get the userId from the request
+            $userId = $request->input('userId');
+            if (!$userId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'UserId is required',
+                ], 400);
+            }
+
             // Get the page number and items per page from the request, or use defaults
             $page = $request->input('page', 1);
             $perPage = $request->input('per_page', 12);
 
-            // Fetch pending members with optional sports and skills
-            $members = Member::with(['sports.sportsCategory', 'sports.skills', 'user'])
+            // Find the club manager and associated manager_id
+            $clubManager = Club_Manager::where('user_id', $userId)->first();
+
+            if (!$clubManager) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Club manager not found for the given userId',
+                ], 404);
+            }
+
+            // Fetch pending members associated with the club manager
+
+            $members = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
+                ->where('manager_id', $clubManager->id)
                 ->whereHas('user', function ($query) {
                     $query->where('is_verified', 0);
                 })
                 ->paginate($perPage, ['*'], 'page', $page);
 
+            $membersWithSportsAndSkills = collect($members->items())->map(function ($member) {
+                $sportsDetails = $member->memberSports->map(function ($memberSport) {
+                    $skills = $memberSport->skills->map(function ($skill) {
+                        return [
+                            'skill_id' => $skill->id ?? null,
+                            'skill_name' => $skill->skill ?? null,
+                        ];
+                    })->values();
 
-            $membersWithSportsAndSkills =  collect($members->items())->map(function ($member) {
-                // Gather sports and skills details if available
-                $sportsDetails = $member->sports->map(function ($memberSport) {
                     return [
-                        'sport_id' => $memberSport->sportsCategory->id,
-                        'sport_name' => $memberSport->sportsCategory->name,
-                        'skills' => $memberSport->skills->map(function ($skill) {
-                            return [
-                                'skill_id' => $skill->id,
-                                'skill_name' => $skill->name,
-
-                            ];
-                        }),
+                        'sport_id' => $memberSport->sport->id,
+                        'sport_name' => $memberSport->sport->name,
+                        'skills' => $skills,
                     ];
-                });
+                })->values();
 
                 return [
                     'member_id' => $member->id,
@@ -199,10 +220,12 @@ class MemberController extends Controller
                     'nic' => $member->nic,
                     'contactNo' => $member->contactNo,
                     'whatsappNo' => $member->whatsappNo,
+                    'experience' => $member->experience,
+                    'position' => $member->position,
                     'gs_id' => $member->gs_id,
-                    'created_at' => $member->created_at->toDateTimeString(), // Include created_at from the members table
-                    'user' => $member->user->safeAttributes(), // Using safeAttributes() to get user details
-                    'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails, // Conditionally include sports details
+                    'created_at' => $member->created_at->toDateString(),
+                    'user' => $member->user->safeAttributes(),
+                    'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
                 ];
             });
 
