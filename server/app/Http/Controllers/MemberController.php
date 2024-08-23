@@ -249,4 +249,112 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
+    // DELETE => http://127.0.0.1:8000/api/deleteMember/{memberId}
+    public function deleteMember($memberId)
+    {
+        try {
+            // Find the member
+            $member = Member::findOrFail($memberId);
+
+            // Begin a database transaction
+            DB::beginTransaction();
+
+            $user_id = $member->user_id;
+
+            $managerId = $member->manager_id;
+            $manager = Club_Manager::findOrFail($managerId);
+            $managerUserId = $manager->user_id;
+
+            try {
+
+                event(new UserRejected($user_id));
+                event(new MemberApplied($member, $managerUserId));
+
+                // Delete related member sports and skills
+                foreach ($member->memberSports as $memberSport) {
+                    // Delete related skills from the pivot table
+                    $memberSport->skills()->detach();
+
+                    // If you have a separate member_skills table, you might need to delete from it directly
+                    DB::table('member_skills')->where('member_sport_id', $memberSport->id)->delete();
+
+                    // Delete the member sport
+                    $memberSport->delete();
+                }
+
+                // Delete the member's user account if it exists
+                if ($member->user) {
+                    $member->user->delete();
+                }
+
+                // Delete the member
+                $member->delete();
+
+                // Commit the transaction
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Member and all related data deleted successfully',
+                ], 200);
+            } catch (\Exception $e) {
+                // Rollback the transaction in case of any error
+                DB::rollBack();
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            Log::error('Error deleting member: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting member: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // POST => http://127.0.0.1:8000/api/verifyMember/{memberId}
+    public function verifyMember($memberId)
+    {
+        try {
+            // Find the member
+            $member = Member::findOrFail($memberId);
+
+            $managerId = $member->manager_id;
+            $manager = Club_Manager::findOrFail($managerId);
+            $managerUserId = $manager->user_id;
+
+            // Check if the member has an associated user
+            if (!$member->user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No associated user found for this member',
+                ], 404);
+            }
+
+            // Update the user's verification status
+            $member->user->is_verified = true;
+            $member->user->save();
+
+            $user_id = $member->user->id;
+
+            event(new UserVerified($user_id));
+            event(new MemberApplied($member, $managerUserId));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Member verified successfully',
+                'data' => [
+                    'member_id' => $member->id,
+                    'user_id' => $member->user->id,
+                    'is_verified' => $member->user->is_verified,
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error verifying member: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error verifying member: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
