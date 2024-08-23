@@ -47,11 +47,10 @@ const ManagerSignIn = () => {
   };
 
   const applyRequest = async () => {
-    const formData = {
+    let { confirm_password, ...formData } = {
       ...clubDetails,
       ...managerDetails,
     };
-
     try {
       const result = await dispatch(applyManager(formData)).unwrap();
       console.log("result", result);
@@ -104,7 +103,7 @@ const ManagerSignIn = () => {
           <div className="w-auto mx-auto">
             <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
               <h1 className="text-xl font-poppins py-5 font-bold text-center">
-                Personal Details
+                Manager SignIn Form
               </h1>
               <div className="px-4 sm:px-6 lg:px-8 pb-8">
                 <PersonalDetails
