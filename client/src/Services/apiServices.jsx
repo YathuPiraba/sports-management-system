@@ -78,9 +78,10 @@ export const fetchManagerPendingDataApi = (page = 1, perPage = 10) => {
   });
 };
 
-export const fetchMemberPendingDataApi = (page = 1, perPage = 10) => {
+export const fetchMemberPendingDataApi = (userId, page = 1, perPage = 10) => {
   return authApiClient.get("/pendingMembers", {
     params: {
+      userId: userId,
       page: page,
       per_page: perPage,
     },
