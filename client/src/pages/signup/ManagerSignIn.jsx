@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
-import PersonalDetails from "../../Components/Signup/PersonalDetails";
-import ClubDetails from "../../Components/Signup/ClubDetails";
 import { applyManager } from "../../features/authslice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { fetchGSDataApi } from "../../Services/apiServices";
-import SignInHeader from "../../Components/Signup/SignInHeader";
 import { TbPlayerTrackPrev } from "react-icons/tb";
+
+const SignInHeader = lazy(() => import("../../Components/Signup/SignInHeader"));
+const PersonalDetails = lazy(() =>
+  import("../../Components/Signup/PersonalDetails")
+);
+const ClubDetails = lazy(() => import("../../Components/Signup/ClubDetails"));
 
 const ManagerSignIn = () => {
   const [divisions, setDivisions] = useState([]);
@@ -96,61 +99,66 @@ const ManagerSignIn = () => {
   };
 
   return (
-    <div className="p-6 bg-customGreen min-h-screen">
-      <SignInHeader currentStep={currentStep} />
-      <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">
-        {currentStep === "personalDetails" && (
-          <div className="w-auto mx-auto">
-            <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
-              <h1 className="text-xl font-poppins py-5 font-bold text-center">
-                Manager SignIn Form
-              </h1>
-              <div className="px-4 sm:px-6 lg:px-8 pb-8">
-                <PersonalDetails
-                  details={managerDetails}
-                  handleChange={handleManagerChange}
-                  divisions={divisions}
-                  onNextStep={handleNextStep}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {currentStep === "clubDetails" && (
-          <div className="w-auto mx-auto">
-            <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
-              <h1 className="text-xl font-poppins pt-5 font-bold text-center">
-                Club Details
-              </h1>
-              <div className="flex justify-start ml-2 my-3">
-                <button
-                  onClick={handlePreviousStep}
-                  className="bg-blue-500 text-white px-4 py-2 lg:px-5 lg:py-2 rounded-md hover:bg-blue-600 transition-colors"
-                >
-                  <TbPlayerTrackPrev size={18} />
-                </button>
-              </div>
-              <div className="px-4 sm:px-6 w-full lg:px-8 pb-8">
-                <ClubDetails
-                  details={clubDetails}
-                  handleChange={handleClubChange}
-                  divisions={divisions}
-                />
-                <div className="text-center mt-6">
-                  <button
-                    type="submit"
-                    className="bg-green-500 text-white px-4 py-2 w-full rounded-md hover:bg-green-600 transition-colors"
-                  >
-                    Apply
-                  </button>
+    <Suspense fallback={<div> Loading...</div>}>
+      <div className="p-6 bg-customGreen min-h-screen">
+        <SignInHeader currentStep={currentStep} />
+        <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">
+          {currentStep === "personalDetails" && (
+            <div className="w-auto mx-auto">
+              <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
+                <h1 className="text-xl font-poppins py-5 font-bold text-center">
+                  Manager SignIn Form
+                </h1>
+                <div className="px-4 sm:px-6 lg:px-8 pb-8">
+                  <PersonalDetails
+                    details={managerDetails}
+                    handleChange={handleManagerChange}
+                    divisions={divisions}
+                    onNextStep={handleNextStep}
+                  />
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </form>
-    </div>
+          )}
+
+          {currentStep === "clubDetails" && (
+            <div className="w-auto mx-auto">
+              <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
+                <h1 className="text-xl font-poppins pt-5 font-bold text-center">
+                  Club Details
+                </h1>
+                <div className="flex justify-start ml-2 my-3">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePreviousStep;
+                    }}
+                    className="bg-blue-500 text-white px-4 py-2 lg:px-5 lg:py-2 rounded-md hover:bg-blue-600 transition-colors"
+                  >
+                    <TbPlayerTrackPrev size={18} />
+                  </button>
+                </div>
+                <div className="px-4 sm:px-6 w-full lg:px-8 pb-8">
+                  <ClubDetails
+                    details={clubDetails}
+                    handleChange={handleClubChange}
+                    divisions={divisions}
+                  />
+                  <div className="text-center mt-6">
+                    <button
+                      type="submit"
+                      className="bg-green-500 text-white px-4 py-2 w-full rounded-md hover:bg-green-600 transition-colors"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </form>
+      </div>
+    </Suspense>
   );
 };
 

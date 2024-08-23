@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import "./login.css";
 import { Modal, Button } from "antd";
-import cover from "../../assets/sample-removebg.png";
-import logo from "../../assets/logo2.png";
 import toast from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginAdmin, fetchUserDetails } from "../../features/authslice";
 import { Input, Space } from "antd";
-import ForgotPassword from "./ForgotPassword";
+const ForgotPassword = lazy(() => import("./ForgotPassword"));
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
 const Login = () => {
@@ -98,80 +96,81 @@ const Login = () => {
   };
 
   return (
-    <div className="body-container">
-      <div className="outter">
-        <div className="sep">
-          <div className="heading">
-            <div className="topic">
-              <div className="logo">
-                <img
-                  src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png"
-                  alt="Club Connect Logo"
-                />
-                <h1>
-                  <span className="title">C</span>
-                  <span className="title3">lub </span>
-                  <span className="title1">C</span>
-                  <span className="title3">onnect</span>
-                </h1>
-              </div>
-              <p>Unite Every Club, Connect Every Player...!</p>
-            </div>
-            <div className="pic">
-              <img
-                src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798479/sample-removebg_j1e38u.png"
-                alt="Cover pic"
-              />
-            </div>
-          </div>
-          <div className="login">
-            <h2 className=" ">Login</h2>
-            <div>
-              <form onSubmit={handleFormSubmit}>
-                <input
-                  type="text"
-                  name="userName"
-                  placeholder="Enter your username"
-                  {...register("userName", { required: true })}
-                />
-                {errors.username && <span>Username is required</span>}
-                <Space direction="vertical">
-                  <Space direction="horizontal">
-                    <Controller
-                      name="password"
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field }) => (
-                        <Input.Password
-                          {...field}
-                          placeholder="Enter your password"
-                          visibilityToggle={{
-                            visible: passwordVisible,
-                            onVisibleChange: setPasswordVisible,
-                          }}
-                          className="pass"
-                        />
-                      )}
-                    />
-                  </Space>
-                  {errors.password && <span>Password is required</span>}
-                </Space>
-                <div className="forgot-btn">
-                  <span
-                    onClick={showForgotPasswordModal}
-                    className="white cursor-pointer forgot mt-2 hover:underline ml-2 "
-                  >
-                    Forgot Password?
-                  </span>
-                  <ForgotPassword
-                    isVisible={isForgotPasswordModalVisible}
-                    onClose={handleForgotPasswordCancel}
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="body-container">
+        <div className="outter">
+          <div className="sep">
+            <div className="heading">
+              <div className="topic">
+                <div className="logo">
+                  <img
+                    src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png"
+                    alt="Club Connect Logo"
                   />
-                  <button>Login</button>
+                  <h1>
+                    <span className="title">C</span>
+                    <span className="title3">lub </span>
+                    <span className="title1">C</span>
+                    <span className="title3">onnect</span>
+                  </h1>
                 </div>
-              </form>
+                <p>Unite Every Club, Connect Every Player...!</p>
+              </div>
+              <div className="pic">
+                <img
+                  src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798479/sample-removebg_j1e38u.png"
+                  alt="Cover pic"
+                />
+              </div>
+            </div>
+            <div className="login">
+              <h2 className=" ">Login</h2>
+              <div>
+                <form onSubmit={handleFormSubmit}>
+                  <input
+                    type="text"
+                    name="userName"
+                    placeholder="Enter your username"
+                    {...register("userName", { required: true })}
+                  />
+                  {errors.username && <span>Username is required</span>}
+                  <Space direction="vertical">
+                    <Space direction="horizontal">
+                      <Controller
+                        name="password"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                          <Input.Password
+                            {...field}
+                            placeholder="Enter your password"
+                            visibilityToggle={{
+                              visible: passwordVisible,
+                              onVisibleChange: setPasswordVisible,
+                            }}
+                            className="pass"
+                          />
+                        )}
+                      />
+                    </Space>
+                    {errors.password && <span>Password is required</span>}
+                  </Space>
+                  <div className="forgot-btn">
+                    <span
+                      onClick={showForgotPasswordModal}
+                      className="white cursor-pointer forgot mt-2 hover:underline ml-2 "
+                    >
+                      Forgot Password?
+                    </span>
+                    <ForgotPassword
+                      isVisible={isForgotPasswordModalVisible}
+                      onClose={handleForgotPasswordCancel}
+                    />
+                    <button>Login</button>
+                  </div>
+                </form>
 
-              {/* <div className="intersect">
+                {/* <div className="intersect">
                 <p>_______________</p>
                 <p id="or">Or</p>
                 <p>_______________</p>
@@ -179,47 +178,48 @@ const Login = () => {
               < >
                <FbGmailSignin/>
               </> */}
-              <div className="signup">
-                <p>
-                  Don&apos;t have an account?{" "}
-                  <a href="#" onClick={showModal}>
-                    Sign up
-                  </a>
-                </p>
+                <div className="signup">
+                  <p>
+                    Don&apos;t have an account?{" "}
+                    <a href="#" onClick={showModal}>
+                      Sign up
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div className="SignUp">
+          <Modal
+            title={<div style={{ textAlign: "center" }}>Sign Up</div>}
+            open={isModalVisible}
+            onCancel={handleCancel}
+            footer={null}
+            width={400}
+          >
+            <div className="signup-options">
+              <Button
+                onClick={() => navigate("/signup/manager")}
+                type="primary"
+                block
+                style={{ width: "150px", margin: "10px auto 0" }}
+              >
+                Manager
+              </Button>
+              <Button
+                onClick={() => navigate("/signup/member")}
+                type="primary"
+                block
+                style={{ width: "150px", margin: "10px auto 0" }}
+              >
+                Member
+              </Button>
+            </div>
+          </Modal>
+        </div>
       </div>
-      <div className="SignUp">
-        <Modal
-          title={<div style={{ textAlign: "center" }}>Sign Up</div>}
-          open={isModalVisible}
-          onCancel={handleCancel}
-          footer={null}
-          width={400}
-        >
-          <div className="signup-options">
-            <Button
-              onClick={() => navigate("/signup/manager")}
-              type="primary"
-              block
-              style={{ width: "150px", margin: "10px auto 0" }}
-            >
-              Manager
-            </Button>
-            <Button
-              onClick={() => navigate("/signup/member")}
-              type="primary"
-              block
-              style={{ width: "150px", margin: "10px auto 0" }}
-            >
-              Member
-            </Button>
-          </div>
-        </Modal>
-      </div>
-    </div>
+    </Suspense>
   );
 };
 

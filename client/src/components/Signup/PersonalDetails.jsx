@@ -97,7 +97,10 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
       </div>
       <div className="flex justify-end mt-6">
         <button
-          onClick={onNextStep}
+          onClick={(e) => {
+            e.preventDefault();
+            onNextStep();
+          }}
           className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 lg:py-3 px-2 lg:px-6 rounded-md transition duration-150 ease-in-out"
         >
           <TbPlayerTrackNext size={19} />
