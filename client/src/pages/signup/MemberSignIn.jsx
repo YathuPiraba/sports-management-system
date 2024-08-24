@@ -169,10 +169,7 @@ const MemberSignIn = () => {
                   <>
                     <div className="flex justify-start mt-3">
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePreviousStep;
-                        }}
+                        onClick={handlePreviousStep}
                         className="bg-blue-500 text-white px-4 py-2 lg:px-5 lg:py-2 rounded-md hover:bg-blue-600 transition-colors"
                       >
                         <TbPlayerTrackPrev size={18} />
