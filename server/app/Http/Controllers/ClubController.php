@@ -248,6 +248,9 @@ class ClubController extends Controller
                     'sportsName' => $item->sportsCategory->name,
                     'sports_arena_id' => $item->sports_arena_id,
                     'sports_arena_name' => $item->sportsArena->name,
+                    'sports_arena_location' => $item->sportsArena->location,
+                    'sports_arena_address' => $item->sportsArena->address,
+                    'sports_arena_image' => $item->sportsArena->image,
                 ];
             });
 

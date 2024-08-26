@@ -179,7 +179,7 @@ export const getSkillsBySportsAPI = (sportsId) => {
 };
 
 //Get a specific club details
-export const fetchClubData = (userId) => {
+export const fetchClubDataAPI = (userId) => {
   return apiClient.get("/club-details", {
     params: {
       userId: userId,

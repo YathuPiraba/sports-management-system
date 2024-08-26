@@ -21,14 +21,6 @@ const useManagerData = () => {
 
       const managers = res.data.data;
       const paginationData = res.data.pagination;
-
-      // // Separate verified and unverified managers
-      // const unverifiedManagers = managers.filter(
-      //   (manager) => manager.user.is_verified == 0
-      // );
-
-      // console.log("hi",unverifiedManagers);
-
       const filteredManagers = managers.map((manager) => ({
         managerId: manager.managerId,
         firstName: manager.firstName,
