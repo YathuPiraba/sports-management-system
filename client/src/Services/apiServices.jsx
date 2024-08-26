@@ -180,7 +180,7 @@ export const getSkillsBySportsAPI = (sportsId) => {
 
 //Get a specific club details
 export const fetchClubData = (userId) => {
-  return apiClient.get("/clubs-details", {
+  return apiClient.get("/club-details", {
     params: {
       userId: userId,
     },

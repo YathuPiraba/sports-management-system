@@ -61,7 +61,7 @@ Route::post('/sports/create', [SportsController::class, 'createSports']);
 Route::get('/clubs-sports/list', [ClubController::class, 'getAllClubSports']);
 Route::post('/clubs-sports/create', [ClubController::class, 'createClubSports']);
 Route::get('/clubs-sports/one', [ClubController::class, 'getAClubSports']);
-Route::get('/clubs-details', [ClubController::class, 'getClubsByUserId']);
+Route::get('/club-details', [ClubController::class, 'getClubsByUserId']);
 
 Route::get('/skills/by-sport', [SportsController::class, 'getSkillsBySport']);
 
