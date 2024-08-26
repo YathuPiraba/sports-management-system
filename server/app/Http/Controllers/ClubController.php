@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Club;
+use App\Models\Club_Manager;
 use App\Models\Club_Sports;
 use App\Models\Sports_Categories;
 use App\Models\Sports_Arena;
 use App\Models\Gs_Division;
+use App\Models\Member;
 use Exception;
 use Cloudinary\Cloudinary;
 
@@ -194,6 +196,49 @@ class ClubController extends Controller
             return response()->json($response);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch club sports.', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getClubsByUserId(Request $request)
+    {
+        try {
+            // Get the userId from the request
+            $userId = $request->input('userId');
+            if (!$userId) {
+                return response()->json([
+                    'error' => 'userId is required.',
+                ], 400);
+            }
+
+            // Fetch the club ID associated with the userId from club_managers
+            $clubId = Club_Manager::where('user_id', $userId)->value('club_id');
+
+            // If no club found in club_managers, fetch the club ID from members
+            if (!$clubId) {
+                $clubId = Member::where('user_id', $userId)->value('club_id');
+            }
+
+            // If still no club ID found, return empty response
+            if (!$clubId) {
+                return response()->json([
+                    'error' => 'No club found for the given userId.',
+                ], 404);
+            }
+
+            // Fetch the club details using the club ID
+            $club = Club::find($clubId);
+
+            // If the club is not found, return an error response
+            if (!$club) {
+                return response()->json([
+                    'error' => 'Club not found.',
+                ], 404);
+            }
+
+            // Return the club data
+            return response()->json($club);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
         }
     }
 }
