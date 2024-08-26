@@ -26,7 +26,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
             type: "date",
             max: maxDateString,
           },
-          { label: "NIC", name: "nic", type: "text" },
+          { label: "NIC", name: "nic", type: "text", maxLength: 12 },
           { label: "Division Name", name: "divisionName", type: "select" },
           { label: "Image", name: "image", type: "file" },
         ].map((field) => (
@@ -66,6 +66,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
                 value={details[field.name]}
                 onChange={handleChange}
                 max={field.type === "date" ? maxDateString : undefined}
+                maxLength={field.maxLength || undefined}
                 className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               />
             )}
