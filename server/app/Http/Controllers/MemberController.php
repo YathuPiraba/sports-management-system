@@ -196,6 +196,8 @@ class MemberController extends Controller
                 ->paginate($perPage, ['*'], 'page', $page);
 
             $membersWithSportsAndSkills = collect($members->items())->map(function ($member) {
+                $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
+
                 $sportsDetails = $member->memberSports->map(function ($memberSport) {
                     $skills = $memberSport->skills->map(function ($skill) {
                         return [
@@ -221,8 +223,10 @@ class MemberController extends Controller
                     'contactNo' => $member->contactNo,
                     'whatsappNo' => $member->whatsappNo,
                     'experience' => $member->experience,
+                    'age' => $member->age,
                     'position' => $member->position,
                     'gs_id' => $member->gs_id,
+                    'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
                     'created_at' => $member->created_at->toDateString(),
                     'user' => $member->user->safeAttributes(),
                     'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,

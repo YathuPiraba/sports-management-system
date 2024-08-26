@@ -28,6 +28,11 @@ export const applyMemberApi = (data) => {
   });
 };
 
+// Update member verification status
+export const updateMemberVerificationApi = (memberId) => {
+  return authApiClient.put(`/verifyMember/${memberId}`);
+};
+
 // Logout API
 export const logoutApi = () => {
   return authApiClient.post("/logout");
@@ -46,6 +51,11 @@ export const fetchGSDataApi = () => {
 // Reject manager request
 export const rejectRequestApi = (clubId, userId) => {
   return authApiClient.delete(`/manager/reject/${clubId}/${userId}`);
+};
+
+// Reject member request
+export const rejectMemberRequestApi = (memberId) => {
+  return authApiClient.delete(`/deleteMember/${memberId}`);
 };
 
 // Fetch all managers data

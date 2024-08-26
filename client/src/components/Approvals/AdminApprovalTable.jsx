@@ -1,7 +1,6 @@
 import React from "react";
 import { useTheme } from "../../context/ThemeContext";
 
-
 const AdminApprovalTable = ({
   clubData,
   clubColumns,
@@ -14,7 +13,7 @@ const AdminApprovalTable = ({
   const clubColumnMapping = {
     "Club Name": "clubName",
     "Club Image": "clubImage",
-    "GS Division Name": "gsDivisionName",
+    "G.N Division": "gsDivisionName",
     Address: "address",
     "Contact No": "contactNo",
   };
@@ -42,6 +41,14 @@ const AdminApprovalTable = ({
       ) : (
         "N/A"
       );
+    }
+
+    if (column === "Address") {
+      return value
+        ? value
+            .split(",")
+            .map((line, index) => <div key={index}>{line.trim()}</div>)
+        : "N/A";
     }
     return data[key] || "N/A";
   };

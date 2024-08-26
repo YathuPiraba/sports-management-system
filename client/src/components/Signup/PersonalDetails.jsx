@@ -2,6 +2,10 @@ import React from "react";
 import { TbPlayerTrackNext } from "react-icons/tb";
 
 const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() - 5);
+  const maxDateString = maxDate.toISOString().split("T")[0];
+
   return (
     <div className="w-auto mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -16,7 +20,12 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
           },
           { label: "First Name", name: "firstName", type: "text" },
           { label: "Last Name", name: "lastName", type: "text" },
-          { label: "Date of Birth", name: "date_of_birth", type: "date" },
+          {
+            label: "Date of Birth",
+            name: "date_of_birth",
+            type: "date",
+            max: maxDateString,
+          },
           { label: "NIC", name: "nic", type: "text" },
           { label: "Division Name", name: "divisionName", type: "select" },
           { label: "Image", name: "image", type: "file" },
@@ -56,6 +65,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
                 name={field.name}
                 value={details[field.name]}
                 onChange={handleChange}
+                max={field.type === "date" ? maxDateString : undefined}
                 className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               />
             )}
@@ -71,7 +81,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
             value={details.address}
             onChange={handleChange}
             className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-            rows="3"
+            rows="5"
           />
         </div>
       </div>
@@ -90,6 +100,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
               name={field.name}
               value={details[field.name]}
               onChange={handleChange}
+              maxLength={15}
               className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
           </div>

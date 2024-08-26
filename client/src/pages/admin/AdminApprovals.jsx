@@ -101,7 +101,7 @@ const AdminApprovals = () => {
                 <div
                   key={club.clubName}
                   className={` ${
-                    theme === "light" ? "bg-white" : "bg-blue-500"
+                    theme === "light" ? "bg-white" : "bg-gray-300 text-black"
                   }    w-full`}
                 >
                   <div className="flex flex-row w-full mr-0 hover:bg-blue-700 hover:text-white">

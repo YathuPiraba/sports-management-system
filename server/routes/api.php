@@ -48,13 +48,13 @@ Route::middleware('auth.token')->group(function () {
 
     Route::put('/manager/update-verification/{managerId}', [ManagerController::class, 'updateVerificationStatus']);
     Route::delete('manager/reject/{club_id}/{user_id}', [ManagerController::class, 'requestDelete']);
+
+    Route::get('/pendingMembers', [MemberController::class, 'pendingMembers']);
+    Route::delete('/deleteMember/{memberId}', [MemberController::class, 'deleteMember']);
+    Route::put('/verifyMember/{memberId}', [MemberController::class, 'verifyMember']);
 });
 
-Route::delete('/deleteMember/{memberId}', [MemberController::class, 'deleteMember']);
-Route::put('/verifyMember/{memberId}', [MemberController::class, 'verifyMember']);
-
 Route::get('/clubs/list', [ClubController::class, 'getAllClubs']);
-
 Route::get('/sports/list', [SportsController::class, 'getSports']);
 Route::post('/sports/create', [SportsController::class, 'createSports']);
 
@@ -65,7 +65,6 @@ Route::get('/clubs-sports/one', [ClubController::class, 'getAClubSports']);
 Route::get('/skills/by-sport', [SportsController::class, 'getSkillsBySport']);
 
 Route::post('/member/apply', [MemberController::class, 'memberApply']);
-Route::get('/pendingMembers', [MemberController::class, 'pendingMembers']);
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
 
