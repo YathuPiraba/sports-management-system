@@ -9,6 +9,7 @@ use App\Http\Controllers\GsDivisionController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\SportsArenaController;
 use App\Http\Controllers\SportsController;
 
 /*
@@ -74,3 +75,20 @@ Route::get('/membersList', [MemberController::class, 'membersList']);
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+Route::prefix('sports-arenas')->group(function () {
+    // Create a new sports arena
+    Route::post('/create', [SportsArenaController::class, 'createSportsArena']);
+
+    // Get a single sports arena by ID
+    Route::get('/{id}', [SportsArenaController::class, 'getSportsArena']);
+
+    // Update a sports arena by ID
+    Route::put('/{id}', [SportsArenaController::class, 'updateSportsArena']);
+
+    // Get all sports arenas
+    Route::get('/list', [SportsArenaController::class, 'getAllSportsArenas']);
+
+    // Get all sports arenas based on a club ID
+    Route::get('/{clubId}', [SportsArenaController::class, 'getSportsArenasByClub']);
+});

@@ -1,11 +1,21 @@
 import React from "react";
 import sample from "../../assets/sample.jpg";
 import { IoLocationSharp } from "react-icons/io5";
+import { MdEditNote } from "react-icons/md";
+
+import {
+  getSportsArenasByClubAPI,
+  updateSportsArenaAPI,
+} from "../../Services/apiServices";
 
 const SportsArena = ({ sports }) => {
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6">
-      <h2 className="text-xl font-semibold mb-4">Sports Arenas</h2>
+    <div className="bg-white shadow-lg rounded-lg w-full p-6">
+      <div className="flex w-full">
+        <h2 className="text-xl font-semibold mb-4">Sports Arenas</h2>
+
+        <MdEditNote size={26} className="ml-auto mr-1 text-green-800" />
+      </div>
       {sports.length > 0 ? (
         [...new Set(sports.map((sport) => sport.sports_arena_id))].map(
           (arenaId, index) => {

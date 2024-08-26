@@ -186,3 +186,17 @@ export const fetchClubDataAPI = (userId) => {
     },
   });
 };
+
+export const createSportsArenaAPI = (data) => {
+  return apiClient.post("/sports-arenas/create", data);
+};
+
+export const updateSportsArenaAPI = (arenaId, data) => {
+  return apiClient.put(`/sports-arenas/${arenaId}`, data);
+};
+
+export const getSportsArenasByClubAPI = (clubId) => {
+  return apiClient.get("/sports-arenas/club", {
+    params: { clubId },
+  });
+};
