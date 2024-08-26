@@ -96,7 +96,7 @@ const Login = () => {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="bg-customDark">Loading...</div>}>
       <div className="body-container">
         <div className="outter">
           <div className="sep">

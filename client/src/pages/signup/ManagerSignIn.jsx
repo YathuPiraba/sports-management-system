@@ -99,7 +99,7 @@ const ManagerSignIn = () => {
   };
 
   return (
-    <Suspense fallback={<div> Loading...</div>}>
+    <Suspense fallback={<div className="bg-customGreen"> Loading...</div>}>
       <div className="p-6 bg-customGreen min-h-screen">
         <SignInHeader currentStep={currentStep} />
         <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">

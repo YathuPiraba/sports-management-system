@@ -146,7 +146,7 @@ const MemberSignIn = () => {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="bg-customGreen">Loading...</div>}>
       <div className="min-h-screen bg-customGreen  text-black">
         <SignInHeader currentStep={currentStep} />
         <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">

@@ -34,9 +34,6 @@ const ManagerApprovals = () => {
     fetchMemberData,
   } = useMemberData();
 
-  console.log("====================================");
-  console.log(sportsData);
-  console.log("====================================");
   return (
     <Suspense fallback={<div>Loading... </div>}>
       <>
