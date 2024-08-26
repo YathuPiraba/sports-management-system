@@ -92,7 +92,7 @@ const ManagerApprovals = () => {
                   } w-full`}
                 >
                   <div className="flex flex-row w-full hover:bg-blue-700 hover:text-white">
-                    <div>
+                    <div className="customApprove">
                       <button
                         className={`w-full text-left text-l border-0 hover:text-white font-semibold p-2 mb-0 rounded-sm mt-0`}
                         onClick={() => handleToggle(member.memberId)}
