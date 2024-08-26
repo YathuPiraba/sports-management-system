@@ -187,7 +187,6 @@ class MemberController extends Controller
             }
 
             // Fetch pending members associated with the club manager
-
             $members = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
                 ->where('manager_id', $clubManager->id)
                 ->whereHas('user', function ($query) {
@@ -358,6 +357,85 @@ class MemberController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error verifying member: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // GET => http://127.0.0.1:8000/api/membersList
+    public function membersList(Request $request)
+    {
+        try {
+            // Get the userId from the request
+            $userId = $request->input('userId');
+            if (!$userId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'UserId is required',
+                ], 400);
+            }
+
+            // Find the club manager and associated manager_id
+            $clubManager = Club_Manager::where('user_id', $userId)->first();
+
+            if (!$clubManager) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Club manager not found for the given userId',
+                ], 404);
+            }
+
+            // Fetch  members associated with the club manager
+            $members = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
+                ->where('manager_id', $clubManager->id)
+                ->get();
+
+            $membersWithSportsAndSkills = $members->map(function ($member) {
+                $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
+
+                $sportsDetails = $member->memberSports->map(function ($memberSport) {
+                    $skills = $memberSport->skills->map(function ($skill) {
+                        return [
+                            'skill_id' => $skill->id ?? null,
+                            'skill_name' => $skill->skill ?? null,
+                        ];
+                    })->values();
+
+                    return [
+                        'sport_id' => $memberSport->sport->id,
+                        'sport_name' => $memberSport->sport->name,
+                        'skills' => $skills,
+                    ];
+                })->values();
+
+                return [
+                    'member_id' => $member->id,
+                    'firstName' => $member->firstName,
+                    'lastName' => $member->lastName,
+                    'date_of_birth' => $member->date_of_birth,
+                    'address' => $member->address,
+                    'nic' => $member->nic,
+                    'contactNo' => $member->contactNo,
+                    'whatsappNo' => $member->whatsappNo,
+                    'experience' => $member->experience,
+                    'age' => $member->age,
+                    'position' => $member->position,
+                    'gs_id' => $member->gs_id,
+                    'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
+                    'created_at' => $member->created_at->toDateString(),
+                    'user' => $member->user->safeAttributes(),
+                    'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $membersWithSportsAndSkills,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching pending members: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching pending members: ' . $e->getMessage(),
             ], 500);
         }
     }

@@ -98,6 +98,15 @@ export const fetchMemberPendingDataApi = (userId, page = 1, perPage = 10) => {
   });
 };
 
+// Fetch all managers data
+export const fetchMemberDataApi = (userId) => {
+  return authApiClient.get("/membersList", {
+    params: {
+      userId: userId,
+    },
+  });
+};
+
 // Update Admin Details API
 export const updateAdminDetailsApi = (userId, data) => {
   data.append("_method", "PUT");

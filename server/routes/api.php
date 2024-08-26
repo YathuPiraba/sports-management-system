@@ -68,6 +68,8 @@ Route::post('/member/apply', [MemberController::class, 'memberApply']);
 Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
 
+Route::get('/membersList', [MemberController::class, 'membersList']);
+
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);

@@ -1,27 +1,27 @@
 import { useState, useEffect } from "react";
 import echo from "../utils/echo";
-import { fetchManagerDataApi } from "../Services/apiServices";
+import { fetchMemberDataApi } from "../Services/apiServices";
+import { useSelector } from "react-redux";
 
-const useManagerNotifications = () => {
+const useMemberNotifications = () => {
   const [notifications, setNotifications] = useState([]);
+  const userId = useSelector((state) => state.auth.userdata.userId);
 
-  const fetchManagerData = async () => {
+  const fetchMemberData = async () => {
     try {
-      const res = await fetchManagerDataApi();
-      const managers = res.data.data;
+      const res = await fetchMemberDataApi(userId);
+      const members = res.data.data;
 
-      console.log(managers);
-
-      // Separate verified and unverified managers
-      const unverifiedManagers = managers.filter(
-        (manager) => manager.user.is_verified === 0
+      // Separate verified and unverified members
+      const unverifiedMembers = members.filter(
+        (member) => member.user.is_verified === 0
       );
 
-      // Map filtered managers to notifications
-      const newNotifications = unverifiedManagers.map((manager) => ({
-        type: "admin",
-        message: `Manager ${manager.firstName} ${manager.lastName} applied for joining request from club ${manager.club.clubName}`,
-        image: `${manager.club.clubImage}`,
+      // Map filtered members to notifications
+      const newNotifications = unverifiedMembers.map((member) => ({
+        type: "manager",
+        message: `${member.firstName} ${member.lastName} applied for joining request as ${member.position}`,
+        image: `${member.user.image}`,
       }));
 
       setNotifications(() => [...newNotifications]);
@@ -36,12 +36,12 @@ const useManagerNotifications = () => {
         console.log("Attempting to subscribe to channel...");
 
         // Fetch initial manager data
-        await fetchManagerData();
+        await fetchMemberData();
 
         // Listen for real-time updates on the "managers" channel
-        echo.channel("managers").listen(".ManagerApplied", (event) => {
+        echo.channel("members").listen(".MemberApplied", (event) => {
           console.log("Notification updated:", event.manager);
-          fetchManagerData();
+          fetchMemberData();
         });
 
         console.log("Successfully subscribed to channel.");
@@ -55,11 +55,11 @@ const useManagerNotifications = () => {
     // Cleanup on component unmount
     return () => {
       console.log("Leaving channel...");
-      echo.leaveChannel("managers");
+      echo.leaveChannel("members");
     };
   }, []);
 
   return { notifications };
 };
 
-export default useManagerNotifications;
+export default useMemberNotifications;

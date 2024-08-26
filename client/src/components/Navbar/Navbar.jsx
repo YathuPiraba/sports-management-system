@@ -12,16 +12,26 @@ import { useDispatch, useSelector } from "react-redux";
 import LoginScreen from "../../Pages/Login/Login";
 import { useTheme } from "../../context/ThemeContext";
 import useManagerNotifications from "../../hooks/useManagerNotification";
+import useMemberNotifications from "../../hooks/useMemberNotification";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 
 const Navbar = () => {
-  const { notifications } = useManagerNotifications();
   const [animate, setAnimate] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const user = useSelector((state) => state.auth.userdata);
   const role_id = useSelector((state) => state.auth.userdata.role_id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  let notifications = [];
+
+  if (role_id == 1) {
+    const managerNotifications = useManagerNotifications();
+    notifications = managerNotifications.notifications;
+  } else if (role_id == 2) {
+    const memberNotifications = useMemberNotifications();
+    notifications = memberNotifications.notifications;
+  }
 
   const image = user.image;
 
@@ -137,8 +147,8 @@ const Navbar = () => {
             style={{ width: 30, height: 30, marginRight: 7, flexShrink: 0 }}
           >
             <img
-              src={notification.clubImage}
-              alt="clubImage"
+              src={notification.image}
+              alt="Image"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </div>
