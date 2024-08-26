@@ -189,7 +189,6 @@ class ClubController extends Controller
                     'sportsName' => $item->sportsCategory->name,
                     'sports_arena_id' => $item->sports_arena_id,
                     'created_at' => $item->created_at,
-                    'updated_at' => $item->updated_at,
                 ];
             });
 
@@ -235,8 +234,28 @@ class ClubController extends Controller
                 ], 404);
             }
 
-            // Return the club data
-            return response()->json($club);
+            // Fetch the club sports details
+            $clubSports = Club_Sports::where('club_id', $clubId)
+                ->with(['club', 'sportsCategory', 'sportsArena'])
+                ->get();
+
+            // Transform the data to include the related names
+            $sportsDetails = $clubSports->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'club_id' => $item->club_id,
+                    'sports_id' => $item->sports_id,
+                    'sportsName' => $item->sportsCategory->name,
+                    'sports_arena_id' => $item->sports_arena_id,
+                    'sports_arena_name' => $item->sportsArena->name,
+                ];
+            });
+
+            // Return the club and sports details
+            return response()->json([
+                'club' => $club,
+                'sports' => $sportsDetails,
+            ]);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
         }
