@@ -39,7 +39,7 @@ const UpdateSportsArena = ({ sports, popClose, fetchClubData }) => {
     formdata.append("name", arenaName);
     formdata.append("address", address);
     try {
-      const res = updateSportsArenaAPI(selectedArena.sports_arena_id, formdata);
+      await updateSportsArenaAPI(selectedArena.sports_arena_id, formdata);
       fetchClubData();
       toast.success("SportsArena updated successfully");
       popClose();
@@ -54,7 +54,7 @@ const UpdateSportsArena = ({ sports, popClose, fetchClubData }) => {
   };
 
   return (
-    <div className="bg-white p-6 w-1/2 z-50 border absolute  top-80 left-32 rounded-lg shadow-lg max-w-md mx-auto">
+    <div className="bg-white p-6 w-1/2 z-50 border absolute  top-40 left-56 rounded-lg shadow-lg max-w-md mx-auto">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold font-poppins">Update Sport Arena</h1>
         <button onClick={popClose} className="text-red-500">
