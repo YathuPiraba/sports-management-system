@@ -3,6 +3,9 @@ import { fetchClubDataAPI } from "../../Services/apiServices";
 import { useSelector } from "react-redux";
 const SportsArena = lazy(() => import("../../Components/Club/SportsArena"));
 const ClubSports = lazy(() => import("../../Components/Club/ClubSports"));
+const UpdateSportsArena = lazy(() =>
+  import("../../Components/Club/UpdateSportsArena")
+);
 import GridLoader from "react-spinners/GridLoader";
 import { createSportsArenaAPI } from "../../Services/apiServices";
 
@@ -10,6 +13,7 @@ const ManagerClub = () => {
   const [club, setClub] = useState(null);
   const [sports, setSports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const userId = useSelector((state) => state.auth.userdata.userId);
 
@@ -30,9 +34,13 @@ const ManagerClub = () => {
     fetchClubData();
   }, []);
 
+  const popup = () => {
+    setIsOpen(true);
+  };
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <>
+      <div className="relative">
         {loading ? (
           <div className="flex justify-center items-center w-full h-[75vh]">
             <GridLoader
@@ -85,11 +93,16 @@ const ManagerClub = () => {
             {/* Sports and Arenas Sections */}
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
               <ClubSports sports={sports} />
-              <SportsArena sports={sports} />
+              <SportsArena sports={sports} popup={popup} />
             </div>
           </div>
         )}
-      </>
+        {isOpen && (
+          <div className="z-50 border shadow-md absolute w-1/2 top-80 left-32 rounded-md h-28">
+            <UpdateSportsArena sports={sports} />
+          </div>
+        )}
+      </div>
     </Suspense>
   );
 };
