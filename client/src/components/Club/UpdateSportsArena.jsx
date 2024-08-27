@@ -3,7 +3,7 @@ import { updateSportsArenaAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 
-const UpdateSportsArena = ({ sports, popClose, fetchClubData }) => {
+const UpdateSportsArena = ({ sports, popClose, fetchClubData, theme }) => {
   const [selectedArena, setSelectedArena] = useState(null);
   const [location, setLocation] = useState("");
   const [arenaName, setArenaName] = useState("");
@@ -54,7 +54,11 @@ const UpdateSportsArena = ({ sports, popClose, fetchClubData }) => {
   };
 
   return (
-    <div className="bg-white p-6 w-1/2 z-50 border absolute  top-40 left-56 rounded-lg shadow-lg max-w-md mx-auto">
+    <div
+      className={`${
+        theme === "light" ? "bg-gray-100" : " bg-white"
+      } p-6 w-1/2 z-50 border absolute text-black top-44 left-64 rounded-lg shadow-lg max-w-md mx-auto`}
+    >
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold font-poppins">Update Sport Arena</h1>
         <button onClick={popClose} className="text-red-500">

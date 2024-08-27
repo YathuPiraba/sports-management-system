@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
-import sample from "../../assets/sample.jpg";
+import React from "react";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEditNote } from "react-icons/md";
 
-const SportsArena = ({ sports, handleButtonClick }) => {
+const SportsArena = ({ sports, handleButtonClick, theme }) => {
   return (
-    <div className="bg-white shadow-lg rounded-lg w-full p-6">
+    <div
+      className={`${
+        theme === "light" ? "bg-white" : "bg-gray-100"
+      } shadow-lg rounded-lg w-full p-6`}
+    >
       <div className="flex w-full">
         <h2 className="text-xl font-semibold mb-4">Sports Arenas</h2>
         <button
-          className="ml-auto mt-0 bg-gray-300 pl-2 pr-1 h-9"
+          className="ml-auto -mt-1 bg-gray-300 pl-2 pr-1 h-9"
           onClick={() => handleButtonClick("updateSportsArenas")}
         >
           <MdEditNote size={30} className=" text-black pt-0" />

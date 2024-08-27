@@ -8,12 +8,14 @@ const UpdateSportsArena = lazy(() =>
 );
 const UpdateClub = lazy(() => import("../../Components/Club/UpdateClub"));
 import GridLoader from "react-spinners/GridLoader";
+import { useTheme } from "../../context/ThemeContext";
 
 const ManagerClub = () => {
   const [club, setClub] = useState(null);
   const [sports, setSports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeComponent, setActiveComponent] = useState(null);
+  const { theme } = useTheme();
 
   const userId = useSelector((state) => state.auth.userdata.userId);
 
@@ -46,6 +48,7 @@ const ManagerClub = () => {
             club={club}
             fetchClubData={fetchClubData}
             popClose={() => setActiveComponent(null)}
+            theme={theme}
           />
         );
       case "addSports":
@@ -58,6 +61,7 @@ const ManagerClub = () => {
             sports={sports}
             popClose={() => setActiveComponent(null)}
             fetchClubData={fetchClubData}
+            theme={theme}
           />
         );
       default:
@@ -80,7 +84,11 @@ const ManagerClub = () => {
           </div>
         ) : (
           <div className="container mx-auto p-4">
-            <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div
+              className={` ${
+                theme === "light" ? "bg-white" : "bg-gray-100"
+              } shadow-lg rounded-lg overflow-hidden`}
+            >
               <div className="md:flex">
                 <div className="md:flex-shrink-0 pt-7 pl-4">
                   <img
@@ -130,11 +138,12 @@ const ManagerClub = () => {
             </div>
 
             {/* Sports and Arenas Sections */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ClubSports sports={sports} />
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 text-black">
+              <ClubSports sports={sports} theme={theme} />
               <SportsArena
                 sports={sports}
                 handleButtonClick={handleButtonClick}
+                theme={theme}
               />
             </div>
           </div>

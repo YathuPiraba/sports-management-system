@@ -1,8 +1,12 @@
 import React from "react";
 
-const ClubSports = ({ sports }) => {
+const ClubSports = ({ sports, theme }) => {
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6">
+    <div
+      className={`${
+        theme === "light" ? "bg-white" : "bg-gray-100"
+      } shadow-lg rounded-lg p-6`}
+    >
       <h2 className="text-xl font-semibold mb-4">Club Sports</h2>
       {sports.length > 0 ? (
         sports.map((sport) => (

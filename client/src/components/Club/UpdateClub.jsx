@@ -46,7 +46,7 @@ const UpdateClub = ({ club, popClose, fetchClubData }) => {
   };
 
   return (
-    <div className="bg-white p-6 w-1/2 z-50 border absolute top-40 left-56 rounded-lg shadow-lg max-w-md mx-auto">
+    <div className="bg-white p-6 text-black w-1/2 z-50 border absolute top-20 left-60 rounded-lg shadow-lg max-w-md mx-auto">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold font-poppins">Update Club</h1>
         <button onClick={popClose} className="text-red-500">
@@ -99,7 +99,7 @@ const UpdateClub = ({ club, popClose, fetchClubData }) => {
           >
             Club Address:
           </label>
-          <input
+          <textarea
             type="text"
             id="clubAddress"
             value={clubAddress}
