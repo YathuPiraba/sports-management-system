@@ -4,24 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Models\Club_Sports;
 use App\Models\Sports_Arena;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SportsArenaController extends Controller
 {
+
+    protected $cloudinary;
+
+    public function __construct(Cloudinary $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
     public function createSportsArena(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'address' => 'required|string|max:255',
-            'image' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg,webp,jfif|max:2048',
             'club_id' => 'required|exists:clubs,id',
             'sports_id' => 'required|exists:sports_categories,id',
         ]);
 
         try {
+            // Handle image upload if provided
+            $imageUrl = null;
+            if ($request->hasFile('image')) {
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $imageUrl = $result['secure_url'];
+            }
+
             // Create the sports arena
-            $sportsArena = Sports_Arena::create($validatedData);
+            $sportsArena = Sports_Arena::create([
+                'name' => $request->name,
+                'location' => $request->location,
+                'address' => $request->address,
+                'image' => $imageUrl,
+                'club_id' => $request->club_id,
+                'sports_id' => $request->sports_id,
+            ]);
 
             // Create the entry in Club_Sports
             Club_Sports::create([
@@ -48,16 +73,40 @@ class SportsArenaController extends Controller
 
     public function updateSportsArena(Request $request, $id)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'sometimes|string|max:255',
             'location' => 'sometimes|string|max:255',
             'address' => 'sometimes|string|max:255',
-            'image' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg,webp,jfif|max:2048',
         ]);
 
         try {
             $sportsArena = Sports_Arena::findOrFail($id);
-            $sportsArena->update($validatedData);
+
+            // Handle image upload if provided
+            if ($request->hasFile('image')) {
+
+                if ($sportsArena->image) {
+                    // Optionally delete the old image from Cloudinary
+                    $this->cloudinary->uploadApi()->destroy($sportsArena->image);
+                }
+
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $sportsArena->image = $result['secure_url'];
+            }
+
+            if ($request->has('name')) {
+                $sportsArena->name = $request->name;
+            }
+
+            if ($request->has('location')) {
+                $sportsArena->location = $request->location;
+            }
+            if ($request->has('address')) {
+                $sportsArena->address = $request->address;
+            }
+
+            $sportsArena->save();
 
             return response()->json(['message' => 'Sports Arena updated successfully', 'data' => $sportsArena], 200);
         } catch (\Exception $e) {

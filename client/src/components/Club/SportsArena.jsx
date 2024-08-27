@@ -2,11 +2,7 @@ import React from "react";
 import sample from "../../assets/sample.jpg";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEditNote } from "react-icons/md";
-
-import {
-  getSportsArenasByClubAPI,
-  updateSportsArenaAPI,
-} from "../../Services/apiServices";
+import { updateSportsArenaAPI } from "../../Services/apiServices";
 
 const SportsArena = ({ sports }) => {
   return (

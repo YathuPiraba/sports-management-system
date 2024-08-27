@@ -192,7 +192,12 @@ export const createSportsArenaAPI = (data) => {
 };
 
 export const updateSportsArenaAPI = (arenaId, data) => {
-  return apiClient.put(`/sports-arenas/${arenaId}`, data);
+  data.append("_method", "PUT");
+  return authApiClient.post(`/sports-arenas/${arenaId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const getSportsArenasByClubAPI = (clubId) => {
