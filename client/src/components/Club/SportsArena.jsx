@@ -3,9 +3,7 @@ import sample from "../../assets/sample.jpg";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEditNote } from "react-icons/md";
 
-
-const SportsArena = ({ sports,popup }) => {
-
+const SportsArena = ({ sports, popup }) => {
   return (
     <div className="bg-white shadow-lg rounded-lg w-full p-6">
       <div className="flex w-full">
