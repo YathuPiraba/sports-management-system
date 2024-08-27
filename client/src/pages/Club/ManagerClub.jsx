@@ -38,6 +38,10 @@ const ManagerClub = () => {
     setIsOpen(true);
   };
 
+  const popClose = () => {
+    setIsOpen(false);
+  };
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="relative">
@@ -98,9 +102,13 @@ const ManagerClub = () => {
           </div>
         )}
         {isOpen && (
-          <div className="z-50 border shadow-md absolute w-1/2 top-80 left-32 rounded-md h-28">
-            <UpdateSportsArena sports={sports} />
-          </div>
+          <>
+            <UpdateSportsArena
+              sports={sports}
+              popClose={popClose}
+              fetchClubData={fetchClubData}
+            />
+          </>
         )}
       </div>
     </Suspense>

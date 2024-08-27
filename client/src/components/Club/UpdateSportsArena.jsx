@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { updateSportsArenaAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
+import { MdClose } from "react-icons/md";
 
-const UpdateSportsArena = ({ sports }) => {
+const UpdateSportsArena = ({ sports, popClose, fetchClubData }) => {
   const [selectedArena, setSelectedArena] = useState(null);
   const [location, setLocation] = useState("");
   const [arenaName, setArenaName] = useState("");
@@ -31,14 +32,19 @@ const UpdateSportsArena = ({ sports }) => {
     }
 
     const formdata = new FormData();
-    formdata.append("image", image);
+    if (image) {
+      formdata.append("image", image);
+    }
     formdata.append("location", location);
     formdata.append("name", arenaName);
     formdata.append("address", address);
     try {
-      const res = updateSportsArenaAPI(arenaId, formdata);
+      const res = updateSportsArenaAPI(selectedArena.sports_arena_id, formdata);
+      fetchClubData();
       toast.success("SportsArena updated successfully");
+      popClose();
     } catch (error) {
+      console.log(error);
       toast.error("Error in updating sports arena");
     }
   };
@@ -48,54 +54,109 @@ const UpdateSportsArena = ({ sports }) => {
   };
 
   return (
-    <div className="bg-white">
-      <h1>Update Sport Arena</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="arenaSelect"> Sports Arena Name:</label>
-        <select id="arenaSelect" onChange={handleArenaChange}>
-          <option value="">Select A Sport Arena</option>
-          {sports.map((sport) => (
-            <option key={sport.id} value={sport.sports_arena_id}>
-              {sport.sports_arena_name}
-            </option>
-          ))}
-        </select>
+    <div className="bg-white p-6 w-1/2 z-50 border absolute  top-80 left-32 rounded-lg shadow-lg max-w-md mx-auto">
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-bold font-poppins">Update Sport Arena</h1>
+        <button onClick={popClose} className="text-red-500">
+          <MdClose size={25} />
+        </button>
+      </div>
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <div>
+          <label
+            htmlFor="arenaSelect"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Sports Arena Name:
+          </label>
+          <select
+            id="arenaSelect"
+            onChange={handleArenaChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          >
+            <option value="">Select A Sport Arena</option>
+            {sports.map((sport) => (
+              <option key={sport.id} value={sport.sports_arena_id}>
+                {sport.sports_arena_name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {selectedArena && (
           <>
-            <label htmlFor="arenaName">Sports Arena Name:</label>
-            <input
-              type="text"
-              id="arenaName"
-              value={arenaName}
-              onChange={(e) => setArenaName(e.target.value)}
-            />
+            <div>
+              <label
+                htmlFor="arenaName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Sports Arena Name:
+              </label>
+              <input
+                type="text"
+                id="arenaName"
+                value={arenaName}
+                onChange={(e) => setArenaName(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
 
-            <label htmlFor="location">Location:</label>
-            <input
-              type="text"
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            />
+            <div>
+              <label
+                htmlFor="location"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Location:
+              </label>
+              <input
+                type="text"
+                id="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
 
-            <label htmlFor="image">Arena Image:</label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleImageChange}
-            />
+            <div>
+              <label
+                htmlFor="image"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Arena Image:
+              </label>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                onChange={handleImageChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
 
-            <label htmlFor="address">Address:</label>
-            <textarea
-              id="address"
-              name="address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
+            <div>
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Address:
+              </label>
+              <textarea
+                id="address"
+                name="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
 
-            <button type="submit">Update Sport Arena</button>
+            <div>
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Update Sport Arena
+              </button>
+            </div>
           </>
         )}
       </form>
