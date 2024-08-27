@@ -105,6 +105,74 @@ class ClubController extends Controller
         }
     }
 
+    // PUT => http://127.0.0.1:8000/api/clubs/{id}
+    public function clubUpdate(Request $request, $id)
+    {
+        // Validate the request data
+        $request->validate([
+            'clubName' => 'sometimes|string|max:255',
+            'clubDivisionName' => 'sometimes|string|max:255',
+            'clubAddress' => 'sometimes|string|max:255',
+            'club_history' => 'nullable|string',
+            'clubContactNo' => 'sometimes|string|max:15',
+            'clubImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
+        ]);
+
+        try {
+            // Find the club by ID
+            $club = Club::findOrFail($id);
+
+            if ($request->has('clubName')) {
+
+                $club->clubName = $request->clubName;
+            }
+
+            if ($request->has('clubDivisionName')) {
+                // Find the gs_id based on the divisionName
+                $gsDivision = Gs_Division::where('divisionName', $request->clubDivisionName)->first();
+
+                if (!$gsDivision) {
+                    return response()->json(['error' => 'Invalid division name'], 404);
+                }
+
+                $club->gs_id = $gsDivision->id;
+            }
+            // Handle the image upload if a new image is provided
+            if ($request->hasFile('clubImage')) {
+
+                if ($club->image) {
+                    // Optionally delete the old image from Cloudinary
+                    $this->cloudinary->uploadApi()->destroy($club->image);
+                }
+
+                $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
+                $club->clubImage = $result['secure_url'];
+            }
+
+            if ($request->has('clubAddress')) {
+
+                $club->clubAddress = $request->clubAddress;
+            }
+
+            if ($request->has('club_history')) {
+                $club->club_history = $request->club_history;
+            }
+
+            if ($request->has('clubContactNo')) {
+                $club->clubContactNo = $request->clubContactNo;
+            }
+
+            // Update the club with the new data
+            $club->save();
+
+            return response()->json(['message' => 'Club updated successfully', 'club' => $club], 200);
+        } catch (Exception $e) {
+            // Handle any errors that may occur
+            return response()->json(['error' => 'Failed to update club', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+
     //GET => http://127.0.0.1:8000/api/clubs-sports/get
     public function getAllClubSports()
     {

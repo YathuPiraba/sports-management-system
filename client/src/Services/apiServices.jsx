@@ -161,13 +161,24 @@ export const getAllClubSportsAPI = () => {
 
 //create a new club sports entry
 export const createClubSportsAPI = (data) => {
-  return apiClient.post("/clubs-sports/create", data);
+  return authApiClient.post("/clubs-sports/create", data);
 };
 
 //Get a specific club sports entry based on clubName
 export const getAClubSportsAPI = (clubName) => {
   return apiClient.get("/clubs-sports/one", {
     params: { clubName },
+  });
+};
+
+// Update Manager personal Details API
+export const updateClubDetailsApi = (clubId, data) => {
+  data.append("_method", "PUT");
+
+  return authApiClient.post(`/club/${clubId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 };
 

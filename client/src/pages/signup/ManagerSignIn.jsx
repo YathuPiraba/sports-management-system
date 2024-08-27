@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { fetchGSDataApi } from "../../Services/apiServices";
 import { TbPlayerTrackPrev } from "react-icons/tb";
+import useGsDivisions from "../../hooks/useGsDivisions";
 
 const SignInHeader = lazy(() => import("../../Components/Signup/SignInHeader"));
 const PersonalDetails = lazy(() =>
@@ -13,7 +14,7 @@ const PersonalDetails = lazy(() =>
 const ClubDetails = lazy(() => import("../../Components/Signup/ClubDetails"));
 
 const ManagerSignIn = () => {
-  const [divisions, setDivisions] = useState([]);
+  const { divisions } = useGsDivisions();
   const [clubDetails, setClubDetails] = useState({
     clubName: "",
     clubAddress: "",
@@ -64,20 +65,6 @@ const ManagerSignIn = () => {
       toast.error("Error while applying Request");
     }
   };
-
-  const fetchGsData = async () => {
-    try {
-      const res = await fetchGSDataApi();
-      setDivisions(res.data.data);
-      console.log(res.data.data);
-    } catch (error) {
-      console.error("Error fetching Gs divisions data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchGsData();
-  }, []);
 
   const handleClubChange = (e) => {
     const { name, value } = e.target;

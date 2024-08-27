@@ -6,14 +6,14 @@ const ClubSports = lazy(() => import("../../Components/Club/ClubSports"));
 const UpdateSportsArena = lazy(() =>
   import("../../Components/Club/UpdateSportsArena")
 );
+const UpdateClub = lazy(() => import("../../Components/Club/UpdateClub"));
 import GridLoader from "react-spinners/GridLoader";
-import { createSportsArenaAPI } from "../../Services/apiServices";
 
 const ManagerClub = () => {
   const [club, setClub] = useState(null);
   const [sports, setSports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [activeComponent, setActiveComponent] = useState(null);
 
   const userId = useSelector((state) => state.auth.userdata.userId);
 
@@ -34,12 +34,35 @@ const ManagerClub = () => {
     fetchClubData();
   }, []);
 
-  const popup = () => {
-    setIsOpen(true);
+  const handleButtonClick = (componentName) => {
+    setActiveComponent(componentName);
   };
 
-  const popClose = () => {
-    setIsOpen(false);
+  const renderComponent = () => {
+    switch (activeComponent) {
+      case "editClub":
+        return (
+          <UpdateClub
+            club={club}
+            fetchClubData={fetchClubData}
+            popClose={() => setActiveComponent(null)}
+          />
+        );
+      case "addSports":
+        return <div>Add Sports Component</div>;
+      case "addSportsArenas":
+        return <div>Add SportsArenas Component</div>;
+      case "updateSportsArenas":
+        return (
+          <UpdateSportsArena
+            sports={sports}
+            popClose={() => setActiveComponent(null)}
+            fetchClubData={fetchClubData}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -59,7 +82,7 @@ const ManagerClub = () => {
           <div className="container mx-auto p-4">
             <div className="bg-white shadow-lg rounded-lg overflow-hidden">
               <div className="md:flex">
-                <div className="md:flex-shrink-0">
+                <div className="md:flex-shrink-0 pt-7 pl-4">
                   <img
                     className="h-48 w-full object-cover md:w-48"
                     src={club.clubImage}
@@ -74,7 +97,7 @@ const ManagerClub = () => {
                     Contact: {club?.clubContactNo || "N/A"}
                   </p>
                   <p className="mt-2 text-gray-500">
-                    Established:{" "}
+                    Joined Year:{" "}
                     {new Date(club?.created_at).getFullYear() || "N/A"}
                   </p>
                   <p className="mt-4 text-gray-700">
@@ -83,10 +106,22 @@ const ManagerClub = () => {
                   </p>
 
                   <div className="mt-6 flex space-x-4">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <button
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => handleButtonClick("editClub")}
+                    >
+                      Edit Club
+                    </button>
+                    <button
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => handleButtonClick("addSports")}
+                    >
                       Add Sports
                     </button>
-                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <button
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => handleButtonClick("addSportsArenas")}
+                    >
                       Add Sports Arenas
                     </button>
                   </div>
@@ -97,19 +132,14 @@ const ManagerClub = () => {
             {/* Sports and Arenas Sections */}
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
               <ClubSports sports={sports} />
-              <SportsArena sports={sports} popup={popup} />
+              <SportsArena
+                sports={sports}
+                handleButtonClick={handleButtonClick}
+              />
             </div>
           </div>
         )}
-        {isOpen && (
-          <>
-            <UpdateSportsArena
-              sports={sports}
-              popClose={popClose}
-              fetchClubData={fetchClubData}
-            />
-          </>
-        )}
+        {renderComponent()}
       </div>
     </Suspense>
   );

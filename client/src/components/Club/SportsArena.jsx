@@ -3,14 +3,14 @@ import sample from "../../assets/sample.jpg";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEditNote } from "react-icons/md";
 
-const SportsArena = ({ sports, popup }) => {
+const SportsArena = ({ sports, handleButtonClick }) => {
   return (
     <div className="bg-white shadow-lg rounded-lg w-full p-6">
       <div className="flex w-full">
         <h2 className="text-xl font-semibold mb-4">Sports Arenas</h2>
         <button
           className="ml-auto mt-0 bg-gray-300 pl-2 pr-1 h-9"
-          onClick={popup}
+          onClick={() => handleButtonClick("updateSportsArenas")}
         >
           <MdEditNote size={30} className=" text-black pt-0" />
         </button>

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { applyMember } from "../../features/authslice";
 import { TbPlayerTrackPrev } from "react-icons/tb";
+import useGsDivisions from "../../hooks/useGsDivisions";
 
 const SignInHeader = lazy(() => import("../../Components/Signup/SignInHeader"));
 const PersonalDetails = lazy(() =>
@@ -15,7 +16,7 @@ const SportsDetails = lazy(() =>
 );
 
 const MemberSignIn = () => {
-  const [divisions, setDivisions] = useState([]);
+  const { divisions } = useGsDivisions();
   const [memberDetails, setMemberDetails] = useState({
     userName: "",
     email: "",
@@ -45,15 +46,6 @@ const MemberSignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const fetchGsData = async () => {
-    try {
-      const res = await fetchGSDataApi();
-      setDivisions(res.data.data);
-    } catch (error) {
-      console.error("Error fetching Gs divisions data:", error);
-    }
-  };
-
   const fetchAllClubs = async () => {
     try {
       const res = await getAllClubsAPI();
@@ -64,7 +56,6 @@ const MemberSignIn = () => {
   };
 
   useEffect(() => {
-    fetchGsData();
     fetchAllClubs();
   }, []);
 

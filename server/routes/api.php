@@ -39,6 +39,7 @@ Route::middleware('auth.token')->group(function () {
     Route::post('/clubs/create', [ClubController::class, 'clubCreate']);
     Route::delete('clubs/{id}', [ClubController::class, 'clubDelete']);
 
+
     Route::post('/manager/create', [ManagerController::class, 'managerCreate']);
     Route::get('/manager/list', [ManagerController::class, 'getAllManagers']);
     Route::get('/manager/query', [ManagerController::class, 'queryManagers']);
@@ -54,6 +55,8 @@ Route::middleware('auth.token')->group(function () {
     Route::delete('/deleteMember/{memberId}', [MemberController::class, 'deleteMember']);
     Route::put('/verifyMember/{memberId}', [MemberController::class, 'verifyMember']);
 });
+
+Route::put('/club/{id}', [ClubController::class, 'clubUpdate']);
 
 Route::get('/clubs/list', [ClubController::class, 'getAllClubs']);
 Route::get('/sports/list', [SportsController::class, 'getSports']);
