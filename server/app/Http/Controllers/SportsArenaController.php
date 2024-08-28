@@ -117,14 +117,40 @@ class SportsArenaController extends Controller
     public function getAllSportsArenas()
     {
         try {
-            // Retrieve all sports arenas
-            $sportsArenas = Sports_Arena::all();
+            // Retrieve all sports arenas with related club sports and club data
+            $sportsArenas = Sports_Arena::with(['clubSports.club' => function ($query) {
+                $query->select('id', 'clubName'); // Select only necessary fields from Club
+            }])->get();
+
+            if ($sportsArenas->isEmpty()) {
+                return response()->json(['error' => 'Sports Arenas not found'], 404);
+            }
+
+            // Transform the data to include all club_ids and clubNames in a simpler format
+            $sportsArenas = $sportsArenas->map(function ($arena) {
+                $clubs = $arena->clubSports->map(function ($clubSport) {
+                    return [
+                        'club_id' => $clubSport->club_id,
+                        'clubName' => $clubSport->club ? $clubSport->club->clubName : null,
+                    ];
+                });
+
+                return [
+                    'id' => $arena->id,
+                    'name' => $arena->name,
+                    'location' => $arena->location,
+                    'address' => $arena->address,
+                    'image' =>  $arena->image,
+                    'clubs' => $clubs,
+                ];
+            });
 
             return response()->json(['data' => $sportsArenas], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch sports arenas', 'message' => $e->getMessage()], 500);
         }
     }
+
 
     public function getSportsArenasByClub($clubId)
     {

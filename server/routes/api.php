@@ -89,9 +89,10 @@ Route::prefix('sports-arenas')->group(function () {
     // Update a sports arena by ID
     Route::put('/{id}', [SportsArenaController::class, 'updateSportsArena']);
 
-    // Get all sports arenas
-    Route::get('/list', [SportsArenaController::class, 'getAllSportsArenas']);
 
     // Get all sports arenas based on a club ID
     Route::get('/club/{clubId}', [SportsArenaController::class, 'getSportsArenasByClub']);
 });
+
+// Get all sports arenas
+Route::get('/arena/list', [SportsArenaController::class, 'getAllSportsArenas']);

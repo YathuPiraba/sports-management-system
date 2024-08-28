@@ -108,7 +108,6 @@ const Navbar = () => {
   }, [notificationCount]);
 
   useEffect(() => {
-    console.log("Notifications state updated:", notifications);
     const timer = setTimeout(() => {
       setAnimate(false);
     }, 1000);

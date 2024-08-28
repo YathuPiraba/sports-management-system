@@ -154,6 +154,16 @@ export const getAllClubsAPI = () => {
   return apiClient.get("/clubs/list");
 };
 
+// get all sports
+export const getAllSportsAPI = () => {
+  return apiClient.get("/sports/list");
+};
+
+//get all sport arenas
+export const getAllSportArenasAPI = () => {
+  return apiClient.get("/arena/list");
+};
+
 // get all club sports
 export const getAllClubSportsAPI = () => {
   return apiClient.get("/clubs-sports/list");
@@ -161,7 +171,11 @@ export const getAllClubSportsAPI = () => {
 
 //create a new club sports entry
 export const createClubSportsAPI = (data) => {
-  return authApiClient.post("/clubs-sports/create", data);
+  return authApiClient.post("/clubs-sports/create", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 //Get a specific club sports entry based on clubName

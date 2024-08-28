@@ -60,7 +60,8 @@ const ManagerClub = () => {
             fetchClubData={fetchClubData}
             popClose={() => setActiveComponent(null)}
             theme={theme}
-            sports={sports}
+            sportsDetails={sports}
+            club={club}
           />
         );
       case "addSportsArenas":

@@ -17,4 +17,9 @@ class Sports_Arena extends Model
         'address',
         'image'
     ];
+
+    public function clubSports()
+    {
+        return $this->hasMany(Club_Sports::class, 'sports_arena_id');
+    }
 }

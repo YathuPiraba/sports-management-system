@@ -205,14 +205,33 @@ class ClubController extends Controller
         try {
             $request->validate([
                 'clubName' => 'required|string|max:255',
-                'sportsName' => 'required|string|max:255',
                 'sportsArenaName' => 'required|string|max:255',
+                'sportsName' => 'required_without:newSport|string|max:255',
+                'newSport' => 'required_without:sportsName|json',
+                'sportImage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
-            // Find IDs based on provided names
-            $club = Club::where('clubName', $request->input('clubName'))->firstOrFail();
-            $sportsCategory = Sports_Categories::where('name', $request->input('sportsName'))->firstOrFail();
-            $sportsArena = Sports_Arena::where('name', $request->input('sportsArenaName'))->firstOrFail();
+            // Find or create club
+            $club = Club::firstOrCreate(['clubName' => $request->input('clubName')]);
+
+            // Find or create sports arena
+            $sportsArena = Sports_Arena::firstOrCreate(['name' => $request->input('sportsArenaName')]);
+
+            // Handle sports category
+            if ($request->has('newSport')) {
+                $newSportData = json_decode($request->input('newSport'), true);
+                $sportsCategory = new Sports_Categories($newSportData);
+
+                $imageUrl = null;
+                if ($request->hasFile('sportImage')) {
+                    $result = $this->cloudinary->uploadApi()->upload($request->file('sportImage')->getRealPath());
+                    $imageUrl = $result['secure_url'];
+                    $sportsCategory->image = $imageUrl;
+                }
+                $sportsCategory->save();
+            } else {
+                $sportsCategory = Sports_Categories::where('name', $request->input('sportsName'))->firstOrFail();
+            }
 
             // Create a new club sports entry
             $clubSports = Club_Sports::create([
@@ -221,7 +240,10 @@ class ClubController extends Controller
                 'sports_arena_id' => $sportsArena->id,
             ]);
 
-            return response()->json($clubSports, 201);
+            return response()->json([
+                'message' => 'Club sports entry created successfully',
+                'data' => $clubSports
+            ], 201);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to create club sports entry.', 'message' => $e->getMessage()], 500);
         }
