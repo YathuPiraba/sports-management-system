@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import useGsDivisions from "../../hooks/useGsDivisions";
 
-const UpdateClub = ({ club, popClose, fetchClubData }) => {
+const UpdateClub = ({ club, popClose, fetchClubData, theme }) => {
   const { divisions } = useGsDivisions();
   const [clubName, setClubName] = useState(club.clubName || "");
   const [clubDivisionName, setClubDivisionName] = useState(
@@ -46,7 +46,11 @@ const UpdateClub = ({ club, popClose, fetchClubData }) => {
   };
 
   return (
-    <div className="bg-white p-6 text-black w-1/2 z-50 border absolute top-20 left-60 rounded-lg shadow-lg max-w-md mx-auto">
+    <div
+      className={`${
+        theme === "light" ? "bg-gray-100" : " bg-white"
+      } p-6 text-black w-1/2 z-50 border absolute top-20 left-60 rounded-lg shadow-lg max-w-md mx-auto`}
+    >
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold font-poppins">Update Club</h1>
         <button onClick={popClose} className="text-red-500">
@@ -75,7 +79,7 @@ const UpdateClub = ({ club, popClose, fetchClubData }) => {
             htmlFor="clubDivisionName"
             className="block text-sm font-medium text-gray-700"
           >
-            Club Division Name:
+            Club Division:
           </label>
           <select
             id="clubDivisionName"

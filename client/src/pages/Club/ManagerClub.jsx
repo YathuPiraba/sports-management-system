@@ -1,14 +1,17 @@
 import React, { useEffect, useState, Suspense, lazy } from "react";
 import { fetchClubDataAPI } from "../../Services/apiServices";
 import { useSelector } from "react-redux";
+import GridLoader from "react-spinners/GridLoader";
+import { useTheme } from "../../context/ThemeContext";
+
 const SportsArena = lazy(() => import("../../Components/Club/SportsArena"));
 const ClubSports = lazy(() => import("../../Components/Club/ClubSports"));
 const UpdateSportsArena = lazy(() =>
   import("../../Components/Club/UpdateSportsArena")
 );
 const UpdateClub = lazy(() => import("../../Components/Club/UpdateClub"));
-import GridLoader from "react-spinners/GridLoader";
-import { useTheme } from "../../context/ThemeContext";
+const AddClubSports = lazy(() => import("../../Components/Club/AddClubSports"));
+const AddSportArena = lazy(() => import("../../Components/Club/AddSportArena"));
 
 const ManagerClub = () => {
   const [club, setClub] = useState(null);
@@ -52,9 +55,23 @@ const ManagerClub = () => {
           />
         );
       case "addSports":
-        return <div>Add Sports Component</div>;
+        return (
+          <AddClubSports
+            fetchClubData={fetchClubData}
+            popClose={() => setActiveComponent(null)}
+            theme={theme}
+            sports={sports}
+          />
+        );
       case "addSportsArenas":
-        return <div>Add SportsArenas Component</div>;
+        return (
+          <AddSportArena
+            fetchClubData={fetchClubData}
+            popClose={() => setActiveComponent(null)}
+            theme={theme}
+            club={club}
+          />
+        );
       case "updateSportsArenas":
         return (
           <UpdateSportsArena
