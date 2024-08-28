@@ -338,7 +338,7 @@ const AddClubSports = ({
                 <div className="mt-2 text-sm text-gray-700">
                   <strong>Clubs Playing: </strong>
                   {data.selectedArenaClubs
-                    .filter((c) => c.clubName !== club.clubName )
+                    .filter((c) => c.clubName !== club.clubName)
                     .map((c) => c.clubName)
                     .join(", ")}
                 </div>
