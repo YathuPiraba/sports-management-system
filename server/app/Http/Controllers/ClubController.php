@@ -302,6 +302,8 @@ class ClubController extends Controller
                 ], 404);
             }
 
+            $clubDivision = Gs_Division::where('id', $club->gs_id)->first();
+
             // Fetch the club sports details
             $clubSports = Club_Sports::where('club_id', $clubId)
                 ->with(['club', 'sportsCategory', 'sportsArena'])
@@ -324,7 +326,18 @@ class ClubController extends Controller
 
             // Return the club and sports details
             return response()->json([
-                'club' => $club,
+                'club' => [
+                    'id' => $club->id,
+                    'clubAddress' => $club->clubAddress,
+                    'clubContactNo' => $club->clubContactNo,
+                    'clubImage' => $club->clubImage,
+                    'clubName' => $club->clubName,
+                    'club_history' => $club->club_history,
+                    'created_at' => $club->created_at,
+                    'gs_id' => $club->gs_id,
+                    'isVerified' => $club->isVerified,
+                    'clubDivisionName' => $clubDivision->divisionName,
+                ],
                 'sports' => $sportsDetails,
             ]);
         } catch (Exception $e) {
