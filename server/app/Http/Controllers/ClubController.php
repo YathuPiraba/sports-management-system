@@ -379,6 +379,7 @@ class ClubController extends Controller
                     'club_id' => $item->club_id,
                     'sports_id' => $item->sports_id,
                     'sportsName' => $item->sportsCategory->name,
+                    'sportsImage' => $item->sportsCategory->image,
                     'sports_arena_id' => $item->sports_arena_id,
                     'sports_arena_name' => $item->sportsArena->name,
                     'sports_arena_location' => $item->sportsArena->location,
