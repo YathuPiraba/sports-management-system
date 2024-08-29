@@ -11,7 +11,6 @@ const UpdateSportsArena = lazy(() =>
 );
 const UpdateClub = lazy(() => import("../../Components/Club/UpdateClub"));
 const AddClubSports = lazy(() => import("../../Components/Club/AddClubSports"));
-const AddSportArena = lazy(() => import("../../Components/Club/AddSportArena"));
 
 const ManagerClub = () => {
   const [club, setClub] = useState(null);
@@ -61,15 +60,6 @@ const ManagerClub = () => {
             popClose={() => setActiveComponent(null)}
             theme={theme}
             sportsDetails={sports}
-            club={club}
-          />
-        );
-      case "addSportsArenas":
-        return (
-          <AddSportArena
-            fetchClubData={fetchClubData}
-            popClose={() => setActiveComponent(null)}
-            theme={theme}
             club={club}
           />
         );
@@ -143,12 +133,6 @@ const ManagerClub = () => {
                       onClick={() => handleButtonClick("addSports")}
                     >
                       Add Sports
-                    </button>
-                    <button
-                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => handleButtonClick("addSportsArenas")}
-                    >
-                      Add Sports Arenas
                     </button>
                   </div>
                 </div>

@@ -80,15 +80,9 @@ Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 Route::prefix('sports-arenas')->group(function () {
-    // Create a new sports arena
-    Route::post('/create', [SportsArenaController::class, 'createSportsArena']);
-
-    // Get a single sports arena by ID
-    Route::get('/{id}', [SportsArenaController::class, 'getSportsArena']);
 
     // Update a sports arena by ID
     Route::put('/{id}', [SportsArenaController::class, 'updateSportsArena']);
-
 
     // Get all sports arenas based on a club ID
     Route::get('/club/{clubId}', [SportsArenaController::class, 'getSportsArenasByClub']);
@@ -96,3 +90,6 @@ Route::prefix('sports-arenas')->group(function () {
 
 // Get all sports arenas
 Route::get('/arena/list', [SportsArenaController::class, 'getAllSportsArenas']);
+
+Route::delete('/arena/{clubId}/{arenaId}', [SportsArenaController::class, 'deleteSportsArena']);
+Route::delete('/club/{clubId}/{sportId}/{arenaId}', [ClubController::class, 'deleteClubSports']);

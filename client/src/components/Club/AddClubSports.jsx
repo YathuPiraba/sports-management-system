@@ -23,6 +23,8 @@ const AddClubSports = ({
     selectedArena: "",
     newSportName: "",
     newArenaName: "",
+    newSportImage: null,
+    newArenaImage: null,
     isAddingNewSport: false,
     isAddingNewArena: false,
     selectedArenaClubs: [],
@@ -112,11 +114,32 @@ const AddClubSports = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = {
-      clubName: club.clubName,
-      sportsName: data.selectedSport,
-      sportsArenaName: data.selectedArena,
-    };
+    const formData = new FormData();
+    formData.append("clubName", club.clubName);
+
+    if (data.addNewSport) {
+      formData.append("newSport", "true");
+      formData.append("newSportName", data.newSportName);
+      formData.append("sportType", data.newSportType);
+      formData.append("sportDescription", data.newSportDescription);
+      if (data.newSportImage) {
+        formData.append("sportImage", data.newSportImage);
+      }
+    } else {
+      formData.append("sportsName", data.selectedSport);
+    }
+
+    if (data.addNewArena) {
+      formData.append("newArena", "true");
+      formData.append("newArenaName", data.newArenaName);
+      formData.append("arenaLocation", data.newArenaLocation);
+      formData.append("arenaAddress", data.newArenaAddress);
+      if (data.newArenaImage) {
+        formData.append("arenaImage", data.newArenaImage);
+      }
+    } else {
+      formData.append("sportsArenaName", data.selectedArena);
+    }
 
     try {
       await createClubSportsAPI(formData);

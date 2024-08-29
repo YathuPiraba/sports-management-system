@@ -19,57 +19,6 @@ class SportsArenaController extends Controller
         $this->cloudinary = $cloudinary;
     }
 
-    public function createSportsArena(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg,webp,jfif|max:2048',
-            'club_id' => 'required|exists:clubs,id',
-            'sports_id' => 'required|exists:sports_categories,id',
-        ]);
-
-        try {
-            // Handle image upload if provided
-            $imageUrl = null;
-            if ($request->hasFile('image')) {
-                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
-                $imageUrl = $result['secure_url'];
-            }
-
-            // Create the sports arena
-            $sportsArena = Sports_Arena::create([
-                'name' => $request->name,
-                'location' => $request->location,
-                'address' => $request->address,
-                'image' => $imageUrl,
-                'club_id' => $request->club_id,
-                'sports_id' => $request->sports_id,
-            ]);
-
-            // Create the entry in Club_Sports
-            Club_Sports::create([
-                'club_id' => $validatedData['club_id'],
-                'sports_id' => $validatedData['sports_id'],
-                'sports_arena_id' => $sportsArena->id,
-            ]);
-
-            return response()->json(['message' => 'Sports Arena created successfully', 'data' => $sportsArena], 201);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to create Sports Arena', 'message' => $e->getMessage()], 500);
-        }
-    }
-
-    public function getSportsArena($id)
-    {
-        try {
-            $sportsArena = Sports_Arena::findOrFail($id);
-            return response()->json(['data' => $sportsArena], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Sports Arena not found', 'message' => $e->getMessage()], 404);
-        }
-    }
 
     public function updateSportsArena(Request $request, $id)
     {
@@ -180,6 +129,40 @@ class SportsArenaController extends Controller
             return response()->json(['data' => $response], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch sports arenas', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteSportsArena($clubId, $arenaId)
+    {
+        try {
+            // Validate that the sports arena exists
+            $sportsArena = Sports_Arena::findOrFail($arenaId);
+
+            // Fetch entries to be deleted
+            $entriesToDelete = Club_Sports::where('club_id', $clubId)
+                ->where('sports_arena_id', $sportsArena->id)
+                ->get();
+
+            if ($entriesToDelete->isEmpty()) {
+                return response()->json(['message' => 'No Club Sports entries found for the given club and arena IDs'], 404);
+            }
+
+
+            // Delete associated club sports entries based on club_id and sports_arena_id
+            $deletedRows = Club_Sports::where('club_id', $clubId)
+                ->where('sports_arena_id', $sportsArena->id)
+                ->delete();
+
+            if ($deletedRows > 0) {
+                return response()->json([
+                    'message' => 'Club Sports entries deleted successfully',
+                    'deleted_entries' => $entriesToDelete
+                ], 200);
+            } else {
+                return response()->json(['message' => 'No Club Sports entries found for the given club and arena IDs'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete Club Sports', 'message' => $e->getMessage()], 500);
         }
     }
 }
