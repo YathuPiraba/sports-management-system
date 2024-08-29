@@ -6,6 +6,9 @@ import {
 } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
+import { Select } from "antd";
+
+const { Option } = Select;
 
 const AddClubSports = ({
   popClose,
@@ -70,17 +73,15 @@ const AddClubSports = ({
     fetchData();
   }, [sportsDetails]);
 
-  const handleSportChange = (e) => {
-    const sportName = e.target.value;
-
+  const handleSportChange = (value) => {
     // Determine if we're adding a new sport or selecting an existing one
-    const isAddingNewSport = sportName === "new";
+    const isAddingNewSport = value === "new";
 
     setData((prev) => ({
       ...prev,
-      selectedSport: sportName,
+      selectedSport: value,
       isAddingNewSport: isAddingNewSport,
-      newSportName: isAddingNewSport ? "" : sportName, // Clear newSportName if not adding a new sport
+      newSportName: isAddingNewSport ? "" : value,
     }));
   };
 
@@ -117,7 +118,7 @@ const AddClubSports = ({
     const formData = new FormData();
     formData.append("clubName", club.clubName);
 
-    if (data.addNewSport) {
+    if (data.isAddingNewSport) {
       formData.append("newSport", "true");
       formData.append("newSportName", data.newSportName);
       formData.append("sportType", data.newSportType);
@@ -129,7 +130,7 @@ const AddClubSports = ({
       formData.append("sportsName", data.selectedSport);
     }
 
-    if (data.addNewArena) {
+    if (data.isAddingNewArena) {
       formData.append("newArena", "true");
       formData.append("newArenaName", data.newArenaName);
       formData.append("arenaLocation", data.newArenaLocation);
@@ -175,19 +176,17 @@ const AddClubSports = ({
               >
                 Select Sport:
               </label>
-              <select
-                id="sportSelect"
-                value={data.selectedSport}
+              <Select
+                showSearch
+                placeholder="Select a Sport"
+                optionFilterProp="label"
                 onChange={handleSportChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                <option value="">Select A Sport</option>
-                {data.sports.map((sport) => (
-                  <option key={sport.id} value={sport.name}>
-                    {sport.name}
-                  </option>
-                ))}
-              </select>
+                options={data.sports.map((sport) => ({
+                  value: sport.name,
+                  label: sport.name,
+                }))}
+                className="mt-1 block w-full px-0 py-0 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
             </>
           )}
           <div className="mt-2">
@@ -208,36 +207,37 @@ const AddClubSports = ({
                 >
                   Select Other Sports:
                 </label>
-                <select
-                  id="newSportSelect"
+                <Select
+                  showSearch
+                  placeholder="Select a Sport"
+                  optionFilterProp="label"
                   value={data.newSportName}
-                  onChange={(e) => {
-                    const selectedValue = e.target.value;
-                    if (selectedValue === "new") {
+                  onChange={(value) => {
+                    if (value === "new") {
                       setData((prev) => ({
                         ...prev,
                         isAddingNewSport: true,
-                        newSportName: selectedValue,
+                        newSportName: value,
                       }));
                     } else {
                       setData((prev) => ({
                         ...prev,
-                        selectedSport: selectedValue,
+                        selectedSport: value,
                         isAddingNewSport: false,
-                        newSportName: selectedValue,
+                        newSportName: value,
                       }));
                     }
                   }}
-                  className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="mt-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 >
-                  <option value="">Select New Sport</option>
+                  <Option value="">Select New Sport</Option>
                   {data.filteredSports.map((sport) => (
-                    <option key={sport.id} value={sport.name}>
+                    <Option key={sport.id} value={sport.name}>
                       {sport.name}
-                    </option>
+                    </Option>
                   ))}
-                  <option value="new">Add New Sport</option>
-                </select>
+                  <Option value="new">Add New Sport</Option>
+                </Select>
 
                 {data.isAddingNewSport && (
                   <div className="space-y-2">
@@ -416,7 +416,6 @@ const AddClubSports = ({
                   ))}
                   <option value="new">Add New Arena</option>
                 </select>
-
                 {data.isAddingNewArena && (
                   <div className="space-y-2 mt-2">
                     <div>
