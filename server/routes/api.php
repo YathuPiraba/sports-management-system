@@ -90,6 +90,7 @@ Route::prefix('sports-arenas')->group(function () {
 
 // Get all sports arenas
 Route::get('/arena/list', [SportsArenaController::class, 'getAllSportsArenas']);
+Route::get('/arena/sports/{clubId}/{arenaId}', [SportsArenaController::class, 'getSportsBySportsArena']);
 
 Route::delete('/arena/{clubId}/{arenaId}', [SportsArenaController::class, 'deleteSportsArena']);
 Route::delete('/club/{clubId}/{sportId}/{arenaId}', [ClubController::class, 'deleteClubSports']);

@@ -70,6 +70,7 @@ const ManagerClub = () => {
             popClose={() => setActiveComponent(null)}
             fetchClubData={fetchClubData}
             theme={theme}
+            club={club}
           />
         );
       default:

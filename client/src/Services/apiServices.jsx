@@ -238,3 +238,7 @@ export const deleteSportsArenaAPI = (clubId, arenaId) => {
 export const deleteClubSportsAPI = (clubId, sportId, arenaId) => {
   return authApiClient.delete(`/club/${clubId}/${sportId}/${arenaId}`);
 };
+
+export const getSportsBySportsArenaAPI =(clubId,arenaId)=>{
+  return apiClient.get(`/arena/sports/${clubId}/${arenaId}`);
+}

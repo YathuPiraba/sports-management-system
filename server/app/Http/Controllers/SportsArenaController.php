@@ -132,6 +132,35 @@ class SportsArenaController extends Controller
         }
     }
 
+    public function getSportsBySportsArena($clubId, $arenaId)
+    {
+        try {
+
+            $clubSports = Club_Sports::where('club_id', $clubId)
+                ->where('sports_arena_id', $arenaId)
+                ->with('sportsCategory')
+                ->get();
+
+
+            if ($clubSports->isEmpty()) {
+                return response()->json(['message' => 'No sports found for this sports arena'], 404);
+            }
+
+
+            $response = $clubSports->map(function ($item) {
+                return [
+                    'sports' => $item->sportsCategory,
+                    'club_id' => $item->club_id,
+                ];
+            });
+
+            return response()->json($response, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch sports', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
     public function deleteSportsArena($clubId, $arenaId)
     {
         try {
