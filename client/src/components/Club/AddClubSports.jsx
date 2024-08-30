@@ -191,7 +191,9 @@ const AddClubSports = ({
       popClose();
     } catch (error) {
       console.log(error);
-      toast.error("Error in adding club sport");
+      const errorMessage =
+        error.response?.data?.error || "Error in adding club sport.";
+      toast.error(errorMessage);
     }
   };
 

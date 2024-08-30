@@ -49,22 +49,25 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
   };
 
   // Handle delete action
-  const handleDelete = async () => {
-    if (!selectedSport) {
-      toast.error("Please select a sport");
-      return;
-    }
+const handleDelete = async () => {
+  if (!selectedSport ) {
+    toast.error("Please select a sport");
+    return;
+  }
 
-    try {
-      await deleteClubSportsAPI(selectedSport.id);
-      fetchClubData();
-      toast.success("Club Sports deleted successfully");
-      popClose();
-    } catch (error) {
-      console.log(error);
-      toast.error("Error in deleting Club Sports");
-    }
-  };
+  try {
+    await deleteClubSportsAPI(selectedSport.club_id, selectedSport.sports_id);
+    fetchClubData();
+    toast.success("Club Sports deleted successfully");
+    popClose();
+  } catch (error) {
+    console.log(error);
+    const errorMessage =
+      error.response?.data?.error || "Error in deleting Club Sports.";
+    toast.error(errorMessage);
+  }
+};
+
 
   return (
     <div

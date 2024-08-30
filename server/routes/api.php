@@ -65,7 +65,7 @@ Route::post('/sports/create', [SportsController::class, 'createSports']);
 Route::get('/clubs-sports/list', [ClubController::class, 'getAllClubSports']);
 Route::post('/clubs-sports/create', [ClubController::class, 'createClubSports']);
 Route::get('/clubs-sports/one', [ClubController::class, 'getAClubSports']);
-Route::delete('/club-sports/{id}', [ClubController::class, 'deleteClubSports']);
+Route::delete('/club-sports', [ClubController::class, 'deleteClubSports']);
 Route::put('/club-sports/{id}', [ClubController::class, 'updateClubSports']);
 
 Route::get('/club-details', [ClubController::class, 'getClubsByUserId']);

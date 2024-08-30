@@ -13,7 +13,7 @@ const ClubSports = ({ sports, theme, handleButtonClick }) => {
   // Function to get arenas for a given sport
   const getArenasForSport = (sportId) => {
     return sports
-      .filter((sport) => sport.sports_id == sportId)
+      .filter((sport) => sport.sports_id === sportId)
       .map((sport) => sport.sports_arena_name);
   };
 

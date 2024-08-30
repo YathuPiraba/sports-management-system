@@ -13,6 +13,7 @@ use App\Models\Member;
 use Exception;
 use Cloudinary\Cloudinary;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB; // Import the DB facade
 
 class ClubController extends Controller
 {
@@ -301,13 +302,14 @@ class ClubController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        DB::beginTransaction(); // Start a transaction
+
         try {
             // Find or create the club
             $club = Club::firstOrCreate(['clubName' => $request->input('clubName')]);
 
             // Handle sport
             if ($request->input('newSport') === 'true') {
-                // Create a new sport category
                 $sportsCategory = new Sports_Categories();
                 $sportsCategory->name = $request->input('newSportName');
                 $sportsCategory->type = $request->input('sportType');
@@ -316,43 +318,46 @@ class ClubController extends Controller
                 // Handle sport image upload if exists
                 if ($request->hasFile('sportImage')) {
                     if ($sportsCategory->image) {
-                        // Optionally delete the old image from Cloudinary
                         $this->cloudinary->uploadApi()->destroy($sportsCategory->image);
                     }
-
                     $result = $this->cloudinary->uploadApi()->upload($request->file('sportImage')->getRealPath());
                     $sportsCategory->image = $result['secure_url'];
                 }
 
                 $sportsCategory->save();
             } else {
-                // Find the existing sport
                 $sportsCategory = Sports_Categories::where('name', $request->input('sportsName'))->firstOrFail();
             }
 
             // Handle arena
             if ($request->input('newArena') === 'true') {
-                // Create a new sports arena
                 $sportsArena = new Sports_Arena();
                 $sportsArena->name = $request->input('newArenaName');
                 $sportsArena->location = $request->input('arenaLocation');
                 $sportsArena->address = $request->input('arenaAddress');
 
-                // Handle arena image upload if exists
                 if ($request->hasFile('arenaImage')) {
                     if ($sportsArena->image) {
-                        // Optionally delete the old image from Cloudinary
                         $this->cloudinary->uploadApi()->destroy($sportsArena->image);
                     }
-
                     $result = $this->cloudinary->uploadApi()->upload($request->file('arenaImage')->getRealPath());
                     $sportsArena->image = $result['secure_url'];
                 }
 
                 $sportsArena->save();
             } else {
-                // Find the existing sports arena
                 $sportsArena = Sports_Arena::where('name', $request->input('sportsArenaName'))->firstOrFail();
+            }
+
+            // Check if the combination already exists
+            $existingClubSports = Club_Sports::where('club_id', $club->id)
+                ->where('sports_id', $sportsCategory->id)
+                ->where('sports_arena_id', $sportsArena->id)
+                ->first();
+
+            if ($existingClubSports) {
+                DB::rollBack(); // Rollback transaction
+                return response()->json(['error' => 'This combination of club, sport, and arena already exists.'], 409);
             }
 
             // Create a new club sports entry
@@ -362,11 +367,14 @@ class ClubController extends Controller
                 'sports_arena_id' => $sportsArena->id,
             ]);
 
+            DB::commit(); // Commit transaction
+
             return response()->json([
                 'message' => 'Club sports entry created successfully',
                 'data' => $clubSports
             ], 201);
         } catch (Exception $e) {
+            DB::rollBack(); // Rollback transaction
             return response()->json(['error' => 'Failed to create club sports entry.', 'message' => $e->getMessage()], 500);
         }
     }
@@ -410,28 +418,46 @@ class ClubController extends Controller
         }
     }
 
-    //DELETE => http://127.0.0.1:8000/api/clubs-sports/{id}
-    public function deleteClubSports($id)
+    // DELETE => http://127.0.0.1:8000/api/clubs-sports?club_id={club_id}&sports_id={sports_id}
+    public function deleteClubSports(Request $request)
     {
         try {
-            // Validate that the Club_Sports entry exists
-            $entryToDelete = Club_Sports::findOrFail($id);
+            // Validate incoming data
+            $validator = Validator::make($request->all(), [
+                'club_id' => 'required|integer',
+                'sports_id' => 'required|integer',
+            ]);
 
-            // Delete the Club_Sports entry by ID
-            $deletedRow = $entryToDelete->delete();
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
 
-            if ($deletedRow) {
+            // Get the club_id and sports_id from the request
+            $clubId = $request->input('club_id');
+            $sportsId = $request->input('sports_id');
+
+            // Find the Club_Sports entry with the given club_id and sports_id
+            $entryToDelete = Club_Sports::where('club_id', $clubId)
+                ->where('sports_id', $sportsId)
+                ->get();
+
+            $deletedRows = Club_Sports::where('club_id', $clubId)
+                ->where('sports_id', $sportsId)
+                ->delete();
+
+            if ($deletedRows > 0) {
                 return response()->json([
-                    'message' => 'Club Sports entry deleted successfully',
-                    'deletedEntry' => $entryToDelete,
+                    'message' => 'Club Sports entries deleted successfully',
+                    'deletedRows' => $entryToDelete,
                 ], 200);
             } else {
-                return response()->json(['message' => 'No Club Sports entry found for the given ID'], 404);
+                return response()->json(['message' => 'No Club Sports entry found for the given club_id and sports_id'], 404);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete Club Sports', 'message' => $e->getMessage()], 500);
         }
     }
+
 
     //PUT => http://127.0.0.1:8000/api/clubs-sports/{id}
     public function updateClubSports(Request $request, $id)
