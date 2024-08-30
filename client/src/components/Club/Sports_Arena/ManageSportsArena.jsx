@@ -180,8 +180,8 @@ const ManageSportsArena = ({
       label: "Delete",
       children: selectedArena && (
         <div>
-          <p>Are you sure you want to delete this sports arena?</p>
-          <div className="flex space-x-4 mt-2">
+          <p className="text-center">Are you sure you want to delete this sports arena?</p>
+          <div className="flex  justify-center gap-5 space-x-4 mt-4">
             <button
               onClick={handleDelete}
               className="bg-red-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
@@ -232,7 +232,7 @@ const ManageSportsArena = ({
                 <p className="text-lg font-semibold">
                   Sports played by your club here:
                 </p>
-                <ul className="list-disc pl-6 mt-2 space-y-1">
+                <ul className="list-disc flex flex-col items-center mt-2 space-y-1">
                   {sportsData.map((item) => (
                     <li key={item.sports.id} className=" hover:text-blue-600">
                       {item.sports.name}
