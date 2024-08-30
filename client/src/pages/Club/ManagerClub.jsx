@@ -139,15 +139,15 @@ const ManagerClub = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div
-        className={`container mx-auto p-8 ${
+        className={` mx-auto p-4 sm:p-6 md:p-8 ${
           theme === "light" ? "bg-white" : "bg-gray-300"
         } text-${theme === "light" ? "black" : "white"} shadow-lg rounded-lg`}
       >
         {/* Profile Header */}
-        <div className="flex items-center space-x-6 mb-8">
+        <div className="flex flex-col sm:flex-row items-center mb-8">
           <Avatar size={80} src={club.clubImage} />
-          <div>
-            <div className="flex ">
+          <div className="text-center sm:text-left sm:ml-6">
+            <div className="flex  justify-center sm:justify-start">
               <Title
                 level={2}
                 className={`m-0 ${
@@ -156,13 +156,13 @@ const ManagerClub = () => {
               >
                 {club.clubName}
               </Title>
-              <MdVerified className="ml-2 text-blue-500 mt-3" />
+              <MdVerified className="ml-3 text-blue-500 mt-2" />
             </div>
             <Text type="secondary">
               Joined {new Date(club.created_at).getFullYear()}
             </Text>
           </div>
-          <div className="ml-auto space-x-4">
+          <div className="mt-4 sm:mt-0 sm:ml-auto flex flex-wrap justify-center sm:justify-end space-x-2">
             <Button
               icon={<EditOutlined />}
               onClick={() => handleButtonClick("editClub")}
@@ -183,15 +183,15 @@ const ManagerClub = () => {
         <Divider />
 
         {/* Club Info */}
-        <div className="flex">
-          <div className="w-2/5 pr-4">
-            <div className="mb-8">
-              <div className="flex items-center  mb-4">
-                <div className="flex">
-                  <MdPhone className="mr-2 mt-1 text-blue-500" />
+        <div className="flex flex-col sm:flex-row">
+          <div className="w-full sm:w-2/5 pr-4 mb-4 sm:mb-0">
+            <div className="mb-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4">
+                <div className="flex items-center mb-2 sm:mb-0">
+                  <MdPhone className="mr-2 text-blue-500" />
                   <Text>{club.clubContactNo}</Text>
                 </div>
-                <div className="ml-8 flex items-center">
+                <div className="flex items-center mt-2 sm:mt-0 sm:ml-8">
                   <Text strong className="mr-2">
                     G.N Division:
                   </Text>
@@ -205,7 +205,7 @@ const ManagerClub = () => {
             </div>
           </div>
 
-          <div className="w-3/5 pl-4 pt-0.5 -mt-1">
+          <div className="w-full sm:w-3/5 pl-0 sm:pl-4">
             <div className="mb-8">
               <Text strong className="mr-2">
                 History:
