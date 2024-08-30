@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Popconfirm } from "antd";
 import {
@@ -6,42 +6,79 @@ import {
   deleteClubSportsAPI,
 } from "../../../Services/apiServices";
 import { MdClose } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
+
+// Function to get unique sports from the list
+const getUniqueSports = (sports) => {
+  const uniqueSports = {};
+  sports.forEach((sport) => {
+    if (!uniqueSports[sport.sports_id]) {
+      uniqueSports[sport.sports_id] = sport;
+    }
+  });
+  return Object.values(uniqueSports);
+};
+
+// Function to get arenas by sport id
+const getArenasBySportId = (sports, sportId) => {
+  return sports
+    .filter((sport) => sport.sports_id === sportId)
+    .map((sport) => ({
+      id: sport.sports_arena_id,
+      name: sport.sports_arena_name,
+    }));
+};
 
 const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
   const [selectedSport, setSelectedSport] = useState(null);
-  const [selectedArena, setSelectedArena] = useState("");
+  const [selectedArenas, setSelectedArenas] = useState([]);
+  const [availableArenas, setAvailableArenas] = useState([]);
+
+  // Get unique sports
+  const uniqueSports = getUniqueSports(sports);
 
   // Handle sport selection change
   const handleSportChange = (e) => {
-    const sportId = e.target.value;
-    const sport = sports.find((s) => s.sports_id === parseInt(sportId));
+    const sportId = parseInt(e.target.value);
+    const sport = sports.find((s) => s.sports_id === sportId);
     setSelectedSport(sport);
-    setSelectedArena(sport ? sport.sports_arena_id : "");
+    if (sport) {
+      const arenas = getArenasBySportId(sports, sportId);
+      setAvailableArenas(arenas);
+      setSelectedArenas(arenas.map((arena) => arena.id));
+    } else {
+      setAvailableArenas([]);
+      setSelectedArenas([]);
+    }
   };
 
   // Handle arena selection change
-  const handleArenaChange = (e) => {
-    setSelectedArena(e.target.value);
+  const handleArenaChange = (arenaId) => {
+    setSelectedArenas((prevArenas) =>
+      prevArenas.includes(arenaId)
+        ? prevArenas.filter((id) => id !== arenaId)
+        : [...prevArenas, arenaId]
+    );
   };
 
   // Handle form submission for updating club sports
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedSport || !selectedArena) {
-      toast.error("Please select a sport and an arena");
+    if (!selectedSport) {
+      toast.error("Please select a sport");
       return;
     }
 
     const data = {
       sport_id: selectedSport.sports_id,
-      sports_arena_id: selectedArena,
+      sports_arena_ids: selectedArenas,
     };
 
     try {
       await updateClubSportsAPI(selectedSport.id, data);
-      fetchClubData(); // Update the state with the latest data
+      fetchClubData();
       toast.success("Club Sports updated successfully");
-      popClose(); // Close the modal or perform any other UI action
+      popClose();
     } catch (error) {
       console.log(error);
       toast.error("Error in updating Club Sports");
@@ -49,25 +86,24 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
   };
 
   // Handle delete action
-const handleDelete = async () => {
-  if (!selectedSport ) {
-    toast.error("Please select a sport");
-    return;
-  }
+  const handleDelete = async () => {
+    if (!selectedSport) {
+      toast.error("Please select a sport");
+      return;
+    }
 
-  try {
-    await deleteClubSportsAPI(selectedSport.club_id, selectedSport.sports_id);
-    fetchClubData();
-    toast.success("Club Sports deleted successfully");
-    popClose();
-  } catch (error) {
-    console.log(error);
-    const errorMessage =
-      error.response?.data?.error || "Error in deleting Club Sports.";
-    toast.error(errorMessage);
-  }
-};
-
+    try {
+      await deleteClubSportsAPI(selectedSport.club_id, selectedSport.sports_id);
+      fetchClubData();
+      toast.success("Club Sports deleted successfully");
+      popClose();
+    } catch (error) {
+      console.log(error);
+      const errorMessage =
+        error.response?.data?.error || "Error in deleting Club Sports.";
+      toast.error(errorMessage);
+    }
+  };
 
   return (
     <div
@@ -97,7 +133,7 @@ const handleDelete = async () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
               <option value="">Select a Sport</option>
-              {sports.map((sport) => (
+              {uniqueSports.map((sport) => (
                 <option key={sport.sports_id} value={sport.sports_id}>
                   {sport.sportsName}
                 </option>
@@ -106,29 +142,28 @@ const handleDelete = async () => {
           </div>
 
           {selectedSport && (
-            <div>
-              <label
-                htmlFor="arenaSelect"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Select Arena:
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Available Arenas:
               </label>
-              <select
-                id="arenaSelect"
-                value={selectedArena}
-                onChange={handleArenaChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                <option value="">Select an Arena</option>
-                {sports.map((sport) => (
-                  <option
-                    key={sport.sports_arena_id}
-                    value={sport.sports_arena_id}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {availableArenas.map((arena) => (
+                  <div
+                    key={arena.id}
+                    className={`px-3 py-1 rounded-full flex items-center space-x-2 cursor-pointer ${
+                      selectedArenas.includes(arena.id)
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-800"
+                    }`}
+                    onClick={() => handleArenaChange(arena.id)}
                   >
-                    {sport.sports_arena_name}
-                  </option>
+                    <span>{arena.name}</span>
+                    {selectedArenas.includes(arena.id) && (
+                      <IoMdClose size={16} />
+                    )}
+                  </div>
                 ))}
-              </select>
+              </div>
             </div>
           )}
 
