@@ -3,12 +3,12 @@ import {
   updateSportsArenaAPI,
   deleteSportsArenaAPI,
   getSportsBySportsArenaAPI,
-} from "../../Services/apiServices";
+} from "../../../Services/apiServices";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import { Tabs } from "antd";
 
-const UpdateSportsArena = ({
+const ManageSportsArena = ({
   sports,
   popClose,
   fetchClubData,
@@ -251,4 +251,4 @@ const UpdateSportsArena = ({
   );
 };
 
-export default UpdateSportsArena;
+export default ManageSportsArena;

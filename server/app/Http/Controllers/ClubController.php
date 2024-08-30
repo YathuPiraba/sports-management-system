@@ -105,6 +105,87 @@ class ClubController extends Controller
         }
     }
 
+    //GET => http://127.0.0.1:8000/api//club-details
+    public function getClubsByUserId(Request $request)
+    {
+        try {
+            // Get the userId from the request
+            $userId = $request->input('userId');
+            if (!$userId) {
+                return response()->json([
+                    'error' => 'userId is required.',
+                ], 400);
+            }
+
+            // Fetch the club ID associated with the userId from club_managers
+            $clubId = Club_Manager::where('user_id', $userId)->value('club_id');
+
+            // If no club found in club_managers, fetch the club ID from members
+            if (!$clubId) {
+                $clubId = Member::where('user_id', $userId)->value('club_id');
+            }
+
+            // If still no club ID found, return empty response
+            if (!$clubId) {
+                return response()->json([
+                    'error' => 'No club found for the given userId.',
+                ], 404);
+            }
+
+            // Fetch the club details using the club ID
+            $club = Club::find($clubId);
+
+            // If the club is not found, return an error response
+            if (!$club) {
+                return response()->json([
+                    'error' => 'Club not found.',
+                ], 404);
+            }
+
+            $clubDivision = Gs_Division::where('id', $club->gs_id)->first();
+
+            // Fetch the club sports details
+            $clubSports = Club_Sports::where('club_id', $clubId)
+                ->with(['club', 'sportsCategory', 'sportsArena'])
+                ->get();
+
+            // Transform the data to include the related names
+            $sportsDetails = $clubSports->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'club_id' => $item->club_id,
+                    'sports_id' => $item->sports_id,
+                    'sportsName' => $item->sportsCategory->name,
+                    'sportsImage' => $item->sportsCategory->image,
+                    'sports_arena_id' => $item->sports_arena_id,
+                    'sports_arena_name' => $item->sportsArena->name,
+                    'sports_arena_location' => $item->sportsArena->location,
+                    'sports_arena_address' => $item->sportsArena->address,
+                    'sports_arena_image' => $item->sportsArena->image,
+                ];
+            });
+
+            // Return the club and sports details
+            return response()->json([
+                'club' => [
+                    'id' => $club->id,
+                    'clubAddress' => $club->clubAddress,
+                    'clubContactNo' => $club->clubContactNo,
+                    'clubImage' => $club->clubImage,
+                    'clubName' => $club->clubName,
+                    'club_history' => $club->club_history,
+                    'created_at' => $club->created_at,
+                    'gs_id' => $club->gs_id,
+                    'isVerified' => $club->isVerified,
+                    'clubDivisionName' => $clubDivision->divisionName,
+                ],
+                'sports' => $sportsDetails,
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
+        }
+    }
+
     // PUT => http://127.0.0.1:8000/api/clubs/{id}
     public function clubUpdate(Request $request, $id)
     {
@@ -171,7 +252,6 @@ class ClubController extends Controller
             return response()->json(['error' => 'Failed to update club', 'details' => $e->getMessage()], 500);
         }
     }
-
 
     //GET => http://127.0.0.1:8000/api/clubs-sports/get
     public function getAllClubSports()
@@ -291,6 +371,7 @@ class ClubController extends Controller
         }
     }
 
+    //GET => http://127.0.0.1:8000/api/clubs-sports/one
     public function getAClubSports(Request $request)
     {
         try {
@@ -329,113 +410,59 @@ class ClubController extends Controller
         }
     }
 
-    public function getClubsByUserId(Request $request)
+    //DELETE => http://127.0.0.1:8000/api/clubs-sports/{id}
+    public function deleteClubSports($id)
     {
         try {
-            // Get the userId from the request
-            $userId = $request->input('userId');
-            if (!$userId) {
+            // Validate that the Club_Sports entry exists
+            $entryToDelete = Club_Sports::findOrFail($id);
+
+            // Delete the Club_Sports entry by ID
+            $deletedRow = $entryToDelete->delete();
+
+            if ($deletedRow) {
                 return response()->json([
-                    'error' => 'userId is required.',
-                ], 400);
-            }
-
-            // Fetch the club ID associated with the userId from club_managers
-            $clubId = Club_Manager::where('user_id', $userId)->value('club_id');
-
-            // If no club found in club_managers, fetch the club ID from members
-            if (!$clubId) {
-                $clubId = Member::where('user_id', $userId)->value('club_id');
-            }
-
-            // If still no club ID found, return empty response
-            if (!$clubId) {
-                return response()->json([
-                    'error' => 'No club found for the given userId.',
-                ], 404);
-            }
-
-            // Fetch the club details using the club ID
-            $club = Club::find($clubId);
-
-            // If the club is not found, return an error response
-            if (!$club) {
-                return response()->json([
-                    'error' => 'Club not found.',
-                ], 404);
-            }
-
-            $clubDivision = Gs_Division::where('id', $club->gs_id)->first();
-
-            // Fetch the club sports details
-            $clubSports = Club_Sports::where('club_id', $clubId)
-                ->with(['club', 'sportsCategory', 'sportsArena'])
-                ->get();
-
-            // Transform the data to include the related names
-            $sportsDetails = $clubSports->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'club_id' => $item->club_id,
-                    'sports_id' => $item->sports_id,
-                    'sportsName' => $item->sportsCategory->name,
-                    'sportsImage' => $item->sportsCategory->image,
-                    'sports_arena_id' => $item->sports_arena_id,
-                    'sports_arena_name' => $item->sportsArena->name,
-                    'sports_arena_location' => $item->sportsArena->location,
-                    'sports_arena_address' => $item->sportsArena->address,
-                    'sports_arena_image' => $item->sportsArena->image,
-                ];
-            });
-
-            // Return the club and sports details
-            return response()->json([
-                'club' => [
-                    'id' => $club->id,
-                    'clubAddress' => $club->clubAddress,
-                    'clubContactNo' => $club->clubContactNo,
-                    'clubImage' => $club->clubImage,
-                    'clubName' => $club->clubName,
-                    'club_history' => $club->club_history,
-                    'created_at' => $club->created_at,
-                    'gs_id' => $club->gs_id,
-                    'isVerified' => $club->isVerified,
-                    'clubDivisionName' => $clubDivision->divisionName,
-                ],
-                'sports' => $sportsDetails,
-            ]);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
-        }
-    }
-
-    public function deleteClubSports($clubId, $sportId, $arenaId)
-    {
-        try {
-            // Validate that the sports arena exists
-            $sportsArena = Sports_Arena::findOrFail($arenaId);
-
-            $entrytoDelete = Club_Sports::where('club_id', $clubId)
-                ->where('sports_id', $sportId)
-                ->where('sports_arena_id', $sportsArena->id)
-                ->get();
-
-            // Delete a specific Club_Sports entry based on club_id, sports_id, and sports_arena_id
-            $deletedRow = Club_Sports::where('club_id', $clubId)
-                ->where('sports_id', $sportId)
-                ->where('sports_arena_id', $sportsArena->id)
-                ->delete();
-
-            if ($deletedRow > 0) {
-                return response()->json([
-                    'message' => 'Specific Club Sports entry deleted successfully',
-                    'deletedEntry' => $entrytoDelete,
+                    'message' => 'Club Sports entry deleted successfully',
+                    'deletedEntry' => $entryToDelete,
                 ], 200);
             } else {
-                return response()->json(['message' => 'No Club Sports entry found for the given club, sport, and arena IDs'], 404);
+                return response()->json(['message' => 'No Club Sports entry found for the given ID'], 404);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to delete Club Sports', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    //PUT => http://127.0.0.1:8000/api/clubs-sports/{id}
+    public function updateClubSports(Request $request, $id)
+    {
+        try {
+            // Validate that the Club_Sports entry exists
+            $clubSports = Club_Sports::findOrFail($id);
+
+            // Validate incoming request data
+            $validatedData = $request->validate([
+                'sports_id' => 'nullable|integer|exists:sports_categories,id',
+                'sports_arena_id' => 'nullable|integer|exists:sports_arenas,id',
+            ]);
+
+            // Update fields if they are present in the request
+            if (isset($validatedData['sports_id'])) {
+                $clubSports->sports_id = $validatedData['sports_id'];
+            }
+            if (isset($validatedData['sports_arena_id'])) {
+                $clubSports->sports_arena_id = $validatedData['sports_arena_id'];
+            }
+
+            // Save changes
+            $clubSports->save();
+
+            return response()->json([
+                'message' => 'Club Sports entry updated successfully',
+                'updatedEntry' => $clubSports,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update Club Sports', 'message' => $e->getMessage()], 500);
         }
     }
 }

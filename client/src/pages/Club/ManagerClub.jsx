@@ -4,13 +4,21 @@ import { useSelector } from "react-redux";
 import GridLoader from "react-spinners/GridLoader";
 import { useTheme } from "../../context/ThemeContext";
 
-const SportsArena = lazy(() => import("../../Components/Club/SportsArena"));
-const ClubSports = lazy(() => import("../../Components/Club/ClubSports"));
-const UpdateSportsArena = lazy(() =>
-  import("../../Components/Club/UpdateSportsArena")
+const SportsArena = lazy(() =>
+  import("../../Components/Club/Sports_Arena/SportsArena")
+);
+const ClubSports = lazy(() =>
+  import("../../Components/Club/Club_Sports/ClubSports")
+);
+const ManageSportsArena = lazy(() =>
+  import("../../Components/Club/Sports_Arena/ManageSportsArena")
+);
+const ManageClubSports = lazy(() =>
+  import("../../Components/Club/Club_Sports/ManageClubSports")
 );
 const UpdateClub = lazy(() => import("../../Components/Club/UpdateClub"));
 const AddClubSports = lazy(() => import("../../Components/Club/AddClubSports"));
+import { Tabs } from "antd";
 
 const ManagerClub = () => {
   const [club, setClub] = useState(null);
@@ -63,9 +71,9 @@ const ManagerClub = () => {
             club={club}
           />
         );
-      case "updateSportsArenas":
+      case "manageSportsArenas":
         return (
-          <UpdateSportsArena
+          <ManageSportsArena
             sports={sports}
             popClose={() => setActiveComponent(null)}
             fetchClubData={fetchClubData}
@@ -73,10 +81,44 @@ const ManagerClub = () => {
             club={club}
           />
         );
+      case "manageClubSports":
+        return (
+          <ManageClubSports
+            sports={sports}
+            popClose={() => setActiveComponent(null)}
+            fetchClubData={fetchClubData}
+            theme={theme}
+          />
+        );
       default:
         return null;
     }
   };
+
+  const tabItems = [
+    {
+      key: "1",
+      label: "Club Sports",
+      children: (
+        <ClubSports
+          sports={sports}
+          theme={theme}
+          handleButtonClick={handleButtonClick}
+        />
+      ),
+    },
+    {
+      key: "2",
+      label: "Sports Arena",
+      children: (
+        <SportsArena
+          sports={sports}
+          handleButtonClick={handleButtonClick}
+          theme={theme}
+        />
+      ),
+    },
+  ];
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -141,14 +183,7 @@ const ManagerClub = () => {
             </div>
 
             {/* Sports and Arenas Sections */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 text-black">
-              <ClubSports sports={sports} theme={theme} />
-              <SportsArena
-                sports={sports}
-                handleButtonClick={handleButtonClick}
-                theme={theme}
-              />
-            </div>
+            <Tabs defaultActiveKey="1" centered items={tabItems} />
           </div>
         )}
         {renderComponent()}
