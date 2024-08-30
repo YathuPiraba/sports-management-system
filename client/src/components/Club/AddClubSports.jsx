@@ -85,15 +85,12 @@ const AddClubSports = ({
     }));
   };
 
-  const handleArenaChange = (e) => {
-    const arenaName = e.target.value;
-    const selectedArenaData = data.arenas.find(
-      (arena) => arena.name === arenaName
-    );
+  const handleArenaChange = (value) => {
+    const selectedArenaData = data.arenas.find((arena) => arena.name === value);
 
     setData((prev) => ({
       ...prev,
-      selectedArena: arenaName,
+      selectedArena: value,
       selectedArenaClubs: selectedArenaData?.clubs || [],
     }));
   };
@@ -344,22 +341,41 @@ const AddClubSports = ({
               >
                 Select Sports Arena:
               </label>
-              <select
-                id="arenaSelect"
+              <Select
+                showSearch
+                placeholder="Select a Sports Arena"
+                optionFilterProp="label"
                 value={data.selectedArena}
-                onChange={handleArenaChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                onChange={(value) => {
+                  if (value === "new") {
+                    setData((prev) => ({
+                      ...prev,
+                      isAddingNewArena: true,
+                      newArenaName: value,
+                    }));
+                  } else {
+                    handleArenaChange(value);
+                    setData((prev) => ({
+                      ...prev,
+                      selectedArena: value,
+                      isAddingNewArena: false,
+                      newArenaName: value,
+                    }));
+                  }
+                }}
+                className="mt-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
-                <option value="">Select A Sports Arena</option>
+                <Option value="">Select a Sports Arena</Option>
                 {data.arenas.map((arena) => (
-                  <option key={arena.id} value={arena.name}>
+                  <Option key={arena.id} value={arena.name}>
                     {arena.name}
-                  </option>
+                  </Option>
                 ))}
-              </select>
+                <Option value="new">Add New Arena</Option>
+              </Select>
               {data.selectedArenaClubs.length > 0 && (
                 <div className="mt-2 text-sm text-gray-700">
-                  <strong>Clubs Playing: </strong>
+                  <strong>Other Clubs Playing Here: </strong>
                   {data.selectedArenaClubs
                     .filter((c) => c.clubName !== club.clubName)
                     .map((c) => c.clubName)
@@ -386,36 +402,37 @@ const AddClubSports = ({
                 >
                   Select Other Arenas:
                 </label>
-                <select
-                  id="newArenaSelect"
+                <Select
+                  showSearch
+                  placeholder="Select a New Arena"
+                  optionFilterProp="label"
                   value={data.newArenaName}
-                  onChange={(e) => {
-                    const selectedValue = e.target.value;
-                    if (selectedValue === "new") {
+                  onChange={(value) => {
+                    if (value === "new") {
                       setData((prev) => ({
                         ...prev,
                         isAddingNewArena: true,
-                        newArenaName: selectedValue,
+                        newArenaName: value,
                       }));
                     } else {
                       setData((prev) => ({
                         ...prev,
-                        selectedArena: selectedValue,
+                        selectedArena: value,
                         isAddingNewArena: false,
-                        newArenaName: selectedValue,
+                        newArenaName: value,
                       }));
                     }
                   }}
-                  className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="mt-2 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 >
-                  <option value="">Select New Arena</option>
+                  <Option value="">Select New Arena</Option>
                   {data.filteredArenas.map((arena) => (
-                    <option key={arena.id} value={arena.name}>
+                    <Option key={arena.id} value={arena.name}>
                       {arena.name}
-                    </option>
+                    </Option>
                   ))}
-                  <option value="new">Add New Arena</option>
-                </select>
+                  <Option value="new">Add New Arena</Option>
+                </Select>
                 {data.isAddingNewArena && (
                   <div className="space-y-2 mt-2">
                     <div>
