@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Sports_Categories;
 use Cloudinary\Cloudinary;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class SportsController extends Controller
 {
@@ -89,4 +90,52 @@ class SportsController extends Controller
         }
     }
 
+    //PUT/PATCH => http://127.0.0.1:8000/api/sports/{id}
+    public function updateSports(Request $request, $id)
+    {
+        try {
+            // Validate incoming data
+            $request->validate([
+                'name' => 'nullable|string|max:255',
+                'type' => 'nullable|string|max:255',
+                'description' => 'nullable|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,jfif,webp|max:2048',
+            ]);
+
+            Log::info('Incoming request data', $request->all());
+
+            // Find the existing sports category
+            $sportsCategory = Sports_Categories::findOrFail($id);
+
+            // Update fields if provided
+            if ($request->has('name')) {
+                $sportsCategory->name = $request->input('name');
+            }
+            if ($request->has('type')) {
+                $sportsCategory->type = $request->input('type');
+            }
+            if ($request->has('description')) {
+                $sportsCategory->description = $request->input('description');
+            }
+
+            // Handle image upload if provided
+            if ($request->hasFile('image')) {
+                // Optionally delete the old image from Cloudinary
+                if ($sportsCategory->image) {
+                    $this->cloudinary->uploadApi()->destroy($sportsCategory->image);
+                }
+
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $sportsCategory->image = $result['secure_url'];
+            }
+
+            // Save the updated sports category
+            $sportsCategory->save();
+
+            return response()->json($sportsCategory, 200);
+        } catch (Exception $e) {
+            // Handle any errors that occur
+            return response()->json(['error' => 'Failed to update sports category.', 'message' => $e->getMessage()], 500);
+        }
+    }
 }
