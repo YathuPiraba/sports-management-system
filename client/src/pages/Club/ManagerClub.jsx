@@ -5,7 +5,7 @@ import GridLoader from "react-spinners/GridLoader";
 import { useTheme } from "../../context/ThemeContext";
 import { Tabs, Avatar, Button, Typography, Divider } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-
+import { MdVerified, MdPhone, MdLocationOn } from "react-icons/md";
 const { Title, Text } = Typography;
 
 import SportsArena from "../../Components/Club/Sports_Arena/SportsArena";
@@ -140,21 +140,24 @@ const ManagerClub = () => {
     <Suspense fallback={<div>Loading...</div>}>
       <div
         className={`container mx-auto p-8 ${
-          theme === "light" ? "bg-white" : "bg-gray-800"
+          theme === "light" ? "bg-white" : "bg-gray-300"
         } text-${theme === "light" ? "black" : "white"} shadow-lg rounded-lg`}
       >
         {/* Profile Header */}
         <div className="flex items-center space-x-6 mb-8">
           <Avatar size={80} src={club.clubImage} />
           <div>
-            <Title
-              level={2}
-              className={`m-0 ${
-                theme === "light" ? "text-gray-800" : "text-white"
-              }`}
-            >
-              {club.clubName}
-            </Title>
+            <div className="flex ">
+              <Title
+                level={2}
+                className={`m-0 ${
+                  theme === "light" ? "text-gray-800" : "text-white"
+                } items-center`}
+              >
+                {club.clubName}
+              </Title>
+              <MdVerified className="ml-2 text-blue-500 mt-3" />
+            </div>
             <Text type="secondary">
               Joined {new Date(club.created_at).getFullYear()}
             </Text>
@@ -163,14 +166,14 @@ const ManagerClub = () => {
             <Button
               icon={<EditOutlined />}
               onClick={() => handleButtonClick("editClub")}
-              size="large"
+              size="medium"
             >
               Edit Club
             </Button>
             <Button
               icon={<PlusOutlined />}
               onClick={() => handleButtonClick("addSports")}
-              size="large"
+              size="medium"
             >
               Add Sports & Arenas
             </Button>
@@ -180,16 +183,36 @@ const ManagerClub = () => {
         <Divider />
 
         {/* Club Info */}
-        <div className="mb-8">
-          <Text strong className="mr-2">
-            Contact:
-          </Text>
-          <Text>{club.clubContactNo}</Text>
-          <br />
-          <Text strong className="mr-2">
-            History:
-          </Text>
-          <Text>{club.club_history}</Text>
+        <div className="flex">
+          <div className="w-2/5 pr-4">
+            <div className="mb-8">
+              <div className="flex items-center  mb-4">
+                <div className="flex">
+                  <MdPhone className="mr-2 mt-1 text-blue-500" />
+                  <Text>{club.clubContactNo}</Text>
+                </div>
+                <div className="ml-8 flex items-center">
+                  <Text strong className="mr-2">
+                    G.N Division:
+                  </Text>
+                  <Text>{club.clubDivisionName}</Text>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <MdLocationOn className="mr-2 text-red-500" />
+                <Text>{club.clubAddress}</Text>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-3/5 pl-4 pt-0.5 -mt-1">
+            <div className="mb-8">
+              <Text strong className="mr-2">
+                History:
+              </Text>
+              <Text className="break-words">{club.club_history}</Text>
+            </div>
+          </div>
         </div>
 
         {/* Sports and Arenas Sections */}
