@@ -3,10 +3,13 @@ import { fetchClubDataAPI } from "../../Services/apiServices";
 import { useSelector } from "react-redux";
 import GridLoader from "react-spinners/GridLoader";
 import { useTheme } from "../../context/ThemeContext";
+import { Tabs, Avatar, Button, Typography, Divider } from "antd";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
-const SportsArena = lazy(() =>
-  import("../../Components/Club/Sports_Arena/SportsArena")
-);
+const { Title, Text } = Typography;
+
+import SportsArena from "../../Components/Club/Sports_Arena/SportsArena";
+
 const ClubSports = lazy(() =>
   import("../../Components/Club/Club_Sports/ClubSports")
 );
@@ -18,7 +21,6 @@ const ManageClubSports = lazy(() =>
 );
 const UpdateClub = lazy(() => import("../../Components/Club/UpdateClub"));
 const AddClubSports = lazy(() => import("../../Components/Club/AddClubSports"));
-import { Tabs } from "antd";
 
 const ManagerClub = () => {
   const [club, setClub] = useState(null);
@@ -120,74 +122,81 @@ const ManagerClub = () => {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[75vh]">
+        <GridLoader
+          loading={loading}
+          size={15}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          color="#4682B4"
+        />
+      </div>
+    );
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="relative">
-        {loading ? (
-          <div className="flex justify-center items-center w-full h-[75vh]">
-            <GridLoader
-              loading={loading}
-              size={15}
-              aria-label="Loading Spinner"
-              data-testid="loader"
-              color="#4682B4"
-            />
-          </div>
-        ) : (
-          <div className="container mx-auto p-4">
-            <div
-              className={` ${
-                theme === "light" ? "bg-white" : "bg-gray-100"
-              } shadow-lg rounded-lg overflow-hidden`}
+      <div
+        className={`container mx-auto p-8 ${
+          theme === "light" ? "bg-white" : "bg-gray-800"
+        } text-${theme === "light" ? "black" : "white"} shadow-lg rounded-lg`}
+      >
+        {/* Profile Header */}
+        <div className="flex items-center space-x-6 mb-8">
+          <Avatar size={80} src={club.clubImage} />
+          <div>
+            <Title
+              level={2}
+              className={`m-0 ${
+                theme === "light" ? "text-gray-800" : "text-white"
+              }`}
             >
-              <div className="md:flex">
-                <div className="md:flex-shrink-0 pt-7 pl-4">
-                  <img
-                    className="h-48 w-full object-cover md:w-48"
-                    src={club.clubImage}
-                    alt="Club Image"
-                  />
-                </div>
-                <div className="p-8">
-                  <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-                    {club?.clubName || "Club Name"}
-                  </div>
-                  <p className="mt-2 text-gray-500">
-                    Contact: {club?.clubContactNo || "N/A"}
-                  </p>
-                  <p className="mt-2 text-gray-500">
-                    Joined Year:{" "}
-                    {new Date(club?.created_at).getFullYear() || "N/A"}
-                  </p>
-                  <p className="mt-4 text-gray-700">
-                    {club?.club_history ||
-                      "Club history and description goes here. This is a brief overview of the club's background and achievements."}
-                  </p>
-
-                  <div className="mt-6 flex space-x-4">
-                    <button
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => handleButtonClick("editClub")}
-                    >
-                      Edit Club
-                    </button>
-                    <button
-                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => handleButtonClick("addSports")}
-                    >
-                      Add Sports & Arenas
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sports and Arenas Sections */}
-            <Tabs defaultActiveKey="1" centered items={tabItems} />
+              {club.clubName}
+            </Title>
+            <Text type="secondary">
+              Joined {new Date(club.created_at).getFullYear()}
+            </Text>
           </div>
-        )}
-        {renderComponent()}
+          <div className="ml-auto space-x-4">
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => handleButtonClick("editClub")}
+              size="large"
+            >
+              Edit Club
+            </Button>
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => handleButtonClick("addSports")}
+              size="large"
+            >
+              Add Sports & Arenas
+            </Button>
+          </div>
+        </div>
+
+        <Divider />
+
+        {/* Club Info */}
+        <div className="mb-8">
+          <Text strong className="mr-2">
+            Contact:
+          </Text>
+          <Text>{club.clubContactNo}</Text>
+          <br />
+          <Text strong className="mr-2">
+            History:
+          </Text>
+          <Text>{club.club_history}</Text>
+        </div>
+
+        {/* Sports and Arenas Sections */}
+        <Tabs defaultActiveKey="1" items={tabItems} size="large" />
       </div>
+
+      {renderComponent()}
     </Suspense>
   );
 };
