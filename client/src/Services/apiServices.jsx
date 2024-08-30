@@ -149,6 +149,16 @@ export const createSportsAPI = (data) => {
   return apiClient.post("/sports/create", data);
 };
 
+// update sports category
+export const updateSportsAPI = (sportsId, data) => {
+  data.append("_method", "PUT");
+  return authApiClient.post(`/sports-arenas/${sportsId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 // get all clubs
 export const getAllClubsAPI = () => {
   return apiClient.get("/clubs/list");
@@ -239,8 +249,8 @@ export const deleteClubSportsAPI = (clubId, sportsId) => {
   return authApiClient.delete(`/club-sports`, {
     data: {
       club_id: clubId,
-      sports_id: sportsId
-    }
+      sports_id: sportsId,
+    },
   });
 };
 
