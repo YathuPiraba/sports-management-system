@@ -254,8 +254,8 @@ export const deleteClubSportsAPI = (clubId, sportsId) => {
   });
 };
 
-export const updateClubSportsAPI = (clubSportsId, data) => {
-  return authApiClient.put(`/club-sports/${clubSportsId}`, data);
+export const updateClubSportsAPI = (clubId, data) => {
+  return authApiClient.put(`/club-sports/${clubId}`, data);
 };
 
 export const getSportsBySportsArenaAPI = (clubId, arenaId) => {

@@ -459,33 +459,43 @@ class ClubController extends Controller
     }
 
 
-    //PUT => http://127.0.0.1:8000/api/clubs-sports/{id}
-    public function updateClubSports(Request $request, $id)
+    //PUT => http://127.0.0.1:8000/api/clubs-sports/{clubId}
+    public function updateClubSports(Request $request, $clubId)
     {
         try {
-            // Validate that the Club_Sports entry exists
-            $clubSports = Club_Sports::findOrFail($id);
-
             // Validate incoming request data
             $validatedData = $request->validate([
-                'sports_id' => 'nullable|integer|exists:sports_categories,id',
-                'sports_arena_id' => 'nullable|integer|exists:sports_arenas,id',
+                'sport_id' => 'required|integer|exists:sports_categories,id',
+                'sports_arena_ids' => 'required|array|min:1',
+                'sports_arena_ids.*' => 'integer|exists:sports_arenas,id',
             ]);
 
-            // Update fields if they are present in the request
-            if (isset($validatedData['sports_id'])) {
-                $clubSports->sports_id = $validatedData['sports_id'];
-            }
-            if (isset($validatedData['sports_arena_id'])) {
-                $clubSports->sports_arena_id = $validatedData['sports_arena_id'];
-            }
+            $sportId = $validatedData['sport_id'];
+            $arenaIds = $validatedData['sports_arena_ids'];
 
-            // Save changes
-            $clubSports->save();
+            // Delete existing Club_Sports entries for this club and sport
+            Club_Sports::where('club_id', $clubId)
+                ->where('sports_id', $sportId)
+                ->delete();
+
+            // Store the newly created entries
+            $newEntries = [];
+
+            // Create new entries for each selected arena
+            foreach ($arenaIds as $arenaId) {
+                $newEntry = Club_Sports::create([
+                    'club_id' => $clubId,
+                    'sports_id' => $sportId,
+                    'sports_arena_id' => $arenaId,
+                ]);
+
+                // Add the newly created entry to the array
+                $newEntries[] = $newEntry;
+            }
 
             return response()->json([
-                'message' => 'Club Sports entry updated successfully',
-                'updatedEntry' => $clubSports,
+                'message' => 'Club Sports entries updated successfully',
+                'updatedEntries' => $newEntries,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to update Club Sports', 'message' => $e->getMessage()], 500);
