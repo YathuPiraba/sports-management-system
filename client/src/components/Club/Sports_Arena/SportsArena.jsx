@@ -25,7 +25,7 @@ const SportsArena = ({ sports, handleButtonClick, theme }) => {
   return (
     <div
       className={`${
-        theme === "light" ? "bg-white" : "bg-gray-100"
+        theme === "light" ? "bg-gray-200" : "bg-white"
       } shadow-lg rounded-lg w-full p-6`}
     >
       <div className="flex items-center mb-6">
@@ -39,11 +39,13 @@ const SportsArena = ({ sports, handleButtonClick, theme }) => {
       </div>
 
       {uniqueArenas.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {uniqueArenas.map((arena) => (
             <div
               key={arena.sports_arena_id}
-              className="bg-white shadow-md rounded-lg overflow-hidden"
+              className={`${
+                theme === "light" ? "bg-white" : "bg-gray-200"
+              } shadow-md rounded-lg overflow-hidden`}
             >
               {arena.sports_arena_image ? (
                 <img
@@ -57,25 +59,29 @@ const SportsArena = ({ sports, handleButtonClick, theme }) => {
                 />
               ) : (
                 <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
-                  <p className="text-gray-500">No Image Available</p>
+                  <img
+                    className="w-full h-40 object-cover"
+                    src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1725186027/istockphoto-464497970-612x612_lstzga.jpg"
+                    alt="Arena Image"
+                  />
                 </div>
               )}
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">
+              <div className="flex items-center mt-2 px-2">
+                <IoLocationSharp className="text-red-500 mr-1" />
+                <p className="text-gray-600">
+                  {arena.sports_arena_location || "No Location"}
+                </p>
+              </div>
+              <div className="px-3 py-1">
+                <h3 className="text-lg text-wrap font-semibold mb-1">
                   {arena.sports_arena_name || "No Name"}
                 </h3>
-                <div className="flex items-center mb-2">
-                  <IoLocationSharp className="text-red-500 mr-2" />
-                  <p className="text-gray-600">
-                    {arena.sports_arena_location || "No Location"}
-                  </p>
-                </div>
                 <p className="text-gray-500">
                   Address: {arena.sports_arena_address || "No Address"}
                 </p>
-                <div className="mt-4">
-                  <h4 className="text-md font-semibold mb-2">Sports Played:</h4>
-                  <ul className="list-disc ml-5 text-gray-600">
+                <div className="mt-2">
+                  <h4 className="text-md font-semibold mb-1">Sports Played:</h4>
+                  <ul className="list-disc ml-5 pb-1 text-gray-600">
                     {getSportsForArena(arena.sports_arena_id).length > 0 ? (
                       getSportsForArena(arena.sports_arena_id).map(
                         (sport, index) => <li key={index}>{sport}</li>

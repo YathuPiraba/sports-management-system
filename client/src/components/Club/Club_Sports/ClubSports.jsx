@@ -22,7 +22,7 @@ const ClubSports = ({ sports, theme, handleButtonClick }) => {
   return (
     <div
       className={`${
-        theme === "light" ? "bg-white" : "bg-gray-100"
+        theme === "light" ? "bg-gray-200" : "bg-white"
       } shadow-lg rounded-lg p-6`}
     >
       <div className="flex w-full items-center mb-4">
@@ -40,7 +40,9 @@ const ClubSports = ({ sports, theme, handleButtonClick }) => {
           {uniqueSports.map((sport) => (
             <div
               key={sport.id}
-              className="bg-white shadow-md rounded-lg overflow-hidden relative hover:shadow-lg transition-shadow duration-300"
+              className={`${
+                theme === "light" ? "bg-white" : "bg-gray-200"
+              } shadow-md rounded-lg overflow-hidden relative hover:shadow-lg transition-shadow duration-300`}
             >
               {sport.sportsImage ? (
                 <img

@@ -139,9 +139,9 @@ const ManagerClub = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div
-        className={` mx-auto p-4 sm:p-6 md:p-8 ${
+        className={` mx-auto sm:mr-2 sm:ml-6 p-4 sm:p-6 md:p-8 ${
           theme === "light" ? "bg-white" : "bg-gray-300"
-        } text-${theme === "light" ? "black" : "white"} shadow-lg rounded-lg`}
+        } shadow-lg rounded-lg`}
       >
         {/* Profile Header */}
         <div className="flex flex-col sm:flex-row items-center mb-8">

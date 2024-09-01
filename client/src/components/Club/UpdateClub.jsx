@@ -49,7 +49,7 @@ const UpdateClub = ({ club, popClose, fetchClubData, theme }) => {
     <div
       className={`${
         theme === "light" ? "bg-gray-100" : " bg-white"
-      } p-6 text-black w-1/2 z-50 border absolute top-20 left-60 rounded-lg shadow-lg max-w-md mx-auto`}
+      } p-6 text-black w-1/2 z-50 border absolute top-20 left-60 sm:right-20 sm:top-48  rounded-lg shadow-lg max-w-md mx-auto`}
     >
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold font-poppins">Update Club</h1>

@@ -108,7 +108,7 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
     <div
       className={`${
         theme === "light" ? "bg-gray-100" : "bg-white"
-      } p-6 w-1/2 z-50 border absolute text-black top-44 left-64 rounded-lg shadow-lg max-w-md mx-auto`}
+      } p-6 w-1/2 z-50 border absolute text-black top-44 left-64 sm:right-28 sm:top-64  rounded-lg shadow-lg max-w-md mx-auto`}
     >
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-bold font-poppins">Manage Club Sports</h1>
