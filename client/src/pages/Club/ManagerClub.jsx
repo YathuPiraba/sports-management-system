@@ -139,7 +139,7 @@ const ManagerClub = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div
-        className={` mx-auto sm:mr-2 sm:ml-6 md:ml-2 lg:ml-2 p-4 sm:p-6 md:p-8 ${
+        className={` mx-auto sm:mr-2 sm:ml-6 md:ml-5 lg:ml-5 p-4 sm:p-6 md:p-8 ${
           theme === "light" ? "bg-white" : "bg-gray-300"
         } shadow-lg rounded-lg`}
       >

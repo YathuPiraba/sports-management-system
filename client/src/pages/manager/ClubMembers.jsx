@@ -32,7 +32,6 @@ const ClubMembers = () => {
     setLoading(true);
     try {
       const res = await fetchVerifiedMemberDataApi(userId, page, perPage);
-      console.log(res.data);
       setMembers(res.data.data);
       const paginationData = res.data.pagination;
 
@@ -98,9 +97,9 @@ const ClubMembers = () => {
     }
   };
 
-  console.log('====================================');
+  console.log("====================================");
   console.log(members);
-  console.log('====================================');
+  console.log("====================================");
 
   return (
     <div className="container mx-auto p-4">
@@ -164,17 +163,26 @@ const ClubMembers = () => {
                       <div className="text-sm font-medium">
                         <Popconfirm
                           title={
-                            member.deleted_at
+                            member.user.deleted_at
                               ? "Are you sure you want to activate this user?"
                               : "Are you sure you want to deactivate this user?"
                           }
                           onConfirm={() =>
-                            handleAction(member.user.id, !!member.user.deleted_at)
+                            handleAction(
+                              member.user.id,
+                              !!member.user.deleted_at
+                            )
                           }
                           okText="Yes"
                           cancelText="No"
                         >
-                          <button className="text-red-600 hover:text-red-900">
+                          <button
+                            className={
+                              member.user.deleted_at
+                                ? "text-blue-600 hover:text-blue-900" // Blue text for activation
+                                : "text-red-600 hover:text-red-900" // Red text for deactivation
+                            }
+                          >
                             {member.user.deleted_at ? "Activate" : "Deactivate"}
                           </button>
                         </Popconfirm>

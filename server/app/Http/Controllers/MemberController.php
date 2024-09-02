@@ -484,10 +484,16 @@ class MemberController extends Controller
             }
 
             // Fetch both verified and soft-deleted members associated with the club manager
-            $query = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
-                ->where('manager_id', $clubManager->id)
-                ->whereHas('user', function ($query) {
+            $query = Member::with([
+                'memberSports.sport',
+                'memberSports.skills',
+                'user' => function ($query) {
                     $query->withTrashed();
+                }
+            ])->where('manager_id', $clubManager->id)
+                ->whereHas('user', function ($query) {
+                    $query->where('is_verified', 1)
+                        ->withTrashed();
                 });
 
 
