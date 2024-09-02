@@ -57,11 +57,6 @@ const ClubMembers = () => {
           </tbody>
         </table>
       </div>
-      <div className="mt-4">
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-          Add New Member
-        </button>
-      </div>
     </div>
   );
 };

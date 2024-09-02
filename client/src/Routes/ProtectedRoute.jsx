@@ -8,14 +8,13 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
 
   console.log("Is Authenticated:", isAuthenticated);
 
-
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   if (isAuthenticated) {
     const isVerified = auth.userdata.is_verified;
-    
+
     if (isVerified == 0) {
       return <Navigate to="/home" />;
     }

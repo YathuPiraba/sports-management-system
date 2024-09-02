@@ -46,18 +46,19 @@ const Login = () => {
           const isVerified = userDetails.is_verified;
 
           if (isVerified === 0) {
-            navigate("/home");
+            navigate("/home", { replace: true });
           } else {
             if (roleID === 1) {
-              navigate("/admin/dashboard");
+              navigate("/admin/dashboard", { replace: true });
             } else if (roleID === 2) {
-              navigate("/manager/club");
+              navigate("/manager/club", { replace: true });
             } else if (roleID === 3) {
-              navigate("/member/dashboard");
+              navigate("/member/dashboard", { replace: true });
             } else {
-              navigate("/");
+              navigate("/", { replace: true });
             }
           }
+
           toast.success("Login Successfully!..");
           reset();
         } else {
