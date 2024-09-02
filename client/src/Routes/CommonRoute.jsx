@@ -22,8 +22,8 @@ const CommonRoute = () => {
         <Route path="/events" element={<Events />} />
         <Route path="/club" element={<Club />} />
         <Route path="/club/member/:memberId" element={<MemberProfile />} />
-        <Route path="*" element={<PageNotFound />} />
       </Route>
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
