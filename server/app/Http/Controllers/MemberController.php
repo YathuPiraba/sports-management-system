@@ -50,7 +50,7 @@ class MemberController extends Controller
             'date_of_birth' => 'required|date',
             'address' => 'required|string|max:255',
             'experience' => 'nullable|string|max:255',
-            'nic' => 'required|string|max:20',
+            'nic' => 'nullable|string|max:20',
             'contactNo' => 'required|string|max:15',
             'whatsappNo' => 'nullable|string|max:15',
             'sports' => 'required|array',
@@ -436,6 +436,169 @@ class MemberController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching pending members: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // GET => http://127.0.0.1:8000/api/queryMembers
+    public function queryMembers(Request $request)
+    {
+
+        try {
+            // Get the userId from the request
+            $userId = $request->input('userId');
+            if (!$userId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'UserId is required',
+                ], 400);
+            }
+
+            // Get the page number and items per page from the request, or use defaults
+            $page = $request->input('page', 1);
+            $perPage = $request->input('per_page', 12);
+
+            // Find the club manager and associated manager_id
+            $clubManager = Club_Manager::where('user_id', $userId)->first();
+
+            if (!$clubManager) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Club manager not found for the given userId',
+                ], 404);
+            }
+
+            // Fetch pending members associated with the club manager
+            $members = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
+                ->where('manager_id', $clubManager->id)
+                ->whereHas('user', function ($query) {
+                    $query->where('is_verified', 1);
+                })
+                ->paginate($perPage, ['*'], 'page', $page);
+
+            $membersWithSportsAndSkills = collect($members->items())->map(function ($member) {
+                $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
+
+                //  $sportsDetails = $member->memberSports->map(function ($memberSport) {
+                //      $skills = $memberSport->skills->map(function ($skill) {
+                //          return [
+                //              'skill_id' => $skill->id ?? null,
+                //              'skill_name' => $skill->skill ?? null,
+                //          ];
+                //      })->values();
+
+                //      return [
+                //          'sport_id' => $memberSport->sport->id,
+                //          'sport_name' => $memberSport->sport->name,
+                //          'skills' => $skills,
+                //      ];
+                //  })->values();
+
+                return [
+                    'member_id' => $member->id,
+                    'firstName' => $member->firstName,
+                    'lastName' => $member->lastName,
+                    'date_of_birth' => $member->date_of_birth,
+                    //  'address' => $member->address,
+                    //  'nic' => $member->nic,
+                    'contactNo' => $member->contactNo,
+                    'whatsappNo' => $member->whatsappNo,
+                    //  'experience' => $member->experience,
+                    'age' => $member->age,
+                    'position' => $member->position,
+                    //  'gs_id' => $member->gs_id,
+                    //  'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
+                    'created_at' => $member->created_at->toDateString(),
+                    'user' => $member->user->safeAttributes(),
+                    //  'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $membersWithSportsAndSkills,
+                'pagination' => [
+                    'total' => $members->total(),
+                    'per_page' => $members->perPage(),
+                    'current_page' => $members->currentPage(),
+                    'last_page' => $members->lastPage(),
+                    'from' => $members->firstItem(),
+                    'to' => $members->lastItem(),
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching pending members: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching pending members: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // GET => http://127.0.0.1:8000/api/memberDetails/{memberId}
+    public function getMemberDetails($memberId)
+    {
+        try {
+            // Find the member by memberId
+            $member = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
+                ->where('id', $memberId)
+                ->first();
+
+            if (!$member) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Member not found for the given memberId',
+                ], 404);
+            }
+
+            // Get the member's division details
+            $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
+
+            // Get the sports details associated with the member
+            $sportsDetails = $member->memberSports->map(function ($memberSport) {
+                $skills = $memberSport->skills->map(function ($skill) {
+                    return [
+                        'skill_id' => $skill->id ?? null,
+                        'skill_name' => $skill->skill ?? null,
+                    ];
+                })->values();
+
+                return [
+                    'sport_id' => $memberSport->sport->id,
+                    'sport_name' => $memberSport->sport->name,
+                    'skills' => $skills,
+                ];
+            })->values();
+
+            // Prepare the response data
+            $memberData = [
+                'member_id' => $member->id,
+                'firstName' => $member->firstName,
+                'lastName' => $member->lastName,
+                'date_of_birth' => $member->date_of_birth,
+                'address' => $member->address,
+                'nic' => $member->nic,
+                'contactNo' => $member->contactNo,
+                'whatsappNo' => $member->whatsappNo,
+                'experience' => $member->experience,
+                'age' => $member->age,
+                'position' => $member->position,
+                'gs_id' => $member->gs_id,
+                'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
+                'created_at' => $member->created_at->toDateString(),
+                'user' => $member->user->safeAttributes(),
+                'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data' => $memberData,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching member details: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching member details: ' . $e->getMessage(),
             ], 500);
         }
     }

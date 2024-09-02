@@ -78,6 +78,8 @@ Route::post('/manager/apply', [ManagerController::class, 'managerApply']);
 Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivisions']);
 
 Route::get('/membersList', [MemberController::class, 'membersList']);
+Route::get('/queryMembers', [MemberController::class, 'queryMembers']);
+Route::get('/memberDetails/{memberId}', [MemberController::class, 'getMemberDetails']);
 
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);
@@ -97,4 +99,5 @@ Route::get('/arena/list', [SportsArenaController::class, 'getAllSportsArenas']);
 Route::get('/arena/sports/{clubId}/{arenaId}', [SportsArenaController::class, 'getSportsBySportsArena']);
 
 Route::delete('/arena/{clubId}/{arenaId}', [SportsArenaController::class, 'deleteSportsArena']);
+
 

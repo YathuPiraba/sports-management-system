@@ -23,7 +23,6 @@ const memberColumns = [
   "Email",
   "Age",
   "Address",
-  "NIC",
   "Contact No",
 ];
 

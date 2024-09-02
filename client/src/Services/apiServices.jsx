@@ -107,6 +107,21 @@ export const fetchMemberDataApi = (userId) => {
   });
 };
 
+export const fetchVerifiedMemberDataApi = (userId, page = 1, perPage = 10) => {
+  return authApiClient.get("/queryMembers", {
+    params: {
+      userId: userId,
+      page: page,
+      per_page: perPage,
+    },
+  });
+};
+
+// Fetch A member data
+export const fetchMemberDetailApi = (memberId) => {
+  return authApiClient.get(`/memberDetails/${memberId}`);
+};
+
 // Update Admin Details API
 export const updateAdminDetailsApi = (userId, data) => {
   data.append("_method", "PUT");
