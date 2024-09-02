@@ -34,6 +34,7 @@ const Login = () => {
 
     try {
       const loginResult = await dispatch(loginAdmin(data));
+
       if (loginAdmin.fulfilled.match(loginResult)) {
         // Now fetch the user details
         const userDetailsResult = await dispatch(fetchUserDetails());
@@ -45,17 +46,30 @@ const Login = () => {
           const roleID = userDetails.role_id;
           const isVerified = userDetails.is_verified;
 
+          if (userDetails.deleted_at) {
+            toast.error(
+              "Your account has been deactivated. Please contact your Club Manager."
+            );
+            navigate("/", { replace: true });
+            return;
+          }
+
           if (isVerified === 0) {
             navigate("/home", { replace: true });
           } else {
-            if (roleID === 1) {
-              navigate("/admin/dashboard", { replace: true });
-            } else if (roleID === 2) {
-              navigate("/manager/club", { replace: true });
-            } else if (roleID === 3) {
-              navigate("/member/dashboard", { replace: true });
-            } else {
-              navigate("/", { replace: true });
+            switch (roleID) {
+              case 1:
+                navigate("/admin/dashboard", { replace: true });
+                break;
+              case 2:
+                navigate("/manager/club", { replace: true });
+                break;
+              case 3:
+                navigate("/member/dashboard", { replace: true });
+                break;
+              default:
+                navigate("/", { replace: true });
+                break;
             }
           }
 

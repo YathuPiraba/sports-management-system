@@ -44,7 +44,15 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('userName', $request->userName)->first();
+        // Retrieve user including soft-deleted users
+        $user = User::withTrashed()->where('userName', $request->userName)->first();
+
+        // Check if the user is soft-deleted
+        if ($user && $user->trashed()) {
+            return response()->json([
+                'message' => 'Your account has been deactivated. Please contact your Club Manager.',
+            ], 403);
+        }
 
         if ($user && Hash::check($request->password, $user->password)) {
 
@@ -175,6 +183,41 @@ class UserController extends Controller
                 'is_verified' => $user->is_verified,
                 'image' =>  $user->image,
             ],
+        ], 200);
+    }
+
+    public function deactivateUser($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Soft delete the user
+        $user->delete();
+
+        return response()->json([
+            'message' => 'User successfully soft deleted'
+        ], 200);
+    }
+
+    public function restoreUser($id)
+    {
+        $user = User::withTrashed()->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $user->restore();
+
+        return response()->json([
+            'message' => 'User successfully restored'
         ], 200);
     }
 }

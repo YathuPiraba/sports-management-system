@@ -148,6 +148,24 @@ const ManagerApprovals = () => {
                     <MdOutlineSkipPrevious />
                   </button>
 
+                  {Array.from(
+                    { length: pagination.totalPages },
+                    (_, i) => i + 1
+                  ).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => goToPage(page)}
+                      disabled={page === pagination.currentPage}
+                      className={`px-4 py-2 border rounded-md ${
+                        page === pagination.currentPage
+                          ? "bg-blue-500 text-white"
+                          : "bg-white text-gray-700 hover:bg-blue-300 hover:text-black"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
                   {/* Next Button */}
                   <button
                     onClick={() => goToPage(pagination.currentPage + 1)}

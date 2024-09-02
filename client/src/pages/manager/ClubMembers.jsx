@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchVerifiedMemberDataApi } from "../../Services/apiServices";
+import { fetchVerifiedMemberDataApi,deactivateUserAPI,restoreUserAPI } from "../../Services/apiServices";
 import { useSelector } from "react-redux";
 import { MdOutlineSkipPrevious, MdOutlineSkipNext } from "react-icons/md";
 import { useTheme } from "../../context/ThemeContext";
@@ -15,7 +15,7 @@ const ClubMembers = () => {
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
-    perPage: 10,
+    perPage: 5,
     total: 0,
   });
   const [loading, setLoading] = useState(false);
@@ -24,10 +24,10 @@ const ClubMembers = () => {
   const user = useSelector((state) => state.auth.userdata);
   const userId = user.userId;
 
-  const fetchMembers = async () => {
+  const fetchMembers = async (page = 1, perPage = 5) => {
     setLoading(true);
     try {
-      const res = await fetchVerifiedMemberDataApi(userId);
+      const res = await fetchVerifiedMemberDataApi(userId, page, perPage);
       console.log(res.data);
       setMembers(res.data.data);
       const paginationData = res.data.pagination;
@@ -43,6 +43,10 @@ const ClubMembers = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const goToPage = (page) => {
+    fetchMembers(page, pagination.perPage);
   };
 
   useEffect(() => {
@@ -94,7 +98,10 @@ const ClubMembers = () => {
             {members.map((member, index) => (
               <tr key={member.member_id}>
                 {columns.map((column) => (
-                  <td key={column.key} className="px-6 py-4 whitespace-nowrap">
+                  <td
+                    key={column.key}
+                    className="px-6 py-2.5 whitespace-nowrap"
+                  >
                     {column.key === "no" && (
                       <div className="text-sm text-gray-500">{index + 1}</div>
                     )}
@@ -132,7 +139,7 @@ const ClubMembers = () => {
                       <div className="text-sm font-medium">
                         <Popconfirm>
                           <button className="text-red-600 hover:text-red-900">
-                            Remove
+                            Deactivate
                           </button>
                         </Popconfirm>
                       </div>
@@ -145,7 +152,7 @@ const ClubMembers = () => {
         </table>
       </div>
       {pagination.totalPages > 1 && (
-        <div className="flex justify-center items-center mt-8">
+        <div className="flex justify-center items-center mt-4">
           <div className="flex space-x-2">
             {/* Previous Button */}
             <button
@@ -159,6 +166,24 @@ const ClubMembers = () => {
             >
               <MdOutlineSkipPrevious />
             </button>
+
+            {/* Page Number Buttons */}
+            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  disabled={page === pagination.currentPage}
+                  className={`px-4 py-2 border rounded-md ${
+                    page === pagination.currentPage
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-700 hover:bg-blue-300 hover:text-black"
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
 
             {/* Next Button */}
             <button

@@ -54,6 +54,9 @@ Route::middleware('auth.token')->group(function () {
     Route::get('/pendingMembers', [MemberController::class, 'pendingMembers']);
     Route::delete('/deleteMember/{memberId}', [MemberController::class, 'deleteMember']);
     Route::put('/verifyMember/{memberId}', [MemberController::class, 'verifyMember']);
+
+    Route::delete('/user/{id}', [UserController::class, 'deactivateUser']);
+    Route::patch('/user/{id}/restore', [UserController::class, 'restoreUser']);
 });
 
 Route::put('/club/{id}', [ClubController::class, 'clubUpdate']);

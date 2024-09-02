@@ -110,7 +110,7 @@ export const fetchMemberDataApi = (userId) => {
 export const fetchVerifiedMemberDataApi = (
   userId,
   page = 1,
-  perPage = 10,
+  perPage = 5,
   sortBy = "name", // Default sort by 'name'
   sort = "asc"
 ) => {
@@ -283,3 +283,13 @@ export const updateClubSportsAPI = (clubId, data) => {
 export const getSportsBySportsArenaAPI = (clubId, arenaId) => {
   return apiClient.get(`/arena/sports/${clubId}/${arenaId}`);
 };
+
+export const deactivateUserAPI = (userId) => {
+  return authApiClient.delete(`/user/${userId}`);
+};
+
+export const restoreUserAPI = (userId) => {
+  return authApiClient.patch(`/user/${userId}/restore`);
+};
+
+
