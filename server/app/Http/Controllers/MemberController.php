@@ -387,7 +387,20 @@ class MemberController extends Controller
             // Fetch  members associated with the club manager
             $members = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
                 ->where('manager_id', $clubManager->id)
+                ->whereHas('user', function ($query) {
+                    $query->where(function ($subQuery) {
+                        $subQuery
+                            ->WhereNull('deleted_at'); // Include non-deleted members
+                    });
+                })
                 ->get();
+
+            if ($members->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                ], 200);
+            }
 
             $membersWithSportsAndSkills = $members->map(function ($member) {
                 $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
@@ -422,7 +435,7 @@ class MemberController extends Controller
                     'gs_id' => $member->gs_id,
                     'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
                     'created_at' => $member->created_at->toDateString(),
-                    'user' => $member->user->safeAttributes(),
+                    'user' => $member->user ? $member->user->safeAttributes() : null,
                     'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
                 ];
             });
@@ -470,12 +483,13 @@ class MemberController extends Controller
                 ], 404);
             }
 
-            // Fetch pending members associated with the club manager
+            // Fetch both verified and soft-deleted members associated with the club manager
             $query = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
                 ->where('manager_id', $clubManager->id)
                 ->whereHas('user', function ($query) {
-                    $query->where('is_verified', 1);
+                    $query->withTrashed();
                 });
+
 
             if ($sortBy === 'name') {
                 $query->orderBy('firstName', $sort)
@@ -486,8 +500,16 @@ class MemberController extends Controller
 
             $members = $query->paginate($perPage, ['*'], 'page', $page);
 
+            if ($members->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                ], 200);
+            }
+
             $membersWithSportsAndSkills = collect($members->items())->map(function ($member) {
                 $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
+                $user = $member->user;
 
                 //  $sportsDetails = $member->memberSports->map(function ($memberSport) {
                 //      $skills = $memberSport->skills->map(function ($skill) {
@@ -519,7 +541,7 @@ class MemberController extends Controller
                     //  'gs_id' => $member->gs_id,
                     //  'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
                     'created_at' => $member->created_at->toDateString(),
-                    'user' => $member->user->safeAttributes(),
+                    'user' => $user ? $user->safeAttributes() : null,
                     //  'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
                 ];
             });
@@ -537,10 +559,10 @@ class MemberController extends Controller
                 ],
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Error fetching pending members: ' . $e->getMessage());
+            Log::error('Error fetching verified members: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching pending members: ' . $e->getMessage(),
+                'message' => 'Error fetching verified members: ' . $e->getMessage(),
             ], 500);
         }
     }

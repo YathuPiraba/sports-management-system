@@ -45,6 +45,7 @@ class User extends Model
             'image' => $this->image,
             'role_id' => $this->role_id,
             'is_verified' => $this->is_verified,
+            'deleted_at'=>$this->deleted_at,
         ];
     }
 }
