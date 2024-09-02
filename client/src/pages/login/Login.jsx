@@ -44,33 +44,20 @@ const Login = () => {
 
           // Handle role-based navigation
           const roleID = userDetails.role_id;
-          const isVerified = userDetails.is_verified;
 
-          if (userDetails.deleted_at) {
-            toast.error(
-              "Your account has been deactivated. Please contact your Club Manager."
-            );
-            navigate("/", { replace: true });
-            return;
-          }
-
-          if (isVerified === 0) {
-            navigate("/home", { replace: true });
-          } else {
-            switch (roleID) {
-              case 1:
-                navigate("/admin/dashboard", { replace: true });
-                break;
-              case 2:
-                navigate("/manager/club", { replace: true });
-                break;
-              case 3:
-                navigate("/member/dashboard", { replace: true });
-                break;
-              default:
-                navigate("/", { replace: true });
-                break;
-            }
+          switch (roleID) {
+            case 1:
+              navigate("/admin/dashboard", { replace: true });
+              break;
+            case 2:
+              navigate("/manager/club", { replace: true });
+              break;
+            case 3:
+              navigate("/member/dashboard", { replace: true });
+              break;
+            default:
+              navigate("/", { replace: true });
+              break;
           }
 
           toast.success("Login Successfully!..");

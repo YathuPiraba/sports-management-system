@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\userDeactivation;
+use App\Events\UserRejected;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -10,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Cloudinary\Cloudinary;
+use App\Events\UserVerified;
 
 
 class UserController extends Controller
@@ -95,6 +98,7 @@ class UserController extends Controller
                 'role_id' => $user->role_id,
                 'is_verified' => $user->is_verified,
                 'image' => $user->image,
+                'deleted_at' => $user->deleted_at,
             ], 200);
         } else {
             return response()->json([
@@ -196,6 +200,9 @@ class UserController extends Controller
             ], 404);
         }
 
+        $user_id =  $user->id;
+
+        event(new userDeactivation($user_id));
         // Soft delete the user
         $user->delete();
 
@@ -213,6 +220,10 @@ class UserController extends Controller
                 'message' => 'User not found'
             ], 404);
         }
+
+        $user_id =  $user->id;
+
+        event(new UserVerified($user_id));
 
         $user->restore();
 

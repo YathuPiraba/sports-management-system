@@ -6,7 +6,6 @@ use App\Models\Club;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Club_Manager;
-use App\Models\Club_Sports;
 use App\Models\Role;
 use App\Models\Gs_Division;
 use Exception;

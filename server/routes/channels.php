@@ -32,3 +32,7 @@ Broadcast::channel('reject', function () {
 Broadcast::channel('members', function () {
     return true;
 });
+
+Broadcast::channel('deactivate', function () {
+    return true;
+});
