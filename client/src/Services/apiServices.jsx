@@ -126,7 +126,7 @@ export const fetchVerifiedMemberDataApi = (
 };
 
 // Fetch A member data
-export const fetchMemberDetailApi = (memberId) => {
+export const fetchMemberDetailsApi = (memberId) => {
   return authApiClient.get(`/memberDetails/${memberId}`);
 };
 

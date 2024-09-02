@@ -107,10 +107,12 @@ const ClubMembers = () => {
                         />
                       </div>
                     )}
-                
+
                     {column.key === "name" && (
                       <div className="text-sm font-medium text-gray-900">
-                        {member.firstName} {member.lastName}
+                        <Link to={`/club/member/${member.member_id}`}>
+                          {member.firstName} {member.lastName}
+                        </Link>
                       </div>
                     )}
                     {column.key === "role" && (
