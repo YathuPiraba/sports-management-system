@@ -107,12 +107,20 @@ export const fetchMemberDataApi = (userId) => {
   });
 };
 
-export const fetchVerifiedMemberDataApi = (userId, page = 1, perPage = 10) => {
+export const fetchVerifiedMemberDataApi = (
+  userId,
+  page = 1,
+  perPage = 10,
+  sortBy = "name", // Default sort by 'name'
+  sort = "asc"
+) => {
   return authApiClient.get("/queryMembers", {
     params: {
       userId: userId,
       page: page,
       per_page: perPage,
+      sortBy: sortBy,
+      sort: sort,
     },
   });
 };
@@ -136,7 +144,6 @@ export const updateAdminDetailsApi = (userId, data) => {
 // Update Manager personal Details API
 export const updateManagerDetailsApi = (userId, data) => {
   data.append("_method", "PUT");
-
   return authApiClient.post(`/manager/update/personal/${userId}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",

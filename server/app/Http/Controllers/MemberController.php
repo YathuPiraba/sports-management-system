@@ -457,6 +457,8 @@ class MemberController extends Controller
             // Get the page number and items per page from the request, or use defaults
             $page = $request->input('page', 1);
             $perPage = $request->input('per_page', 12);
+            $sort = $request->input('sort', 'asc');
+            $sortBy = $request->input('sortBy', 'name');
 
             // Find the club manager and associated manager_id
             $clubManager = Club_Manager::where('user_id', $userId)->first();
@@ -469,12 +471,20 @@ class MemberController extends Controller
             }
 
             // Fetch pending members associated with the club manager
-            $members = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
+            $query = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
                 ->where('manager_id', $clubManager->id)
                 ->whereHas('user', function ($query) {
                     $query->where('is_verified', 1);
-                })
-                ->paginate($perPage, ['*'], 'page', $page);
+                });
+
+            if ($sortBy === 'name') {
+                $query->orderBy('firstName', $sort)
+                    ->orderBy('lastName', $sort);
+            } elseif ($sortBy === 'created_at') {
+                $query->orderBy('created_at', $sort);
+            }
+
+            $members = $query->paginate($perPage, ['*'], 'page', $page);
 
             $membersWithSportsAndSkills = collect($members->items())->map(function ($member) {
                 $memberDivision = Gs_Division::where('id', $member->gs_id)->first();

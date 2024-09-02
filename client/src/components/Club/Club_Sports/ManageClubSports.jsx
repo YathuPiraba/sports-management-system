@@ -32,12 +32,16 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
   const uniqueSports = getUniqueSports(sports);
 
   useEffect(() => {
-    setAvailableArenas(
-      sports.map(({ sports_arena_id, sports_arena_name }) => ({
-        id: sports_arena_id,
-        name: sports_arena_name,
-      }))
+    const uniqueArenas = Array.from(
+      new Map(
+        sports.map(({ sports_arena_id, sports_arena_name }) => [
+          sports_arena_id,
+          { id: sports_arena_id, name: sports_arena_name },
+        ])
+      ).values()
     );
+
+    setAvailableArenas(uniqueArenas);
   }, [sports]);
 
   const handleSportChange = (e) => {
