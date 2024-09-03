@@ -83,53 +83,57 @@ const ManagerApprovals = () => {
               Manager Approvals
             </h1>
             <div className="space-y-4">
-              {memberData.map((member, index) => (
-                <div
-                  key={member.memberId}
-                  className={`${
-                    theme === "light" ? "bg-white" : "bg-gray-300 text-black"
-                  } w-full`}
-                >
-                  <div className="flex flex-row w-full hover:bg-blue-700 hover:text-white">
-                    <div className="customApprove">
-                      <button
-                        className={`w-full text-left text-l border-0 hover:text-white font-semibold p-2 mb-0 rounded-sm mt-0`}
-                        onClick={() => handleToggle(member.memberId)}
-                      >
-                        {index + 1}. {member.firstName} {member.lastName} -{" "}
-                        {member.position}
-                      </button>
+              {memberData && memberData > 0
+                ? memberData.map((member, index) => (
+                    <div
+                      key={member.memberId}
+                      className={`${
+                        theme === "light"
+                          ? "bg-white"
+                          : "bg-gray-300 text-black"
+                      } w-full`}
+                    >
+                      <div className="flex flex-row w-full hover:bg-blue-700 hover:text-white">
+                        <div className="customApprove">
+                          <button
+                            className={`w-full text-left text-l border-0 hover:text-white font-semibold p-2 mb-0 rounded-sm mt-0`}
+                            onClick={() => handleToggle(member.memberId)}
+                          >
+                            {index + 1}. {member.firstName} {member.lastName} -{" "}
+                            {member.position}
+                          </button>
+                        </div>
+                        <div className="ml-auto mt-0.5 mr-4 flex gap-6">
+                          <button
+                            onClick={() => updateVerification(member.memberId)}
+                          >
+                            <FcApproval size={22} />
+                          </button>
+                          <Popconfirm
+                            title="Delete the task"
+                            description="Are you sure to delete this Request?"
+                            onConfirm={() => rejectRequest(member.memberId)}
+                            onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <button className="text-red-400 hover:text-red-500">
+                              <TiDelete size={25} />
+                            </button>
+                          </Popconfirm>
+                        </div>
+                      </div>
+                      {expandedMember === member.memberId && (
+                        <MemberApprovalTable
+                          memberData={[member]}
+                          memberColumns={memberColumns}
+                          playerColumns={playerColumns}
+                          coachColumns={coachColumns}
+                        />
+                      )}
                     </div>
-                    <div className="ml-auto mt-0.5 mr-4 flex gap-6">
-                      <button
-                        onClick={() => updateVerification(member.memberId)}
-                      >
-                        <FcApproval size={22} />
-                      </button>
-                      <Popconfirm
-                        title="Delete the task"
-                        description="Are you sure to delete this Request?"
-                        onConfirm={() => rejectRequest(member.memberId)}
-                        onCancel={cancel}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <button className="text-red-400 hover:text-red-500">
-                          <TiDelete size={25} />
-                        </button>
-                      </Popconfirm>
-                    </div>
-                  </div>
-                  {expandedMember === member.memberId && (
-                    <MemberApprovalTable
-                      memberData={[member]}
-                      memberColumns={memberColumns}
-                      playerColumns={playerColumns}
-                      coachColumns={coachColumns}
-                    />
-                  )}
-                </div>
-              ))}
+                  ))
+                : "No Approval requests are here"}
             </div>
 
             <Pagination
