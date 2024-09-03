@@ -1,7 +1,6 @@
 import React, { useState, Suspense, lazy } from "react";
 import { TiDelete } from "react-icons/ti";
 import { FcApproval } from "react-icons/fc";
-import { MdOutlineSkipPrevious, MdOutlineSkipNext } from "react-icons/md";
 import { useTheme } from "../../context/ThemeContext";
 import toast from "react-hot-toast";
 import useManagerData from "../../hooks/useManagerData";
@@ -11,6 +10,7 @@ import {
 } from "../../Services/apiServices";
 import { Popconfirm, message } from "antd";
 import GridLoader from "react-spinners/GridLoader";
+import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 
 const AdminApprovalTable = lazy(() =>
   import("../../Components/Approvals/AdminApprovalTable")
@@ -153,64 +153,11 @@ const AdminApprovals = () => {
               ))}
             </div>
 
-            {pagination.totalPages > 1 && (
-              <div className="flex justify-center items-center mt-8">
-                <div className="flex space-x-2">
-                  {/* Previous Button */}
-                  <button
-                    onClick={() => goToPage(pagination.currentPage - 1)}
-                    disabled={pagination.currentPage === 1}
-                    className={`px-2 py-2 border rounded-md ${
-                      pagination.currentPage === 1
-                        ? "cursor-not-allowed"
-                        : "hover:bg-blue-300 hover:text-black"
-                    } ${
-                      theme === "light"
-                        ? "bg-white text-black"
-                        : "bg-gray-200 text-white"
-                    }`}
-                  >
-                    <MdOutlineSkipPrevious size={23} />
-                  </button>
-
-                  {/* Page Numbers */}
-                  {Array.from(
-                    { length: pagination.totalPages },
-                    (_, i) => i + 1
-                  ).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      disabled={page === pagination.currentPage}
-                      className={`px-4 py-2 border rounded-md ${
-                        page === pagination.currentPage
-                          ? "bg-blue-500 text-white"
-                          : "bg-white text-gray-700 hover:bg-blue-300 hover:text-black"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-
-                  {/* Next Button */}
-                  <button
-                    onClick={() => goToPage(pagination.currentPage + 1)}
-                    disabled={pagination.currentPage === pagination.totalPages}
-                    className={`px-2 py-2 border rounded-md ${
-                      pagination.currentPage === pagination.totalPages
-                        ? "cursor-not-allowed"
-                        : "hover:bg-blue-300 hover:text-black"
-                    } ${
-                      theme === "light"
-                        ? "bg-white text-black"
-                        : "bg-gray-200 text-white"
-                    }`}
-                  >
-                    <MdOutlineSkipNext size={23} />
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              goToPage={goToPage}
+            />
 
             <div className="flex justify-end text-center mt-2">
               Total items: &nbsp;{" "}

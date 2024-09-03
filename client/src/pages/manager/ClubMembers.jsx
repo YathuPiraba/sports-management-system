@@ -5,17 +5,19 @@ import {
   restoreUserAPI,
 } from "../../Services/apiServices";
 import { useSelector } from "react-redux";
-import { MdOutlineSkipPrevious, MdOutlineSkipNext } from "react-icons/md";
 import { useTheme } from "../../context/ThemeContext";
 import { Popconfirm, message } from "antd";
 import GridLoader from "react-spinners/GridLoader";
 import { IoSearchCircleOutline } from "react-icons/io5";
-import { mdiSortCalendarAscending, mdiSortCalendarDescending } from "@mdi/js";
 import { Link } from "react-router-dom";
+import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
+import SortControls from "../../Components/Pagination_Sorting_Search/SortControls";
 
 const ClubMembers = () => {
   const [members, setMembers] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -24,15 +26,31 @@ const ClubMembers = () => {
   });
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
+  const [sortConfig, setSortConfig] = useState({
+    sortBy: "name",
+    sort: "asc",
+  });
 
   const user = useSelector((state) => state.auth.userdata);
   const userId = user.userId;
 
-  const fetchMembers = async (page = 1, perPage = 5) => {
+  const fetchMembers = async (
+    page = 1,
+    perPage = 5,
+    sortBy = sortConfig.sortBy,
+    sort = sortConfig.sort
+  ) => {
     setLoading(true);
     try {
-      const res = await fetchVerifiedMemberDataApi(userId, page, perPage);
+      const res = await fetchVerifiedMemberDataApi(
+        userId,
+        page,
+        perPage,
+        sortBy,
+        sort
+      );
       setMembers(res.data.data);
+      setFilteredMembers(res.data.data);
       const paginationData = res.data.pagination;
 
       setPagination({
@@ -53,8 +71,13 @@ const ClubMembers = () => {
   };
 
   useEffect(() => {
-    fetchMembers();
-    // Define the columns dynamically
+    fetchMembers(
+      pagination.currentPage,
+      pagination.perPage,
+      sortConfig.sortBy,
+      sortConfig.sort
+    );
+
     setColumns([
       { key: "no", label: "No" },
       { key: "image", label: "Image" },
@@ -64,7 +87,26 @@ const ClubMembers = () => {
       { key: "created_at", label: "Join Date" },
       { key: "actions", label: "Actions" },
     ]);
-  }, [userId]);
+  }, [sortConfig]);
+
+  const handleSortChange = (sortBy, sort) => {
+    setSortConfig({ sortBy, sort });
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (query === "") {
+      setFilteredMembers(members);
+    } else {
+      setFilteredMembers(
+        members.filter((member) =>
+          `${member.firstName} ${member.lastName}`.toLowerCase().includes(query)
+        )
+      );
+    }
+  };
 
   if (loading) {
     return (
@@ -90,20 +132,39 @@ const ClubMembers = () => {
         message.success("User deactivated successfully");
       }
       // Refresh the member list after action
-      fetchMembers(pagination.currentPage, pagination.perPage);
+      fetchMembers(
+        pagination.currentPage,
+        pagination.perPage,
+        sortConfig.sortBy,
+        sortConfig.sort
+      );
     } catch (error) {
       console.error("Error in action:", error);
       message.error("Action failed. Please try again.");
     }
   };
 
-  console.log("====================================");
-  console.log(members);
-  console.log("====================================");
-
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Club Members</h2>
+      <div className="flex">
+        <div className="flex gap-5">
+          <h2 className="text-2xl font-bold mb-4 mr-2">Club Members</h2>
+          <SortControls onSortChange={handleSortChange} />
+        </div>
+        <div className="relative mt-1 ml-auto">
+          <input
+            type="search"
+            placeholder="Search Members..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className=" border rounded-md p-1 text-sm pl-6"
+          />
+          <IoSearchCircleOutline
+            size={22}
+            className="absolute top-0 left-0 ml-0.5 mt-1 text-blue-500 "
+          />
+        </div>
+      </div>
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -195,55 +256,11 @@ const ClubMembers = () => {
           </tbody>
         </table>
       </div>
-      {pagination.totalPages > 1 && (
-        <div className="flex justify-center items-center mt-4">
-          <div className="flex space-x-2">
-            {/* Previous Button */}
-            <button
-              onClick={() => goToPage(pagination.currentPage - 1)}
-              disabled={pagination.currentPage === 1}
-              className={`px-2 py-2 border rounded-md ${
-                pagination.currentPage === 1
-                  ? "bg-gray-200 cursor-not-allowed"
-                  : "bg-blue-500 text-white"
-              }`}
-            >
-              <MdOutlineSkipPrevious />
-            </button>
-
-            {/* Page Number Buttons */}
-            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
-              (page) => (
-                <button
-                  key={page}
-                  onClick={() => goToPage(page)}
-                  disabled={page === pagination.currentPage}
-                  className={`px-4 py-2 border rounded-md ${
-                    page === pagination.currentPage
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-gray-700 hover:bg-blue-300 hover:text-black"
-                  }`}
-                >
-                  {page}
-                </button>
-              )
-            )}
-
-            {/* Next Button */}
-            <button
-              onClick={() => goToPage(pagination.currentPage + 1)}
-              disabled={pagination.currentPage === pagination.totalPages}
-              className={`px-2 py-2 border rounded-md ${
-                pagination.currentPage === pagination.totalPages
-                  ? "bg-gray-200 cursor-not-allowed"
-                  : "bg-blue-500 text-white"
-              }`}
-            >
-              <MdOutlineSkipNext />
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        goToPage={goToPage}
+      />
     </div>
   );
 };

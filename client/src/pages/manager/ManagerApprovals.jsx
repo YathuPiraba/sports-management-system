@@ -4,13 +4,13 @@ import { FcApproval } from "react-icons/fc";
 import useMemberData from "../../hooks/useMemberData";
 import { Popconfirm, message } from "antd";
 import GridLoader from "react-spinners/GridLoader";
-import { MdOutlineSkipPrevious, MdOutlineSkipNext } from "react-icons/md";
 import { useTheme } from "../../context/ThemeContext";
 import toast from "react-hot-toast";
 import {
   rejectMemberRequestApi,
   updateMemberVerificationApi,
 } from "../../Services/apiServices";
+import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 
 const MemberApprovalTable = lazy(() =>
   import("../../Components/Approvals/MemberApprovalTable")
@@ -132,55 +132,11 @@ const ManagerApprovals = () => {
               ))}
             </div>
 
-            {pagination.totalPages > 1 && (
-              <div className="flex justify-center items-center mt-8">
-                <div className="flex space-x-2">
-                  {/* Previous Button */}
-                  <button
-                    onClick={() => goToPage(pagination.currentPage - 1)}
-                    disabled={pagination.currentPage === 1}
-                    className={`px-2 py-2 border rounded-md ${
-                      pagination.currentPage === 1
-                        ? "bg-gray-200 cursor-not-allowed"
-                        : "bg-blue-500 text-white"
-                    }`}
-                  >
-                    <MdOutlineSkipPrevious />
-                  </button>
-
-                  {Array.from(
-                    { length: pagination.totalPages },
-                    (_, i) => i + 1
-                  ).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      disabled={page === pagination.currentPage}
-                      className={`px-4 py-2 border rounded-md ${
-                        page === pagination.currentPage
-                          ? "bg-blue-500 text-white"
-                          : "bg-white text-gray-700 hover:bg-blue-300 hover:text-black"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-
-                  {/* Next Button */}
-                  <button
-                    onClick={() => goToPage(pagination.currentPage + 1)}
-                    disabled={pagination.currentPage === pagination.totalPages}
-                    className={`px-2 py-2 border rounded-md ${
-                      pagination.currentPage === pagination.totalPages
-                        ? "bg-gray-200 cursor-not-allowed"
-                        : "bg-blue-500 text-white"
-                    }`}
-                  >
-                    <MdOutlineSkipNext />
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              goToPage={goToPage}
+            />
           </div>
         )}
       </>
