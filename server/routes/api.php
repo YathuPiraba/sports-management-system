@@ -11,6 +11,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SportsArenaController;
 use App\Http\Controllers\SportsController;
+use App\Http\Controllers\EventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,5 +103,14 @@ Route::get('/arena/list', [SportsArenaController::class, 'getAllSportsArenas']);
 Route::get('/arena/sports/{clubId}/{arenaId}', [SportsArenaController::class, 'getSportsBySportsArena']);
 
 Route::delete('/arena/{clubId}/{arenaId}', [SportsArenaController::class, 'deleteSportsArena']);
+
+Route::prefix('events')->group(function () {
+    Route::get('/', [EventController::class, 'index']); // Get all events
+    Route::post('/', [EventController::class, 'store']); // Create a new event
+    Route::get('/{id}', [EventController::class, 'show']); // Get a specific event
+    Route::put('/{id}', [EventController::class, 'update']); // Update a specific event
+    Route::delete('/{id}', [EventController::class, 'destroy']); // Delete a specific event
+});
+
 
 
