@@ -1,12 +1,29 @@
-import React, { useState } from "react";
-import { Button, Table } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Table, Modal } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import EventFormModal from "../../Components/Events/EventFormModal";
+import { getEventAPI, deleteEventAPI } from "../../Services/apiServices";
+import toast from "react-hot-toast";
 
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [isEventModalVisible, setIsEventModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await getEventAPI();
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      toast.error("Failed to fetch events.");
+    }
+  };
+
+  useEffect(() => {
+    // Fetch events when component mounts
+    fetchEvents();
+  }, []);
 
   const showEventModal = () => {
     setIsEventModalVisible(true);
@@ -21,6 +38,17 @@ const Events = () => {
     setIsEventModalVisible(false);
   };
 
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      await deleteEventAPI(eventId);
+      setEvents(events.filter((event) => event.id !== eventId));
+      toast.success("Event deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event.");
+    }
+  };
+
   const columns = [
     {
       title: "Event Name",
@@ -29,13 +57,13 @@ const Events = () => {
     },
     {
       title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
+      dataIndex: "start_date",
+      key: "start_date",
     },
     {
       title: "End Date",
-      dataIndex: "endDate",
-      key: "endDate",
+      dataIndex: "end_date",
+      key: "end_date",
     },
     {
       title: "Actions",
@@ -53,7 +81,10 @@ const Events = () => {
           <Button
             icon={<DeleteOutlined />}
             onClick={() => {
-              /* Delete logic */
+              Modal.confirm({
+                title: "Are you sure you want to delete this event?",
+                onOk: () => handleDeleteEvent(record.id),
+              });
             }}
             className="text-red-500 hover:text-red-700"
           />
@@ -79,12 +110,14 @@ const Events = () => {
         className="w-full"
       />
       <EventFormModal
-        visible={isEventModalVisible}
+        open={isEventModalVisible}
         onOk={handleEventModalOk}
         onCancel={handleEventModalCancel}
         event={selectedEvent}
+        fetchEvents={fetchEvents}
       />
     </div>
   );
 };
+
 export default Events;

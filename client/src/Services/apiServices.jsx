@@ -292,4 +292,18 @@ export const restoreUserAPI = (userId) => {
   return authApiClient.patch(`/user/${userId}/restore`);
 };
 
+export const addEventAPI = (data) => {
+  return authApiClient.post("/events", data);
+};
 
+export const editEventAPI = (eventId, data) => {
+  return authApiClient.put(`/events/${eventId}`, data);
+};
+
+export const getEventAPI = () => {
+  return authApiClient.get(`/events/`);
+};
+
+export const deleteEventAPI = (eventId) => {
+  return authApiClient.delete(`/events/${eventId}`);
+};
