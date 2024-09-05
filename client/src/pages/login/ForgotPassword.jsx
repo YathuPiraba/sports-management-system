@@ -243,6 +243,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
       onCancel={onClose}
       footer={null}
       centered
+      maskClosable={false} 
     >
       {renderStep()}
     </Modal>
