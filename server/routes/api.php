@@ -12,6 +12,12 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SportsArenaController;
 use App\Http\Controllers\SportsController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventParticipantController;
+use App\Http\Controllers\EventSportController;
+use App\Http\Controllers\MatchResultController;
+use App\Http\Controllers\MatchScheduleController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RankingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,6 +117,58 @@ Route::prefix('events')->group(function () {
     Route::put('/{id}', [EventController::class, 'update']); // Update a specific event
     Route::delete('/{id}', [EventController::class, 'destroy']); // Delete a specific event
 });
+
+Route::prefix('events/{eventId}/sports')->group(function () {
+    Route::post('/', [EventSportController::class, 'store']); // Add a new sport to an event
+    Route::get('/', [EventSportController::class, 'index']); // Get all sports for a specific event
+    Route::get('/{id}', [EventSportController::class, 'show']); // Get a specific sport for a specific event
+    Route::put('/{id}', [EventSportController::class, 'update']); // Update a specific sport in an event
+    Route::delete('/{id}', [EventSportController::class, 'destroy']); // Delete a specific sport from an event
+});
+
+Route::prefix('event-clubs/{eventClubId}/participants')->group(function () {
+    Route::post('/', [EventParticipantController::class, 'store']); // Add a new participant to an event club
+    Route::get('/', [EventParticipantController::class, 'index']); // Get all participants for a specific event club
+    Route::get('/{id}', [EventParticipantController::class, 'show']); // Get a specific participant
+    Route::put('/{id}', [EventParticipantController::class, 'update']); // Update a specific participant
+    Route::delete('/{id}', [EventParticipantController::class, 'destroy']); // Delete a specific participant
+});
+
+Route::prefix('event-sports/{eventSportId}/matches')->group(function () {
+    Route::post('/', [MatchScheduleController::class, 'store']); // Create a new match schedule
+    Route::get('/', [MatchScheduleController::class, 'index']); // Get all matches for a specific event sport
+    Route::get('/{id}', [MatchScheduleController::class, 'show']); // Get a specific match
+    Route::put('/{id}', [MatchScheduleController::class, 'update']); // Update a specific match schedule
+    Route::delete('/{id}', [MatchScheduleController::class, 'destroy']); // Delete a specific match schedule
+});
+
+Route::prefix('matches/{matchScheduleId}/results')->group(function () {
+    Route::post('/', [MatchResultController::class, 'store']); // Create a new match result
+    Route::get('/', [MatchResultController::class, 'index']); // Get all results for a specific match schedule
+    Route::get('/{id}', [MatchResultController::class, 'show']); // Get a specific match result
+    Route::put('/{id}', [MatchResultController::class, 'update']); // Update a specific match result
+    Route::delete('/{id}', [MatchResultController::class, 'destroy']); // Delete a specific match result
+});
+
+Route::prefix('event-sports/{eventSportId}/rankings')->group(function () {
+    Route::post('/', [RankingController::class, 'store']); // Create or update a ranking
+    Route::get('/', [RankingController::class, 'index']); // Get all rankings for a specific event sport
+    Route::get('/{clubId}', [RankingController::class, 'show']); // Get a specific ranking
+    Route::put('/{clubId}', [RankingController::class, 'update']); // Update a specific ranking
+    Route::delete('/{clubId}', [RankingController::class, 'destroy']); // Delete a specific ranking
+});
+
+
+Route::prefix('users/{userId}/notifications')->group(function () {
+    Route::post('/', [NotificationController::class, 'store']); // Create a new notification
+    Route::get('/', [NotificationController::class, 'index']); // Get all notifications for a specific user
+    Route::get('/{id}', [NotificationController::class, 'show']); // Get a specific notification
+    Route::put('/{id}', [NotificationController::class, 'update']); // Update a specific notification
+    Route::delete('/{id}', [NotificationController::class, 'destroy']); // Delete a specific notification
+});
+
+
+
 
 
 

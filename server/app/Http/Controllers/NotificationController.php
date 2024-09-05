@@ -2,62 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class NotificationController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Create a new notification.
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'message' => 'required|string',
+            'user_id' => 'required|exists:users,id',
+            'event_id' => 'sometimes|nullable|exists:events,id',
+            'status' => 'required|in:unread,read',
+        ]);
+
+        $notification = Notification::create([
+            'title' => $request->title,
+            'message' => $request->message,
+            'user_id' => $request->user_id,
+            'event_id' => $request->event_id,
+            'status' => $request->status,
+        ]);
+
+        return response()->json($notification, Response::HTTP_CREATED);
     }
 
     /**
-     * Display the specified resource.
+     * Get all notifications for a specific user.
      *
-     * @param  int  $id
+     * @param int $userId
+     * @return \Illuminate\Http\Response
+     */
+    public function index($userId)
+    {
+        $notifications = Notification::where('user_id', $userId)->get();
+        return response()->json($notifications);
+    }
+
+    /**
+     * Get a specific notification.
+     *
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $notification = Notification::findOrFail($id);
+        return response()->json($notification);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update a specific notification.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'message' => 'sometimes|required|string',
+            'user_id' => 'sometimes|required|exists:users,id',
+            'event_id' => 'sometimes|nullable|exists:events,id',
+            'status' => 'sometimes|required|in:unread,read',
+        ]);
+
+        $notification = Notification::findOrFail($id);
+        $notification->update($request->all());
+
+        return response()->json($notification);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a specific notification.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        $notification = Notification::findOrFail($id);
+        $notification->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

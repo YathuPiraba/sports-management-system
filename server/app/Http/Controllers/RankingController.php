@@ -2,62 +2,102 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ranking;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class RankingController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Create or update a ranking for a specific event sport.
      *
+     * @param \Illuminate\Http\Request $request
+     * @param int $eventSportId
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function store(Request $request, $eventSportId)
     {
-        //
+        $request->validate([
+            'club_id' => 'required|exists:clubs,id',
+            'rank' => 'required|integer|min:1',
+        ]);
+
+        $ranking = Ranking::updateOrCreate(
+            [
+                'event_sport_id' => $eventSportId,
+                'club_id' => $request->club_id
+            ],
+            [
+                'rank' => $request->rank
+            ]
+        );
+
+        return response()->json($ranking, Response::HTTP_OK);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Get all rankings for a specific event sport.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param int $eventSportId
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function index($eventSportId)
     {
-        //
+        $rankings = Ranking::where('event_sport_id', $eventSportId)->orderBy('rank')->get();
+        return response()->json($rankings);
     }
 
     /**
-     * Display the specified resource.
+     * Get a specific ranking.
      *
-     * @param  int  $id
+     * @param int $eventSportId
+     * @param int $clubId
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($eventSportId, $clubId)
     {
-        //
+        $ranking = Ranking::where('event_sport_id', $eventSportId)
+                          ->where('club_id', $clubId)
+                          ->firstOrFail();
+        return response()->json($ranking);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update a specific ranking.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $eventSportId
+     * @param int $clubId
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $eventSportId, $clubId)
     {
-        //
+        $request->validate([
+            'rank' => 'required|integer|min:1',
+        ]);
+
+        $ranking = Ranking::where('event_sport_id', $eventSportId)
+                          ->where('club_id', $clubId)
+                          ->firstOrFail();
+        $ranking->update(['rank' => $request->rank]);
+
+        return response()->json($ranking);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a specific ranking.
      *
-     * @param  int  $id
+     * @param int $eventSportId
+     * @param int $clubId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($eventSportId, $clubId)
     {
-        //
+        $ranking = Ranking::where('event_sport_id', $eventSportId)
+                          ->where('club_id', $clubId)
+                          ->firstOrFail();
+        $ranking->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
