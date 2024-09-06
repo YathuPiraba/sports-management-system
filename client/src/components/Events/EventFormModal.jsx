@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button } from "antd";
 import { addEventAPI, editEventAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
@@ -18,6 +18,8 @@ const EventFormModal = ({
     image: null,
   });
 
+  const fileInputRef = useRef(null);
+
   useEffect(() => {
     if (open) {
       if (event) {
@@ -26,7 +28,7 @@ const EventFormModal = ({
           name: event.name || "",
           start_date: event.start_date || "",
           end_date: event.end_date || "",
-          image: null, // reset image field
+          image: null,
         });
       } else {
         // If there's no event, we are in "Add" mode
@@ -37,6 +39,10 @@ const EventFormModal = ({
           image: null,
         });
       }
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
     }
   }, [open, event]);
 
@@ -63,13 +69,15 @@ const EventFormModal = ({
       if (event) {
         // Edit event
         await editEventAPI(event.id, formDataToSend);
+        toast.success("Event updated successfully!");
       } else {
         // Add new event
         await addEventAPI(formDataToSend);
+        toast.success("Event created successfully!");
       }
       fetchEvents();
       fetchEventDetails();
-      toast.success("Event saved successfully!");
+
       onOk();
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -85,8 +93,12 @@ const EventFormModal = ({
       open={open}
       footer={null}
       onCancel={onCancel}
+      className="text-center"
     >
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col space-y-1 mt-2 text-left"
+      >
         <div className="flex flex-col space-y-2">
           <label htmlFor="name" className="font-semibold text-gray-700">
             Event Name
@@ -98,7 +110,7 @@ const EventFormModal = ({
             value={formData.name}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex flex-col space-y-2">
@@ -112,7 +124,7 @@ const EventFormModal = ({
             value={formData.start_date}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex flex-col space-y-2">
@@ -126,7 +138,7 @@ const EventFormModal = ({
             value={formData.end_date}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-300 rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="flex flex-col space-y-2">
@@ -139,23 +151,24 @@ const EventFormModal = ({
             name="image"
             accept="image/*"
             onChange={handleChange}
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ref={fileInputRef}
+            className="border border-gray-300 rounded-md p-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div className="flex justify-end gap-4 mt-4">
+        <div className="flex justify-center gap-4 mt-4">
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="bg-blue-500 hover:bg-blue-600"
+          >
+            {event ? "Update Event" : "Create Event"}
+          </Button>
           <Button
             type="default"
             onClick={onCancel}
             className="bg-gray-200 hover:bg-gray-300"
           >
             Cancel
-          </Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="bg-blue-500 hover:bg-blue-600"
-          >
-            Save
           </Button>
         </div>
       </form>

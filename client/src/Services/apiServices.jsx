@@ -293,11 +293,20 @@ export const restoreUserAPI = (userId) => {
 };
 
 export const addEventAPI = (data) => {
-  return authApiClient.post("/events", data);
+  return authApiClient.post("/events", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const editEventAPI = (eventId, data) => {
-  return authApiClient.put(`/events/${eventId}`, data);
+  data.append("_method", "PUT");
+  return authApiClient.post(`/events/${eventId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const getAllEventAPI = () => {

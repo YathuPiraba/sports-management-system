@@ -7,6 +7,7 @@ import {
   deleteEventAPI,
 } from "../../Services/apiServices";
 import toast from "react-hot-toast";
+import GridLoader from "react-spinners/GridLoader";
 
 const EventFormModal = lazy(() =>
   import("../../Components/Events/EventFormModal")
@@ -24,6 +25,7 @@ const SportsFormModal = lazy(() =>
 const { Option } = Select;
 
 const Events = () => {
+  const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedEventDetails, setSelectedEventDetails] = useState({});
@@ -32,6 +34,7 @@ const Events = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const fetchEvents = async () => {
+    setLoading(true);
     try {
       const response = await getAllEventAPI();
       setEvents(response.data);
@@ -50,12 +53,15 @@ const Events = () => {
 
   const fetchEventDetails = async () => {
     if (selectedEvent) {
+      setLoading(true);
       try {
         const response = await getAEventAPI(selectedEvent);
         setSelectedEventDetails(response.data || {});
       } catch (error) {
         console.error("Error fetching event details:", error);
         toast.error("Failed to fetch event details.");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -74,6 +80,8 @@ const Events = () => {
     } catch (error) {
       console.error("Error deleting event:", error);
       toast.error("Failed to delete event.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,6 +108,20 @@ const Events = () => {
       ],
     }));
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[75vh]">
+        <GridLoader
+          loading={loading}
+          size={15}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          color="#4682B4"
+        />
+      </div>
+    );
+  }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -151,7 +173,15 @@ const Events = () => {
           )}
         </div>
         {selectedEvent && (
-          <div className="bg-white p-6  border-2 border-blue-500  rounded-lg shadow-lg">
+          <div
+            className="p-6 border-2 border-blue-500 rounded-lg shadow-lg"
+            style={{
+              backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725631596/2_razyun.png')`,
+              backgroundSize: "cover", 
+              backgroundRepeat: "no-repeat", 
+              backgroundPosition: "center", 
+            }}
+          >
             <h2 className="text-xl font-bold text-black text-center mb-4">
               {selectedEventDetails.name}
             </h2>
@@ -174,7 +204,7 @@ const Events = () => {
                   }}
                 />
               ))}
-              <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
+              {/* <AddSportsCard onClick={() => setIsSportModalVisible(true)} /> */}
             </div>
           </div>
         )}
