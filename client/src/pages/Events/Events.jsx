@@ -123,6 +123,9 @@ const Events = () => {
     );
   }
 
+  console.log(selectedEventDetails);
+  
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="px-6">
@@ -177,16 +180,27 @@ const Events = () => {
             className="p-6 border-2 border-blue-500 rounded-lg shadow-lg"
             style={{
               backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725631596/2_razyun.png')`,
-              backgroundSize: "cover", 
-              backgroundRepeat: "no-repeat", 
-              backgroundPosition: "center", 
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
             }}
           >
             <h2 className="text-xl font-bold text-black text-center mb-4">
               {selectedEventDetails.name}
             </h2>
-            <p>{selectedEventDetails.start_date}</p>
-            <p>{selectedEventDetails.end_date}</p>
+            <div className="flex flex-col items-center mb-4">
+              <img
+                src={selectedEventDetails.image}
+                alt={selectedEventDetails.name}
+                className="w-1/2 h-auto rounded-lg mb-4" // Adjust width and height for responsiveness
+              />
+              <p className="text-lg font-medium text-black mb-2">
+                Start Date: {selectedEventDetails.start_date}
+              </p>
+              <p className="text-lg font-medium text-black">
+                End Date: {selectedEventDetails.end_date}
+              </p>
+            </div>
             <div className="flex flex-wrap justify-center mb-4">
               {selectedEventDetails.event_sports?.map((sport) => (
                 <SportsCard
