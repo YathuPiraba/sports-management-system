@@ -162,7 +162,7 @@ const Navbar = () => {
       <div
         className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8  w-full font-poppins`}
       >
-        <div className="flex pt-4 items-center">
+        <div className="flex pt-2 items-center">
           <div className="flex gap-3">
             <MdDarkMode size={19} className="mt-1" />
             <Space direction="vertical">

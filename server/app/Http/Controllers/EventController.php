@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Events;
+use App\Models\EventSports;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -50,10 +51,30 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        $event = Events::findOrFail($id);
-        return response()->json($event);
-    }
+        // Find the event by ID and load the related event sports with sports category
+        $event = Events::with('sports')->findOrFail($id);
 
+        // Format the response to include necessary event sports details only
+        $eventData = $event->only(['id', 'name', 'start_date', 'end_date']);
+        $eventData['event_sports'] = EventSports::where('event_id', $id)
+            ->get()
+            ->map(function ($sport) {
+                return [
+                    'id' => $sport->id,
+                    'sports_id' => $sport->sports_id,
+                    'sports_image' => $sport->sportsCategory ? $sport->sportsCategory->image : null,
+                    'sports_name' => $sport->sportsCategory ? $sport->sportsCategory->name : null,
+                    'event_id' => $sport->event_id,
+                    'name' => $sport->name,
+                    'place' => $sport->place,
+                    'start_date' => $sport->start_date,
+                    'end_date' => $sport->end_date,
+                    'apply_due_date' => $sport->apply_due_date,
+                ];
+            });
+
+        return response()->json($eventData);
+    }
     /**
      * Update a specific event.
      *

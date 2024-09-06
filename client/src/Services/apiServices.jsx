@@ -300,10 +300,17 @@ export const editEventAPI = (eventId, data) => {
   return authApiClient.put(`/events/${eventId}`, data);
 };
 
-export const getEventAPI = () => {
+export const getAllEventAPI = () => {
   return authApiClient.get(`/events/`);
+};
+export const getAEventAPI = (eventId) => {
+  return authApiClient.get(`/events/${eventId}`);
 };
 
 export const deleteEventAPI = (eventId) => {
   return authApiClient.delete(`/events/${eventId}`);
+};
+
+export const addEventSportsAPI = (eventId, data) => {
+  return authApiClient.post(`/events/${eventId}/sports`, data);
 };

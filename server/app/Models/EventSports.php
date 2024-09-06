@@ -12,7 +12,9 @@ class EventSports extends Model
         'sports_id',
         'event_id',
         'name',
-        'event_date',
+        'start_date',
+        'end_date',
+        'apply_due_date',
         'place',
     ];
 
@@ -23,8 +25,9 @@ class EventSports extends Model
      */
     public function event()
     {
-        return $this->belongsTo(Events::class);
+        return $this->belongsTo(Events::class, 'event_id');
     }
+
 
     /**
      * Get the sports category that owns the EventSport.

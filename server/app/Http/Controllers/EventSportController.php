@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Events;
 use App\Models\EventSports;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,23 +18,33 @@ class EventSportController extends Controller
      */
     public function store(Request $request, $eventId)
     {
+        // Fetch the event to get its start_date and end_date
+        $event = Events::findOrFail($eventId);
+
+        // Validate the request input
         $request->validate([
-            'sports_id' => 'required|exists:sports,id',
+            'sports_id' => 'required|exists:sports_categories,id',
             'name' => 'required|string|max:255',
-            'event_date' => 'required|date',
+            'start_date' => 'required|date|after_or_equal:' . $event->start_date,
+            'end_date' => 'required|date|before_or_equal:' . $event->end_date,
+            'apply_due_date' => 'required|date|before:' . $request->start_date,
             'place' => 'required|string|max:255',
         ]);
 
+        // Create the event sport
         $eventSport = EventSports::create([
             'event_id' => $eventId,
             'sports_id' => $request->sports_id,
             'name' => $request->name,
-            'event_date' => $request->event_date,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'apply_due_date' => $request->apply_due_date,
             'place' => $request->place,
         ]);
 
         return response()->json($eventSport, Response::HTTP_CREATED);
     }
+
 
     /**
      * Get all sports for a specific event.

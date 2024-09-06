@@ -8,44 +8,50 @@ use Illuminate\Database\Eloquent\Model;
 class Events extends Model
 {
     use HasFactory;
-     protected $fillable = [
+
+    protected $fillable = [
         'name',
         'start_date',
-        'end_date'
-     ];
+        'end_date',
+    ];
 
-         // Many-to-many relationship with Sports Categories
-     public function sportsCategories()
-     {
-        return $this->belongsToMany(Sports_Categories::class, 'event_sports', 'event_id', 'sports_category_id');
-     }
+    /**
+     * Many-to-many relationship with Sports Categories through event_sports
+     */
+    public function sportsCategories()
+    {
+        return $this->belongsToMany(Sports_Categories::class, 'event_sports', 'event_id', 'sports_id');
+    }
 
-     public function sports()
-     {
-         return $this->hasMany(EventSports::class);
-     }
+    /**
+     * One-to-many relationship with EventSports
+     */
+    public function sports()
+    {
+        return $this->hasMany(EventSports::class,'event_id');
+    }
 
-     public function clubs()
-     {
-         return $this->hasManyThrough(
-             Club::class,
-             EventSports::class,
-             'event_id', // Foreign key on EventSport table
-             'id',       // Foreign key on Club table
-             'id',       // Local key on Event table
-             'club_id'   // Local key on EventSport table
-         );
-     }
+    /**
+     * Get all clubs participating in the event through EventSports
+     */
+    public function clubs()
+    {
+        return $this->belongsToMany(Club::class, 'event_clubs', 'event_sports_id', 'club_id')
+            ->withPivot('rank');
+    }
 
-     public function participants()
-     {
-         return $this->hasManyThrough(
-             Event_Participants::class,
-             EventClub::class,
-             'event_id', // Foreign key on EventClub table
-             'event_clubs_id', // Foreign key on EventParticipant table
-             'id', // Local key on Event table
-             'id'  // Local key on EventClub table
-         );
-     }
+    /**
+     * Get all participants in the event through EventClubs
+     */
+    public function participants()
+    {
+        return $this->hasManyThrough(
+            Event_Participants::class,
+            EventClub::class,
+            'event_id', // Foreign key on EventClub table
+            'event_clubs_id', // Foreign key on EventParticipants table
+            'id', // Local key on Events table
+            'id'  // Local key on EventClub table
+        );
+    }
 }

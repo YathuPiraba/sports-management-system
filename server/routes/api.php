@@ -116,7 +116,7 @@ Route::prefix('events')->group(function () {
     Route::get('/{id}', [EventController::class, 'show']); // Get a specific event
     Route::put('/{id}', [EventController::class, 'update']); // Update a specific event
     Route::delete('/{id}', [EventController::class, 'destroy']); // Delete a specific event
-});
+}); 
 
 Route::prefix('events/{eventId}/sports')->group(function () {
     Route::post('/', [EventSportController::class, 'store']); // Add a new sport to an event
