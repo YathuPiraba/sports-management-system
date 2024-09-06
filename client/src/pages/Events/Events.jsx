@@ -1,7 +1,11 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
-import { Button, Select } from "antd";
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
-import { getAEventAPI, getAllEventAPI } from "../../Services/apiServices";
+import { Button, Select, Popconfirm } from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  getAEventAPI,
+  getAllEventAPI,
+  deleteEventAPI,
+} from "../../Services/apiServices";
 import toast from "react-hot-toast";
 
 const EventFormModal = lazy(() =>
@@ -13,8 +17,8 @@ const SportsCard = lazy(() =>
 const AddSportsCard = lazy(() =>
   import("../../Components/Events/Sports/AddSportsCard")
 );
-const AddSportsModal = lazy(() =>
-  import("../../Components/Events/Sports/AddSportsModal")
+const SportsFormModal = lazy(() =>
+  import("../../Components/Events/Sports/SportsFormModal")
 );
 
 const { Option } = Select;
@@ -24,7 +28,8 @@ const Events = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedEventDetails, setSelectedEventDetails] = useState({});
   const [isEventModalVisible, setIsEventModalVisible] = useState(false);
-  const [isAddSportModalVisible, setIsAddSportModalVisible] = useState(false);
+  const [isSportModalVisible, setIsSportModalVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const fetchEvents = async () => {
     try {
@@ -59,7 +64,21 @@ const Events = () => {
     fetchEventDetails();
   }, [selectedEvent]);
 
-  const showEventModal = () => {
+  const handleDeleteEvent = async () => {
+    try {
+      await deleteEventAPI(selectedEvent);
+      setSelectedEvent(null);
+      setSelectedEventDetails({});
+      fetchEvents();
+      toast.success("Event deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event.");
+    }
+  };
+
+  const showEventModal = (isEditingMode = false) => {
+    setIsEditing(isEditingMode); // Set the mode to add or edit
     setIsEventModalVisible(true);
   };
 
@@ -89,7 +108,7 @@ const Events = () => {
         <div className="flex mb-4 space-x-2">
           <Button
             icon={<PlusOutlined />}
-            onClick={showEventModal}
+            onClick={() => showEventModal(false)}
             className="bg-blue-500 text-white hover:bg-blue-600"
           >
             Add Events
@@ -107,13 +126,28 @@ const Events = () => {
             ))}
           </Select>
           {selectedEvent && (
-            <Button
-              onClick={() => alert("Edit Event not implemented")}
-              className="bg-blue-500 text-white hover:bg-blue-600 ml-2"
-              icon={<EditOutlined />}
-            >
-              Edit Event
-            </Button>
+            <>
+              <Button
+                onClick={() => showEventModal(true)}
+                className="bg-blue-500 text-white hover:bg-blue-600 ml-2"
+                icon={<EditOutlined />}
+              >
+                Edit Event
+              </Button>
+              {/* <Popconfirm
+                title="Are you sure you want to delete this event?"
+                onConfirm={handleDeleteEvent}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  className="bg-red-500 text-white hover:bg-red-600"
+                  icon={<DeleteOutlined />}
+                >
+                  Delete Event
+                </Button>
+              </Popconfirm> */}
+            </>
           )}
         </div>
         {selectedEvent && (
@@ -140,7 +174,7 @@ const Events = () => {
                   }}
                 />
               ))}
-              <AddSportsCard onClick={() => setIsAddSportModalVisible(true)} />
+              <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
             </div>
           </div>
         )}
@@ -149,13 +183,21 @@ const Events = () => {
           open={isEventModalVisible}
           onOk={handleEventModalOk}
           onCancel={handleEventModalCancel}
-          event={events.find((event) => event.id === selectedEvent)}
+          event={
+            isEditing
+              ? events.find((event) => event.id === selectedEvent)
+              : null
+          }
+          fetchEvents={fetchEvents}
+          fetchEventDetails={fetchEventDetails}
         />
 
-        <AddSportsModal
-          visible={isAddSportModalVisible}
-          onCancel={() => setIsAddSportModalVisible(false)}
+        <SportsFormModal
+          visible={isSportModalVisible}
+          onCancel={() => setIsSportModalVisible(false)}
           onAdd={handleAddSport}
+          fetchEvents={fetchEvents}
+          fetchEventDetails={fetchEventDetails}
         />
       </div>
     </Suspense>

@@ -4,11 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Events;
 use App\Models\EventSports;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class EventController extends Controller
 {
+
+    protected $cloudinary;
+
+    public function __construct(Cloudinary $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
     /**
      * Create a new event.
      *
@@ -21,12 +30,23 @@ class EventController extends Controller
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,jfif,webp,svg|max:2048',
         ]);
+
+        $imageUrl = null;
+
+        // Handle image upload if provided
+        if ($request->hasFile('image')) {
+            $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+            $imageUrl = $result['secure_url'];
+        }
+
 
         $event = Events::create([
             'name' => $request->name,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
+            'image' => $imageUrl,
         ]);
 
         return response()->json($event, Response::HTTP_CREATED);
@@ -88,13 +108,30 @@ class EventController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'start_date' => 'sometimes|required|date',
             'end_date' => 'sometimes|required|date|after_or_equal:start_date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,jfif,webp,svg|max:2048',
         ]);
 
         $event = Events::findOrFail($id);
-        $event->update($request->all());
+
+        // Handle image upload if provided
+        if ($request->hasFile('image')) {
+            // Optionally delete the old image from Cloudinary if it exists
+            if ($event->image) {
+                // Assuming you have a method or service to handle Cloudinary deletion
+                $this->cloudinary->uploadApi()->destroy($event->image);
+            }
+
+            // Upload the new image to Cloudinary
+            $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+            $event->image = $result['secure_url'];
+        }
+
+        // Update event details
+        $event->update($request->except('image'));
 
         return response()->json($event);
     }
+
 
     /**
      * Delete a specific event.

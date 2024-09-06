@@ -11,6 +11,7 @@ class Events extends Model
 
     protected $fillable = [
         'name',
+        'image',
         'start_date',
         'end_date',
     ];
@@ -28,7 +29,7 @@ class Events extends Model
      */
     public function sports()
     {
-        return $this->hasMany(EventSports::class,'event_id');
+        return $this->hasMany(EventSports::class, 'event_id');
     }
 
     /**

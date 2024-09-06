@@ -3,44 +3,72 @@ import { Modal, Button } from "antd";
 import { addEventAPI, editEventAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 
-const EventFormModal = ({ open, onOk, onCancel, event, fetchEvents }) => {
+const EventFormModal = ({
+  open,
+  onOk,
+  onCancel,
+  event,
+  fetchEvents,
+  fetchEventDetails,
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     start_date: "",
     end_date: "",
+    image: null,
   });
 
   useEffect(() => {
-    if (event) {
-      setFormData({
-        name: event.name || "",
-        start_date: event.start_date || "",
-        end_date: event.end_date || "",
-      });
+    if (open) {
+      if (event) {
+        // If there's an event, we are in "Edit" mode
+        setFormData({
+          name: event.name || "",
+          start_date: event.start_date || "",
+          end_date: event.end_date || "",
+          image: null, // reset image field
+        });
+      } else {
+        // If there's no event, we are in "Add" mode
+        setFormData({
+          name: "",
+          start_date: "",
+          end_date: "",
+          image: null,
+        });
+      }
     }
-  }, [event]);
+  }, [open, event]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
+    const { name, value, type, files } = e.target;
+    if (type === "file") {
+      setFormData((prevState) => ({ ...prevState, [name]: files[0] }));
+    } else {
+      setFormData((prevState) => ({ ...prevState, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formattedValues = {
-        ...formData,
-        start_date: formData.start_date,
-        end_date: formData.end_date,
-      };
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("start_date", formData.start_date);
+      formDataToSend.append("end_date", formData.end_date);
+      if (formData.image) {
+        formDataToSend.append("image", formData.image);
+      }
+
       if (event) {
         // Edit event
-        await editEventAPI(event.id, formattedValues);
+        await editEventAPI(event.id, formDataToSend);
       } else {
         // Add new event
-        await addEventAPI(formattedValues);
+        await addEventAPI(formDataToSend);
       }
       fetchEvents();
+      fetchEventDetails();
       toast.success("Event saved successfully!");
       onOk();
     } catch (error) {
@@ -58,7 +86,7 @@ const EventFormModal = ({ open, onOk, onCancel, event, fetchEvents }) => {
       footer={null}
       onCancel={onCancel}
     >
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
         <div className="flex flex-col space-y-2">
           <label htmlFor="name" className="font-semibold text-gray-700">
             Event Name
@@ -98,6 +126,19 @@ const EventFormModal = ({ open, onOk, onCancel, event, fetchEvents }) => {
             value={formData.end_date}
             onChange={handleChange}
             required
+            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="image" className="font-semibold text-gray-700">
+            Event Image
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            onChange={handleChange}
             className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

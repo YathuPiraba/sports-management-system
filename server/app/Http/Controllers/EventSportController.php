@@ -84,7 +84,9 @@ class EventSportController extends Controller
         $request->validate([
             'sports_id' => 'sometimes|required|exists:sports,id',
             'name' => 'sometimes|required|string|max:255',
-            'event_date' => 'sometimes|required|date',
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'apply_due_date' => $request->apply_due_date,
             'place' => 'sometimes|required|string|max:255',
         ]);
 
