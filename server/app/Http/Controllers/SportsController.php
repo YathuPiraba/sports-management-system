@@ -99,7 +99,7 @@ class SportsController extends Controller
                 'name' => 'nullable|string|max:255',
                 'type' => 'nullable|string|max:255',
                 'description' => 'nullable|string',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,jfif,webp|max:2048',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,jfif,webp,svg|max:2048',
             ]);
 
             Log::info('Incoming request data', $request->all());
