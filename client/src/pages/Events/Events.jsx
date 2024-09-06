@@ -1,6 +1,11 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Button, Select, Popconfirm } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import {
   getAEventAPI,
   getAllEventAPI,
@@ -32,6 +37,11 @@ const Events = () => {
   const [isEventModalVisible, setIsEventModalVisible] = useState(false);
   const [isSportModalVisible, setIsSportModalVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showFirstDiv, setShowFirstDiv] = useState(true); // State to toggle between divs
+
+  const handleToggleDiv = () => {
+    setShowFirstDiv(!showFirstDiv);
+  };
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -86,7 +96,7 @@ const Events = () => {
   };
 
   const showEventModal = (isEditingMode = false) => {
-    setIsEditing(isEditingMode); // Set the mode to add or edit
+    setIsEditing(isEditingMode);
     setIsEventModalVisible(true);
   };
 
@@ -122,9 +132,6 @@ const Events = () => {
       </div>
     );
   }
-
-  console.log(selectedEventDetails);
-  
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -175,11 +182,13 @@ const Events = () => {
             </>
           )}
         </div>
-        {selectedEvent && (
+
+        {showFirstDiv ? (
+          // First Div with Event Details
           <div
             className="p-6 border-2 border-blue-500 rounded-lg shadow-lg"
             style={{
-              backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725631596/2_razyun.png')`,
+              backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725641354/Blue_and_Yellow_Abstract_Sport_Trivia_Quiz_Presentation_1_qfmavk.png')`,
               backgroundSize: "cover",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
@@ -192,15 +201,36 @@ const Events = () => {
               <img
                 src={selectedEventDetails.image}
                 alt={selectedEventDetails.name}
-                className="w-1/2 h-auto rounded-lg mb-4" // Adjust width and height for responsiveness
+                className="w-1/2 h-auto rounded-lg mb-4"
               />
               <p className="text-lg font-medium text-black mb-2">
                 Start Date: {selectedEventDetails.start_date}
               </p>
-              <p className="text-lg font-medium text-black">
+              <p className="text-lg font-medium text-black mb-2">
                 End Date: {selectedEventDetails.end_date}
               </p>
+              <Button
+                className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
+                onClick={handleToggleDiv}
+              >
+                Click to see {showFirstDiv ? ">" : "<"}
+              </Button>
             </div>
+          </div>
+        ) : (
+          // Second Div with Sports Cards
+          <div
+            className="p-6 border-2 border-blue-500 rounded-lg shadow-lg"
+            style={{
+              backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725638342/1_jc38od.png')`,
+              backgroundSize: "cover",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+            }}
+          >
+            <h2 className="text-xl font-bold text-black text-center mb-4">
+              Event Sports
+            </h2>
             <div className="flex flex-wrap justify-center mb-4">
               {selectedEventDetails.event_sports?.map((sport) => (
                 <SportsCard
@@ -218,8 +248,14 @@ const Events = () => {
                   }}
                 />
               ))}
-              {/* <AddSportsCard onClick={() => setIsSportModalVisible(true)} /> */}
+              <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
             </div>
+            <Button
+              className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
+              onClick={handleToggleDiv}
+            >
+              Click to go back {showFirstDiv ? ">" : "<"}
+            </Button>
           </div>
         )}
 

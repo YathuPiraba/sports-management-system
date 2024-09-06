@@ -10,7 +10,8 @@ export default {
       },
       colors:{
         customGreen:'#cfead1',
-        customDark:'rgba(34, 52, 76)'
+        customDark:'rgba(34, 52, 76)',
+        customPurple:'#6887c6'
       }
     },
   },
