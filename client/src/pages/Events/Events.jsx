@@ -37,7 +37,8 @@ const Events = () => {
   const [isEventModalVisible, setIsEventModalVisible] = useState(false);
   const [isSportModalVisible, setIsSportModalVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [showFirstDiv, setShowFirstDiv] = useState(true); // State to toggle between divs
+  const [showFirstDiv, setShowFirstDiv] = useState(true); 
+  const [selectedSport, setSelectedSport] = useState(null); 
 
   const handleToggleDiv = () => {
     setShowFirstDiv(!showFirstDiv);
@@ -119,6 +120,12 @@ const Events = () => {
     }));
   };
 
+  const handleEditSport = (sport) => {
+    setSelectedSport(sport); // Set the selected sport to edit
+    setIsSportModalVisible(true);
+  };
+  
+
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full h-[75vh]">
@@ -182,82 +189,73 @@ const Events = () => {
             </>
           )}
         </div>
-
-        {showFirstDiv ? (
-          // First Div with Event Details
-          <div
-            className="p-6 border-2 border-blue-500 rounded-lg shadow-lg"
-            style={{
-              backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725641354/Blue_and_Yellow_Abstract_Sport_Trivia_Quiz_Presentation_1_qfmavk.png')`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
-          >
-            <h2 className="text-xl font-bold text-black text-center mb-4">
-              {selectedEventDetails.name}
-            </h2>
-            <div className="flex flex-col items-center mb-4">
-              <img
-                src={selectedEventDetails.image}
-                alt={selectedEventDetails.name}
-                className="w-1/2 h-auto rounded-lg mb-4"
-              />
-              <p className="text-lg font-medium text-black mb-2">
-                Start Date: {selectedEventDetails.start_date}
-              </p>
-              <p className="text-lg font-medium text-black mb-2">
-                End Date: {selectedEventDetails.end_date}
-              </p>
+        <div
+          className="p-6 border-2 border-blue-500 rounded-lg shadow-lg "
+          style={{
+            backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725782081/Blue_and_Yellow_Abstract_Sport_Trivia_Quiz_Presentation_2_p0com9.png')`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }}
+        >
+          {showFirstDiv ? (
+            <>
+              <h2 className="text-xl font-bold text-black text-center mb-4">
+                {selectedEventDetails.name}
+              </h2>
+              <div className="flex flex-col items-center mb-4">
+                <img
+                  src={selectedEventDetails.image}
+                  alt={selectedEventDetails.name}
+                  className="w-1/2 h-auto rounded-lg mb-4"
+                />
+                <p className="text-lg font-medium text-black mb-2">
+                  Start Date: {selectedEventDetails.start_date}
+                </p>
+                <p className="text-lg font-medium text-black mb-2">
+                  End Date: {selectedEventDetails.end_date}
+                </p>
+                <Button
+                  className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
+                  onClick={handleToggleDiv}
+                >
+                  Click to see {showFirstDiv ? ">" : "<"}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-bold text-black text-center mb-4">
+                Event Sports
+              </h2>
+              <div className="flex flex-wrap justify-center mb-4">
+                {selectedEventDetails.event_sports?.map((sport) => (
+                  <SportsCard
+                    key={sport.id}
+                    name={sport.name}
+                    image={sport.sports_image}
+                    onEdit={() => handleEditSport(sport)}
+                    onDelete={() => {
+                      setSelectedEventDetails((prevDetails) => ({
+                        ...prevDetails,
+                        event_sports: prevDetails.event_sports.filter(
+                          (s) => s.id !== sport.id
+                        ),
+                      }));
+                    }}
+                  />
+                ))}
+                <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
+              </div>
               <Button
                 className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
                 onClick={handleToggleDiv}
               >
-                Click to see {showFirstDiv ? ">" : "<"}
+                Click to go back {showFirstDiv ? ">" : "<"}
               </Button>
-            </div>
-          </div>
-        ) : (
-          // Second Div with Sports Cards
-          <div
-            className="p-6 border-2 border-blue-500 rounded-lg shadow-lg"
-            style={{
-              backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725638342/1_jc38od.png')`,
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-            }}
-          >
-            <h2 className="text-xl font-bold text-black text-center mb-4">
-              Event Sports
-            </h2>
-            <div className="flex flex-wrap justify-center mb-4">
-              {selectedEventDetails.event_sports?.map((sport) => (
-                <SportsCard
-                  key={sport.id}
-                  name={sport.sports_name}
-                  image={sport.sports_image}
-                  onEdit={() => alert("Edit Sport not implemented")}
-                  onDelete={() => {
-                    setSelectedEventDetails((prevDetails) => ({
-                      ...prevDetails,
-                      event_sports: prevDetails.event_sports.filter(
-                        (s) => s.id !== sport.id
-                      ),
-                    }));
-                  }}
-                />
-              ))}
-              <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
-            </div>
-            <Button
-              className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
-              onClick={handleToggleDiv}
-            >
-              Click to go back {showFirstDiv ? ">" : "<"}
-            </Button>
-          </div>
-        )}
+            </>
+          )}
+        </div>
 
         <EventFormModal
           open={isEventModalVisible}
@@ -276,8 +274,9 @@ const Events = () => {
           visible={isSportModalVisible}
           onCancel={() => setIsSportModalVisible(false)}
           onAdd={handleAddSport}
-          fetchEvents={fetchEvents}
           fetchEventDetails={fetchEventDetails}
+          event={events.find((event) => event.id === selectedEvent)}
+          sport={selectedSport}
         />
       </div>
     </Suspense>
