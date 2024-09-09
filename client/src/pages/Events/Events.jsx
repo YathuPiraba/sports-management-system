@@ -247,10 +247,9 @@ const Events = () => {
                   },
                   {
                     key: "2",
-                    label: "Event Participation",
+                    label: "Participation List",
                     children: (
                       <div>
-                      
                         <p className="text-lg font-medium text-black mb-2 font-poppins">
                           This is the Event Participation tab content.
                         </p>
@@ -258,10 +257,11 @@ const Events = () => {
                     ),
                   },
                 ]}
-                tabBarStyle={{ 
-                  fontFamily: 'Poppins, sans-serif',
-                  borderBottom: '1px solid black' }}
-                // tabBarStyle={{ borderBottom: `none !important;` }} 
+                tabBarStyle={{
+                  fontFamily: "Poppins, sans-serif",
+                  borderBottom: "1px solid black",
+                }}
+                // tabBarStyle={{ borderBottom: `none !important;` }}
               />
               <Button
                 className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
