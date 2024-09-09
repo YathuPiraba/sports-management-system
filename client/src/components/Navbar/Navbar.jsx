@@ -239,13 +239,12 @@ const Navbar = () => {
                       : "bg-gray-300 text-white"
                   } icon-container`}
                 >
-                  <div className="relative mt-1 group">
-                    {/* Profile Image and Dropdown Trigger */}
+                  <div className="relative mt-1 ">
                     <div
                       tabIndex={0}
                       role="button"
                       className="text-black"
-                      onClick={() => setDropdownOpen(!dropdownOpen)} // Add click toggle
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
                     >
                       <span
                         className="relative inline-flex items-center justify-center rounded-full mt-0.5 text-white overflow-hidden"
@@ -259,48 +258,42 @@ const Navbar = () => {
                         />
                       </span>
                     </div>
-
-                    {/* Dropdown Menu */}
-                    <ul
-                      className={`absolute right-0 mt-2 w-52 bg-gray-50 rounded-md shadow-lg z-10 transition-opacity duration-200 ease-in-out ${
-                        dropdownOpen
-                          ? "opacity-100"
-                          : "opacity-0 group-hover:opacity-100"
-                      }`}
-                    >
-                      <li className="w-full px-3 mt-2">
-                        <Link
-                          to={
-                            role_id === 1
-                              ? "/admin/settings"
-                              : role_id === 2
-                              ? "/manager/settings"
-                              : "/member/profile"
-                          }
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100 rounded-md"
-                        >
-                          <div className="flex items-center">
-                            <ImProfile size={20} />
-                          </div>
-                          <span className="flex-1 text-md font-normal text-gray-600">
-                            Profile
-                          </span>
-                        </Link>
-                      </li>
-                      <li className="w-full px-3 mb-2 ">
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100 rounded-md text-left"
-                        >
-                          <div className="flex items-center">
-                            <TbLogout2 size={20} />
-                          </div>
-                          <span className="flex-1 text-md font-normal text-gray-600">
-                            Logout
-                          </span>
-                        </button>
-                      </li>
-                    </ul>
+                    {dropdownOpen && (
+                      <ul className="absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg z-10">
+                        <li className="px-3 py-2 hover:bg-gray-200 mt-2 mx-2 rounded-md">
+                          <Link
+                            to={
+                              role_id === 1
+                                ? "/admin/settings"
+                                : role_id === 2
+                                ? "/manager/settings"
+                                : "/member/settings"
+                            }
+                            className="flex items-center gap-2 w-full"
+                          >
+                            <div className="flex items-center">
+                              <ImProfile size={20} />
+                            </div>
+                            <span className="flex-1 text-md font-normal text-gray-600">
+                              Profile
+                            </span>
+                          </Link>
+                        </li>
+                        <li className="px-3 py-2 hover:bg-gray-200 mx-2 mb-2 rounded-md">
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 w-full text-left"
+                          >
+                            <div className="flex items-center">
+                              <TbLogout2 size={20} />
+                            </div>
+                            <span className="flex-1 text-md font-normal text-gray-600">
+                              Logout
+                            </span>
+                          </button>
+                        </li>
+                      </ul>
+                    )}
                   </div>
                 </div>
               ) : (
