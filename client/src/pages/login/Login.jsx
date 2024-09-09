@@ -4,9 +4,10 @@ import { Modal, Button } from "antd";
 import toast from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginAdmin, fetchUserDetails } from "../../features/authslice";
 import { Input, Space } from "antd";
+import { FadeLoader } from "react-spinners";
 const ForgotPassword = lazy(() => import("./ForgotPassword"));
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
@@ -18,6 +19,8 @@ const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.auth.loading);
+  // const loading = true;
   const {
     control,
     register,
@@ -100,7 +103,12 @@ const Login = () => {
   return (
     <Suspense fallback={<div className="bg-customDark">Loading...</div>}>
       <div className="body-container">
-        <div className="outter">
+        <div className="outter relative">
+          {loading && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm z-50">
+              <FadeLoader className="ml-1 mt-1" color="skyblue" />
+            </div>
+          )}
           <div className="sep">
             <div className="heading">
               <div className="topic">
@@ -168,10 +176,10 @@ const Login = () => {
                       isVisible={isForgotPasswordModalVisible}
                       onClose={handleForgotPasswordCancel}
                     />
-                    <button>Login</button>
+
+                    <button> Login</button>
                   </div>
                 </form>
-
                 {/* <div className="intersect">
                 <p>_______________</p>
                 <p id="or">Or</p>

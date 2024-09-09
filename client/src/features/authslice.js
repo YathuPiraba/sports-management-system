@@ -60,6 +60,7 @@ export const logOutAdmin = createAsyncThunk("/logout", async () => {
 const initialState = {
   token: null,
   userdata: null,
+  loading: false,
 };
 
 // Auth slice to manage authentication state
@@ -70,28 +71,65 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.userdata = null;
+      state.loading = false; 
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginAdmin.fulfilled, (state, action) => {
-        state.token = action.payload;
-      })
-      .addCase(fetchUserDetails.fulfilled, (state, action) => {
-        state.userdata = action.payload;
-      })
-      .addCase(logOutAdmin.fulfilled, (state) => {
-        state.token = null;
-        state.userdata = null;
-      })
-      .addCase(applyManager.fulfilled, (state, action) => {
-        state.userdata = action.payload;
-      })
-      .addCase(applyMember.fulfilled, (state, action) => {
-        state.userdata = action.payload;
-      });
-  },
+    .addCase(loginAdmin.pending, (state) => {
+      state.loading = true;  
+    })
+    .addCase(loginAdmin.fulfilled, (state, action) => {
+      state.token = action.payload;
+      state.loading = false;  
+    })
+    .addCase(loginAdmin.rejected, (state) => {
+      state.loading = false;  
+    })
+    .addCase(fetchUserDetails.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(fetchUserDetails.fulfilled, (state, action) => {
+      state.userdata = action.payload;
+      state.loading = false;
+    })
+    .addCase(fetchUserDetails.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(logOutAdmin.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(logOutAdmin.fulfilled, (state) => {
+      state.token = null;
+      state.userdata = null;
+      state.loading = false;
+    })
+    .addCase(logOutAdmin.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(applyManager.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(applyManager.fulfilled, (state, action) => {
+      state.userdata = action.payload;
+      state.loading = false;
+    })
+    .addCase(applyManager.rejected, (state) => {
+      state.loading = false;
+    })
+    .addCase(applyMember.pending, (state) => {
+      state.loading = true;
+    })
+    .addCase(applyMember.fulfilled, (state, action) => {
+      state.userdata = action.payload;
+      state.loading = false;
+    })
+    .addCase(applyMember.rejected, (state) => {
+      state.loading = false;
+    });
+},
 });
+
 
 export default authSlice.reducer;
 export const { logout } = authSlice.actions;

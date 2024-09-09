@@ -1,33 +1,28 @@
 import React, { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import echo from "../utils/echo";
-import { useDispatch } from "react-redux";
 import { logOutAdmin } from "../features/authslice";
 
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   const auth = useSelector((state) => state.auth);
   const isAuthenticated = !!auth.token;
-  const navigate = useNavigate();
   const authenticate = auth.userdata;
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log("Is Authenticated:", isAuthenticated);
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  } else {
-    useEffect(() => {
+  useEffect(() => {
+    if (isAuthenticated) {
       const channel = echo.channel("deactivate");
 
       // Listen for real-time updates
       channel.listen(".user-deactivate", (event) => {
         console.log("New user applied:", event.userId);
 
-        if (authenticate.userId == event.userId) {
+        if (authenticate.userId === event.userId) {
           toast.error(
-            "Sorry your account has been deactivated. Please contact your Club Manager."
+            "Sorry, your account has been deactivated. Please contact your Club Manager."
           );
           navigate("/login");
           dispatch(logOutAdmin());
@@ -35,7 +30,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
       });
 
       channel.subscribed(() => {
-        console.log("Subscribed to the reject channel");
+        console.log("Subscribed to the deactivate channel");
       });
 
       channel.error((error) => {
@@ -45,16 +40,20 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
       return () => {
         echo.leaveChannel("deactivate");
       };
-    }, [authenticate.userId, navigate]);
-
-    const isVerified = authenticate.is_verified;
-
-    if (isVerified == 0) {
-      return <Navigate to="/home" />;
     }
+  }, [isAuthenticated, authenticate?.userId, navigate, dispatch]);
 
-    return <Component {...rest} />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
+
+  const isVerified = authenticate?.is_verified;
+
+  if (isVerified === 0) {
+    return <Navigate to="/home" />;
+  }
+
+  return <Component {...rest} />;
 };
 
 export default ProtectedRoute;

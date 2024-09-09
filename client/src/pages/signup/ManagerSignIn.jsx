@@ -1,11 +1,11 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import { applyManager } from "../../features/authslice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { fetchGSDataApi } from "../../Services/apiServices";
 import { TbPlayerTrackPrev } from "react-icons/tb";
 import useGsDivisions from "../../hooks/useGsDivisions";
+import { FadeLoader } from "react-spinners";
 
 const SignInHeader = lazy(() => import("../../Components/Signup/SignInHeader"));
 const PersonalDetails = lazy(() =>
@@ -41,7 +41,9 @@ const ManagerSignIn = () => {
   const [currentStep, setCurrentStep] = useState("personalDetails");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.auth.loading);
 
+  // const loading = true;
   const handleNextStep = () => {
     setCurrentStep("clubDetails");
   };
@@ -90,6 +92,11 @@ const ManagerSignIn = () => {
       <div className="p-6 bg-customGreen min-h-screen">
         <SignInHeader currentStep={currentStep} />
         <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">
+          {loading && (
+            <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
+              <FadeLoader className="ml-1 mt-1" color="skyblue" />
+            </div>
+          )}
           {currentStep === "personalDetails" && (
             <div className="w-auto mx-auto">
               <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">

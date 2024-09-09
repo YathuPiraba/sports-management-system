@@ -8,15 +8,14 @@ export default {
         roboto: '"Roboto", sans-serif',
         acme: '"Acme", sans-serif',
       },
-      colors:{
-        customGreen:'#cfead1',
-        customDark:'rgba(34, 52, 76)',
-        customPurple:'#6887c6'
-      }
+      colors: {
+        customGreen: "#cfead1",
+        customDark: "rgba(34, 52, 76)",
+        customPurple: "#6887c6",
+      },
     },
   },
   plugins: [
-    require('daisyui'),
     function ({ addUtilities }) {
       const newUtilties = {
         ".no-scrollbar::-webkit-scrollbar": {

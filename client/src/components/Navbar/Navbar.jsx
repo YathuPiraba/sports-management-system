@@ -14,14 +14,31 @@ import { useTheme } from "../../context/ThemeContext";
 import useManagerNotifications from "../../hooks/useManagerNotification";
 import useMemberNotifications from "../../hooks/useMemberNotification";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
+import { FadeLoader } from "react-spinners";
 
 const Navbar = () => {
   const [animate, setAnimate] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const loading = useSelector((state) => state.auth.loading);
   const user = useSelector((state) => state.auth.userdata);
   const role_id = useSelector((state) => state.auth.userdata.role_id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  //  const loading = true;
+
+  // Close dropdown when clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".relative")) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   let notifications = [];
 
@@ -162,6 +179,11 @@ const Navbar = () => {
       <div
         className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8  w-full font-poppins`}
       >
+        {loading && (
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
+            <FadeLoader className="ml-1 mt-1" color="skyblue" />
+          </div>
+        )}
         <div className="flex pt-2 items-center">
           <div className="flex gap-3">
             <MdDarkMode size={19} className="mt-1" />
@@ -217,8 +239,14 @@ const Navbar = () => {
                       : "bg-gray-300 text-white"
                   } icon-container`}
                 >
-                  <div className="dropdown dropdown-end mt-1">
-                    <div tabIndex={0} role="button" className="text-black">
+                  <div className="relative mt-1 group">
+                    {/* Profile Image and Dropdown Trigger */}
+                    <div
+                      tabIndex={0}
+                      role="button"
+                      className="text-black"
+                      onClick={() => setDropdownOpen(!dropdownOpen)} // Add click toggle
+                    >
                       <span
                         className="relative inline-flex items-center justify-center rounded-full mt-0.5 text-white overflow-hidden"
                         style={{ width: 40, height: 40 }}
@@ -231,43 +259,46 @@ const Navbar = () => {
                         />
                       </span>
                     </div>
+
+                    {/* Dropdown Menu */}
                     <ul
-                      tabIndex={0}
-                      className="dropdown-content menu bg-gray-50 rounded-md z-[1] w-52 shadow"
+                      className={`absolute right-0 mt-2 w-52 bg-gray-50 rounded-md shadow-lg z-10 transition-opacity duration-200 ease-in-out ${
+                        dropdownOpen
+                          ? "opacity-100"
+                          : "opacity-0 group-hover:opacity-100"
+                      }`}
                     >
-                      <li className="px-3">
+                      <li className="w-full px-3 mt-2">
                         <Link
-                          to="/settings"
-                          className="flex items-center gap-2 rounded"
+                          to={
+                            role_id === 1
+                              ? "/admin/settings"
+                              : role_id === 2
+                              ? "/manager/settings"
+                              : "/member/profile"
+                          }
+                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100 rounded-md"
                         >
-                          <div className="flex items-center self-center ">
+                          <div className="flex items-center">
                             <ImProfile size={20} />
                           </div>
-                          <div className="flex w-full flex-1 text-md font-normal text-gray-600 tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate">
+                          <span className="flex-1 text-md font-normal text-gray-600">
                             Profile
-                          </div>
+                          </span>
                         </Link>
                       </li>
-                      <li className="px-3">
-                        <div>
-                          <button
-                            onClick={handleLogout}
-                            href="#"
-                            className="text-gray-600 font-bold"
-                          >
-                            <Link
-                              to="#"
-                              className="flex items-center gap-2 rounded "
-                            >
-                              <div className="flex items-center self-center ">
-                                <TbLogout2 size={20} />
-                              </div>
-                              <div className="flex w-full flex-1 text-md font-normal text-gray-600 tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate">
-                                Logout
-                              </div>
-                            </Link>
-                          </button>
-                        </div>
+                      <li className="w-full px-3 mb-2 ">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-gray-100 rounded-md text-left"
+                        >
+                          <div className="flex items-center">
+                            <TbLogout2 size={20} />
+                          </div>
+                          <span className="flex-1 text-md font-normal text-gray-600">
+                            Logout
+                          </span>
+                        </button>
                       </li>
                     </ul>
                   </div>
