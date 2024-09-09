@@ -8,6 +8,7 @@ import {
 } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import GridLoader from "react-spinners/GridLoader";
+import { useSelector } from "react-redux";
 
 const EventFormModal = lazy(() =>
   import("../../Components/Events/EventFormModal")
@@ -34,6 +35,7 @@ const Events = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showFirstDiv, setShowFirstDiv] = useState(true);
   const [selectedSport, setSelectedSport] = useState(null);
+  const role_id = useSelector((state) => state.auth.userdata.role_id);
 
   const handleToggleDiv = () => {
     setShowFirstDiv(!showFirstDiv);
@@ -139,13 +141,15 @@ const Events = () => {
       <div className="px-6">
         <h1 className="text-2xl font-bold mb-4">Event Management</h1>
         <div className="flex mb-4 space-x-2">
-          <Button
-            icon={<PlusOutlined />}
-            onClick={() => showEventModal(false)}
-            className="bg-blue-500 text-white hover:bg-blue-600"
-          >
-            Add Events
-          </Button>
+          {role_id == 1 && (
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => showEventModal(false)}
+              className="bg-blue-500 text-white hover:bg-blue-600"
+            >
+              Add Events
+            </Button>
+          )}
           <Select
             value={selectedEvent}
             onChange={(value) => setSelectedEvent(value)}
@@ -160,26 +164,31 @@ const Events = () => {
           </Select>
           {selectedEvent && (
             <>
-              <Button
-                onClick={() => showEventModal(true)}
-                className="bg-blue-500 text-white hover:bg-blue-600 ml-2"
-                icon={<EditOutlined />}
-              >
-                Edit Event
-              </Button>
-              {/* <Popconfirm
-                title="Are you sure you want to delete this event?"
-                onConfirm={handleDeleteEvent}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button
-                  className="bg-red-500 text-white hover:bg-red-600"
-                  icon={<DeleteOutlined />}
-                >
-                  Delete Event
-                </Button>
-              </Popconfirm> */}
+              {role_id == 1 && (
+                <>
+                  <Button
+                    onClick={() => showEventModal(true)}
+                    className="bg-blue-500 text-white hover:bg-blue-600 ml-2"
+                    icon={<EditOutlined />}
+                  >
+                    Edit Event
+                  </Button>
+
+                  {/* <Popconfirm
+                    title="Are you sure you want to delete this event?"
+                    onConfirm={handleDeleteEvent}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button
+                      className="bg-red-500 text-white hover:bg-red-600"
+                      icon={<DeleteOutlined />}
+                    >
+                      Delete Event
+                    </Button>
+                  </Popconfirm> */}
+                </>
+              )}
             </>
           )}
         </div>
@@ -225,15 +234,19 @@ const Events = () => {
               <div className="flex flex-wrap justify-center mb-4">
                 {selectedEventDetails.event_sports?.map((sport) => (
                   <SportsCard
+                    key={sport.id}
                     eventSportsId={sport.id}
                     name={sport.name}
                     image={sport.sports_image}
                     onEdit={() => handleEditSport(sport)}
                     event={events.find((event) => event.id === selectedEvent)}
                     fetchEventDetails={fetchEventDetails}
+                    role_id={role_id}
                   />
                 ))}
-                <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
+                {role_id == 1 && (
+                  <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
+                )}
               </div>
               <Button
                 className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
@@ -244,26 +257,29 @@ const Events = () => {
             </div>
           )}
         </div>
+        {role_id == 1 && (
+          <>
+            <EventFormModal
+              open={isEventModalVisible}
+              onOk={handleEventModalOk}
+              onCancel={handleEventModalCancel}
+              event={
+                isEditing
+                  ? events.find((event) => event.id === selectedEvent)
+                  : null
+              }
+            />
 
-        <EventFormModal
-          open={isEventModalVisible}
-          onOk={handleEventModalOk}
-          onCancel={handleEventModalCancel}
-          event={
-            isEditing
-              ? events.find((event) => event.id === selectedEvent)
-              : null
-          }
-        />
-
-        <SportsFormModal
-          visible={isSportModalVisible}
-          onCancel={handleSportsModalCancel}
-          fetchEventDetails={fetchEventDetails}
-          event={events.find((event) => event.id === selectedEvent)}
-          sport={selectedSport}
-          onOk={handleSportsModalOk}
-        />
+            <SportsFormModal
+              visible={isSportModalVisible}
+              onCancel={handleSportsModalCancel}
+              fetchEventDetails={fetchEventDetails}
+              event={events.find((event) => event.id === selectedEvent)}
+              sport={selectedSport}
+              onOk={handleSportsModalOk}
+            />
+          </>
+        )}
       </div>
     </Suspense>
   );
