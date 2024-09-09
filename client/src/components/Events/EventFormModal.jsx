@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button } from "antd";
 import { addEventAPI, editEventAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
+import { FadeLoader } from "react-spinners";
 
 const EventFormModal = ({
   open,
@@ -17,6 +18,7 @@ const EventFormModal = ({
     end_date: "",
     image: null,
   });
+  const [loading, setLoading] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -57,6 +59,7 @@ const EventFormModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("name", formData.name);
@@ -84,6 +87,8 @@ const EventFormModal = ({
       const errorMessage =
         error.response?.data?.message || "Failed to save event.";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,6 +104,11 @@ const EventFormModal = ({
         onSubmit={handleSubmit}
         className="flex flex-col space-y-1 mt-2 text-left"
       >
+        {loading && (
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
+            <FadeLoader className="ml-1 mt-1" color="skyblue" />
+          </div>
+        )}
         <div className="flex flex-col space-y-2">
           <label htmlFor="name" className="font-semibold text-gray-700">
             Event Name

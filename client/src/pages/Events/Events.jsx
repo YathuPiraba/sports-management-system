@@ -1,11 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Button, Select, Popconfirm } from "antd";
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import {
   getAEventAPI,
   getAllEventAPI,
@@ -37,8 +32,16 @@ const Events = () => {
   const [isEventModalVisible, setIsEventModalVisible] = useState(false);
   const [isSportModalVisible, setIsSportModalVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [showFirstDiv, setShowFirstDiv] = useState(true); 
-  const [selectedSport, setSelectedSport] = useState(null); 
+  const [showFirstDiv, setShowFirstDiv] = useState(true);
+  const [selectedSport, setSelectedSport] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    start_date: "",
+    end_date: "",
+    apply_due_date: "",
+    place: "",
+    sports_id: "",
+  });
 
   const handleToggleDiv = () => {
     setShowFirstDiv(!showFirstDiv);
@@ -110,6 +113,11 @@ const Events = () => {
     setIsEventModalVisible(false);
   };
 
+  const handleSportsModalCancel = () => {
+    setIsSportModalVisible(false);
+    setSelectedSport(null);
+  };
+
   const handleAddSport = (newSport) => {
     setSelectedEventDetails((prevDetails) => ({
       ...prevDetails,
@@ -121,10 +129,9 @@ const Events = () => {
   };
 
   const handleEditSport = (sport) => {
-    setSelectedSport(sport); // Set the selected sport to edit
+    setSelectedSport(sport);
     setIsSportModalVisible(true);
   };
-  
 
   if (loading) {
     return (
@@ -199,10 +206,10 @@ const Events = () => {
           }}
         >
           {showFirstDiv ? (
-            <>
-              <h2 className="text-xl font-bold text-black text-center mb-4">
+            <div className="font-poppins ">
+              <h1 className="text-3xl font-bold text-black text-center mb-4">
                 {selectedEventDetails.name}
-              </h2>
+              </h1>
               <div className="flex flex-col items-center mb-4">
                 <img
                   src={selectedEventDetails.image}
@@ -222,9 +229,9 @@ const Events = () => {
                   Click to see {showFirstDiv ? ">" : "<"}
                 </Button>
               </div>
-            </>
+            </div>
           ) : (
-            <>
+            <div className="font-poppins">
               <h2 className="text-xl font-bold text-black text-center mb-4">
                 Event Sports
               </h2>
@@ -253,7 +260,7 @@ const Events = () => {
               >
                 Click to go back {showFirstDiv ? ">" : "<"}
               </Button>
-            </>
+            </div>
           )}
         </div>
 
@@ -272,11 +279,13 @@ const Events = () => {
 
         <SportsFormModal
           visible={isSportModalVisible}
-          onCancel={() => setIsSportModalVisible(false)}
+          onCancel={handleSportsModalCancel}
           onAdd={handleAddSport}
           fetchEventDetails={fetchEventDetails}
           event={events.find((event) => event.id === selectedEvent)}
           sport={selectedSport}
+          formData={formData}
+          setFormData={setFormData}
         />
       </div>
     </Suspense>

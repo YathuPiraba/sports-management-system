@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "antd";
-import toast from "react-hot-toast"; // Import toast from react-hot-toast
+import toast from "react-hot-toast";
 import {
   addEventSportsAPI,
   getAllSportsAPI,
@@ -13,40 +13,34 @@ const SportsFormModal = ({
   sport,
   fetchEventDetails,
   event,
+  formData,
+  setFormData,
 }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    start_date: "",
-    end_date: "",
-    apply_due_date: "",
-    place: "",
-    sports_id: "",
-  });
-
   useEffect(() => {
-    if(visible){
-    if (sport) {
-      setFormData({
-        name: sport.name || "",
-        start_date: sport.start_date || "",
-        end_date: sport.end_date || "",
-        apply_due_date: sport.apply_due_date || "",
-        place: sport.place || "",
-        sports_id: sport.sports_id || "",
-      });
-    } else {
-      // Reset the form data when there's no sport
-      setFormData({
-        name: "",
-        start_date: "",
-        end_date: "",
-        apply_due_date: "",
-        place: "",
-        sports_id: "",
-      });
-    }
-  }
+    if (visible) {
+      if (sport) {
+        console.log(sport);
 
+        setFormData({
+          name: sport.name || "",
+          start_date: sport.start_date || "",
+          end_date: sport.end_date || "",
+          apply_due_date: sport.apply_due_date || "",
+          place: sport.place || "",
+          sports_id: sport.sports_id || "",
+        });
+      } else {
+        // Reset the form data when there's no sport
+        setFormData({
+          name: "",
+          start_date: "",
+          end_date: "",
+          apply_due_date: "",
+          place: "",
+          sports_id: "",
+        });
+      }
+    }
   }, [sport, visible]);
 
   const [loading, setLoading] = useState(false);
@@ -55,7 +49,6 @@ const SportsFormModal = ({
   const fetchSports = async () => {
     try {
       const response = await getAllSportsAPI();
-      console.log(response.data);
       setSportsList(response.data);
     } catch (error) {
       console.error("Error fetching sports names:", error);
@@ -126,11 +119,16 @@ const SportsFormModal = ({
       title={sport ? "Edit Sport" : "Add Sport"}
       open={visible}
       onOk={handleSubmit}
-      onCancel={handleModalCancel} // Use the updated onCancel handler
+      onCancel={handleModalCancel}
       confirmLoading={loading}
       className="text-center"
     >
       <form className="mt-0 text-left">
+        {loading && (
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
+            <FadeLoader className="ml-1 mt-1" color="skyblue" />
+          </div>
+        )}
         <div className="mb-4">
           <label htmlFor="name" className="block font-medium">
             Event Sport Name
