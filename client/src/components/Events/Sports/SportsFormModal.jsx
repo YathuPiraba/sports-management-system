@@ -4,26 +4,26 @@ import toast from "react-hot-toast";
 import {
   addEventSportsAPI,
   getAllSportsAPI,
+  editEventSportsAPI,
 } from "../../../Services/apiServices";
+import { FadeLoader } from "react-spinners";
 
-const SportsFormModal = ({
-  visible,
-  onOk,
-  onCancel,
-  sport,
-  fetchEventDetails,
-  event,
-  formData,
-  setFormData,
-}) => {
+const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    start_date: "",
+    end_date: "",
+    apply_due_date: "",
+    place: "",
+    sports_id: "",
+  });
+
   useEffect(() => {
     if (visible) {
       if (sport) {
-        console.log(sport);
-
         setFormData({
           name: sport.name || "",
-          start_date: sport.start_date || "",
+          start_date: sport.start_date || event.start_date || "",
           end_date: sport.end_date || "",
           apply_due_date: sport.apply_due_date || "",
           place: sport.place || "",
@@ -33,7 +33,7 @@ const SportsFormModal = ({
         // Reset the form data when there's no sport
         setFormData({
           name: "",
-          start_date: "",
+          start_date: event.start_date || "",
           end_date: "",
           apply_due_date: "",
           place: "",
@@ -41,7 +41,7 @@ const SportsFormModal = ({
         });
       }
     }
-  }, [sport, visible]);
+  }, [sport, visible, event]);
 
   const [loading, setLoading] = useState(false);
   const [sportsList, setSportsList] = useState([]);
@@ -80,17 +80,15 @@ const SportsFormModal = ({
     }
 
     setLoading(true);
-
     try {
-      const response = await addEventSportsAPI(event.id, formData);
-
-      if (response && response.success) {
+      if (sport) {
+        await editEventSportsAPI(event.id, sport.id, formData);
         toast.success("Event updated successfully!");
       } else {
+        await addEventSportsAPI(event.id, formData);
         toast.success("Event sports added successfully!");
       }
 
-      fetchEventDetails();
       onOk();
     } catch (error) {
       console.error("Error while adding or updating the sport:", error);
@@ -174,6 +172,8 @@ const SportsFormModal = ({
             id="start_date"
             name="start_date"
             value={formData.start_date}
+            min={event.start_date}
+            max={event.end_date}
             onChange={handleInputChange}
             className="w-full border rounded px-2 py-1"
             required
@@ -189,6 +189,8 @@ const SportsFormModal = ({
             id="end_date"
             name="end_date"
             value={formData.end_date}
+            min={formData.start_date}
+            max={event.end_date}
             onChange={handleInputChange}
             className="w-full border rounded px-2 py-1"
             required
@@ -205,6 +207,7 @@ const SportsFormModal = ({
             name="apply_due_date"
             value={formData.apply_due_date}
             onChange={handleInputChange}
+            max={formData.start_date}
             className="w-full border rounded px-2 py-1"
             required
           />

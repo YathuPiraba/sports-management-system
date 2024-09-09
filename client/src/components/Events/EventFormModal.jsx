@@ -9,9 +9,8 @@ const EventFormModal = ({
   onOk,
   onCancel,
   event,
-  fetchEvents,
-  fetchEventDetails,
 }) => {
+  
   const [formData, setFormData] = useState({
     name: "",
     start_date: "",
@@ -78,8 +77,6 @@ const EventFormModal = ({
         await addEventAPI(formDataToSend);
         toast.success("Event created successfully!");
       }
-      fetchEvents();
-      fetchEventDetails();
 
       onOk();
     } catch (error) {

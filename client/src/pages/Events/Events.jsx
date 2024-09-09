@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Button, Select, Popconfirm } from "antd";
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   getAEventAPI,
   getAllEventAPI,
@@ -34,14 +34,6 @@ const Events = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showFirstDiv, setShowFirstDiv] = useState(true);
   const [selectedSport, setSelectedSport] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    start_date: "",
-    end_date: "",
-    apply_due_date: "",
-    place: "",
-    sports_id: "",
-  });
 
   const handleToggleDiv = () => {
     setShowFirstDiv(!showFirstDiv);
@@ -94,8 +86,6 @@ const Events = () => {
     } catch (error) {
       console.error("Error deleting event:", error);
       toast.error("Failed to delete event.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -107,25 +97,22 @@ const Events = () => {
   const handleEventModalOk = () => {
     setIsEventModalVisible(false);
     fetchEvents();
+    fetchEventDetails();
   };
 
   const handleEventModalCancel = () => {
     setIsEventModalVisible(false);
   };
 
-  const handleSportsModalCancel = () => {
+  const handleSportsModalOk = () => {
     setIsSportModalVisible(false);
+    fetchEventDetails();
     setSelectedSport(null);
   };
 
-  const handleAddSport = (newSport) => {
-    setSelectedEventDetails((prevDetails) => ({
-      ...prevDetails,
-      event_sports: [
-        ...(prevDetails.event_sports || []),
-        { ...newSport, id: Date.now() },
-      ],
-    }));
+  const handleSportsModalCancel = () => {
+    setIsSportModalVisible(false);
+    setSelectedSport(null);
   };
 
   const handleEditSport = (sport) => {
@@ -238,18 +225,12 @@ const Events = () => {
               <div className="flex flex-wrap justify-center mb-4">
                 {selectedEventDetails.event_sports?.map((sport) => (
                   <SportsCard
-                    key={sport.id}
+                    eventSportsId={sport.id}
                     name={sport.name}
                     image={sport.sports_image}
                     onEdit={() => handleEditSport(sport)}
-                    onDelete={() => {
-                      setSelectedEventDetails((prevDetails) => ({
-                        ...prevDetails,
-                        event_sports: prevDetails.event_sports.filter(
-                          (s) => s.id !== sport.id
-                        ),
-                      }));
-                    }}
+                    event={events.find((event) => event.id === selectedEvent)}
+                    fetchEventDetails={fetchEventDetails}
                   />
                 ))}
                 <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
@@ -273,19 +254,15 @@ const Events = () => {
               ? events.find((event) => event.id === selectedEvent)
               : null
           }
-          fetchEvents={fetchEvents}
-          fetchEventDetails={fetchEventDetails}
         />
 
         <SportsFormModal
           visible={isSportModalVisible}
           onCancel={handleSportsModalCancel}
-          onAdd={handleAddSport}
           fetchEventDetails={fetchEventDetails}
           event={events.find((event) => event.id === selectedEvent)}
           sport={selectedSport}
-          formData={formData}
-          setFormData={setFormData}
+          onOk={handleSportsModalOk}
         />
       </div>
     </Suspense>

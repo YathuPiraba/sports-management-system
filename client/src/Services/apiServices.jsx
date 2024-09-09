@@ -323,3 +323,11 @@ export const deleteEventAPI = (eventId) => {
 export const addEventSportsAPI = (eventId, data) => {
   return authApiClient.post(`/events/${eventId}/sports`, data);
 };
+
+export const editEventSportsAPI = (eventId,event_sportsId, data) => {
+  return authApiClient.put(`/events/${eventId}/sports/${event_sportsId}`, data);
+};
+
+export const deleteEventSportsAPI = (eventId,event_sportsId, data) => {
+  return authApiClient.delete(`/events/${eventId}/sports/${event_sportsId}`, data);
+};

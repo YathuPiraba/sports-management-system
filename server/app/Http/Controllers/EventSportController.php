@@ -81,13 +81,16 @@ class EventSportController extends Controller
      */
     public function update(Request $request, $eventId, $id)
     {
+        // Fetch the event to get its start_date and end_date
+        $event = Events::findOrFail($eventId);
+
         $request->validate([
-            'sports_id' => 'sometimes|required|exists:sports,id',
+            'sports_id' => 'sometimes|required|exists:sports_categories,id',
             'name' => 'sometimes|required|string|max:255',
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'apply_due_date' => $request->apply_due_date,
-            'place' => 'sometimes|required|string|max:255',
+            'start_date' => 'sometimes|date|after_or_equal:' . $event->start_date,
+            'end_date' => 'sometimes|date|before_or_equal:' . $event->end_date,
+            'apply_due_date' => 'sometimes|date|before:' . $request->start_date,
+            'place' => 'sometimes|string|max:255',
         ]);
 
         $eventSport = EventSports::where('event_id', $eventId)->findOrFail($id);
