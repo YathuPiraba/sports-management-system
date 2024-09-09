@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
-import { Button, Select, Popconfirm } from "antd";
+import { Button, Select, Popconfirm, Tabs } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   getAEventAPI,
@@ -173,20 +173,6 @@ const Events = () => {
                   >
                     Edit Event
                   </Button>
-
-                  {/* <Popconfirm
-                    title="Are you sure you want to delete this event?"
-                    onConfirm={handleDeleteEvent}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button
-                      className="bg-red-500 text-white hover:bg-red-600"
-                      icon={<DeleteOutlined />}
-                    >
-                      Delete Event
-                    </Button>
-                  </Popconfirm> */}
                 </>
               )}
             </>
@@ -228,26 +214,55 @@ const Events = () => {
             </div>
           ) : (
             <div className="font-poppins">
-              <h2 className="text-xl font-bold text-black text-center mb-4">
-                Event Sports
-              </h2>
-              <div className="flex flex-wrap justify-center mb-4">
-                {selectedEventDetails.event_sports?.map((sport) => (
-                  <SportsCard
-                    key={sport.id}
-                    eventSportsId={sport.id}
-                    name={sport.name}
-                    image={sport.sports_image}
-                    onEdit={() => handleEditSport(sport)}
-                    event={events.find((event) => event.id === selectedEvent)}
-                    fetchEventDetails={fetchEventDetails}
-                    role_id={role_id}
-                  />
-                ))}
-                {role_id == 1 && (
-                  <AddSportsCard onClick={() => setIsSportModalVisible(true)} />
-                )}
-              </div>
+              <Tabs
+                defaultActiveKey="1"
+                centered
+                items={[
+                  {
+                    key: "1",
+                    label: "Event Sports",
+                    children: (
+                      <div className="flex flex-wrap justify-center mb-4 font-poppins">
+                        {selectedEventDetails.event_sports?.map((sport) => (
+                          <SportsCard
+                            key={sport.id}
+                            eventSportsId={sport.id}
+                            name={sport.name}
+                            image={sport.sports_image}
+                            onEdit={() => handleEditSport(sport)}
+                            event={events.find(
+                              (event) => event.id === selectedEvent
+                            )}
+                            fetchEventDetails={fetchEventDetails}
+                            role_id={role_id}
+                          />
+                        ))}
+                        {role_id == 1 && (
+                          <AddSportsCard
+                            onClick={() => setIsSportModalVisible(true)}
+                          />
+                        )}
+                      </div>
+                    ),
+                  },
+                  {
+                    key: "2",
+                    label: "Event Participation",
+                    children: (
+                      <div>
+                      
+                        <p className="text-lg font-medium text-black mb-2 font-poppins">
+                          This is the Event Participation tab content.
+                        </p>
+                      </div>
+                    ),
+                  },
+                ]}
+                tabBarStyle={{ 
+                  fontFamily: 'Poppins, sans-serif',
+                  borderBottom: '1px solid black' }}
+                // tabBarStyle={{ borderBottom: `none !important;` }} 
+              />
               <Button
                 className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
                 onClick={handleToggleDiv}

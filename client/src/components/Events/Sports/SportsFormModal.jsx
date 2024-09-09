@@ -23,7 +23,7 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
       if (sport) {
         setFormData({
           name: sport.name || "",
-          start_date: sport.start_date || event.start_date || "",
+          start_date: sport.start_date || event?.start_date || "",
           end_date: sport.end_date || "",
           apply_due_date: sport.apply_due_date || "",
           place: sport.place || "",
@@ -33,7 +33,7 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
         // Reset the form data when there's no sport
         setFormData({
           name: "",
-          start_date: event.start_date || "",
+          start_date: event?.start_date || "",
           end_date: "",
           apply_due_date: "",
           place: "",
@@ -172,8 +172,8 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
             id="start_date"
             name="start_date"
             value={formData.start_date}
-            min={event.start_date}
-            max={event.end_date}
+            min={event?.start_date}
+            max={event?.end_date}
             onChange={handleInputChange}
             className="w-full border rounded px-2 py-1"
             required
@@ -190,7 +190,7 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
             name="end_date"
             value={formData.end_date}
             min={formData.start_date}
-            max={event.end_date}
+            max={event?.end_date}
             onChange={handleInputChange}
             className="w-full border rounded px-2 py-1"
             required
