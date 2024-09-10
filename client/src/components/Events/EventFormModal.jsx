@@ -4,13 +4,7 @@ import { addEventAPI, editEventAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import { FadeLoader } from "react-spinners";
 
-const EventFormModal = ({
-  open,
-  onOk,
-  onCancel,
-  event,
-}) => {
-  
+const EventFormModal = ({ open, onOk, onCancel, event }) => {
   const [formData, setFormData] = useState({
     name: "",
     start_date: "",
@@ -96,6 +90,7 @@ const EventFormModal = ({
       footer={null}
       onCancel={onCancel}
       className="text-center"
+      maskClosable={false}
     >
       <form
         onSubmit={handleSubmit}

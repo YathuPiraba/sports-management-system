@@ -230,6 +230,8 @@ const Events = () => {
                             eventSportsId={sport.id}
                             name={sport.name}
                             image={sport.sports_image}
+                            sports_id={sport.sports_id}
+                            min_players={sport.min_players}
                             onEdit={() => handleEditSport(sport)}
                             event={events.find(
                               (event) => event.id === selectedEvent
@@ -289,7 +291,6 @@ const Events = () => {
             <SportsFormModal
               visible={isSportModalVisible}
               onCancel={handleSportsModalCancel}
-              fetchEventDetails={fetchEventDetails}
               event={events.find((event) => event.id === selectedEvent)}
               sport={selectedSport}
               onOk={handleSportsModalOk}

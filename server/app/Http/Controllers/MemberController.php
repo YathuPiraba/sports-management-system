@@ -688,7 +688,7 @@ class MemberController extends Controller
                         }])
                         ->select('id', 'member_id', 'sports_id');
                 }])
-                ->get(['id', 'firstName', 'lastName']);
+                ->get(['id', 'firstName', 'lastName','position']);
 
             if ($members->isEmpty()) {
                 return response()->json([
@@ -708,14 +708,16 @@ class MemberController extends Controller
                     })->values();
 
                     return [
-                        'id' => $memberSport->id, 
+                        'id' => $memberSport->id,
                         'skills' => $skills,
                     ];
                 });
 
                 return [
+                    'member_id' => $member->id,
                     'firstName' => $member->firstName,
                     'lastName' => $member->lastName,
+                    'member_position' => $member-> position,
                     'member_sports' => $memberSports,
                 ];
             });

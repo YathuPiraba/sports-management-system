@@ -120,6 +120,7 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
       onCancel={handleModalCancel}
       confirmLoading={loading}
       className="text-center"
+      maskClosable={false}
     >
       <form className="mt-0 text-left">
         {loading && (

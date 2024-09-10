@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { deleteEventSportsAPI } from "../../../Services/apiServices";
 import toast from "react-hot-toast";
+import EventParticipantModal from "../EventParticipantModal";
 
 const SportsCard = ({
   name,
@@ -12,7 +13,20 @@ const SportsCard = ({
   eventSportsId,
   fetchEventDetails,
   role_id,
+  sports_id,
+  min_players,
 }) => {
+  const [isParticipantModalVisible, setIsParticipantModalVisible] =
+    useState(false);
+
+  const handleParticipantModalOk = () => {
+    setIsParticipantModalVisible(false);
+  };
+
+  const handleParticipantModalCancel = () => {
+    setIsParticipantModalVisible(false);
+  };
+
   const onDelete = async () => {
     try {
       await deleteEventSportsAPI(event.id, eventSportsId);
@@ -64,13 +78,25 @@ const SportsCard = ({
           )}
           {role_id == 2 && (
             <div className="hover:bg-green-500 rounded-md">
-              <Button type="text" className="bg-green-400  !text-white">
+              <Button
+                type="text"
+                className="bg-green-400  !text-white"
+                onClick={() => setIsParticipantModalVisible(true)}
+              >
                 Apply
               </Button>
             </div>
           )}
         </div>
       </div>
+      <EventParticipantModal
+        open={isParticipantModalVisible}
+        sports_id={sports_id}
+        onCancel={handleParticipantModalCancel}
+        onOk={handleParticipantModalOk}
+        min_players={min_players}
+        name={name}
+      />
     </div>
   );
 };

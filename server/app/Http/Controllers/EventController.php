@@ -75,7 +75,7 @@ class EventController extends Controller
         $event = Events::with('sports')->findOrFail($id);
 
         // Format the response to include necessary event sports details only
-        $eventData = $event->only(['id', 'name', 'start_date', 'end_date','image']);
+        $eventData = $event->only(['id', 'name', 'start_date', 'end_date', 'image']);
         $eventData['event_sports'] = EventSports::where('event_id', $id)
             ->get()
             ->map(function ($sport) {
@@ -84,6 +84,7 @@ class EventController extends Controller
                     'sports_id' => $sport->sports_id,
                     'sports_image' => $sport->sportsCategory ? $sport->sportsCategory->image : null,
                     'sports_name' => $sport->sportsCategory ? $sport->sportsCategory->name : null,
+                    'min_players' => $sport->sportsCategory ? $sport->sportsCategory->min_Players : null,
                     'event_id' => $sport->event_id,
                     'name' => $sport->name,
                     'place' => $sport->place,
