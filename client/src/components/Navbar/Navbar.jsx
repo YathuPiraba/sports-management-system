@@ -236,7 +236,7 @@ const Navbar = () => {
                   className={`${
                     theme === "light"
                       ? "bg-white text-black"
-                      : "bg-gray-300 text-white"
+                      : "bg-gray-300 text-black"
                   } icon-container`}
                 >
                   <div className="relative mt-1 ">
@@ -247,7 +247,7 @@ const Navbar = () => {
                       onClick={() => setDropdownOpen(!dropdownOpen)}
                     >
                       <span
-                        className="relative inline-flex items-center justify-center rounded-full mt-0.5 text-white overflow-hidden"
+                        className="relative inline-flex items-center justify-center rounded-full mt-0.5 overflow-hidden"
                         style={{ width: 40, height: 40 }}
                       >
                         <img
@@ -259,8 +259,20 @@ const Navbar = () => {
                       </span>
                     </div>
                     {dropdownOpen && (
-                      <ul className="absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg z-10">
-                        <li className="px-3 py-2 hover:bg-gray-200 mt-2 mx-2 rounded-md">
+                      <ul
+                        className={`absolute right-0 mt-2 w-44 ${
+                          theme === "light"
+                            ? "bg-white text-black"
+                            : "bg-gray-200 text-black"
+                        }  rounded-md shadow-lg z-10`}
+                      >
+                        <li
+                          className={`px-3 py-2 mt-2 mb-1 mx-2 ${
+                            theme === "light"
+                              ? "bg-gray-200 hover:bg-gray-300"
+                              : "bg-white hover:bg-gray-400"
+                          } rounded-md`}
+                        >
                           <Link
                             to={
                               role_id === 1
@@ -279,7 +291,13 @@ const Navbar = () => {
                             </span>
                           </Link>
                         </li>
-                        <li className="px-3 py-2 hover:bg-gray-200 mx-2 mb-2 rounded-md">
+                        <li
+                          className={`px-3 py-2 mb-2 mt-1 mx-2 ${
+                            theme === "light"
+                              ? "bg-gray-200 hover:bg-gray-300"
+                              : "bg-white hover:bg-gray-400"
+                          } rounded-md`}
+                        >
                           <button
                             onClick={handleLogout}
                             className="flex items-center gap-2 w-full text-left"
