@@ -232,6 +232,9 @@ const Events = () => {
                             image={sport.sports_image}
                             sports_id={sport.sports_id}
                             min_players={sport.min_players}
+                            start_date={sport.start_date}
+                            end_date={sport.end_date}
+                            apply_due_date={sport.apply_due_date}
                             onEdit={() => handleEditSport(sport)}
                             event={events.find(
                               (event) => event.id === selectedEvent
