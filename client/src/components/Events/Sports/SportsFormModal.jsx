@@ -112,6 +112,18 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
     onCancel();
   };
 
+  function getMaxDate(startDate) {
+    if (!startDate) return "";
+    const date = new Date(startDate);
+    date.setDate(date.getDate() - 1);
+
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+
+    return `${year}-${month}-${day}`;
+  }
+
   return (
     <Modal
       title={sport ? "Edit Sport" : "Add Sport"}
@@ -208,7 +220,7 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
             name="apply_due_date"
             value={formData.apply_due_date}
             onChange={handleInputChange}
-            max={formData.start_date}
+            max={getMaxDate(formData.start_date)}
             className="w-full border rounded px-2 py-1"
             required
           />

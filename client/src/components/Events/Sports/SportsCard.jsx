@@ -6,10 +6,13 @@ import toast from "react-hot-toast";
 import EventParticipantModal from "../EventParticipantModal";
 import "../../../App.css";
 
-const formatDate = (date) => {
+function formatDate(date) {
   const d = new Date(date);
-  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-};
+  const year = d.getFullYear();
+  const month = ('0' + (d.getMonth() + 1)).slice(-2); 
+  const day = ('0' + d.getDate()).slice(-2);         
+  return `${year}-${month}-${day}`;
+}
 
 const SportsCard = ({
   name,
@@ -49,6 +52,9 @@ const SportsCard = ({
 
   const todayDate = formatDate(new Date());
   const dueDate = formatDate(apply_due_date);
+
+  console.log(todayDate  <= dueDate , todayDate,dueDate);
+  
 
   return (
     <div className=" flex flex-col border bg-slate-100 rounded-md  px-0.5">
