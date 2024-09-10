@@ -9,6 +9,7 @@ import {
 import toast from "react-hot-toast";
 import GridLoader from "react-spinners/GridLoader";
 import { useSelector } from "react-redux";
+import "../../Components/Navbar/Navbar.css";
 
 const EventFormModal = lazy(() =>
   import("../../Components/Events/EventFormModal")
@@ -259,9 +260,9 @@ const Events = () => {
                 ]}
                 tabBarStyle={{
                   fontFamily: "Poppins, sans-serif",
-                  borderBottom: "1px solid black",
+                  borderBottom: "none",
                 }}
-                // tabBarStyle={{ borderBottom: `none !important;` }}
+                className="customTab"
               />
               <Button
                 className="mt-2 bg-blue-500 text-white hover:bg-blue-600"

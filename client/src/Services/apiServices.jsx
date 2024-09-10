@@ -331,3 +331,12 @@ export const editEventSportsAPI = (eventId,event_sportsId, data) => {
 export const deleteEventSportsAPI = (eventId,event_sportsId, data) => {
   return authApiClient.delete(`/events/${eventId}/sports/${event_sportsId}`, data);
 };
+
+export const getMembersBySportsAPI = (userId, sports_id) => {
+  return apiClient.get("/membersBySport", {
+    params: { 
+      userId, 
+      sports_id
+    },
+  });
+};

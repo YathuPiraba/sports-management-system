@@ -80,7 +80,7 @@ const ClubMembers = () => {
 
     setColumns([
       { key: "no", label: "No" },
-      { key: "image", label: "Image" },
+      { key: "profile", label: "Profile" },
       { key: "name", label: "Name" },
       { key: "role", label: "Role" },
       { key: "age", label: "Age" },
@@ -191,7 +191,7 @@ const ClubMembers = () => {
                       {column.key === "no" && (
                         <div className="text-gray-500">{index + 1}</div>
                       )}
-                      {column.key === "image" && (
+                      {column.key === "profile" && (
                         <div className="flex items-center">
                           <img
                             src={member.user?.image || "/default-avatar.png"}

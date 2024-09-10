@@ -36,3 +36,13 @@
   justify-content: center;
   align-items: center;
 }
+
+
+.customTab:where(.css-dev-only-do-not-override-1pg9a38).ant-tabs-top
+  > .ant-tabs-nav::before,
+:where(.css-dev-only-do-not-override-1pg9a38).ant-tabs-top
+  > div
+  > .ant-tabs-nav::before {
+  bottom: 0;
+  border-bottom: none;
+}

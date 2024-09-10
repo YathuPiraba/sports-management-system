@@ -90,6 +90,7 @@ Route::get('/gs-divisions/list', [GsDivisionController::class, 'getAllGsDivision
 Route::get('/membersList', [MemberController::class, 'membersList']);
 Route::get('/queryMembers', [MemberController::class, 'queryMembers']);
 Route::get('/memberDetails/{memberId}', [MemberController::class, 'getMemberDetails']);
+Route::get('/membersBySport', [MemberController::class, 'membersBySport']);
 
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);
@@ -116,7 +117,7 @@ Route::prefix('events')->group(function () {
     Route::get('/{id}', [EventController::class, 'show']); // Get a specific event
     Route::put('/{id}', [EventController::class, 'update']); // Update a specific event
     Route::delete('/{id}', [EventController::class, 'destroy']); // Delete a specific event
-}); 
+});
 
 Route::prefix('events/{eventId}/sports')->group(function () {
     Route::post('/', [EventSportController::class, 'store']); // Add a new sport to an event
@@ -166,9 +167,3 @@ Route::prefix('users/{userId}/notifications')->group(function () {
     Route::put('/{id}', [NotificationController::class, 'update']); // Update a specific notification
     Route::delete('/{id}', [NotificationController::class, 'destroy']); // Delete a specific notification
 });
-
-
-
-
-
-

@@ -19,7 +19,7 @@ class EventParticipantController extends Controller
     {
         $request->validate([
             'member_sports_id' => 'required|exists:member_sports,id',
-            'participatedDate' => 'required|date',
+            'participatedDate' => 'nullable|date',
             'rank' => 'nullable|string|max:255',
         ]);
 

@@ -639,4 +639,97 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
+    // GET => http://127.0.0.1:8000/api/membersBySport
+    public function membersBySport(Request $request)
+    {
+        try {
+            // Get the userId and sports_id from the request
+            $userId = $request->input('userId');
+            $sportsId = $request->input('sports_id');
+
+            if (!$userId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'UserId is required',
+                ], 400);
+            }
+
+            if (!$sportsId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sports ID is required',
+                ], 400);
+            }
+
+            // Find the club manager using userId
+            $clubManager = Club_Manager::where('user_id', $userId)->first();
+
+            if (!$clubManager) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Club manager not found for the given userId',
+                ], 404);
+            }
+
+            // Fetch members associated with the club manager and filter by sports_id
+            $members = Member::where('manager_id', $clubManager->id)
+                ->whereHas('user', function ($query) {
+                    $query->whereNull('deleted_at'); // Include non-deleted members
+                })
+                ->whereHas('memberSports', function ($query) use ($sportsId) {
+                    $query->where('sports_id', $sportsId);
+                })
+                ->with(['memberSports' => function ($query) use ($sportsId) {
+                    $query->where('sports_id', $sportsId)
+                        ->with(['skills' => function ($skillQuery) {
+                            $skillQuery->select('member_skills.id as member_skill_id', 'skills.skill as skill_name', 'member_skills.member_sport_id')
+                                ->join('skills as s', 's.id', '=', 'member_skills.skill_id'); // Use alias 's' for the skills table
+                        }])
+                        ->select('id', 'member_id', 'sports_id');
+                }])
+                ->get(['id', 'firstName', 'lastName']);
+
+            if ($members->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                ], 200);
+            }
+
+            // Map the results to include only required fields along with skills
+            $filteredMembers = $members->map(function ($member) {
+                $memberSports = $member->memberSports->map(function ($memberSport) {
+                    $skills = $memberSport->skills->map(function ($skill) {
+                        return [
+                            'member_skill_id' => $skill->member_skill_id,
+                            'skill_name' => $skill->skill_name,
+                        ];
+                    })->values();
+
+                    return [
+                        'id' => $memberSport->id, 
+                        'skills' => $skills,
+                    ];
+                });
+
+                return [
+                    'firstName' => $member->firstName,
+                    'lastName' => $member->lastName,
+                    'member_sports' => $memberSports,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $filteredMembers,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching members by sport: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching members by sport: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
