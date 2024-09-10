@@ -157,7 +157,7 @@ const ClubMembers = () => {
             placeholder="Search Members..."
             value={searchQuery}
             onChange={handleSearch}
-            className="border rounded-md p-1 text-sm pl-8 w-full lg:w-64"
+            className="border border-blue-200 outline-none rounded-md py-1 text-sm pl-8 w-full lg:w-64 hover:border-blue-400 "
           />
           <IoSearchCircleOutline
             size={22}
