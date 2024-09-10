@@ -269,7 +269,7 @@ const Navbar = () => {
                         <li
                           className={`px-3 py-2 mt-2 mb-1 mx-2 ${
                             theme === "light"
-                              ? "bg-gray-200 hover:bg-gray-300"
+                              ? "bg-gray-100 hover:bg-gray-300"
                               : "bg-white hover:bg-gray-400"
                           } rounded-md`}
                         >
@@ -294,7 +294,7 @@ const Navbar = () => {
                         <li
                           className={`px-3 py-2 mb-2 mt-1 mx-2 ${
                             theme === "light"
-                              ? "bg-gray-200 hover:bg-gray-300"
+                              ? "bg-gray-100 hover:bg-gray-300"
                               : "bg-white hover:bg-gray-400"
                           } rounded-md`}
                         >
