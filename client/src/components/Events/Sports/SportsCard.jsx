@@ -89,14 +89,17 @@ const SportsCard = ({
           )}
         </div>
       </div>
-      <EventParticipantModal
-        open={isParticipantModalVisible}
-        sports_id={sports_id}
-        onCancel={handleParticipantModalCancel}
-        onOk={handleParticipantModalOk}
-        min_players={min_players}
-        name={name}
-      />
+      {role_id == 2 && (
+        <EventParticipantModal
+          open={isParticipantModalVisible}
+          sports_id={sports_id}
+          onCancel={handleParticipantModalCancel}
+          onOk={handleParticipantModalOk}
+          min_players={min_players}
+          name={name}
+          eventSportsId={eventSportsId}
+        />
+      )}
     </div>
   );
 };

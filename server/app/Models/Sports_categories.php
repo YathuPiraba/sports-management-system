@@ -15,7 +15,8 @@ class Sports_Categories extends Model
         'name',
         'type',
         'description',
-        'image'
+        'image',
+        'min_Players'
     ];
 
     // One-to-many relationship with Skills

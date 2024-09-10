@@ -24,8 +24,8 @@ class EventClub extends Model
         return $this->belongsTo(EventSports::class, 'event_sports_id');
     }
 
-    public function eventParticipants()
+    public function participants()
     {
-        return $this->hasMany(Event_Participants::class);
+        return $this->hasMany(Event_Participants::class, 'event_clubs_id' );
     }
 }

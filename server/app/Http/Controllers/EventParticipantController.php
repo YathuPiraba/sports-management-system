@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event_Participants;
+use App\Models\EventClub;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EventParticipantController extends Controller
 {
@@ -93,5 +96,52 @@ class EventParticipantController extends Controller
         $participant->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    //POST => http://127.0.0.1:8000/api/addEventParticipants 
+    public function addEventParticipants(Request $request)
+    {
+        $request->validate([
+            'club_id' => 'required|integer|exists:clubs,id',
+            'event_sports_id' => 'required|integer|exists:event_sports,id',
+            'participants' => 'required|array',
+            'participants.*.member_sports_id' => 'required|integer|exists:member_sports,id',
+        ]);
+
+        try {
+            // Begin a transaction
+            DB::beginTransaction();
+
+            // Create a new event_club record
+            $eventClub = EventClub::create([
+                'club_id' => $request->club_id,
+                'event_sports_id' => $request->event_sports_id,
+            ]);
+
+            // Create event_participants records
+            foreach ($request->participants as $participant) {
+                Event_Participants::create([
+                    'event_clubs_id' => $eventClub->id,
+                    'member_sports_id' => $participant['member_sports_id'],
+                ]);
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Participants added successfully.',
+            ], 201);
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollBack();
+            Log::error('Error adding event participants: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error adding participants: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
