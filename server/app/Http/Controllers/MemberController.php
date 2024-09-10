@@ -684,11 +684,11 @@ class MemberController extends Controller
                     $query->where('sports_id', $sportsId)
                         ->with(['skills' => function ($skillQuery) {
                             $skillQuery->select('member_skills.id as member_skill_id', 'skills.skill as skill_name', 'member_skills.member_sport_id')
-                                ->join('skills as s', 's.id', '=', 'member_skills.skill_id'); // Use alias 's' for the skills table
+                                ->join('skills as s', 's.id', '=', 'member_skills.skill_id');
                         }])
                         ->select('id', 'member_id', 'sports_id');
                 }])
-                ->get(['id', 'firstName', 'lastName','position']);
+                ->get(['id', 'firstName', 'lastName', 'position', 'club_id']);
 
             if ($members->isEmpty()) {
                 return response()->json([
@@ -717,7 +717,8 @@ class MemberController extends Controller
                     'member_id' => $member->id,
                     'firstName' => $member->firstName,
                     'lastName' => $member->lastName,
-                    'member_position' => $member-> position,
+                    'club_id' => $member->club_id,
+                    'member_position' => $member->position,
                     'member_sports' => $memberSports,
                 ];
             });

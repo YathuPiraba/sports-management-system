@@ -14,7 +14,6 @@ const EventParticipantModal = ({
   name,
 }) => {
   const userId = useSelector((state) => state.auth.userdata.userId);
-  const [memberList, setMemberList] = useState([]);
   const [availableMembers, setAvailableMembers] = useState([]);
   const [addedParticipants, setAddedParticipants] = useState([]);
 
@@ -22,7 +21,6 @@ const EventParticipantModal = ({
     try {
       const response = await getMembersBySportsAPI(userId, sports_id);
       const members = response.data.data;
-      setMemberList(members);
       setAvailableMembers(members);
     } catch (error) {
       toast.error("Failed to fetch members.");
@@ -55,6 +53,10 @@ const EventParticipantModal = ({
       ).length,
     0
   );
+
+  console.log('====================================');
+  console.log(addedParticipants);
+  console.log('====================================');
 
   return (
     <Modal
@@ -102,13 +104,15 @@ const EventParticipantModal = ({
           <h3 className="text-lg font-semibold mb-4">Added Participants</h3>
           {/* Display the message if neededPlayers > 0 */}
           {neededPlayers > 0 && (
-            <div className="absolute top-10 right-2 text-red-500 font-semibold">
+            <div className="absolute top-11 right-2 text-red-500 font-semibold">
               {`${neededPlayers} more ${
                 neededPlayers == 1 ? "player" : "players"
               }  needed..!`}
             </div>
           )}
-          <ol className="list-decimal pl-4 space-y-2">
+          <ol className={`list-decimal pl-4 ${
+                neededPlayers == 0 ? "mt-0" : "mt-6"
+              } space-y-2`}>
             {addedParticipants.map((member, index) => (
               <li
                 key={member.member_id}
