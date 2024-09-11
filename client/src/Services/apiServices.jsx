@@ -353,3 +353,13 @@ export const addEventParticipantsAPI = (data) => {
 export const getEventParticipantsAPI = () => {
   return authApiClient.get(`/getEventParticipants`);
 };
+
+export const getAClubEventParticipantsAPI = (userId, selectedEvent) => {
+  return authApiClient.get('/getSpecificEventParticipants', {
+    params: {
+      user_id: userId,
+      event_id: selectedEvent,
+    },
+  });
+};
+

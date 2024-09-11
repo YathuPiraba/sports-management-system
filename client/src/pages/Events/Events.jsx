@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import GridLoader from "react-spinners/GridLoader";
 import { useSelector } from "react-redux";
 import "../../Components/Navbar/Navbar.css";
+import useClubEvents from "../../hooks/useClubEvents";
 
 const ClubParticipants = lazy(() =>
   import("../../Components/Events/ClubParticipants")
@@ -43,6 +44,14 @@ const Events = () => {
   const [showFirstDiv, setShowFirstDiv] = useState(true);
   const [selectedSport, setSelectedSport] = useState(null);
   const role_id = useSelector((state) => state.auth.userdata.role_id);
+  const userId = useSelector((state) => state.auth.userdata.userId);
+
+  const {
+    eventSportsWithParticipants,
+    loading: clubEventsLoading,
+    error,
+    fetchClubEvents
+  } = useClubEvents(selectedEvent, userId);
 
   const handleToggleDiv = () => {
     setShowFirstDiv(!showFirstDiv);
@@ -255,6 +264,8 @@ const Events = () => {
                             end_date={sport.end_date}
                             apply_due_date={sport.apply_due_date}
                             place={sport.place}
+                            participants={eventSportsWithParticipants}
+                            fetchClubEvents={fetchClubEvents}
                             onEdit={() => handleEditSport(sport)}
                             event={events.find(
                               (event) => event.id === selectedEvent

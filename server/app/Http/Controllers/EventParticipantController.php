@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Club_Manager;
 use App\Models\Event_Participants;
 use App\Models\EventClub;
+use App\Models\EventSports;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -151,46 +152,45 @@ class EventParticipantController extends Controller
     {
         try {
             // Fetch data from multiple tables with relationships
-            $eventClubs = EventClub::with([
-                'club:id,clubName', // Fetch club details
-                'eventSport:id,sports_id,event_id,name,place,start_date,end_date,apply_due_date', // Fetch event sport details
-                'eventSport.sportsCategory:id,name', // Fetch sports category details
-                'participants.memberSport:id,sports_id,member_id', // Fetch member sport details
-                'participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
-                'participants.memberSport.sport:id,name,image',
+            $eventSports = EventSports::with([
+                'eventClubs.club:id,clubName', // Fetch clubs associated with the event sport
+                'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
+                'eventClubs.participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
+                'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
             ])->get();
 
             // Transform the data to a simplified structure
-            $flattenedData = $eventClubs->map(function ($eventClub) {
+            $flattenedData = $eventSports->map(function ($eventSport) {
                 return [
-                    'club_id' => $eventClub->club_id,
-                    'clubName' => $eventClub->club->clubName,
-                    'event_clubs_id' => $eventClub->id,
-                    'sports_id' => $eventClub->eventSport->sports_id,
-                    'event_id' => $eventClub->eventSport->event_id,
                     'event_sports' => [
-                        'id' => $eventClub->eventSport->id,
-                        'name' => $eventClub->eventSport->name,
-                        'start_date' => $eventClub->eventSport->start_date,
-                        'end_date' => $eventClub->eventSport->end_date,
-                        'place' => $eventClub->eventSport->place,
+                        'id' => $eventSport->id,
+                        'name' => $eventSport->name,
+                        'start_date' => $eventSport->start_date,
+                        'end_date' => $eventSport->end_date,
+                        'place' => $eventSport->place,
+                        'sports' => [
+                            'sports_id' => $eventSport->sportsCategory->id,
+                            'name' => $eventSport->sportsCategory->name,
+                            'image' => $eventSport->sportsCategory->image, 
+                        ],
+                        'clubs' => $eventSport->eventClubs->map(function ($eventClub) {
+                            return [
+                                'club_id' => $eventClub->club_id,
+                                'clubName' => $eventClub->club->clubName,
+                                'event_clubs_id' => $eventClub->id,
+                                'participants' => $eventClub->participants->map(function ($participant) {
+                                    return [
+                                        'member' => [
+                                            'id' => $participant->memberSport->member->id,
+                                            'firstName' => $participant->memberSport->member->firstName,
+                                            'lastName' => $participant->memberSport->member->lastName,
+                                            'position' => $participant->memberSport->member->position,
+                                        ],
+                                    ];
+                                }),
+                            ];
+                        }),
                     ],
-                    'participants' => $eventClub->participants->map(function ($participant) {
-                        return [
-                            'member' => [
-                                'id' => $participant->memberSport->member->id,
-                                'firstName' => $participant->memberSport->member->firstName,
-                                'lastName' => $participant->memberSport->member->lastName,
-                                'position' => $participant->memberSport->member->position,
-                            ],
-                            'sport' => [
-                                'sports_id' => $participant->memberSport->sports_id,
-                                'name' => $participant->memberSport->sport->name,
-                                'image' => $participant->memberSport->sport->image,
-                            ],
-
-                        ];
-                    }),
                 ];
             });
 
@@ -233,51 +233,55 @@ class EventParticipantController extends Controller
 
             $clubId = $clubManager->club_id;
 
-            // Fetch data from multiple tables with relationships based on club_id and event_id
-            $eventClubs = EventClub::with([
-                'club:id,clubName', // Fetch club details
-                'eventSport:id,sports_id,event_id,name,place,start_date,end_date,apply_due_date', // Fetch event sport details
-                'eventSport.sportsCategory:id,name', // Fetch sports category details
-                'participants.memberSport:id,sports_id,member_id', // Fetch member sport details
-                'participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
-                'participants.memberSport.sport:id,name,image',
+            // Fetch all event sports data with participants based on event_id and club_id
+            $eventSports = EventSports::with([
+                'eventClubs.club:id,clubName', // Fetch club details
+                'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
+                'eventClubs.participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
+                'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
             ])
-                ->where('club_id', $clubId)
-                ->whereHas('eventSport', function ($query) use ($eventId) {
-                    $query->where('event_id', $eventId);
+                ->where('event_id', $eventId)
+                ->whereHas('eventClubs', function ($query) use ($clubId) {
+                    $query->where('club_id', $clubId);
                 })
                 ->get();
 
-            // Transform the data to a simplified structure
-            $flattenedData = $eventClubs->map(function ($eventClub) {
+            if ($eventSports->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Event sports data not found.',
+                ], 404);
+            }
+
+            // Transform the data to the desired structure
+            $flattenedData = $eventSports->map(function ($eventSport) {
                 return [
-                    'club_id' => $eventClub->club_id,
-                    'clubName' => $eventClub->club->clubName,
-                    'event_clubs_id' => $eventClub->id,
-                    'sports_id' => $eventClub->eventSport->sports_id,
-                    'event_id' => $eventClub->eventSport->event_id,
                     'event_sports' => [
-                        'id' => $eventClub->eventSport->id,
-                        'name' => $eventClub->eventSport->name,
-                        'start_date' => $eventClub->eventSport->start_date,
-                        'end_date' => $eventClub->eventSport->end_date,
-                        'place' => $eventClub->eventSport->place,
+                        'id' => $eventSport->id,
+                        'name' => $eventSport->name,
+                        'start_date' => $eventSport->start_date,
+                        'end_date' => $eventSport->end_date,
+                        'place' => $eventSport->place,
+                        'sports' => [
+                            'sports_id' => $eventSport->sportsCategory->id, // Assuming sportsCategory represents the sport
+                            'name' => $eventSport->sportsCategory->name,
+                            'image' => $eventSport->sportsCategory->image, // Ensure this field exists in the sportsCategory model
+                        ],
+                        'club_id' => $eventSport->eventClubs->first()->club_id,
+                        'event_club_id' => $eventSport->eventClubs->first()->id,
+                        'participants' => $eventSport->eventClubs->flatMap(function ($eventClub) {
+                            return $eventClub->participants->map(function ($participant) {
+                                return [
+                                    'member' => [
+                                        'id' => $participant->memberSport->member->id,
+                                        'firstName' => $participant->memberSport->member->firstName,
+                                        'lastName' => $participant->memberSport->member->lastName,
+                                        'position' => $participant->memberSport->member->position,
+                                    ],
+                                ];
+                            });
+                        }),
                     ],
-                    'participants' => $eventClub->participants->map(function ($participant) {
-                        return [
-                            'member' => [
-                                'id' => $participant->memberSport->member->id,
-                                'firstName' => $participant->memberSport->member->firstName,
-                                'lastName' => $participant->memberSport->member->lastName,
-                                'position' => $participant->memberSport->member->position,
-                            ],
-                            'sport' => [
-                                'sports_id' => $participant->memberSport->sports_id,
-                                'name' => $participant->memberSport->sport->name,
-                                'image' => $participant->memberSport->sport->image,
-                            ],
-                        ];
-                    }),
                 ];
             });
 

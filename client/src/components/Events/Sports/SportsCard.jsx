@@ -28,12 +28,15 @@ const SportsCard = ({
   end_date,
   apply_due_date,
   place,
+  participants,
+  fetchClubEvents,
 }) => {
   const [isParticipantModalVisible, setIsParticipantModalVisible] =
     useState(false);
 
   const handleParticipantModalOk = () => {
     setIsParticipantModalVisible(false);
+    fetchClubEvents();
   };
 
   const handleParticipantModalCancel = () => {
@@ -54,11 +57,14 @@ const SportsCard = ({
   const todayDate = formatDate(new Date());
   const dueDate = formatDate(apply_due_date);
 
-  console.log(todayDate <= dueDate, todayDate, dueDate);
+  // Check if the eventSportsId is in the participants array
+  const isApplied = participants?.some(
+    (participant) => participant.id === eventSportsId
+  );
 
   return (
-    <div className=" flex flex-col border bg-slate-100 rounded-md  px-0.5">
-      <div className="w-44 h-40  bg-customPurple rounded-lg shadow-md flex items-center justify-center mx-4 mt-4 mb-2 overflow-hidden relative group">
+    <div className="flex flex-col border bg-slate-100 rounded-md px-0.5">
+      <div className="w-44 h-40 bg-customPurple rounded-lg shadow-md flex items-center justify-center mx-4 mt-4 mb-2 overflow-hidden relative group">
         <img
           src={image}
           alt={name}
@@ -104,14 +110,24 @@ const SportsCard = ({
             {role_id === 2 && (
               <div className="hover:bg-green-500 rounded-md">
                 {/* Apply Button Conditional Rendering */}
-                {todayDate <= dueDate && (
+                {isApplied ? (
                   <Button
                     type="text"
-                    className="bg-green-400 !text-white"
-                    onClick={() => setIsParticipantModalVisible(true)}
+                    className="bg-gray-400 !text-white"
+                    disabled
                   >
-                    Apply
+                    Applied
                   </Button>
+                ) : (
+                  todayDate <= dueDate && (
+                    <Button
+                      type="text"
+                      className="bg-green-400 !text-white"
+                      onClick={() => setIsParticipantModalVisible(true)}
+                    >
+                      Apply
+                    </Button>
+                  )
                 )}
               </div>
             )}
