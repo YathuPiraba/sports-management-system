@@ -180,6 +180,19 @@ const Events = () => {
                   >
                     Edit Event
                   </Button>
+                  <Popconfirm
+                    title="Are you sure you want to delete this event?"
+                    onConfirm={handleDeleteEvent}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button
+                      className="bg-red-500 text-white hover:bg-red-600 ml-2"
+                      icon={<DeleteOutlined />}
+                    >
+                      Delete Event
+                    </Button>
+                  </Popconfirm>
                 </>
               )}
             </>

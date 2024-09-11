@@ -121,6 +121,7 @@ Route::prefix('events')->group(function () {
 
 Route::post('/addEventParticipants', [EventParticipantController::class, 'addEventParticipants']);
 Route::get('/getEventParticipants', [EventParticipantController::class, 'getEventParticipants']);
+Route::get('/getSpecificEventParticipants', [EventParticipantController::class, 'getSpecificEventParticipants']);
 
 Route::prefix('events/{eventId}/sports')->group(function () {
     Route::post('/', [EventSportController::class, 'store']); // Add a new sport to an event
