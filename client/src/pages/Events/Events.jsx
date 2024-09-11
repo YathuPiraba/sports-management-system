@@ -11,6 +11,9 @@ import GridLoader from "react-spinners/GridLoader";
 import { useSelector } from "react-redux";
 import "../../Components/Navbar/Navbar.css";
 
+const EventParticipantList = lazy(() =>
+  import("../../Components/Events/EventParticipantList")
+);
 const EventFormModal = lazy(() =>
   import("../../Components/Events/EventFormModal")
 );
@@ -235,6 +238,7 @@ const Events = () => {
                             start_date={sport.start_date}
                             end_date={sport.end_date}
                             apply_due_date={sport.apply_due_date}
+                            place={sport.place}
                             onEdit={() => handleEditSport(sport)}
                             event={events.find(
                               (event) => event.id === selectedEvent
@@ -256,9 +260,7 @@ const Events = () => {
                     label: "Participation List",
                     children: (
                       <div>
-                        <p className="text-lg font-medium text-black mb-2 font-poppins">
-                          This is the Event Participation tab content.
-                        </p>
+                        <EventParticipantList />
                       </div>
                     ),
                   },

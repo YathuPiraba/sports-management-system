@@ -347,3 +347,7 @@ export const getMembersBySportsAPI = (userId, sports_id) => {
 export const addEventParticipantsAPI = (data) => {
   return authApiClient.post(`/addEventParticipants`, data);
 };
+
+export const getEventParticipantsAPI = () => {
+  return authApiClient.get(`/getEventParticipants`);
+};

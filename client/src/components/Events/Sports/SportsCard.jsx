@@ -9,8 +9,8 @@ import "../../../App.css";
 function formatDate(date) {
   const d = new Date(date);
   const year = d.getFullYear();
-  const month = ('0' + (d.getMonth() + 1)).slice(-2); 
-  const day = ('0' + d.getDate()).slice(-2);         
+  const month = ("0" + (d.getMonth() + 1)).slice(-2);
+  const day = ("0" + d.getDate()).slice(-2);
   return `${year}-${month}-${day}`;
 }
 
@@ -27,6 +27,7 @@ const SportsCard = ({
   start_date,
   end_date,
   apply_due_date,
+  place,
 }) => {
   const [isParticipantModalVisible, setIsParticipantModalVisible] =
     useState(false);
@@ -53,8 +54,7 @@ const SportsCard = ({
   const todayDate = formatDate(new Date());
   const dueDate = formatDate(apply_due_date);
 
-  console.log(todayDate  <= dueDate , todayDate,dueDate);
-  
+  console.log(todayDate <= dueDate, todayDate, dueDate);
 
   return (
     <div className=" flex flex-col border bg-slate-100 rounded-md  px-0.5">
@@ -70,7 +70,8 @@ const SportsCard = ({
           </p>
           {/* Display Start and End Date */}
           <p className="text-white text-xs mb-1">Start Date: {start_date}</p>
-          <p className="text-white text-xs mb-2">End Date: {end_date}</p>
+          <p className="text-white text-xs mb-1">End Date: {end_date}</p>
+          <p className="text-white text-xs mb-2">Place: {place}</p>
           <div className="flex justify-center space-x-2">
             {role_id === 1 && (
               <>
