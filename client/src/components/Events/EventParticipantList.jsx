@@ -17,6 +17,8 @@ const EventParticipantList = () => {
       const clubsData = res.data.data;
       const formattedTreeData = formatTreeData(clubsData);
       setTreeData(formattedTreeData);
+      console.log(res.data.data);
+      
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");

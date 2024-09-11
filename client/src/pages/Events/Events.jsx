@@ -242,7 +242,7 @@ const Events = () => {
                     key: "1",
                     label: "Event Sports",
                     children: (
-                      <div className="flex flex-wrap justify-center mb-4 font-poppins">
+                      <div className="flex flex-wrap gap-2 justify-center mb-4 font-poppins">
                         {selectedEventDetails.event_sports?.map((sport) => (
                           <SportsCard
                             key={sport.id}
