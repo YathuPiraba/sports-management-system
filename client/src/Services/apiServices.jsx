@@ -112,7 +112,8 @@ export const fetchVerifiedMemberDataApi = (
   page = 1,
   perPage = 5,
   sortBy = "name", // Default sort by 'name'
-  sort = "asc"
+  sort = "asc",
+  search = "" 
 ) => {
   return authApiClient.get("/queryMembers", {
     params: {
@@ -121,6 +122,7 @@ export const fetchVerifiedMemberDataApi = (
       per_page: perPage,
       sortBy: sortBy,
       sort: sort,
+      search: search, 
     },
   });
 };

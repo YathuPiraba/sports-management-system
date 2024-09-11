@@ -455,7 +455,6 @@ class MemberController extends Controller
     // GET => http://127.0.0.1:8000/api/queryMembers
     public function queryMembers(Request $request)
     {
-
         try {
             // Get the userId from the request
             $userId = $request->input('userId');
@@ -466,11 +465,12 @@ class MemberController extends Controller
                 ], 400);
             }
 
-            // Get the page number and items per page from the request, or use defaults
+            // Get the page number, items per page, sort order, and sort column from the request, or use defaults
             $page = $request->input('page', 1);
             $perPage = $request->input('per_page', 12);
             $sort = $request->input('sort', 'asc');
             $sortBy = $request->input('sortBy', 'name');
+            $search = $request->input('search', '');
 
             // Find the club manager and associated manager_id
             $clubManager = Club_Manager::where('user_id', $userId)->first();
@@ -495,14 +495,25 @@ class MemberController extends Controller
                         ->withTrashed();
                 });
 
+            // Apply search filter if a search term is provided
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('firstName', 'like', "%{$search}%")
+                      ->orWhere('lastName', 'like', "%{$search}%")
+                      ->orWhere('contactNo', 'like', "%{$search}%")
+                      ->orWhere('whatsappNo', 'like', "%{$search}%");
+                });
+            }
 
+            // Apply sorting
             if ($sortBy === 'name') {
                 $query->orderBy('firstName', $sort)
-                    ->orderBy('lastName', $sort);
+                      ->orderBy('lastName', $sort);
             } elseif ($sortBy === 'created_at') {
                 $query->orderBy('created_at', $sort);
             }
 
+            // Paginate the results
             $members = $query->paginate($perPage, ['*'], 'page', $page);
 
             if ($members->isEmpty()) {
@@ -512,42 +523,22 @@ class MemberController extends Controller
                 ], 200);
             }
 
+            // Transform the members data
             $membersWithSportsAndSkills = collect($members->items())->map(function ($member) {
                 $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
                 $user = $member->user;
-
-                //  $sportsDetails = $member->memberSports->map(function ($memberSport) {
-                //      $skills = $memberSport->skills->map(function ($skill) {
-                //          return [
-                //              'skill_id' => $skill->id ?? null,
-                //              'skill_name' => $skill->skill ?? null,
-                //          ];
-                //      })->values();
-
-                //      return [
-                //          'sport_id' => $memberSport->sport->id,
-                //          'sport_name' => $memberSport->sport->name,
-                //          'skills' => $skills,
-                //      ];
-                //  })->values();
 
                 return [
                     'member_id' => $member->id,
                     'firstName' => $member->firstName,
                     'lastName' => $member->lastName,
                     'date_of_birth' => $member->date_of_birth,
-                    //  'address' => $member->address,
-                    //  'nic' => $member->nic,
                     'contactNo' => $member->contactNo,
                     'whatsappNo' => $member->whatsappNo,
-                    //  'experience' => $member->experience,
                     'age' => $member->age,
                     'position' => $member->position,
-                    //  'gs_id' => $member->gs_id,
-                    //  'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
                     'created_at' => $member->created_at->toDateString(),
                     'user' => $user ? $user->safeAttributes() : null,
-                    //  'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
                 ];
             });
 
@@ -571,6 +562,7 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
 
     // GET => http://127.0.0.1:8000/api/memberDetails/{memberId}
     public function getMemberDetails($memberId)

@@ -7,11 +7,11 @@ import {
 import { useSelector } from "react-redux";
 import { useTheme } from "../../context/ThemeContext";
 import { Popconfirm, message } from "antd";
-import GridLoader from "react-spinners/GridLoader";
 import { IoSearchCircleOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 import SortControls from "../../Components/Pagination_Sorting_Search/SortControls";
+import { PropagateLoader, GridLoader } from "react-spinners";
 
 const ClubMembers = () => {
   const [members, setMembers] = useState([]);
@@ -24,6 +24,7 @@ const ClubMembers = () => {
     total: 0,
   });
   const [initialLoading, setInitialLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
   const [sortConfig, setSortConfig] = useState({
     sortBy: "name",
@@ -43,63 +44,56 @@ const ClubMembers = () => {
     { key: "actions", label: "Actions" },
   ];
 
-  const fetchMembers = 
-    async (
-      page = pagination.currentPage,
-      perPage = pagination.perPage,
-      sortBy = sortConfig.sortBy,
-      sort = sortConfig.sort
-    ) => {
-      try {
-        const res = await fetchVerifiedMemberDataApi(
-          userId,
-          page,
-          perPage,
-          sortBy,
-          sort
-        );
-        setMembers(res.data.data);
-        setFilteredMembers(res.data.data);
-        const paginationData = res.data.pagination;
+  const fetchMembers = async (
+    page = pagination.currentPage,
+    perPage = pagination.perPage,
+    sortBy = sortConfig.sortBy,
+    sort = sortConfig.sort,
+    search = searchQuery
+  ) => {
+    setLoading(true);
+    try {
+      const res = await fetchVerifiedMemberDataApi(
+        userId,
+        page,
+        perPage,
+        sortBy,
+        sort,
+        search
+      );
+      setMembers(res.data.data);
+      setFilteredMembers(res.data.data);
+      const paginationData = res.data.pagination;
 
-        setPagination({
-          currentPage: paginationData.current_page,
-          totalPages: paginationData.last_page,
-          perPage: paginationData.per_page,
-          total: paginationData.total,
-        });
-      } catch (error) {
-        console.error(error);
-        message.error("Failed to fetch members. Please try again.");
-      } finally {
-        setInitialLoading(false);
-      }
+      setPagination({
+        currentPage: paginationData.current_page,
+        totalPages: paginationData.last_page,
+        perPage: paginationData.per_page,
+        total: paginationData.total,
+      });
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to fetch members. Please try again.");
+    } finally {
+      setInitialLoading(false);
+      setLoading(false);
     }
+  };
 
   useEffect(() => {
     fetchMembers();
-  }, [sortConfig]);
+  }, [sortConfig, searchQuery]);
 
   const handleSortChange = (sortBy, sort) => {
     setSortConfig({ sortBy, sort });
   };
 
-  console.log(sortConfig);
-
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-
-    setFilteredMembers(
-      query === ""
-        ? members
-        : members.filter((member) =>
-            `${member.firstName} ${member.lastName}`
-              .toLowerCase()
-              .includes(query)
-          )
-    );
   };
+
+  console.log(searchQuery);
 
   const handleAction = async (memberUserId, isDeactivated) => {
     try {
@@ -147,7 +141,7 @@ const ClubMembers = () => {
             placeholder="Search Members..."
             value={searchQuery}
             onChange={handleSearch}
-            className="border border-blue-200 outline-none rounded-md py-1 text-sm pl-8 w-full lg:w-64 hover:border-blue-400"
+            className="border border-blue-200 outline-none rounded-md py-1 text-sm pl-8  pr-2 w-full lg:w-64 hover:border-blue-400"
           />
           <IoSearchCircleOutline
             size={22}
@@ -170,6 +164,15 @@ const ClubMembers = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
+            {loading && (
+              <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20  z-50">
+                <PropagateLoader
+                  className="ml-1 mt-1"
+                  size={10}
+                  color="skyblue"
+                />
+              </div>
+            )}
             {filteredMembers.length > 0 ? (
               filteredMembers.map((member, index) => (
                 <tr key={member.member_id}>
