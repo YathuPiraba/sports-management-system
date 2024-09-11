@@ -46,9 +46,7 @@ const MemberSignIn = () => {
   const [currentStep, setCurrentStep] = useState("personalDetails");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const loading = useSelector((state) => state.auth.loading);
-
-  const loading = true;
+  const loading = useSelector((state) => state.auth.loading);
 
   const fetchAllClubs = async () => {
     try {

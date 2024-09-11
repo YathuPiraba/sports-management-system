@@ -33,15 +33,19 @@ const useMemberNotifications = () => {
   useEffect(() => {
     const subscribeToChannel = async () => {
       try {
-        console.log("Attempting to subscribe to channel...");
+        console.log("Attempting to subscribe to Notification channel...");
 
         // Fetch initial manager data
         await fetchMemberData();
 
         // Listen for real-time updates on the "managers" channel
         echo.channel("members").listen(".MemberApplied", (event) => {
-          console.log("Notification updated:", event.manager);
-          fetchMemberData();
+          console.log("Notification updated:", event.managerUserId);
+
+          if (event.managerUserId == userId) {
+            // Fetch the updated member data
+            fetchMemberData();
+          }
         });
 
         console.log("Successfully subscribed to channel.");

@@ -73,14 +73,14 @@ const useMemberData = () => {
   };
 
   useEffect(() => {
-    console.log("Attempting to subscribe to channel...");
+    console.log("Attempting to subscribe to approval channel...");
     fetchMemberData(pagination.currentPage, pagination.perPage);
 
     const channel = echo.channel("members");
 
     // Listen for real-time updates
     channel.listen(".MemberApplied", (event) => {
-      console.log("New member applied");
+      console.log("New member applied:", event.managerUserId);
 
       if (event.managerUserId == userId) {
         // Fetch the updated member data

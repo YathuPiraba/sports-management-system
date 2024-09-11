@@ -46,12 +46,16 @@ const Events = () => {
   const role_id = useSelector((state) => state.auth.userdata.role_id);
   const userId = useSelector((state) => state.auth.userdata.userId);
 
-  const {
-    eventSportsWithParticipants,
-    loading: clubEventsLoading,
-    error,
-    fetchClubEvents,
-  } = useClubEvents(selectedEvent, userId);
+  let eventSportsWithParticipants = [];
+  let clubEventsLoading = false;
+  let fetchClubEvents = () => {};
+
+  if (role_id === 2) {
+    const clubEventsData = useClubEvents(selectedEvent, userId);
+    eventSportsWithParticipants = clubEventsData.eventSportsWithParticipants;
+    clubEventsLoading = clubEventsData.loading;
+    fetchClubEvents = clubEventsData.fetchClubEvents;
+  }
 
   const handleToggleDiv = () => {
     setShowFirstDiv(!showFirstDiv);
@@ -287,15 +291,22 @@ const Events = () => {
                     label: "Participation List",
                     children: (
                       <>
-                        {role_id == 1 ? (
-                          <EventParticipantList />
-                        ) : (
-                          <ClubParticipants
-                            participants={eventSportsWithParticipants}
-                            fetchClubEvents={fetchClubEvents}
-                            loading={clubEventsLoading}
-                          />
-                        )}
+                        {(() => {
+                          switch (role_id) {
+                            case 1:
+                              return <EventParticipantList />;
+                            case 2:
+                              return (
+                                <ClubParticipants
+                                  participants={eventSportsWithParticipants}
+                                  fetchClubEvents={fetchClubEvents}
+                                  loading={clubEventsLoading}
+                                />
+                              );
+                            default:
+                              return null;
+                          }
+                        })()}
                       </>
                     ),
                   },

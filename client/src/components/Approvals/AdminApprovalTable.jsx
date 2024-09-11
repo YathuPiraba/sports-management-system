@@ -44,12 +44,13 @@ const AdminApprovalTable = ({
     }
 
     if (column === "Address") {
-      return value
-        ? value
+      return data[key]
+        ? data[key]
             .split(",")
             .map((line, index) => <div key={index}>{line.trim()}</div>)
         : "N/A";
     }
+
     return data[key] || "N/A";
   };
 

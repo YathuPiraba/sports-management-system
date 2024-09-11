@@ -61,7 +61,7 @@ const ManagerApprovals = () => {
 
   const cancel = (e) => {
     console.log(e);
-    message.error("Click on No");
+    message.error("Process cancelled");
   };
 
   return (
@@ -83,7 +83,7 @@ const ManagerApprovals = () => {
               Manager Approvals
             </h1>
             <div className="space-y-4">
-              {memberData && memberData > 0
+              {memberData && memberData.length > 0
                 ? memberData.map((member, index) => (
                     <div
                       key={member.memberId}
@@ -104,13 +104,22 @@ const ManagerApprovals = () => {
                           </button>
                         </div>
                         <div className="ml-auto mt-0.5 mr-4 flex gap-6">
-                          <button
-                            onClick={() => updateVerification(member.memberId)}
-                          >
-                            <FcApproval size={22} />
-                          </button>
                           <Popconfirm
-                            title="Delete the task"
+                            title="Verification"
+                            description="Are you sure about verifying this Request?"
+                            onConfirm={() =>
+                              updateVerification(member.memberId)
+                            }
+                            onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <button>
+                              <FcApproval size={22} />
+                            </button>
+                          </Popconfirm>
+                          <Popconfirm
+                            title="Deleting Request"
                             description="Are you sure to delete this Request?"
                             onConfirm={() => rejectRequest(member.memberId)}
                             onCancel={cancel}

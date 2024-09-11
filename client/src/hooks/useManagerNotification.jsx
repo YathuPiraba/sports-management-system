@@ -10,8 +10,6 @@ const useManagerNotifications = () => {
       const res = await fetchManagerDataApi();
       const managers = res.data.data;
 
-      console.log(managers);
-
       // Separate verified and unverified managers
       const unverifiedManagers = managers.filter(
         (manager) => manager.user.is_verified === 0
@@ -33,14 +31,16 @@ const useManagerNotifications = () => {
   useEffect(() => {
     const subscribeToChannel = async () => {
       try {
-        console.log("Attempting to subscribe to channel...");
+        console.log("Attempting to subscribe to notification channel...");
 
         // Fetch initial manager data
         await fetchManagerData();
 
+        const channel = echo.channel("managers");
         // Listen for real-time updates on the "managers" channel
-        echo.channel("managers").listen(".ManagerApplied", (event) => {
-          console.log("Notification updated:", event.manager);
+        channel.listen(".ManagerApplied", (event) => {
+          console.log("New manager applied:", event.manager);
+          // Fetch the updated manager data
           fetchManagerData();
         });
 

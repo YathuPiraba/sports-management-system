@@ -171,7 +171,7 @@ class EventParticipantController extends Controller
                         'sports' => [
                             'sports_id' => $eventSport->sportsCategory->id,
                             'name' => $eventSport->sportsCategory->name,
-                            'image' => $eventSport->sportsCategory->image, 
+                            'image' => $eventSport->sportsCategory->image,
                         ],
                         'clubs' => $eventSport->eventClubs->map(function ($eventClub) {
                             return [
@@ -248,9 +248,10 @@ class EventParticipantController extends Controller
 
             if ($eventSports->isEmpty()) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Event sports data not found.',
-                ], 404);
+                    'success' => true,
+                    'data' => [], 
+                    'message' => 'No event sports data found.',
+                ], 200);
             }
 
             // Transform the data to the desired structure

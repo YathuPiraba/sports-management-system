@@ -45,7 +45,7 @@ const Navbar = () => {
   if (role_id == 1) {
     const managerNotifications = useManagerNotifications();
     notifications = managerNotifications.notifications;
-  } else if (role_id == 2) {
+  } else if (role_id === 2) {
     const memberNotifications = useMemberNotifications();
     notifications = memberNotifications.notifications;
   }

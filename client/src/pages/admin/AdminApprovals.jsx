@@ -97,60 +97,71 @@ const AdminApprovals = () => {
               Approval Requests
             </h1>
             <div className="space-y-4">
-              {clubData.map((club, index) => (
-                <div
-                  key={club.clubName}
-                  className={` ${
-                    theme === "light" ? "bg-white" : "bg-gray-300 text-black"
-                  }    w-full`}
-                >
-                  <div className="flex flex-row w-full mr-0 hover:bg-blue-700 hover:text-white">
-                    <div className="customApprove">
-                      {" "}
-                      <button
-                        className={`w-full text-left text-l border-0  hover:text-white  font-semibold p-2 mb-0 rounded-sm mt-0`}
-                        onClick={() => handleToggle(club.clubName)}
-                      >
-                        {index + 1}. {club.clubName}
-                      </button>{" "}
+              {clubData && clubData.length > 0
+                ? clubData.map((club, index) => (
+                    <div
+                      key={club.clubName}
+                      className={` ${
+                        theme === "light"
+                          ? "bg-white"
+                          : "bg-gray-300 text-black"
+                      }    w-full`}
+                    >
+                      <div className="flex flex-row w-full mr-0 hover:bg-blue-700 hover:text-white">
+                        <div className="customApprove">
+                          {" "}
+                          <button
+                            className={`w-full text-left text-l border-0  hover:text-white  font-semibold p-2 mb-0 rounded-sm mt-0`}
+                            onClick={() => handleToggle(club.clubName)}
+                          >
+                            {index + 1}. {club.clubName}
+                          </button>{" "}
+                        </div>
+                        <div className="ml-auto mt-0.5 mr-4 flex gap-6">
+                          <Popconfirm
+                            title="Verification"
+                            description="Are you sure about verifying this Request?"
+                            onConfirm={() =>
+                              updateVerification(club.managers[0].managerId)
+                            }
+                            onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <button>
+                              <FcApproval size={22} />
+                            </button>
+                          </Popconfirm>
+                          <Popconfirm
+                            title="Deleting Request"
+                            description="Are you sure to delete this Request?"
+                            onConfirm={() =>
+                              rejectRequest(
+                                club.managers[0].clubId,
+                                club.managers[0].userId
+                              )
+                            }
+                            onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <button className="text-red-400 hover:text-red-500">
+                              <TiDelete size={25} />
+                            </button>
+                          </Popconfirm>
+                        </div>
+                      </div>
+                      {expandedClub === club.clubName && (
+                        <AdminApprovalTable
+                          clubData={[club]}
+                          clubColumns={clubColumns}
+                          managerData={club.managers}
+                          managerColumns={managerColumns}
+                        />
+                      )}
                     </div>
-                    <div className="ml-auto mt-0.5 mr-4 flex gap-6">
-                      <button
-                        onClick={() =>
-                          updateVerification(club.managers[0].managerId)
-                        }
-                      >
-                        <FcApproval size={22} />
-                      </button>
-                      <Popconfirm
-                        title="Delete the task"
-                        description="Are you sure to delete this Request?"
-                        onConfirm={() =>
-                          rejectRequest(
-                            club.managers[0].clubId,
-                            club.managers[0].userId
-                          )
-                        }
-                        onCancel={cancel}
-                        okText="Yes"
-                        cancelText="No"
-                      >
-                        <button className="text-red-400 hover:text-red-500">
-                          <TiDelete size={25} />
-                        </button>
-                      </Popconfirm>
-                    </div>
-                  </div>
-                  {expandedClub === club.clubName && (
-                    <AdminApprovalTable
-                      clubData={[club]}
-                      clubColumns={clubColumns}
-                      managerData={club.managers}
-                      managerColumns={managerColumns}
-                    />
-                  )}
-                </div>
-              ))}
+                  ))
+                : "No Approval requests are here"}
             </div>
 
             <Pagination
