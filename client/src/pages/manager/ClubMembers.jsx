@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   fetchVerifiedMemberDataApi,
   deactivateUserAPI,
@@ -15,7 +15,6 @@ import SortControls from "../../Components/Pagination_Sorting_Search/SortControl
 
 const ClubMembers = () => {
   const [members, setMembers] = useState([]);
-  const [columns, setColumns] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
@@ -24,7 +23,7 @@ const ClubMembers = () => {
     perPage: 5,
     total: 0,
   });
-  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const { theme } = useTheme();
   const [sortConfig, setSortConfig] = useState({
     sortBy: "name",
@@ -34,93 +33,73 @@ const ClubMembers = () => {
   const user = useSelector((state) => state.auth.userdata);
   const userId = user.userId;
 
-  const fetchMembers = async (
-    page = 1,
-    perPage = 5,
-    sortBy = sortConfig.sortBy,
-    sort = sortConfig.sort
-  ) => {
-    setLoading(true);
-    try {
-      const res = await fetchVerifiedMemberDataApi(
-        userId,
-        page,
-        perPage,
-        sortBy,
-        sort
-      );
-      setMembers(res.data.data);
-      setFilteredMembers(res.data.data);
-      const paginationData = res.data.pagination;
+  const columns = [
+    { key: "no", label: "No" },
+    { key: "profile", label: "Profile" },
+    { key: "name", label: "Name" },
+    { key: "role", label: "Role" },
+    { key: "age", label: "Age" },
+    { key: "created_at", label: "Join Date" },
+    { key: "actions", label: "Actions" },
+  ];
 
-      setPagination({
-        currentPage: paginationData.current_page,
-        totalPages: paginationData.last_page,
-        perPage: paginationData.per_page,
-        total: paginationData.total,
-      });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+  const fetchMembers = 
+    async (
+      page = pagination.currentPage,
+      perPage = pagination.perPage,
+      sortBy = sortConfig.sortBy,
+      sort = sortConfig.sort
+    ) => {
+      try {
+        const res = await fetchVerifiedMemberDataApi(
+          userId,
+          page,
+          perPage,
+          sortBy,
+          sort
+        );
+        setMembers(res.data.data);
+        setFilteredMembers(res.data.data);
+        const paginationData = res.data.pagination;
+
+        setPagination({
+          currentPage: paginationData.current_page,
+          totalPages: paginationData.last_page,
+          perPage: paginationData.per_page,
+          total: paginationData.total,
+        });
+      } catch (error) {
+        console.error(error);
+        message.error("Failed to fetch members. Please try again.");
+      } finally {
+        setInitialLoading(false);
+      }
     }
-  };
-
-  const goToPage = (page) => {
-    fetchMembers(page, pagination.perPage);
-  };
 
   useEffect(() => {
-    fetchMembers(
-      pagination.currentPage,
-      pagination.perPage,
-      sortConfig.sortBy,
-      sortConfig.sort
-    );
-
-    setColumns([
-      { key: "no", label: "No" },
-      { key: "profile", label: "Profile" },
-      { key: "name", label: "Name" },
-      { key: "role", label: "Role" },
-      { key: "age", label: "Age" },
-      { key: "created_at", label: "Join Date" },
-      { key: "actions", label: "Actions" },
-    ]);
+    fetchMembers();
   }, [sortConfig]);
 
   const handleSortChange = (sortBy, sort) => {
     setSortConfig({ sortBy, sort });
   };
 
+  console.log(sortConfig);
+
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
 
-    if (query === "") {
-      setFilteredMembers(members);
-    } else {
-      setFilteredMembers(
-        members.filter((member) =>
-          `${member.firstName} ${member.lastName}`.toLowerCase().includes(query)
-        )
-      );
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center w-full h-[75vh]">
-        <GridLoader
-          loading={loading}
-          size={15}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-          color="#4682B4"
-        />
-      </div>
+    setFilteredMembers(
+      query === ""
+        ? members
+        : members.filter((member) =>
+            `${member.firstName} ${member.lastName}`
+              .toLowerCase()
+              .includes(query)
+          )
     );
-  }
+  };
 
   const handleAction = async (memberUserId, isDeactivated) => {
     try {
@@ -131,25 +110,36 @@ const ClubMembers = () => {
         await deactivateUserAPI(memberUserId);
         message.success("User deactivated successfully");
       }
-      // Refresh the member list after action
-      fetchMembers(
-        pagination.currentPage,
-        pagination.perPage,
-        sortConfig.sortBy,
-        sortConfig.sort
-      );
+      fetchMembers();
     } catch (error) {
       console.error("Error in action:", error);
       message.error("Action failed. Please try again.");
     }
   };
 
+  if (initialLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[75vh]">
+        <GridLoader
+          loading={initialLoading}
+          size={15}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          color="#4682B4"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
         <div className="flex gap-5 mb-4 lg:mb-0">
           <h2 className="text-2xl font-bold">Club Members</h2>
-          <SortControls onSortChange={handleSortChange} />
+          <SortControls
+            onSortChange={handleSortChange}
+            sortConfig={sortConfig}
+          />
         </div>
         <div className="relative lg:ml-auto">
           <input
@@ -157,7 +147,7 @@ const ClubMembers = () => {
             placeholder="Search Members..."
             value={searchQuery}
             onChange={handleSearch}
-            className="border border-blue-200 outline-none rounded-md py-1 text-sm pl-8 w-full lg:w-64 hover:border-blue-400 "
+            className="border border-blue-200 outline-none rounded-md py-1 text-sm pl-8 w-full lg:w-64 hover:border-blue-400"
           />
           <IoSearchCircleOutline
             size={22}
@@ -200,7 +190,6 @@ const ClubMembers = () => {
                           />
                         </div>
                       )}
-
                       {column.key === "name" && (
                         <div className="text-blue-600 hover:text-blue-800">
                           <Link to={`/club/member/${member.member_id}`}>
@@ -265,7 +254,7 @@ const ClubMembers = () => {
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}
-        goToPage={goToPage}
+        goToPage={(page) => fetchMembers(page, pagination.perPage)}
       />
     </div>
   );

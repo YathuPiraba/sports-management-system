@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import Icon from "@mdi/react";
 import { mdiSortCalendarAscending, mdiSortCalendarDescending } from "@mdi/js";
 import { FaSortAlphaDown, FaSortAlphaUp } from "react-icons/fa";
 
-const SortControls = ({ onSortChange }) => {
-  const [nameSort, setNameSort] = useState("asc");
-  const [dateSort, setDateSort] = useState("asc");
-
+const SortControls = ({ onSortChange, sortConfig }) => {
   const handleNameSort = () => {
-    const newSort = nameSort === "asc" ? "desc" : "asc";
-    setNameSort(newSort);
+    const newSort =
+      sortConfig.sortBy === "name" && sortConfig.sort === "asc"
+        ? "desc"
+        : "asc";
     onSortChange("name", newSort);
   };
 
   const handleDateSort = () => {
-    const newSort = dateSort === "asc" ? "desc" : "asc";
-    setDateSort(newSort);
+    const newSort =
+      sortConfig.sortBy === "created_at" && sortConfig.sort === "asc"
+        ? "desc"
+        : "asc";
     onSortChange("created_at", newSort);
   };
 
@@ -23,9 +24,9 @@ const SortControls = ({ onSortChange }) => {
     <div className="flex gap-4 h-7 mt-1.5">
       <button
         onClick={handleNameSort}
-        className="flex  gap-2 px-2 py-1.5  bg-blue-300 rounded hover:bg-blue-400 transition-colors"
+        className="flex gap-2 px-2 py-1.5 bg-blue-300 rounded hover:bg-blue-400 transition-colors"
       >
-        {nameSort === "asc" ? (
+        {sortConfig.sortBy === "name" && sortConfig.sort === "asc" ? (
           <FaSortAlphaDown className="text-blue-800" />
         ) : (
           <FaSortAlphaUp className="text-blue-800" />
@@ -37,7 +38,7 @@ const SortControls = ({ onSortChange }) => {
       >
         <Icon
           path={
-            dateSort === "asc"
+            sortConfig.sortBy === "created_at" && sortConfig.sort === "asc"
               ? mdiSortCalendarAscending
               : mdiSortCalendarDescending
           }
