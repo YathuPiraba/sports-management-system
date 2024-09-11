@@ -9,7 +9,7 @@ import Events from "../Pages/Events/Events";
 import Club from "../Pages/Club/Club";
 import PageNotFound from "../Pages/PageNotFound";
 import MemberProfile from "../Pages/Member/MemberProfile";
-import EventSports from "../Pages/Events/EventSports";
+
 
 const CommonRoute = () => {
   const role_id = useSelector((state) => state.auth.userdata.role_id);
@@ -21,7 +21,6 @@ const CommonRoute = () => {
         {role_id === 2 && <Route path="/*" element={<ManagerRoute />} />}
         {role_id === 3 && <Route path="/*" element={<MemberRoute />} />}
         <Route path="/events" element={<Events />} />
-        <Route path="/events/:eventId/sports" element={<EventSports />} />
         <Route path="/club" element={<Club />} />
         <Route path="/club/member/:memberId" element={<MemberProfile />} />
       </Route>

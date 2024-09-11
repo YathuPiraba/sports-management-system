@@ -11,6 +11,9 @@ import GridLoader from "react-spinners/GridLoader";
 import { useSelector } from "react-redux";
 import "../../Components/Navbar/Navbar.css";
 
+const ClubParticipants = lazy(() =>
+  import("../../Components/Events/ClubParticipants")
+);
 const EventParticipantList = lazy(() =>
   import("../../Components/Events/EventParticipantList")
 );
@@ -259,9 +262,13 @@ const Events = () => {
                     key: "2",
                     label: "Participation List",
                     children: (
-                      <div>
-                        <EventParticipantList />
-                      </div>
+                      <>
+                        {role_id == 1 ? (
+                          <EventParticipantList />
+                        ) : (
+                          <ClubParticipants />
+                        )}
+                      </>
                     ),
                   },
                 ]}

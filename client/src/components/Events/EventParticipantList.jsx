@@ -8,7 +8,7 @@ const { DirectoryTree } = Tree;
 const EventParticipantList = () => {
   const [loading, setLoading] = useState(false);
   const [treeData, setTreeData] = useState([]);
-  const [expandedKeys, setExpandedKeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState([]);
 
   const fetchParticipatingClubs = async () => {
     setLoading(true);
@@ -30,7 +30,7 @@ const EventParticipantList = () => {
 
     return data.map((event) => ({
       title: event.event_sports.name,
-      key: `event-${event.id}`,
+      key: `event-${event.event_sports.id}`,
       children: [
         {
           title: event.clubName,
@@ -48,12 +48,28 @@ const EventParticipantList = () => {
     fetchParticipatingClubs();
   }, []);
 
-  const onSelect = (selectedKeys, info) => {
-    console.log("selected", selectedKeys, info);
-  };
+  const onSelect = (keys) => {
+    // Filter out invalid or undefined keys
+    const validKeys = keys.filter(
+      (key) => key !== "undefined" && key !== undefined
+    );
 
-  const onExpand = (keys) => {
-    setExpandedKeys(keys);
+    // Handle key toggling
+    if (validKeys.length === 0) {
+      setSelectedKeys([]);
+    } else {
+      const selectedKey = validKeys[0];
+      if (selectedKeys.includes(selectedKey)) {
+        setSelectedKeys((prevKeys) =>
+          prevKeys.filter((key) => key !== selectedKey)
+        );
+      } else {
+        setSelectedKeys(() => [selectedKey]);
+      }
+    }
+
+    console.log("Selected keys:", validKeys);
+    console.log("Updated selected keys:", selectedKeys);
   };
 
   if (loading) {
@@ -67,12 +83,11 @@ const EventParticipantList = () => {
   return (
     <div className="px-5  text-lg font-medium text-black mb-2 font-poppins">
       <DirectoryTree
-        multiple
-        onSelect={onSelect}
-        onExpand={onExpand}
         treeData={treeData}
         showIcon={false}
-        className="border rounded-md border-blue-400 w-fit p-2 bg-slate-200"
+        onSelect={onSelect}
+        selectedKeys={selectedKeys}
+        className="border rounded-md border-blue-400 w-fit p-2 bg-blue-50"
       />
     </div>
   );
