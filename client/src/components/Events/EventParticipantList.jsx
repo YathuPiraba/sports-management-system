@@ -18,7 +18,6 @@ const EventParticipantList = () => {
       const formattedTreeData = formatTreeData(clubsData);
       setTreeData(formattedTreeData);
       console.log(res.data.data);
-      
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");
@@ -33,16 +32,14 @@ const EventParticipantList = () => {
     return data.map((event) => ({
       title: event.event_sports.name,
       key: `event-${event.event_sports.id}`,
-      children: [
-        {
-          title: event.clubName,
-          key: `club-${event.club_id}`,
-          children: event.participants.map((participant, index) => ({
-            title: `${participant.member.firstName} ${participant.member.lastName} (${participant.member.position})`,
-            key: `member-${participant.member.id}-${index}`,
-          })),
-        },
-      ],
+      children: event.event_sports.clubs.map((club) => ({
+        title: club.clubName,
+        key: `club-${club.club_id}`,
+        children: club.participants.map((participant) => ({
+          title: `${participant.member.firstName} ${participant.member.lastName} (${participant.member.position})`,
+          key: `member-${participant.member.id}`,
+        })),
+      })),
     }));
   };
 
@@ -83,14 +80,18 @@ const EventParticipantList = () => {
   }
 
   return (
-    <div className="px-5  text-lg font-medium text-black mb-2 font-poppins">
-      <DirectoryTree
-        treeData={treeData}
-        showIcon={false}
-        onSelect={onSelect}
-        selectedKeys={selectedKeys}
-        className="border rounded-md border-blue-400 w-fit p-2 bg-blue-50"
-      />
+    <div className="px-5 text-lg font-medium text-black mb-2 font-poppins flex gap-2 flex-wrap">
+      {treeData.map((event) => (
+        <div key={event.key} className="mb-4">
+          <DirectoryTree
+            treeData={[event]}
+            showIcon={false}
+            onSelect={onSelect}
+            selectedKeys={selectedKeys}
+            className="border rounded-md border-blue-400 w-fit p-2 bg-blue-50"
+          />
+        </div>
+      ))}
     </div>
   );
 };
