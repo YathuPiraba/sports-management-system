@@ -50,7 +50,7 @@ const Events = () => {
     eventSportsWithParticipants,
     loading: clubEventsLoading,
     error,
-    fetchClubEvents
+    fetchClubEvents,
   } = useClubEvents(selectedEvent, userId);
 
   const handleToggleDiv = () => {
@@ -290,7 +290,11 @@ const Events = () => {
                         {role_id == 1 ? (
                           <EventParticipantList />
                         ) : (
-                          <ClubParticipants />
+                          <ClubParticipants
+                            participants={eventSportsWithParticipants}
+                            fetchClubEvents={fetchClubEvents}
+                            loading={clubEventsLoading}
+                          />
                         )}
                       </>
                     ),
