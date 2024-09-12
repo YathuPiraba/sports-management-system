@@ -41,6 +41,8 @@ const ClubMembers = () => {
     { key: "role", label: "Role" },
     { key: "age", label: "Age" },
     { key: "created_at", label: "Join Date" },
+    { key: "contactNo", label: "Contact Number" },
+    { key: "whatsappNo", label: "Whatsapp Number" },
     { key: "actions", label: "Actions" },
   ];
 
@@ -208,6 +210,12 @@ const ClubMembers = () => {
                       )}
                       {column.key === "created_at" && (
                         <div className="text-gray-500">{member.created_at}</div>
+                      )}
+                      {column.key === "contactNo" && (
+                        <div className="text-gray-500">{member.contactNo}</div>
+                      )}
+                      {column.key === "whatsappNo" && (
+                        <div className="text-gray-500">{member.whatsappNo}</div>
                       )}
                       {column.key === "actions" && (
                         <div className="text-sm font-medium">

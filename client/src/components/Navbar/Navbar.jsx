@@ -82,8 +82,6 @@ const Navbar = () => {
 
   let notifications = [];
 
-  console.log("hii", adminNotifications);
-
   if (role_id == 1) {
     const managerNotifications = useManagerNotifications();
     notifications = [
@@ -94,8 +92,6 @@ const Navbar = () => {
     const memberNotifications = useMemberNotifications();
     notifications = memberNotifications.notifications;
   }
-
-  console.log(notifications);
 
   const image = user.image;
 
