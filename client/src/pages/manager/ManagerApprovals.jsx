@@ -130,7 +130,7 @@ const ManagerApprovals = () => {
                             cancelText="No"
                           >
                             <button className="text-red-400 hover:text-red-500">
-                              <TiDelete size={25} />
+                              <TiDelete size={28} />
                             </button>
                           </Popconfirm>
                         </div>
