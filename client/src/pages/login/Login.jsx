@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginAdmin, fetchUserDetails } from "../../features/authslice";
 import { Input, Space } from "antd";
 import { FadeLoader } from "react-spinners";
-const ForgotPassword = lazy(() => import("./ForgotPassword"));
+const ForgotPassword = lazy(() => import("../../Components/Login/ForgotPassword"));
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
 const Login = () => {

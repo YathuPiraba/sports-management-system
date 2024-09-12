@@ -14,6 +14,8 @@ const ForgotPassword = ({ isVisible, onClose }) => {
   const [otp, setOtp] = useState(null);
   const [timer, setTimer] = useState(600);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
 
   const {
     control,
@@ -41,6 +43,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
   };
 
   const sendOTP = async (email) => {
+    setLoading(true);
     try {
       await forgotPasswordAPI({ email: email });
       toast.success("OTP sent to your email.");
@@ -51,10 +54,13 @@ const ForgotPassword = ({ isVisible, onClose }) => {
     } catch (error) {
       toast.error("Failed to send OTP. Please try again.");
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const verifyOTP = async (data) => {
+    setVerifyLoading(true);
     try {
       const payload = {
         email: email,
@@ -68,10 +74,13 @@ const ForgotPassword = ({ isVisible, onClose }) => {
       setStep(3);
     } catch (error) {
       toast.error("Invalid OTP. Please try again.");
+    } finally {
+      setVerifyLoading(false);
     }
   };
 
   const resetPassword = async (data) => {
+    setLoading(true);
     try {
       const payload = {
         email: email,
@@ -88,6 +97,8 @@ const ForgotPassword = ({ isVisible, onClose }) => {
       onClose();
     } catch (error) {
       toast.error("Failed to reset password. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,6 +133,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
               htmlType="submit"
               block
               className="w-full bg-blue-500 text-white py-2 rounded-md"
+              loading={loading}
             >
               Send OTP
             </Button>
@@ -162,12 +174,14 @@ const ForgotPassword = ({ isVisible, onClose }) => {
                 type="primary"
                 htmlType="submit"
                 className="w-full bg-blue-500 text-white py-2 rounded-md"
+                loading={verifyLoading}
               >
                 Verify OTP
               </Button>
               <Button
                 onClick={() => sendOTP(email)}
                 className="w-full bg-gray-500 text-white py-2 rounded-md"
+                loading={loading}
               >
                 Send OTP Again
               </Button>
@@ -228,6 +242,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
               htmlType="submit"
               block
               className="w-full bg-blue-500 text-white py-2 rounded-md"
+              loading={loading}
             >
               Reset Password
             </Button>
@@ -243,7 +258,7 @@ const ForgotPassword = ({ isVisible, onClose }) => {
       onCancel={onClose}
       footer={null}
       centered
-      maskClosable={false} 
+      maskClosable={false}
     >
       {renderStep()}
     </Modal>
