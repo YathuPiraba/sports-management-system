@@ -211,7 +211,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
       </div>
       {!selectedSport && (
         <div
-          className="mt-4 p-4 h-40 border rounded-md bg-gray-100 flex flex-wrap"
+          className="mt-4 p-4 h-40 border w-[700px] rounded-md bg-gray-100 flex flex-wrap"
           style={{
             width: "100%",
             border: "2px solid #ccc",
@@ -220,7 +220,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
       )}
       {position === "Player" && selectedSport && (
         <fieldset
-          className=" mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap"
+          className=" mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap max-w-[700px]"
           style={{
             minHeight: "150px",
             width: "100%",
@@ -251,7 +251,7 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
 
       {position === "Coach" && selectedSport && (
         <textarea
-          className="w-full mt-4 p-4 h-40 border rounded-md bg-gray-100"
+          className="w-[700px] mt-4 p-4 h-40 border rounded-md bg-gray-100"
           placeholder="Tell Us About Your Experience Here"
           value={experience}
           onChange={handleExperienceChange}

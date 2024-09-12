@@ -212,7 +212,7 @@ const Events = () => {
           )}
         </div>
         <div
-          className="p-6 border-2 border-blue-500 rounded-lg shadow-lg "
+          className="p-6 min-h-[70vh] border-2 border-blue-500 rounded-lg shadow-lg "
           style={{
             backgroundImage: `url('https://res.cloudinary.com/dmonsn0ga/image/upload/v1725782081/Blue_and_Yellow_Abstract_Sport_Trivia_Quiz_Presentation_2_p0com9.png')`,
             backgroundSize: "cover",
@@ -247,6 +247,12 @@ const Events = () => {
             </div>
           ) : (
             <div className="font-poppins">
+              <Button
+                className="text-black hover:bg-blue-600"
+                onClick={handleToggleDiv}
+              >
+                Click to go back {showFirstDiv ? ">" : "<"}
+              </Button>
               <Tabs
                 defaultActiveKey="1"
                 centered
@@ -317,12 +323,6 @@ const Events = () => {
                 }}
                 className="customTab"
               />
-              <Button
-                className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
-                onClick={handleToggleDiv}
-              >
-                Click to go back {showFirstDiv ? ">" : "<"}
-              </Button>
             </div>
           )}
         </div>

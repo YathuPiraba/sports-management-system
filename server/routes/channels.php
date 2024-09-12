@@ -36,3 +36,7 @@ Broadcast::channel('members', function () {
 Broadcast::channel('deactivate', function () {
     return true;
 });
+
+Broadcast::channel('notifications', function () {
+    return true;
+});

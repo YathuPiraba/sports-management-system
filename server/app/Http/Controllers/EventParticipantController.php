@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EventApplied;
 use App\Models\Club_Manager;
 use App\Models\Event_Participants;
 use App\Models\EventClub;
 use App\Models\EventSports;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -128,6 +130,15 @@ class EventParticipantController extends Controller
                 ]);
             }
 
+            $notification = Notification::create([
+                'event_sports_id' => $request->event_sports_id,
+                'club_id' => $request->club_id,
+                'is_read' => false,
+            ]);
+
+            // Dispatch the event for real-time notification
+            event(new EventApplied($notification));
+
             // Commit the transaction
             DB::commit();
 
@@ -249,7 +260,7 @@ class EventParticipantController extends Controller
             if ($eventSports->isEmpty()) {
                 return response()->json([
                     'success' => true,
-                    'data' => [], 
+                    'data' => [],
                     'message' => 'No event sports data found.',
                 ], 200);
             }

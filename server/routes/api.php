@@ -131,6 +131,9 @@ Route::prefix('events/{eventId}/sports')->group(function () {
     Route::delete('/{id}', [EventSportController::class, 'destroy']); // Delete a specific sport from an event
 });
 
+Route::get('/notifications', [NotificationController::class, 'getUnreadNotifications']);
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+
 Route::prefix('event-clubs/{eventClubId}/participants')->group(function () {
     Route::post('/', [EventParticipantController::class, 'store']); // Add a new participant to an event club
     Route::get('/', [EventParticipantController::class, 'index']); // Get all participants for a specific event club
@@ -171,3 +174,5 @@ Route::prefix('users/{userId}/notifications')->group(function () {
     Route::put('/{id}', [NotificationController::class, 'update']); // Update a specific notification
     Route::delete('/{id}', [NotificationController::class, 'destroy']); // Delete a specific notification
 });
+
+

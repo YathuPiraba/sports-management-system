@@ -113,7 +113,7 @@ export const fetchVerifiedMemberDataApi = (
   perPage = 5,
   sortBy = "name", // Default sort by 'name'
   sort = "asc",
-  search = "" 
+  search = ""
 ) => {
   return authApiClient.get("/queryMembers", {
     params: {
@@ -122,7 +122,7 @@ export const fetchVerifiedMemberDataApi = (
       per_page: perPage,
       sortBy: sortBy,
       sort: sort,
-      search: search, 
+      search: search,
     },
   });
 };
@@ -355,7 +355,7 @@ export const getEventParticipantsAPI = () => {
 };
 
 export const getAClubEventParticipantsAPI = (userId, selectedEvent) => {
-  return authApiClient.get('/getSpecificEventParticipants', {
+  return authApiClient.get("/getSpecificEventParticipants", {
     params: {
       user_id: userId,
       event_id: selectedEvent,
@@ -363,3 +363,10 @@ export const getAClubEventParticipantsAPI = (userId, selectedEvent) => {
   });
 };
 
+export const fetchNotificationsAPI = () => {
+  return authApiClient.get(`/notifications`);
+};
+
+export const readNotificationAPI =(notificationId)=>{
+  return  authApiClient.post(`/notifications/${notificationId}/read`);
+}

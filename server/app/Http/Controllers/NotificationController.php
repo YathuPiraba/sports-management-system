@@ -95,4 +95,35 @@ class NotificationController extends Controller
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    // Get all unread notifications
+    public function getUnreadNotifications()
+    {
+        $notifications = Notification::where('is_read', false)->with(['eventSport', 'club'])->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $notifications,
+        ], 200);
+    }
+
+    // Mark a notification as read
+    public function markAsRead($id)
+    {
+        try {
+            $notification = Notification::findOrFail($id);
+            $notification->is_read = true;
+            $notification->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notification marked as read.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error marking notification as read: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

@@ -15,6 +15,7 @@ import useManagerNotifications from "../../hooks/useManagerNotification";
 import useMemberNotifications from "../../hooks/useMemberNotification";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import { FadeLoader } from "react-spinners";
+import useNotifications from "../../hooks/useNotifications";
 
 const Navbar = () => {
   const [animate, setAnimate] = useState(false);
@@ -25,8 +26,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  //  const loading = true;
 
   // Close dropdown when clicked outside
   useEffect(() => {
@@ -40,15 +39,23 @@ const Navbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  const { readNotification } = useNotifications();
+
   let notifications = [];
 
   if (role_id == 1) {
     const managerNotifications = useManagerNotifications();
-    notifications = managerNotifications.notifications;
+    const adminNotifications = useNotifications().notifications;
+    notifications = [
+      ...managerNotifications.notifications,
+      ...adminNotifications,
+    ];
   } else if (role_id === 2) {
     const memberNotifications = useMemberNotifications();
     notifications = memberNotifications.notifications;
   }
+
+  console.log(notifications);
 
   const image = user.image;
 
@@ -93,30 +100,7 @@ const Navbar = () => {
     }
   }, [dispatch]);
 
-  const filterNotificationsByRole = () => {
-    switch (role_id) {
-      case 1:
-        // Admin-specific notifications
-        return notifications.filter(
-          (notification) => notification.type === "admin"
-        );
-      case 2:
-        // Manager-specific notifications
-        return notifications.filter(
-          (notification) => notification.type === "manager"
-        );
-      case 3:
-        // Member-specific notifications
-        return notifications.filter(
-          (notification) => notification.type === "member"
-        );
-      default:
-        return [];
-    }
-  };
-
-  const filteredNotifications = filterNotificationsByRole();
-  const notificationCount = filteredNotifications.length;
+  const notificationCount = notifications.length;
 
   useEffect(() => {
     if (notificationCount > 0) {
@@ -132,11 +116,16 @@ const Navbar = () => {
     return () => clearTimeout(timer);
   }, [notifications]);
 
-  const handleNotificationClick = () => {
+  const handleNotificationClick = (notification) => {
     // Navigation based on role_id
     switch (role_id) {
       case 1:
-        navigate("/admin/approvals"); // Admin-specific route
+        if (notification.type === "event") {
+          navigate("/events");
+          readNotification(notification.notificationId);
+        } else {
+          navigate("/admin/approvals");
+        }
         break;
       case 2:
         navigate("/manager/approvals");
@@ -149,7 +138,7 @@ const Navbar = () => {
     }
   };
 
-  const items = filterNotificationsByRole().map((notification, index) => {
+  const items = notifications.map((notification, index) => {
     return {
       key: index,
       label: (
