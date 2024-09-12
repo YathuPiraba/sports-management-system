@@ -1,6 +1,5 @@
 import React, { useState, Suspense, lazy } from "react";
 import { TiDelete } from "react-icons/ti";
-import { FcApproval } from "react-icons/fc";
 import { useTheme } from "../../context/ThemeContext";
 import toast from "react-hot-toast";
 import useManagerData from "../../hooks/useManagerData";
@@ -11,6 +10,7 @@ import {
 import { Popconfirm, message } from "antd";
 import GridLoader from "react-spinners/GridLoader";
 import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 
 const AdminApprovalTable = lazy(() =>
   import("../../Components/Approvals/AdminApprovalTable")
@@ -104,20 +104,20 @@ const AdminApprovals = () => {
                       className={` ${
                         theme === "light"
                           ? "bg-white"
-                          : "bg-gray-300 text-black"
+                          : "bg-gray-200 text-black"
                       }    w-full`}
                     >
-                      <div className="flex flex-row w-full mr-0 hover:bg-blue-700 hover:text-white">
+                      <div className="flex flex-row w-full mr-0">
                         <div className="customApprove">
                           {" "}
                           <button
-                            className={`w-full text-left text-l border-0  hover:text-white  font-semibold p-2 mb-0 rounded-sm mt-0`}
+                            className={`w-full text-left text-l border-0 font-semibold  p-2 mb-0 rounded-sm mt-0`}
                             onClick={() => handleToggle(club.clubName)}
                           >
                             {index + 1}. {club.clubName}
                           </button>{" "}
                         </div>
-                        <div className="ml-auto mt-0.5 mr-4 flex gap-6">
+                        <div className="ml-auto mt-0.5 mr-4  flex gap-6">
                           <Popconfirm
                             title="Verification"
                             description="Are you sure about verifying this Request?"
@@ -129,7 +129,10 @@ const AdminApprovals = () => {
                             cancelText="No"
                           >
                             <button>
-                              <FcApproval size={22} />
+                              <RiVerifiedBadgeFill
+                                size={22}
+                                className="text-green-500 hover:text-green-700"
+                              />
                             </button>
                           </Popconfirm>
                           <Popconfirm

@@ -1,6 +1,6 @@
 import React, { useState, Suspense, lazy } from "react";
 import { TiDelete } from "react-icons/ti";
-import { FcApproval } from "react-icons/fc";
+import { RiVerifiedBadgeFill } from "react-icons/ri";
 import useMemberData from "../../hooks/useMemberData";
 import { Popconfirm, message } from "antd";
 import GridLoader from "react-spinners/GridLoader";
@@ -115,7 +115,10 @@ const ManagerApprovals = () => {
                             cancelText="No"
                           >
                             <button>
-                              <FcApproval size={22} />
+                              <RiVerifiedBadgeFill
+                                size={22}
+                                className="text-green-500 hover:text-green-700"
+                              />
                             </button>
                           </Popconfirm>
                           <Popconfirm
