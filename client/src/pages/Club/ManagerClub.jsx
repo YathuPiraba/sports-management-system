@@ -28,6 +28,7 @@ const ManagerClub = () => {
   const [loading, setLoading] = useState(true);
   const [activeComponent, setActiveComponent] = useState(null);
   const { theme } = useTheme();
+  const role_id = useSelector((state) => state.auth.userdata.role_id);
 
   const userId = useSelector((state) => state.auth.userdata.userId);
 
@@ -106,6 +107,7 @@ const ManagerClub = () => {
           sports={sports}
           theme={theme}
           handleButtonClick={handleButtonClick}
+          role_id={role_id}
         />
       ),
     },
@@ -117,6 +119,7 @@ const ManagerClub = () => {
           sports={sports}
           handleButtonClick={handleButtonClick}
           theme={theme}
+          role_id={role_id}
         />
       ),
     },
@@ -162,22 +165,24 @@ const ManagerClub = () => {
               Joined {new Date(club.created_at).getFullYear()}
             </Text>
           </div>
-          <div className="mt-4 sm:mt-0 sm:ml-auto flex flex-wrap justify-center sm:justify-end space-x-2">
-            <Button
-              icon={<EditOutlined />}
-              onClick={() => handleButtonClick("editClub")}
-              size="medium"
-            >
-              Edit Club
-            </Button>
-            <Button
-              icon={<PlusOutlined />}
-              onClick={() => handleButtonClick("addSports")}
-              size="medium"
-            >
-              Add Sports & Arenas
-            </Button>
-          </div>
+          {role_id == 2 && (
+            <div className="mt-4 sm:mt-0 sm:ml-auto flex flex-wrap justify-center sm:justify-end space-x-2">
+              <Button
+                icon={<EditOutlined />}
+                onClick={() => handleButtonClick("editClub")}
+                size="medium"
+              >
+                Edit Club
+              </Button>
+              <Button
+                icon={<PlusOutlined />}
+                onClick={() => handleButtonClick("addSports")}
+                size="medium"
+              >
+                Add Sports & Arenas
+              </Button>
+            </div>
+          )}
         </div>
 
         <Divider />

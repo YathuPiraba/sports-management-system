@@ -501,4 +501,26 @@ class ClubController extends Controller
             return response()->json(['error' => 'Failed to update Club Sports', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getAllClubsDetails()
+    {
+        try {
+            // Fetch all verified clubs with their verified managers and members
+            $clubs = Club::where('isVerified', 1)
+                ->with(['clubManagers' => function ($query) {
+                    $query->whereHas('user', function ($query) {
+                        $query->where('is_verified', 1);
+                    });
+                }, 'members' => function ($query) {
+                    $query->whereHas('user', function ($query) {
+                        $query->where('is_verified', 1);
+                    });
+                }])
+                ->get();
+
+            return response()->json($clubs);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
+        }
+    }
 }

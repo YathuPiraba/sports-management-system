@@ -2,7 +2,7 @@ import React from "react";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEditNote } from "react-icons/md";
 
-const SportsArena = ({ sports, handleButtonClick, theme }) => {
+const SportsArena = ({ sports, handleButtonClick, theme, role_id }) => {
   // Function to get unique arenas
   const getUniqueArenas = () => {
     const uniqueArenaIds = [
@@ -30,12 +30,14 @@ const SportsArena = ({ sports, handleButtonClick, theme }) => {
     >
       <div className="flex items-center mb-6">
         <h2 className="text-xl font-semibold flex-grow">Sports Arenas</h2>
-        <button
-          className="bg-gray-300 p-2 rounded-md hover:bg-gray-400"
-          onClick={() => handleButtonClick("manageSportsArenas")}
-        >
-          <MdEditNote size={24} className="text-black" />
-        </button>
+        {role_id == 2 && (
+          <button
+            className="bg-gray-300 p-2 rounded-md hover:bg-gray-400"
+            onClick={() => handleButtonClick("manageSportsArenas")}
+          >
+            <MdEditNote size={24} className="text-black" />
+          </button>
+        )}
       </div>
 
       {uniqueArenas.length > 0 ? (

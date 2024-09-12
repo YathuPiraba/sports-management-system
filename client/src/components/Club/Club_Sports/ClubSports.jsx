@@ -1,7 +1,7 @@
 import React from "react";
 import { MdEditNote } from "react-icons/md";
 
-const ClubSports = ({ sports, theme, handleButtonClick }) => {
+const ClubSports = ({ sports, theme, handleButtonClick, role_id }) => {
   // Function to get unique sports
   const getUniqueSports = () => {
     const uniqueSportIds = [...new Set(sports.map((sport) => sport.sports_id))];
@@ -27,12 +27,14 @@ const ClubSports = ({ sports, theme, handleButtonClick }) => {
     >
       <div className="flex w-full items-center mb-4">
         <h2 className="text-xl font-semibold flex-grow">Club Sports</h2>
-        <button
-          className="ml-auto bg-gray-300 p-2 rounded-md hover:bg-gray-400"
-          onClick={() => handleButtonClick("manageClubSports")}
-        >
-          <MdEditNote size={24} className="text-black" />
-        </button>
+        {role_id == 2 && (
+          <button
+            className="ml-auto bg-gray-300 p-2 rounded-md hover:bg-gray-400"
+            onClick={() => handleButtonClick("manageClubSports")}
+          >
+            <MdEditNote size={24} className="text-black" />
+          </button>
+        )}
       </div>
 
       {uniqueSports.length > 0 ? (

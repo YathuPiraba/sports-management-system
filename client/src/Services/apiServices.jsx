@@ -188,6 +188,11 @@ export const getAllClubsAPI = () => {
   return apiClient.get("/clubs/list");
 };
 
+// get all clubs
+export const getAllClubsDetailsAPI = () => {
+  return apiClient.get("/clubs/details");
+};
+
 // get all sports
 export const getAllSportsAPI = () => {
   return apiClient.get("/sports/list");

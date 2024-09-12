@@ -69,6 +69,8 @@ Route::middleware('auth.token')->group(function () {
 Route::put('/club/{id}', [ClubController::class, 'clubUpdate']);
 
 Route::get('/clubs/list', [ClubController::class, 'getAllClubs']);
+Route::get('/clubs/details', [ClubController::class, 'getAllClubsDetails']);
+
 Route::get('/sports/list', [SportsController::class, 'getSports']);
 Route::post('/sports/create', [SportsController::class, 'createSports']);
 Route::put('/sport/{id}', [SportsController::class, 'updateSports']);
@@ -174,5 +176,3 @@ Route::prefix('users/{userId}/notifications')->group(function () {
     Route::put('/{id}', [NotificationController::class, 'update']); // Update a specific notification
     Route::delete('/{id}', [NotificationController::class, 'destroy']); // Delete a specific notification
 });
-
-
