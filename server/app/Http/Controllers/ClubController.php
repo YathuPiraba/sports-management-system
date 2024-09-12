@@ -98,7 +98,7 @@ class ClubController extends Controller
     {
         try {
             // Fetch all club details
-            $clubs = Club::all();
+            $clubs = Club::where('isVerified', 1)->get();
 
             return response()->json($clubs);
         } catch (Exception $e) {
