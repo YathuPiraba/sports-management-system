@@ -15,7 +15,11 @@ import useManagerNotifications from "../../hooks/useManagerNotification";
 import useMemberNotifications from "../../hooks/useMemberNotification";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import { FadeLoader } from "react-spinners";
-import useNotifications from "../../hooks/useNotifications";
+import {
+  fetchNotifications,
+  readNotification,
+} from "../../features/notificationsSlice";
+import echo from "../../utils/echo";
 
 const Navbar = () => {
   const [animate, setAnimate] = useState(false);
@@ -26,6 +30,9 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const adminNotifications = useSelector(
+    (state) => state.notifications.notifications
+  );
 
   // Close dropdown when clicked outside
   useEffect(() => {
@@ -39,13 +46,46 @@ const Navbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const { readNotification } = useNotifications();
+  // Fetch notifications and subscribe to channel
+  useEffect(() => {
+    const subscribeToChannel = async () => {
+      try {
+        console.log("Attempting to subscribe to Notifications channel...");
+
+        // Fetch initial notifications
+        dispatch(fetchNotifications());
+
+        // Listen for real-time updates on the "notifications" channel
+        const channel = echo.channel("notifications");
+
+        channel.listen(".Notifications", (event) => {
+          console.log("Notification received:", event.notification);
+
+          // Fetch the updated notifications
+          dispatch(fetchNotifications());
+        });
+
+        console.log("Successfully subscribed to notifications channel.");
+      } catch (error) {
+        console.error("Error during subscription or data fetching:", error);
+      }
+    };
+
+    subscribeToChannel();
+
+    // Cleanup on component unmount
+    return () => {
+      console.log("Leaving notifications channel...");
+      echo.leave(`notification`);
+    };
+  }, [dispatch]);
 
   let notifications = [];
 
+  console.log("hii", adminNotifications);
+
   if (role_id == 1) {
     const managerNotifications = useManagerNotifications();
-    const adminNotifications = useNotifications().notifications;
     notifications = [
       ...managerNotifications.notifications,
       ...adminNotifications,
@@ -122,7 +162,7 @@ const Navbar = () => {
       case 1:
         if (notification.type === "event") {
           navigate("/events");
-          readNotification(notification.notificationId);
+          dispatch(readNotification(notification.notificationId));
         } else {
           navigate("/admin/approvals");
         }
