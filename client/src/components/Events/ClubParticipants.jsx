@@ -59,10 +59,9 @@ const ClubParticipants = ({ participants, fetchClubEvents, loading }) => {
   }
 
   return (
-    <div className="px-5 text-lg font-medium text-black mb-2 font-poppins">
+    <div className="px-5 text-lg font-medium text-black mb-2 gap-5 flex flex-wrap font-poppins">
       {treeData.map((event) => (
         <div key={event.key} className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">{event.title}</h2>
           <DirectoryTree
             treeData={[event]}
             showIcon={false}

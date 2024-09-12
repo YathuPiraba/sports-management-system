@@ -160,12 +160,12 @@ const Events = () => {
     <Suspense fallback={<div>Loading...</div>}>
       <div className="px-6">
         <h1 className="text-2xl font-bold mb-4">Event Management</h1>
-        <div className="flex mb-4 space-x-2">
-          {role_id == 1 && (
+        <div className="flex flex-wrap mb-4 space-x-2">
+          {role_id === 1 && (
             <Button
               icon={<PlusOutlined />}
               onClick={() => showEventModal(false)}
-              className="bg-blue-500 text-white hover:bg-blue-600"
+              className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none"
             >
               Add Events
             </Button>
@@ -173,7 +173,7 @@ const Events = () => {
           <Select
             value={selectedEvent}
             onChange={(value) => setSelectedEvent(value)}
-            className="w-64"
+            className="w-full md:w-64"
             placeholder="Select Event"
           >
             {events.map((event) => (
@@ -182,35 +182,32 @@ const Events = () => {
               </Option>
             ))}
           </Select>
-          {selectedEvent && (
+          {selectedEvent && role_id === 1 && (
             <>
-              {role_id == 1 && (
-                <>
-                  <Button
-                    onClick={() => showEventModal(true)}
-                    className="bg-blue-500 text-white hover:bg-blue-600 ml-2"
-                    icon={<EditOutlined />}
-                  >
-                    Edit Event
-                  </Button>
-                  <Popconfirm
-                    title="Are you sure you want to delete this event?"
-                    onConfirm={handleDeleteEvent}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button
-                      className="bg-red-500 text-white hover:bg-red-600 ml-2"
-                      icon={<DeleteOutlined />}
-                    >
-                      Delete Event
-                    </Button>
-                  </Popconfirm>
-                </>
-              )}
+              <Button
+                onClick={() => showEventModal(true)}
+                className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none mt-2 md:mt-0"
+                icon={<EditOutlined />}
+              >
+                Edit Event
+              </Button>
+              <Popconfirm
+                title="Are you sure you want to delete this event?"
+                onConfirm={handleDeleteEvent}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  className="bg-red-500 text-white hover:bg-red-600 flex-grow md:flex-none mt-2 md:mt-0"
+                  icon={<DeleteOutlined />}
+                >
+                  Delete Event
+                </Button>
+              </Popconfirm>
             </>
           )}
         </div>
+
         <div
           className="p-6 min-h-[70vh] border-2 border-blue-500 rounded-lg shadow-lg "
           style={{
