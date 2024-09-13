@@ -11,7 +11,7 @@ const Home = () => {
 
   console.log("aut", authenticate);
 
-  const [verified, setVerified] = useState(authenticate.is_verified);
+  const [verified, setVerified] = useState(authenticate?.is_verified);
 
   useEffect(() => {
     const channel = echo.channel("reject");
@@ -65,16 +65,30 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Welcome to Our Club</h1>
-      <p>Some static information here.</p>
-      {verified === 0 ? (
-        <p>You are still under verification.</p>
-      ) : (
-        <p>
-          You are verified. <Link to="/login">Click here to log in.</Link>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+      <div className="bg-white shadow-md rounded-md p-8 w-full max-w-2xl">
+        <h1 className="text-3xl font-bold text-center text-blue-900 mb-4">
+          Welcome to Our Club Connect
+        </h1>
+        <p className="text-gray-700 text-center mb-6">
+          This is an official portal for managing sports activities, clubs, and
+          events.
         </p>
-      )}
+        <div className="bg-blue-50 p-4 rounded-md text-center mb-4">
+          {verified === 0 ? (
+            <p className="text-red-600 font-medium">
+              You are still under verification. Please check back later.
+            </p>
+          ) : (
+            <p className="text-green-700 font-medium">
+              You are verified.{" "}
+              <Link to="/login" className="text-blue-700 underline">
+                Click here to log in.
+              </Link>
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
