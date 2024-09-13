@@ -504,76 +504,76 @@ class ClubController extends Controller
 
     //GET => http://127.0.0.1:8000/api/clubs/details
     public function getAllClubsDetails(Request $request)
-    {
-        try {
-            // Get pagination and sorting parameters from the request
-            $perPage = $request->input('per_page', 10); // Default to 10 items per page
-            $clubNameSortOrder = $request->input('club_name_sort', 'asc'); // Default sorting order for clubName
-            $divisionNameSortOrder = $request->input('division_name_sort', 'asc'); // Default sorting order for divisionName
+{
+    try {
+        // Get pagination and sorting parameters from the request
+        $perPage = $request->input('per_page', 10); // Default to 10 items per page
+        $clubNameSortOrder = $request->input('club_name_sort'); // Sorting order for clubName
+        $divisionNameSortOrder = $request->input('division_name_sort'); // Sorting order for divisionName
 
-            // Get search query from the request
-            $searchQuery = $request->input('search');
+        // Get search query from the request
+        $searchQuery = $request->input('search');
 
-            // Fetch all verified clubs with their verified managers and members
-            $clubs = Club::where('isVerified', 1)
-                ->with(['clubManagers' => function ($query) {
-                    $query->whereHas('user', function ($query) {
-                        $query->where('is_verified', 1);
-                    });
-                }, 'members' => function ($query) {
-                    $query->whereHas('user', function ($query) {
-                        $query->where('is_verified', 1);
-                    });
-                }, 'gsDivision']) // Include division relation
-                ->where(function ($query) use ($searchQuery) {
-                    // Apply search query if provided
-                    if ($searchQuery) {
-                        $query->where('clubName', 'like', "%$searchQuery%")
-                            ->orWhereHas('gsDivision', function ($query) use ($searchQuery) {
-                                $query->where('divisionName', 'like', "%$searchQuery%");
-                            })
-                            ->orWhereHas('clubManagers.user', function ($query) use ($searchQuery) {
-                                $query->where('firstName', 'like', "%$searchQuery%")
-                                    ->orWhere('lastName', 'like', "%$searchQuery%");
-                            })
-                            ->orWhereHas('members.user', function ($query) use ($searchQuery) {
-                                $query->where('firstName', 'like', "%$searchQuery%")
-                                    ->orWhere('lastName', 'like', "%$searchQuery%");
-                            });
-                    }
+        // Fetch all verified clubs with their verified managers and members
+        $clubs = Club::where('isVerified', 1)
+            ->with(['clubManagers' => function ($query) {
+                $query->whereHas('user', function ($query) {
+                    $query->where('is_verified', 1);
                 });
+            }, 'members' => function ($query) {
+                $query->whereHas('user', function ($query) {
+                    $query->where('is_verified', 1);
+                });
+            }, 'gsDivision']) // Include division relation
+            ->where(function ($query) use ($searchQuery) {
+                // Apply search query if provided
+                if ($searchQuery) {
+                    $query->where('clubName', 'like', "%$searchQuery%")
+                        ->orWhereHas('gsDivision', function ($query) use ($searchQuery) {
+                            $query->where('divisionName', 'like', "%$searchQuery%");
+                        })
+                        ->orWhereHas('clubManagers.user', function ($query) use ($searchQuery) {
+                            $query->where('firstName', 'like', "%$searchQuery%")
+                                ->orWhere('lastName', 'like', "%$searchQuery%");
+                        })
+                        ->orWhereHas('members.user', function ($query) use ($searchQuery) {
+                            $query->where('firstName', 'like', "%$searchQuery%")
+                                ->orWhere('lastName', 'like', "%$searchQuery%");
+                        });
+                }
+            });
 
-            // Apply sorting based on clubName and divisionName
-            if ($clubNameSortOrder) {
-                $clubs->orderBy('clubName', $clubNameSortOrder);
-            }
-            if ($divisionNameSortOrder) {
-                $clubs->orderBy(
-                    Gs_Division::select('divisionName')
-                        ->whereColumn('gs_divisions.id', 'clubs.gs_id'),
-                    $divisionNameSortOrder
-                );
-            }
-
-            // Apply pagination
-            $paginatedClubs = $clubs->paginate($perPage);
-
-            // Format the response to include pagination information
-            $response = [
-                'data' => $paginatedClubs->items(),
-                'pagination' => [
-                    'total' => $paginatedClubs->total(),
-                    'per_page' => $paginatedClubs->perPage(),
-                    'current_page' => $paginatedClubs->currentPage(),
-                    'last_page' => $paginatedClubs->lastPage(),
-                    'from' => $paginatedClubs->firstItem(),
-                    'to' => $paginatedClubs->lastItem(),
-                ]
-            ];
-
-            return response()->json($response);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
+        // Apply sorting based on provided parameters
+        if ($clubNameSortOrder && !$divisionNameSortOrder) {
+            $clubs->orderBy('clubName', $clubNameSortOrder);
+        } elseif ($divisionNameSortOrder && !$clubNameSortOrder) {
+            $clubs->orderBy(
+                Gs_Division::select('divisionName')
+                    ->whereColumn('gs_divisions.id', 'clubs.gs_id'),
+                $divisionNameSortOrder
+            );
         }
+
+        // Apply pagination
+        $paginatedClubs = $clubs->paginate($perPage);
+
+        // Format the response to include pagination information
+        $response = [
+            'data' => $paginatedClubs->items(),
+            'pagination' => [
+                'total' => $paginatedClubs->total(),
+                'per_page' => $paginatedClubs->perPage(),
+                'current_page' => $paginatedClubs->currentPage(),
+                'last_page' => $paginatedClubs->lastPage(),
+                'from' => $paginatedClubs->firstItem(),
+                'to' => $paginatedClubs->lastItem(),
+            ]
+        ];
+
+        return response()->json($response);
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
     }
+}
+
 }

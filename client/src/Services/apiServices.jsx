@@ -188,10 +188,32 @@ export const getAllClubsAPI = () => {
   return apiClient.get("/clubs/list");
 };
 
-// get all clubs
-export const getAllClubsDetailsAPI = () => {
-  return apiClient.get("/clubs/details");
+// get all clubs details
+export const getAllClubsDetailsAPI = (
+  page = 1,
+  perPage = 5,
+  sortBy = "clubName",
+  sortOrder = "asc",
+  search = ""
+) => {
+  
+  const sortByParam = sortBy === "clubName" ? "club_name_sort" : "division_name_sort";
+  
+  // Create the params object
+  const params = {
+    page: page,
+    per_page: perPage,
+    search: search,
+  };
+
+  if (sortBy === "clubName" || sortBy === "divisionName") {
+    params[sortByParam] = sortOrder;
+  }
+
+  // Make the API request
+  return apiClient.get("/clubs/details", { params });
 };
+
 
 // get all sports
 export const getAllSportsAPI = () => {
@@ -372,6 +394,6 @@ export const fetchNotificationsAPI = () => {
   return authApiClient.get(`/notifications`);
 };
 
-export const readNotificationAPI =(notificationId)=>{
-  return  authApiClient.post(`/notifications/${notificationId}/read`);
-}
+export const readNotificationAPI = (notificationId) => {
+  return authApiClient.post(`/notifications/${notificationId}/read`);
+};
