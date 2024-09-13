@@ -196,9 +196,9 @@ export const getAllClubsDetailsAPI = (
   sortOrder = "asc",
   search = ""
 ) => {
-  
-  const sortByParam = sortBy === "clubName" ? "club_name_sort" : "division_name_sort";
-  
+  const sortByParam =
+    sortBy === "clubName" ? "club_name_sort" : "division_name_sort";
+
   // Create the params object
   const params = {
     page: page,
@@ -213,7 +213,6 @@ export const getAllClubsDetailsAPI = (
   // Make the API request
   return apiClient.get("/clubs/details", { params });
 };
-
 
 // get all sports
 export const getAllSportsAPI = () => {
