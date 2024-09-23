@@ -508,8 +508,8 @@ class ClubController extends Controller
         try {
             // Get pagination and sorting parameters from the request
             $perPage = $request->input('per_page', 10); // Default to 10 items per page
-            $clubNameSortOrder = $request->input('club_name_sort', 'asc'); // Default sorting order for clubName
-            $divisionNameSortOrder = $request->input('division_name_sort', 'asc'); // Default sorting order for divisionName
+            $clubNameSortOrder = $request->input('club_name_sort'); // Sorting order for clubName
+            $divisionNameSortOrder = $request->input('division_name_sort'); // Sorting order for divisionName
 
             // Get search query from the request
             $searchQuery = $request->input('search');
@@ -543,11 +543,10 @@ class ClubController extends Controller
                     }
                 });
 
-            // Apply sorting based on clubName and divisionName
-            if ($clubNameSortOrder) {
+            // Apply sorting based on provided parameters
+            if ($clubNameSortOrder && !$divisionNameSortOrder) {
                 $clubs->orderBy('clubName', $clubNameSortOrder);
-            }
-            if ($divisionNameSortOrder) {
+            } elseif ($divisionNameSortOrder && !$clubNameSortOrder) {
                 $clubs->orderBy(
                     Gs_Division::select('divisionName')
                         ->whereColumn('gs_divisions.id', 'clubs.gs_id'),
