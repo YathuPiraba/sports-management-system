@@ -278,4 +278,7 @@ form input:hover {
     margin-left: 0px;
     padding: 20px;
   }
+  .signup {
+    margin-top: 10px;
+}
 }
