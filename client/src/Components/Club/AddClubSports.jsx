@@ -233,7 +233,7 @@ const AddClubSports = ({
               />
             </>
           )}
-          <div className="mt-2">
+          {/* <div className="mt-2">
             <label className="inline-flex items-center">
               <input
                 type="checkbox"
@@ -250,7 +250,7 @@ const AddClubSports = ({
                 setData={setData}
               />
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Arena Select */}
