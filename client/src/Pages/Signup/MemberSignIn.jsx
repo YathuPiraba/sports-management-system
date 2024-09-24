@@ -1,12 +1,13 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllClubsAPI, fetchGSDataApi } from "../../Services/apiServices";
+import { getAllClubsAPI } from "../../Services/apiServices";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { applyMember } from "../../features/authslice";
 import { TbPlayerTrackPrev } from "react-icons/tb";
 import useGsDivisions from "../../hooks/useGsDivisions";
-import { FadeLoader } from "react-spinners";
+import { Button } from "antd";
+import "../../App.css"
 
 const SignInHeader = lazy(() => import("../../Components/Signup/SignInHeader"));
 const PersonalDetails = lazy(() =>
@@ -138,18 +139,14 @@ const MemberSignIn = () => {
     setCurrentStep("personalDetails");
   };
 
+  console.log(sportsDetails.selectedSport);
   return (
     <Suspense fallback={<div className="bg-customGreen">Loading...</div>}>
       <div className="min-h-screen bg-customGreen  text-black ">
         <SignInHeader currentStep={currentStep} />
         <form onSubmit={handleSubmit} className="mt-3 px-4 sm:px-6 lg:px-8">
-          {loading && (
-            <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
-              <FadeLoader className="ml-1 mt-1" color="skyblue" />
-            </div>
-          )}
-         <div className="w-auto mx-auto">
-         <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
+          <div className="w-auto mx-auto">
+            <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
               <h1 className="text-xl font-poppins py-5 font-bold text-center">
                 Member SignIn Form
               </h1>
@@ -181,12 +178,19 @@ const MemberSignIn = () => {
                     </div>
 
                     <div className="flex justify-center  mt-6">
-                      <button
-                        className="bg-green-500 text-white px-4 py-2 w-max md:w-56 lg:w-64 rounded-md hover:bg-green-600 transition-colors"
-                        type="submit"
+                      <Button
+                        htmlType="submit"
+                        style={{
+                          backgroundColor: !sportsDetails.selectedSport
+                            ? "#ccc"
+                            : "#22c55e", 
+                        }}
+                        className="text-white px-4 py-2 w-max md:w-56 lg:w-64 rounded-md transition-colors signinbtn"
+                        disabled={!sportsDetails.selectedSport}
+                        loading={loading}
                       >
                         Apply
-                      </button>
+                      </Button>
                     </div>
                   </>
                 )}

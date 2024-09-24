@@ -43,3 +43,7 @@
 .animate-slide {
   animation: slide 30s infinite;
 }
+
+.signinbtn:where(.css-dev-only-do-not-override-1pg9a38).ant-btn:hover{
+background-color:#16a34a
+} 
