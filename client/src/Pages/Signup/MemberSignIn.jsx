@@ -148,8 +148,8 @@ const MemberSignIn = () => {
               <FadeLoader className="ml-1 mt-1" color="skyblue" />
             </div>
           )}
-          <div className=" mx-auto min-w-[700px]">
-            <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
+         <div className="w-auto mx-auto">
+         <div className="bg-white text-black shadow-md border rounded-lg overflow-hidden w-full mb-3">
               <h1 className="text-xl font-poppins py-5 font-bold text-center">
                 Member SignIn Form
               </h1>
