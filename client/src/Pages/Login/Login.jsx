@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
 import "./login.css";
 import { Modal, Button } from "antd";
 import toast from "react-hot-toast";
@@ -8,7 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginAdmin, fetchUserDetails } from "../../features/authslice";
 import { Input, Space } from "antd";
 import { FadeLoader } from "react-spinners";
-const ForgotPassword = lazy(() => import("../../Components/Login/ForgotPassword"));
+import { getAllClubsAPI } from "../../Services/apiServices";
+const ForgotPassword = lazy(() =>
+  import("../../Components/Login/ForgotPassword")
+);
 // import FbGmailSignin from "../../components/Login/FacebookGoogleLogin";
 
 const Login = () => {
@@ -16,6 +19,8 @@ const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isForgotPasswordModalVisible, setIsForgotPasswordModalVisible] =
     useState(false);
+
+  const [clubs, setClubs] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,6 +33,19 @@ const Login = () => {
     formState: { errors },
     reset,
   } = useForm();
+
+  const fetchAllClubs = async () => {
+    try {
+      const res = await getAllClubsAPI();
+      setClubs(res.data);
+    } catch (error) {
+      console.error("Error fetching clubs:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllClubs();
+  }, []);
 
   // Login User
   const onSubmit = async (data) => {
@@ -99,6 +117,8 @@ const Login = () => {
       handleSubmit(onSubmit)();
     }
   };
+
+  console.log(clubs);
 
   return (
     <Suspense fallback={<div className="bg-customDark">Loading...</div>}>
@@ -222,6 +242,8 @@ const Login = () => {
                 type="primary"
                 block
                 style={{ width: "150px", margin: "10px auto 0" }}
+                disabled={clubs.length === 0}
+                title={clubs.length ===0 ? "Can't register since no managers are registered" : ""}
               >
                 Member
               </Button>
