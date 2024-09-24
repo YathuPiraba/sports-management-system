@@ -8,17 +8,23 @@
   background: linear-gradient(to right, rgba(42, 85, 105, 1), rgb(7, 13, 17));
   display: flex;
   align-content: center;
+  align-items: center;
   justify-content: center;
-  height: 599px;
+  min-height: 100vh;
+  height: 100%; 
+  width: 100%; 
 }
 
+
 .outter {
-  margin-top: 20px;
+  display: flex;
   background-color: rgba(34, 52, 76);
   border-radius: 20px;
   border: 0.5px solid rgba(10, 18, 24, 0.26);
-  height: 550px;
-  width: 900px;
+  height: 90%;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
 }
 
 .heading {
@@ -164,7 +170,7 @@ form {
   border: none;
   padding: 12px;
   border-radius: 7px;
-  width: 310px;
+  /* width: 310px; */
   color: white;
 }
 
@@ -246,4 +252,31 @@ form input:hover {
 .pass:focus {
   outline: 2px solid #5fc4ee;
   border: none;
+}
+
+@media (max-width: 767px) {
+  .pic img {
+    display: none;
+  }
+  .sep {
+    display: flex;
+    flex-direction: column;
+  }
+  .sep h2 {
+    margin-top: 10px;
+    margin-left: 0px;
+    letter-spacing: 0.5px;
+    font-size: x-large;
+    font-weight: bold;
+  }
+  .topic {
+    margin-left: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .heading {
+    margin-left: 0px;
+    padding: 20px;
+}
 }
