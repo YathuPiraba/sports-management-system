@@ -1,4 +1,4 @@
-# Use an official PHP runtime as the base image
+# Dockerfile
 FROM php:8.1-fpm
 
 # Set working directory
@@ -6,6 +6,7 @@ WORKDIR /var/www/html
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
+    nginx \
     build-essential \
     libpng-dev \
     libjpeg-dev \
@@ -15,8 +16,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     curl \
     git \
-    unzip \
-    vim
+    unzip
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
@@ -30,10 +30,15 @@ COPY . /var/www/html
 # Install Laravel dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Change the permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
+# Expose port 80
+EXPOSE 80
 
-CMD ["php-fpm"]
+# Start Nginx and PHP-FPM
+CMD ["sh", "-c", "nginx && php-fpm"]
+
