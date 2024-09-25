@@ -59,7 +59,7 @@ export default function Sidebar() {
       >
         <div className="flex flex-col items-center gap-4 p-0">
           <span className=" custom-title flex flex-row items-center justify-start  w-full place-content-center rounded-lg font-acme font-medium tracking-wide">
-            <img src={logo} className="logo-img" />
+            <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png" className="logo-img" />
             <span className="logo-name font-poppins">
               <span className="title">Club </span>
               <span className="title1">Connect</span>
