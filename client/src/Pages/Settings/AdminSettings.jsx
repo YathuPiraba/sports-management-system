@@ -16,14 +16,15 @@ const ChangePassword = lazy(() =>
 
 const AdminSettings = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.userdata);
-  const roleID = useSelector((state) => state.auth.userdata.role_id);
+  const auth = useSelector((state) => state.auth);
+  const user = auth?.userdata;
+  const roleID = user?.role_id;
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
   const fileInputRef = useRef(null);
 
-  const image = user.image;
+  const image = user?.image;
 
   const handleChangePicture = () => {
     fileInputRef.current.click();
@@ -101,7 +102,11 @@ const AdminSettings = () => {
                   style={{ width: 100, height: 100 }}
                 >
                   <img
-                    src={image}
+                    src={
+                      image
+                        ? image
+                        : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724327347/zetjxwm8io1lcgmapjpv.png"
+                    }
                     alt="User Profile"
                     title="user profile"
                     className="w-full h-full object-cover"
