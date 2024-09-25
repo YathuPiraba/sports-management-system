@@ -251,7 +251,12 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
 
       {position === "Coach" && selectedSport && (
         <textarea
-          className="w-[700px] mt-4 p-4 h-40 border rounded-md bg-gray-100"
+          className=" mt-4 p-4 border rounded-md bg-gray-100 flex flex-wrap max-w-[700px]"
+          style={{
+            minHeight: "150px",
+            width: "100%",
+            border: "2px solid #ccc",
+          }}
           placeholder="Tell Us About Your Experience Here"
           value={experience}
           onChange={handleExperienceChange}

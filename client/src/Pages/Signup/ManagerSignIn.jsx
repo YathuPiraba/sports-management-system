@@ -134,7 +134,7 @@ const ManagerSignIn = () => {
                   <div className="text-center mt-6">
                     <Button
                       htmlType="submit"
-                      className="bg-green-500 text-white px-4 py-2 w-full rounded-md hover:bg-green-600 transition-colors"
+                      className="bg-green-500 text-white px-4 py-2 w-full rounded-md signinbtn transition-colors"
                       loading={loading}
                     >
                       Apply
