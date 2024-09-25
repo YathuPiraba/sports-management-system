@@ -18,11 +18,9 @@ yarn-error.log
 /.vscode
 
 
-# Ignore everything inside the 'storage/tokens' folder
 /storage/tokens/*
+!/storage/tokens/.gitkeep
 
-# Do not ignore the 'storage/tokens' folder itself
-!/storage/tokens/
 
 
 
