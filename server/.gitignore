@@ -18,6 +18,10 @@ yarn-error.log
 /.vscode
 
 
+/storage/tokens/*
+!/storage/tokens/.gitkeep
+
+
 
 
 

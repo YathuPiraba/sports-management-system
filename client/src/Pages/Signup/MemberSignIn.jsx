@@ -7,7 +7,7 @@ import { applyMember } from "../../features/authslice";
 import { TbPlayerTrackPrev } from "react-icons/tb";
 import useGsDivisions from "../../hooks/useGsDivisions";
 import { Button } from "antd";
-import "../../App.css"
+import "../../App.css";
 
 const SignInHeader = lazy(() => import("../../Components/Signup/SignInHeader"));
 const PersonalDetails = lazy(() =>
@@ -183,7 +183,8 @@ const MemberSignIn = () => {
                         style={{
                           backgroundColor: !sportsDetails.selectedSport
                             ? "#ccc"
-                            : "#22c55e", 
+                            : "#22c55e",
+                          border: 'none',
                         }}
                         className="text-white px-4 py-2 w-max md:w-56 lg:w-64 rounded-md transition-colors signinbtn"
                         disabled={!sportsDetails.selectedSport}
