@@ -170,7 +170,7 @@ const ManagerSettings = () => {
                     src={
                       image
                         ? image
-                        : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724327347/zetjxwm8io1lcgmapjpv.png"
+                        : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
                     }
                     alt="User Profile"
                     className="w-44 h-44 rounded-full object-cover mb-3"

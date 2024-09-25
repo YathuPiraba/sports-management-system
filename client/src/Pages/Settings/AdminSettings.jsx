@@ -105,7 +105,7 @@ const AdminSettings = () => {
                     src={
                       image
                         ? image
-                        : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724327347/zetjxwm8io1lcgmapjpv.png"
+                        : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
                     }
                     alt="User Profile"
                     title="user profile"
