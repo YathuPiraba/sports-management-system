@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/logout', [UserController::class, 'logout']);
+Route::post('/refresh', [UserController::class, 'refresh']);
 
 
 Route::middleware('auth.token')->group(function () {

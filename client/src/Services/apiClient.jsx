@@ -1,29 +1,65 @@
-import axios from 'axios';
+import axios from "axios";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const apiClient = axios.create({
-    baseURL: baseURL,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  baseURL: baseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
 
-  const authApiClient = axios.create({
-    baseURL: baseURL,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+const authApiClient = axios.create({
+  baseURL: baseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
 
-  authApiClient.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token'); 
+authApiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("access_token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
-  }, (error) => {
+  },
+  (error) => Promise.reject(error)
+);
+
+authApiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const res = await authApiClient.post("/refresh");
+        const { access_token } = res.data;
+        localStorage.setItem("access_token", access_token);
+        originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
+        return authApiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh token has expired or is invalid
+        localStorage.removeItem("access_token");
+        // Redirect to login or dispatch a logout action
+        return Promise.reject(refreshError);
+      }
+    }
     return Promise.reject(error);
-  });
-  
-  export { apiClient, authApiClient };
+  }
+);
+
+export const setAuthToken = (token) => {
+  if (token) {
+    localStorage.setItem("access_token", token);
+    authApiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    localStorage.removeItem("access_token");
+    delete authApiClient.defaults.headers.common["Authorization"];
+  }
+};
+
+export { apiClient, authApiClient };

@@ -2,7 +2,7 @@ import { apiClient, authApiClient } from "./apiClient";
 
 // Login API
 export const loginApi = (data) => {
-  return apiClient.post("/login", data);
+  return authApiClient.post("/login", data);
 };
 
 // Fetch user details API

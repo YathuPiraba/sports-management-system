@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Cloudinary\Cloudinary;
 use App\Events\UserVerified;
-
+use Illuminate\Support\Facades\Cookie;
 
 class UserController extends Controller
 {
@@ -58,16 +58,15 @@ class UserController extends Controller
         }
 
         if ($user && Hash::check($request->password, $user->password)) {
+            $accessToken = $this->tokenService->generateAccessToken($user->id);
+            $refreshToken = $this->tokenService->generateRefreshToken($user->id);
 
-            // Generate and store a token
-            $token = $this->tokenService->generateToken($user->id);
-            $this->tokenService->storeToken($user->id, $token);
-
-
-            return response()->json([
+            $response = response()->json([
                 'message' => 'Login successful',
-                'token' => $token,
+                'access_token' => $accessToken,
             ], 200);
+
+            return $response->withCookie($this->tokenService->setRefreshTokenCookie($refreshToken));
         } else {
             return response()->json([
                 'message' => 'Invalid login credentials'
@@ -78,11 +77,38 @@ class UserController extends Controller
     //POST => http://127.0.0.1:8000/api/logout
     public function logout(Request $request)
     {
-
+        // Clear the refresh token cookie
         return response()->json([
             'message' => 'Logout successful',
-        ], 200);
+        ], 200)->withCookie(Cookie::forget('refresh_token'));
     }
+
+
+    public function refresh(Request $request)
+    {
+        $refreshToken = $request->cookie('refresh_token');
+
+        if (!$refreshToken) {
+            return response()->json(['message' => 'Refresh token not found'], 400);
+        }
+
+        $userId = $this->tokenService->verifyToken($refreshToken, 'refresh');
+
+        if (!$userId) {
+            return response()->json(['message' => 'Invalid refresh token'], 401);
+        }
+
+        $newAccessToken = $this->tokenService->generateAccessToken($userId);
+        $newRefreshToken = $this->tokenService->generateRefreshToken($userId);
+
+        $response = response()->json([
+            'access_token' => $newAccessToken,
+        ], 200);
+
+        return $response->withCookie($this->tokenService->setRefreshTokenCookie($newRefreshToken));
+    }
+
+
 
     //GET => http://127.0.0.1:8000/api/user/details
     public function getUserDetails(Request $request)

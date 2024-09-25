@@ -22,12 +22,12 @@ class AuthenticateToken
         }
 
         try {
-            $rawSecret = env('JWT_SECRET');
+            $rawSecret = env('JWT_ACCESS_SECRET');
             $secret = base64_decode($rawSecret);
 
 
             $payload = JWT::decode($token, new Key($secret, 'HS256'));
-          
+
 
             $user = User::findOrFail($payload->sub);
             $request->merge(['user' => $user]);

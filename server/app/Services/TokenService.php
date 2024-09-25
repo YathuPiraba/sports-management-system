@@ -3,35 +3,73 @@
 namespace App\Services;
 
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key; // Import Key class if you need to specify algorithms
+use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 
 class TokenService
 {
 
-    public function generateToken($userId)
-    {
-        $rawSecret = env('JWT_SECRET');
-        $secret = base64_decode($rawSecret);
+    private $accessTokenExpiry = 900; // 15 minutes
+    private $refreshTokenExpiry = 604800; // 1 week
 
+    public function generateAccessToken($userId)
+    {
+        $rawSecret = env('JWT_ACCESS_SECRET');
+
+        $secret = base64_decode($rawSecret);
 
         $payload = [
             'iss' => 'vsds',
             'sub' => $userId,
             'iat' => time(),
-            'exp' => time() + 86400 
+            'exp' => time() + $this->accessTokenExpiry
         ];
 
         $token = JWT::encode($payload, $secret, 'HS256');
-
+        Log::info('Generated token: ' . $token);
 
         return $token;
     }
 
-    public function storeToken($userId, $token)
+    public function generateRefreshToken($userId)
     {
-        $filePath = storage_path('tokens/' . $userId . '.txt');
-        file_put_contents($filePath, $token);
+        $rawSecret = env('JWT_REFRESH_SECRET');
+        $secret = base64_decode($rawSecret);
+
+        $payload = [
+            'iss' => 'vsds',
+            'sub' => $userId,
+            'iat' => time(),
+            'exp' => time() + $this->refreshTokenExpiry
+        ];
+
+        return JWT::encode($payload, $secret, 'HS256');
+    }
+
+    public function verifyToken($token, $type = 'access')
+    {
+        $rawSecret = $type === 'access' ? env('JWT_ACCESS_SECRET') : env('JWT_REFRESH_SECRET');
+        $secret = base64_decode($rawSecret);
+
+        if (empty($secret)) {
+            Log::error('Secret is empty!');
+            return false;
+        }
+        try {
+            $decoded = JWT::decode($token, new Key($secret, 'HS256'));
+            Log::info('Token decoded successfully. Payload: ' . json_encode($decoded));
+            return $decoded->sub;
+        } catch (\Exception $e) {
+            Log::error('Token validation error: ' . $e->getMessage());
+            Log::error('Token being validated: ' . $token);
+            return false;
+        }
+    }
+
+    public function setRefreshTokenCookie($token)
+    {
+        return Cookie::make('refresh_token', $token, $this->refreshTokenExpiry / 60, null, null, true, true, false, 'None');
     }
 }

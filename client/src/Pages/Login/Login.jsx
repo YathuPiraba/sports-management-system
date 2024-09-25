@@ -118,8 +118,6 @@ const Login = () => {
     }
   };
 
-  console.log(clubs);
-
   return (
     <Suspense fallback={<div className="bg-customDark">Loading...</div>}>
       <div className="body-container">

@@ -20,7 +20,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        '*'
+        'http://localhost:5173',
+        'https://club-connect-km1s.onrender.com'
     ],
 
     'allowed_origins_patterns' => [],
@@ -31,6 +32,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];
