@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Dropdown, Space, Badge, Switch } from "antd";
 import { ImProfile } from "react-icons/im";
 import { TbLogout2 } from "react-icons/tb";
-import { jwtDecode } from "jwt-decode";
 import { logout, logOutAdmin } from "../../features/authslice";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -105,36 +104,6 @@ const Navbar = () => {
       toast.error("Logout failed. Please try again.");
     }
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
-        const expTime = decodedToken.exp;
-
-        if (expTime && expTime > currentTime) {
-          const expiryTime = (expTime - currentTime) * 1000;
-
-          if (expiryTime > 0) {
-            const timer = setTimeout(() => {
-              dispatch(logout());
-            }, expiryTime);
-
-            return () => clearTimeout(timer);
-          }
-        } else {
-          dispatch(logout());
-        }
-      } catch (error) {
-        console.error("Invalid token:", error);
-        dispatch(logout());
-      }
-    } else {
-      dispatch(logout());
-    }
-  }, [dispatch]);
 
   const notificationCount = notifications.length;
 

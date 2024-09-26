@@ -21,7 +21,8 @@ return [
 
     'allowed_origins' => [
         'http://localhost:5173',
-        'https://club-connect-km1s.onrender.com'
+        'https://club-connect-km1s.onrender.com',
+        'http://192.168.1.36:5173'
     ],
 
     'allowed_origins_patterns' => [],
