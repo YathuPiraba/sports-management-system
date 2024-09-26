@@ -33,24 +33,31 @@ authApiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    console.log("Error occurred", error.response.status);  // Error log
+
+    // Check if it's a 401 error
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
+        console.log("Attempting to refresh token...");
         const res = await authApiClient.post("/refresh");
         const { access_token } = res.data;
+        console.log("New access token:", access_token);
+
         localStorage.setItem("access_token", access_token);
         originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
-        return authApiClient(originalRequest);
+        return authApiClient(originalRequest); // Retry request
       } catch (refreshError) {
-        // Refresh token has expired or is invalid
+        console.error("Refresh token failed:", refreshError.response.status, refreshError.message);
         localStorage.removeItem("access_token");
-        // Redirect to login or dispatch a logout action
         return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );
+
 
 export const setAuthToken = (token) => {
   if (token) {

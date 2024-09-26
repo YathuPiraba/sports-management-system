@@ -89,6 +89,7 @@ const initialState = {
   loading: false,
   error: null,
   logoutLoading: false,
+  loginLoading:false,
 };
 
 // Auth slice to manage authentication state
@@ -102,21 +103,22 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.logoutLoading = false;
+      state.loginLoading = false;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginAdmin.pending, (state) => {
-        state.loading = true;
+        state.loginLoading = true;
         state.error = null;
       })
       .addCase(loginAdmin.fulfilled, (state, action) => {
         state.token = action.payload;
-        state.loading = false;
+        state.loginLoading = false;
         state.error = null;
       })
       .addCase(loginAdmin.rejected, (state, action) => {
-        state.loading = false;
+        state.loginLoading = false;
         state.error = action.payload;
       })
       .addCase(fetchUserDetails.pending, (state) => {

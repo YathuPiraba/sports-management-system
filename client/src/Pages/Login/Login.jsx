@@ -24,8 +24,8 @@ const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.auth.loading);
-  // const loading = true;
+  const auth = useSelector((state) => state.auth);
+  const loading = auth?.loginLoading;
   const {
     control,
     register,
