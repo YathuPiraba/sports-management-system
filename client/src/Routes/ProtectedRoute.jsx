@@ -12,6 +12,8 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  
+
   useEffect(() => {
     if (isAuthenticated) {
       const channel = echo.channel("deactivate");
@@ -44,7 +46,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
   }, [isAuthenticated, authenticate?.userId, navigate, dispatch]);
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login"  />;
   }
 
   const isVerified = authenticate?.is_verified;

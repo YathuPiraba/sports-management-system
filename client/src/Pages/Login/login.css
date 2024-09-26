@@ -152,6 +152,12 @@ form {
   background-color: #499cc0;
 }
 
+.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn:hover {
+  background-color: #499cc0 !important;
+  color: rgb(0, 0, 0) !important;
+  border: none !important;
+}
+
 .forgot-btn {
   display: flex;
   gap: 50px;

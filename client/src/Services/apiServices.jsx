@@ -2,7 +2,7 @@ import { apiClient, authApiClient } from "./apiClient";
 
 // Login API
 export const loginApi = (data) => {
-  return apiClient.post("/login", data);
+  return authApiClient.post("/login", data);
 };
 
 // Fetch user details API
@@ -152,6 +152,11 @@ export const updateManagerDetailsApi = (userId, data) => {
     },
   });
 };
+
+//deleteProfile
+export const deleteProfileAPI =(userId) =>{
+  return authApiClient.delete(`/image/${userId}`);
+}
 
 //Forgot-Password API
 export const forgotPasswordAPI = (data) => {

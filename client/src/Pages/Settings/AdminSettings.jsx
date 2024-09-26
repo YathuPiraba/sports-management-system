@@ -2,10 +2,12 @@ import React, { useEffect, useState, useRef, Suspense, lazy } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserDetails } from "../../features/authslice";
 import { useTheme } from "../../context/ThemeContext";
-import { Button, Modal } from "antd";
+import { Button, Modal, Popconfirm } from "antd";
 import toast from "react-hot-toast";
-import { updateAdminDetailsApi } from "../../Services/apiServices";
-import Avatar from "../../assets/default-avatar-profile.png";
+import {
+  deleteProfileAPI,
+  updateAdminDetailsApi,
+} from "../../Services/apiServices";
 
 const UpdateProfile = lazy(() =>
   import("../../Components/settings/UpdateProfile")
@@ -21,6 +23,7 @@ const AdminSettings = () => {
   const roleID = user?.role_id;
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const { theme } = useTheme();
   const fileInputRef = useRef(null);
 
@@ -30,35 +33,32 @@ const AdminSettings = () => {
     fileInputRef.current.click();
   };
 
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
+
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const formData = new FormData();
       formData.append("image", file);
-
+      setImageLoading(true);
       try {
         await updateAdminDetailsApi(user.userId, formData);
         toast.success("Profile picture updated successfully");
         fetchDetails();
       } catch (error) {
         toast.error("Failed to update profile picture");
+      } finally {
+        setImageLoading(false);
       }
     }
   };
 
   const handleDeletePicture = async () => {
     try {
-      // Fetch the image using its path
-      const response = await fetch(Avatar);
-
-      // Convert the image response to a Blob
-      const blob = await response.blob();
-
-      // Create a FormData object and append the Blob
-      const formData = new FormData();
-      formData.append("image", blob, "default-avatar-profile.png");
-
-      await updateAdminDetailsApi(user.userId, formData);
+      await deleteProfileAPI(user.userId);
       toast.success("Profile picture deleted successfully");
       fetchDetails();
     } catch (error) {
@@ -123,15 +123,26 @@ const AdminSettings = () => {
                   <Button
                     onClick={handleChangePicture}
                     className="bg-indigo-900 text-white mb-2 w-full py-1"
+                    loading={imageLoading}
                   >
                     Change picture
                   </Button>
-                  <Button
-                    onClick={handleDeletePicture}
-                    className="border border-gray-300 w-full py-1"
+
+                  <Popconfirm
+                    title="Deleting Profile"
+                    description="Are you sure you want to delete this Profile?"
+                    onConfirm={handleDeletePicture}
+                    onCancel={cancel}
+                    okText="Yes"
+                    cancelText="No"
                   >
-                    Delete picture
-                  </Button>
+                    <Button
+                      className="border border-gray-300 w-full py-1"
+                      disabled={!image}
+                    >
+                      Delete picture
+                    </Button>
+                  </Popconfirm>
                 </div>
               </div>
             </figure>

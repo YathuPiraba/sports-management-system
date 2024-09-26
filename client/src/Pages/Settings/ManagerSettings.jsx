@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useRef, Suspense, lazy } from "react";
-import { Button, Modal } from "antd";
+import { Button, Modal, Popconfirm } from "antd";
 import { useSingleManagerDetails } from "../../hooks/useSingleManagerData";
 import { useTheme } from "../../context/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserDetails } from "../../features/authslice";
 import GridLoader from "react-spinners/GridLoader";
-import { updateManagerDetailsApi } from "../../Services/apiServices";
+import {
+  deleteProfileAPI,
+  updateManagerDetailsApi,
+} from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import {
   MdPermIdentity,
@@ -16,7 +19,6 @@ import { CgRename } from "react-icons/cg";
 import { FaRegIdCard, FaMapMarkerAlt, FaBuilding } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import { BsWhatsapp } from "react-icons/bs";
-import Avatar from "../../assets/default-avatar-profile.png";
 
 const ChangePassword = lazy(() =>
   import("../../Components/settings/ChangePassword")
@@ -33,6 +35,7 @@ const ManagerSettings = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
+  const [imageLoading, setImageLoading] = useState(false);
   const { managerDetails, loading, refetchManagerDetails } =
     useSingleManagerDetails();
   const fileInputRef = useRef(null);
@@ -58,30 +61,22 @@ const ManagerSettings = () => {
     if (file) {
       const formData = new FormData();
       formData.append("image", file);
-
+      setImageLoading(true);
       try {
         await updateManagerDetailsApi(user.userId, formData);
         toast.success("Profile picture updated successfully");
         fetchDetails();
       } catch (error) {
         toast.error("Failed to update profile picture");
+      } finally {
+        setImageLoading(false);
       }
     }
   };
 
   const handleDeletePicture = async () => {
     try {
-      // Fetch the image using its path
-      const response = await fetch(Avatar);
-
-      // Convert the image response to a Blob
-      const blob = await response.blob();
-
-      // Create a FormData object and append the Blob
-      const formData = new FormData();
-      formData.append("image", blob, "default-avatar-profile.png");
-
-      await updateManagerDetailsApi(user.userId, formData);
+      await deleteProfileAPI(user.userId);
       toast.success("Profile picture deleted successfully");
       fetchDetails();
     } catch (error) {
@@ -140,6 +135,11 @@ const ManagerSettings = () => {
     },
   ];
 
+  const cancel = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       {" "}
@@ -185,15 +185,25 @@ const ManagerSettings = () => {
                   <Button
                     onClick={handleChangePicture}
                     className="bg-indigo-900 text-white mb-2 w-full py-1"
+                    loading={imageLoading}
                   >
                     Change picture
                   </Button>
-                  <Button
-                    onClick={handleDeletePicture}
-                    className="border border-gray-300 w-full py-1"
+                  <Popconfirm
+                    title="Deleting Profile"
+                    description="Are you sure you want to delete this Profile?"
+                    onConfirm={handleDeletePicture}
+                    onCancel={cancel}
+                    okText="Yes"
+                    cancelText="No"
                   >
-                    Delete picture
-                  </Button>
+                    <Button
+                      className="border border-gray-300 w-full py-1"
+                      disabled={!image}
+                    >
+                      Delete picture
+                    </Button>
+                  </Popconfirm>
                 </div>
                 <div className="flex-grow">
                   <ul className="space-y-1">

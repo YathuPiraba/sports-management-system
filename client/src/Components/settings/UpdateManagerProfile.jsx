@@ -6,6 +6,7 @@ import {
   fetchGSDataApi,
 } from "../../Services/apiServices";
 import { fetchUserDetails } from "../../features/authslice";
+import { Button } from "antd";
 
 const UpdateManagerProfile = ({
   setIsModalOpen,
@@ -15,6 +16,7 @@ const UpdateManagerProfile = ({
   const user = useSelector((state) => state.auth.userdata);
   const dispatch = useDispatch();
   const [divisions, setDivisions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchGsData = async () => {
     try {
@@ -100,7 +102,7 @@ const UpdateManagerProfile = ({
       toast.error("No changes detected");
       return;
     }
-
+    setLoading(true);
     try {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach((key) => {
@@ -121,6 +123,8 @@ const UpdateManagerProfile = ({
       setIsModalOpen(false);
     } catch (err) {
       toast.error(err.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -201,12 +205,14 @@ const UpdateManagerProfile = ({
           >
             Clear
           </button>
-          <button
-            type="submit"
+          <Button
+            htmlType="submit"
             className="text-base bg-emerald-500 hover:bg-emerald-700 w-full px-4 py-2 rounded-md text-white"
+            loading={loading}
+            style={{ padding: "10px", height: "40px" }}
           >
             Update Profile
-          </button>
+          </Button>
         </div>
       </form>
     </div>

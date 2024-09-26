@@ -118,17 +118,15 @@ const Login = () => {
     }
   };
 
-  console.log(clubs);
-
   return (
     <Suspense fallback={<div className="bg-customDark">Loading...</div>}>
       <div className="body-container">
         <div className="outter relative">
-          {loading && (
+          {/* {loading && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm z-50">
               <FadeLoader className="ml-1 mt-1" color="skyblue" />
             </div>
-          )}
+          )} */}
           <div className="sep">
             <div className="heading">
               <div className="topic">
@@ -196,8 +194,15 @@ const Login = () => {
                       isVisible={isForgotPasswordModalVisible}
                       onClose={handleForgotPasswordCancel}
                     />
-
-                    <button> Login</button>
+                    <Button
+                      htmlType="submit"
+                      className="loginbtn"
+                      loading={loading}
+                      style={{ padding: "10px", height: "40px" }}
+                    >
+                      {" "}
+                      Login
+                    </Button>
                   </div>
                 </form>
                 {/* <div className="intersect">
@@ -243,7 +248,11 @@ const Login = () => {
                 block
                 style={{ width: "150px", margin: "10px auto 0" }}
                 disabled={clubs.length === 0}
-                title={clubs.length ===0 ? "Can't register since no managers are registered" : ""}
+                title={
+                  clubs.length === 0
+                    ? "Can't register since no managers are registered"
+                    : ""
+                }
               >
                 Member
               </Button>
