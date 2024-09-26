@@ -172,7 +172,7 @@ const Navbar = () => {
   return (
     <header>
       <div
-        className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8  w-full font-poppins`}
+        className={`mx-auto max-w-screen-xl pl-1 pr-8 sm:px-9 sm:pr-0 lg:px-8  w-full font-poppins`}
       >
         {/* {loading && (
           <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
@@ -180,7 +180,7 @@ const Navbar = () => {
           </div>
         )} */}
         <div className="flex pt-2 items-center">
-          <div className="flex gap-3">
+          <div className="flex gap-2 mr-1">
             <MdDarkMode size={19} className="mt-1" />
             <Space direction="vertical">
               <Switch
