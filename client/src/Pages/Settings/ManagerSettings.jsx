@@ -27,8 +27,9 @@ const UpdateManagerProfile = lazy(() =>
 
 const ManagerSettings = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.userdata);
-  const roleID = useSelector((state) => state.auth.userdata.role_id);
+  const auth = useSelector((state) => state.auth);
+  const user = auth?.userdata;
+  const roleID = user?.role_id;
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { theme } = useTheme();
@@ -36,7 +37,7 @@ const ManagerSettings = () => {
     useSingleManagerDetails();
   const fileInputRef = useRef(null);
 
-  const image = user.image;
+  const image = user?.image;
 
   const showPasswordModal = () => setIsPasswordModalOpen(true);
   const showProfileModal = () => setIsProfileModalOpen(true);
@@ -166,7 +167,11 @@ const ManagerSettings = () => {
               <div className="flex flex-col md:flex-row gap-8">
                 <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
                   <img
-                    src={image}
+                    src={
+                      image
+                        ? image
+                        : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                    }
                     alt="User Profile"
                     className="w-44 h-44 rounded-full object-cover mb-3"
                   />

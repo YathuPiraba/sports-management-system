@@ -23,9 +23,10 @@ import echo from "../../utils/echo";
 const Navbar = () => {
   const [animate, setAnimate] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const loading = useSelector((state) => state.auth.loading);
-  const user = useSelector((state) => state.auth.userdata);
-  const role_id = useSelector((state) => state.auth.userdata.role_id);
+  const auth = useSelector((state) => state.auth);
+  const loading = auth?.loading;
+  const user = auth?.userdata;
+  const role_id = user?.role_id;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -92,7 +93,7 @@ const Navbar = () => {
     notifications = memberNotifications.notifications;
   }
 
-  const image = user.image;
+  const image = user?.image;
 
   const handleLogout = async () => {
     try {
@@ -245,7 +246,11 @@ const Navbar = () => {
                         style={{ width: 40, height: 40 }}
                       >
                         <img
-                          src={image}
+                          src={
+                            image
+                              ? image
+                              : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                          }
                           alt="user"
                           title="user name"
                           className="w-full h-full object-cover"
