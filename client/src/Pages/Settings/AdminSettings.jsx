@@ -8,6 +8,7 @@ import {
   deleteProfileAPI,
   updateAdminDetailsApi,
 } from "../../Services/apiServices";
+import { GridLoader } from "react-spinners";
 
 const UpdateProfile = lazy(() =>
   import("../../Components/settings/UpdateProfile")
@@ -21,6 +22,7 @@ const AdminSettings = () => {
   const auth = useSelector((state) => state.auth);
   const user = auth?.userdata;
   const roleID = user?.role_id;
+  const loading = auth?.loading;
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
@@ -80,6 +82,20 @@ const AdminSettings = () => {
   useEffect(() => {
     fetchDetails();
   }, [dispatch]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[75vh]">
+        <GridLoader
+          loading={loading}
+          size={15}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          color="#4682B4"
+        />
+      </div>
+    );
+  }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

@@ -88,6 +88,7 @@ const initialState = {
   userdata: null,
   loading: false,
   error: null,
+  logoutLoading: false,
 };
 
 // Auth slice to manage authentication state
@@ -99,23 +100,24 @@ const authSlice = createSlice({
       state.token = null;
       state.userdata = null;
       state.loading = false;
-      state.error = null; 
+      state.error = null;
+      state.logoutLoading = false;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginAdmin.pending, (state) => {
         state.loading = true;
-        state.error = null; 
+        state.error = null;
       })
       .addCase(loginAdmin.fulfilled, (state, action) => {
         state.token = action.payload;
         state.loading = false;
-        state.error = null; 
+        state.error = null;
       })
       .addCase(loginAdmin.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; 
+        state.error = action.payload;
       })
       .addCase(fetchUserDetails.pending, (state) => {
         state.loading = true;
@@ -128,21 +130,21 @@ const authSlice = createSlice({
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; 
+        state.error = action.payload;
       })
       .addCase(logOutAdmin.pending, (state) => {
-        state.loading = true;
+        state.logoutLoading = true;
         state.error = null;
       })
       .addCase(logOutAdmin.fulfilled, (state) => {
         state.token = null;
         state.userdata = null;
-        state.loading = false;
+        state.logoutLoading = false;
         state.error = null;
       })
       .addCase(logOutAdmin.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload; 
+        state.logoutLoading = false;
+        state.error = action.payload;
       })
       .addCase(applyManager.pending, (state) => {
         state.loading = true;
@@ -155,7 +157,7 @@ const authSlice = createSlice({
       })
       .addCase(applyManager.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; 
+        state.error = action.payload;
       })
       .addCase(applyMember.pending, (state) => {
         state.loading = true;
@@ -168,7 +170,7 @@ const authSlice = createSlice({
       })
       .addCase(applyMember.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; 
+        state.error = action.payload;
       });
   },
 });

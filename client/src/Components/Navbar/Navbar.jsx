@@ -24,7 +24,7 @@ const Navbar = () => {
   const [animate, setAnimate] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const auth = useSelector((state) => state.auth);
-  const loading = auth?.loading;
+  const loading = auth?.logoutLoading;
   const user = auth?.userdata;
   const role_id = user?.role_id;
   const navigate = useNavigate();
