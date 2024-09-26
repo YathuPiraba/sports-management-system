@@ -112,7 +112,7 @@ const AdminSettings = () => {
               <h1 className="text-3xl text-center font-medium py-4 text-cyan-600">
                 Admin Profile
               </h1>
-              <div className="flex justify-center gap-3 ml-28">
+              <div className="flex flex-col items-center md:flex-row lg:flex-row justify-center gap-3">
                 <span
                   className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
                   style={{ width: 100, height: 100 }}
@@ -171,7 +171,7 @@ const AdminSettings = () => {
                 <p className="text-slate-400">{user.email}</p>
               </header>
             </div>
-            <div className="flex justify-center gap-2 p-6 pt-0">
+            <div className="flex justify-center flex-col items-center md:flex-row lg:flex-row gap-2 p-6 pt-0">
               <Button
                 onClick={showPasswordModal}
                 className="h-10 px-5 w-40 bg-emerald-500 text-base text-white hover:bg-emerald-800"

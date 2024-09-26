@@ -140,105 +140,108 @@ const ManagerSettings = () => {
     message.error("Click on No");
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[75vh]">
+        <GridLoader
+          loading={loading}
+          size={15}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          color="#4682B4"
+        />
+      </div>
+    );
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       {" "}
       <div>
-        {loading ? (
-          <div className="flex justify-center items-center w-full h-[75vh]">
-            <GridLoader
-              loading={loading}
-              size={15}
-              aria-label="Loading Spinner"
-              data-testid="loader"
-              color="#4682B4"
-            />
-          </div>
-        ) : (
-          <div className="max-w-screen-xl mx-auto px-4 py-2 font-poppins">
-            <h1 className="text-2xl font-bold mb-3">Manager profile</h1>
-            <div
-              className={`${
-                theme === "light"
-                  ? "bg-white text-black"
-                  : "bg-gray-300 text-white"
-              } rounded-lg shadow-md px-6 py-3`}
-            >
-              <div className="flex flex-col md:flex-row gap-8">
-                <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
-                  <img
-                    src={
-                      image
-                        ? image
-                        : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
-                    }
-                    alt="User Profile"
-                    className="w-44 h-44 rounded-full object-cover mb-3"
-                  />
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    style={{ display: "none" }}
-                    accept="image/*"
-                  />
+        <div className="max-w-screen-xl mx-auto px-4 py-2 font-poppins">
+          <h1 className="text-2xl font-bold mb-3">Manager profile</h1>
+          <div
+            className={`${
+              theme === "light"
+                ? "bg-white text-black"
+                : "bg-gray-300 text-white"
+            } rounded-lg shadow-md px-6 py-3`}
+          >
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
+                <img
+                  src={
+                    image
+                      ? image
+                      : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                  }
+                  alt="User Profile"
+                  className="w-44 h-44 rounded-full object-cover mb-3"
+                />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                  accept="image/*"
+                />
+                <Button
+                  onClick={handleChangePicture}
+                  className="bg-indigo-900 text-white mb-2 w-full py-1"
+                  loading={imageLoading}
+                >
+                  Change picture
+                </Button>
+                <Popconfirm
+                  title="Deleting Profile"
+                  description="Are you sure you want to delete this Profile?"
+                  onConfirm={handleDeletePicture}
+                  onCancel={cancel}
+                  okText="Yes"
+                  cancelText="No"
+                >
                   <Button
-                    onClick={handleChangePicture}
-                    className="bg-indigo-900 text-white mb-2 w-full py-1"
-                    loading={imageLoading}
+                    className="border border-gray-300 w-full py-1"
+                    disabled={!image}
                   >
-                    Change picture
+                    Delete picture
                   </Button>
-                  <Popconfirm
-                    title="Deleting Profile"
-                    description="Are you sure you want to delete this Profile?"
-                    onConfirm={handleDeletePicture}
-                    onCancel={cancel}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button
-                      className="border border-gray-300 w-full py-1"
-                      disabled={!image}
-                    >
-                      Delete picture
-                    </Button>
-                  </Popconfirm>
-                </div>
-                <div className="flex-grow">
-                  <ul className="space-y-1">
-                    {profileDetails.map((detail, index) => (
-                      <li
-                        key={index}
-                        className="flex border-b border-gray-200 text-black py-1.5"
-                      >
-                        <span className="font-medium w-1/3 flex items-center">
-                          {detail.icon}
-                          {detail.label}:
-                        </span>
-                        <span className="w-2/3">{detail.value || "N/A"}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                </Popconfirm>
               </div>
-              <div className="flex ml-64 gap-16 mt-4">
-                <Button
-                  onClick={showPasswordModal}
-                  className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
-                >
-                  Change Password
-                </Button>
-                <Button
-                  onClick={showProfileModal}
-                  className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
-                >
-                  Update Profile
-                </Button>
+              <div className="flex-grow">
+                <ul className="space-y-1">
+                  {profileDetails.map((detail, index) => (
+                    <li
+                      key={index}
+                      className="flex border-b border-gray-200 text-black py-1.5"
+                    >
+                      <span className="font-medium w-1/3 flex items-center">
+                        {detail.icon}
+                        {detail.label}:
+                      </span>
+                      <span className="w-2/3">{detail.value || "N/A"}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
+            <div className="flex flex-col items-center md:flex-row lg:flex-row  gap-3 mt-4">
+              <Button
+                onClick={showPasswordModal}
+                className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
+              >
+                Change Password
+              </Button>
+              <Button
+                onClick={showProfileModal}
+                className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
+              >
+                Update Profile
+              </Button>
+            </div>
           </div>
-        )}
+        </div>
+
         <Modal
           title={
             <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
