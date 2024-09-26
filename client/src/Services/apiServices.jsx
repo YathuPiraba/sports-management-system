@@ -153,6 +153,11 @@ export const updateManagerDetailsApi = (userId, data) => {
   });
 };
 
+//deleteProfile
+export const deleteProfileAPI =(userId) =>{
+  return authApiClient.delete(`/image/${userId}`);
+}
+
 //Forgot-Password API
 export const forgotPasswordAPI = (data) => {
   return apiClient.post("/forgot-password", data);

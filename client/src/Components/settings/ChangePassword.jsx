@@ -4,12 +4,14 @@ import {
   updateAdminDetailsApi,
   updateManagerDetailsApi,
 } from "../../Services/apiServices";
+import { Button } from "antd";
 
 const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setPasswordsMatch(password === confirmPassword);
@@ -32,7 +34,7 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
       toast.error("New password and confirm password do not match");
       return;
     }
-
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("password", password);
@@ -43,13 +45,15 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
       } else if (roleID == 2) {
         res = await updateManagerDetailsApi(userId, formData);
       }
-      toast.success(res.data.message);
+      toast.success("Password Updated Successfully");
       setCurrentPassword("");
       setPassword("");
       setConfirmPassword("");
       setIsModalOpen(false);
     } catch (err) {
       toast.error(err.res?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -134,12 +138,14 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
           >
             Clear
           </button>
-          <button
+          <Button
             onClick={handleUpdatePassword}
             className="text-base bg-emerald-500 hover:bg-emerald-700 w-full px-4 py-2 rounded-md text-white"
+            loading={loading}
+            style={{ padding: "10px", height: "43px" }}
           >
             Update Password
-          </button>
+          </Button>
         </div>
       </form>
     </div>

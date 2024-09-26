@@ -12,7 +12,6 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log(auth);
   
 
   useEffect(() => {

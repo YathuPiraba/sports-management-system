@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Navbar.css";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
-import { Dropdown, Space, Badge, Switch } from "antd";
+import { Dropdown, Space, Badge, Switch, Button } from "antd";
 import { ImProfile } from "react-icons/im";
 import { TbLogout2 } from "react-icons/tb";
 import { logout, logOutAdmin } from "../../features/authslice";
@@ -174,11 +174,11 @@ const Navbar = () => {
       <div
         className={`mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8  w-full font-poppins`}
       >
-        {loading && (
+        {/* {loading && (
           <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
             <FadeLoader className="ml-1 mt-1" color="skyblue" />
           </div>
-        )}
+        )} */}
         <div className="flex pt-2 items-center">
           <div className="flex gap-3">
             <MdDarkMode size={19} className="mt-1" />
@@ -291,15 +291,21 @@ const Navbar = () => {
                           </Link>
                         </li>
                         <li
-                          className={`px-3 py-2 mb-2 mt-1 mx-2 ${
+                          className={`px-2 py-2 mb-2 mt-1 mx-2 ${
                             theme === "light"
                               ? "bg-gray-100 hover:bg-gray-300"
                               : "bg-white hover:bg-gray-400"
                           } rounded-md`}
                         >
-                          <button
+                          <Button
                             onClick={handleLogout}
                             className="flex items-center gap-2 w-full text-left"
+                            loading={loading}
+                            style={{
+                              border: "none",
+                              padding: 0,
+                              paddingLeft: "5px",
+                            }}
                           >
                             <div className="flex items-center">
                               <TbLogout2 size={20} />
@@ -307,7 +313,7 @@ const Navbar = () => {
                             <span className="flex-1 text-md font-normal text-gray-600">
                               Logout
                             </span>
-                          </button>
+                          </Button>
                         </li>
                       </ul>
                     )}

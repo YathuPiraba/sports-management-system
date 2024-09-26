@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { updateAdminDetailsApi } from "../../Services/apiServices";
+import { Button } from "antd";
 
 const UpdateProfile = ({ setIsModalOpen, user, fetchDetails }) => {
   const [userName, setUserName] = useState(user.userName);
   const [email, setEmail] = useState(user.email);
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchDetails();
@@ -25,7 +27,7 @@ const UpdateProfile = ({ setIsModalOpen, user, fetchDetails }) => {
       toast.error("No changes detected");
       return;
     }
-
+    setLoading(true);
     try {
       const formData = new FormData();
       if (userName !== user.userName) formData.append("userName", userName);
@@ -37,6 +39,8 @@ const UpdateProfile = ({ setIsModalOpen, user, fetchDetails }) => {
       fetchDetails();
     } catch (err) {
       toast.error(err.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,12 +90,14 @@ const UpdateProfile = ({ setIsModalOpen, user, fetchDetails }) => {
           >
             Clear
           </button>
-          <button
+          <Button
             onClick={handleUpdateProfile}
             className="text-base bg-emerald-500 hover:bg-emerald-700 w-full px-4 py-2 rounded-md text-white"
+            loading={loading}
+            style={{ padding: "10px", height: "40px" }}
           >
             Update Profile
-          </button>
+          </Button>
         </div>
       </form>
     </div>

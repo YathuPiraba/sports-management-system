@@ -257,4 +257,41 @@ class UserController extends Controller
             'message' => 'User successfully restored'
         ], 200);
     }
+
+    public function deleteImage($id)
+    {
+        // Fetch the user by ID
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Check if the user has an image
+        if (!$user->image) {
+            return response()->json([
+                'message' => 'No image to delete'
+            ], 400);
+        }
+
+        // Delete the image from Cloudinary (or any other service you're using)
+        try {
+            $this->cloudinary->uploadApi()->destroy($user->image);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete image',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
+        // Set image field to null
+        $user->image = null;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Image deleted successfully'
+        ], 200);
+    }
 }
