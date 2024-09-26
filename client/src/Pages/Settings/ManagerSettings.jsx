@@ -210,7 +210,7 @@ const ManagerSettings = () => {
               </div>
               <div className="flex-grow">
                 <ul className="space-y-1">
-                  {profileDetails.map((detail, index) => (
+                  {profileDetails?.map((detail, index) => (
                     <li
                       key={index}
                       className="flex border-b border-gray-200 text-black py-1.5"
@@ -225,7 +225,7 @@ const ManagerSettings = () => {
                 </ul>
               </div>
             </div>
-            <div className="flex flex-col items-center md:flex-row lg:flex-row  gap-3 mt-4">
+            <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row  gap-3 mt-4">
               <Button
                 onClick={showPasswordModal}
                 className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
