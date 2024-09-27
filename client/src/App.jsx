@@ -7,11 +7,12 @@ import MemberSignIn from "./Pages/Signup/MemberSignIn";
 import CommonRoute from "./Routes/CommonRoute";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import Welcome from "./Pages/Welcome";
+import { ApiClientProvider } from "./Services/apiClient";
 
 const App = () => {
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <ApiClientProvider>
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/home" element={<Home />} />
@@ -20,8 +21,8 @@ const App = () => {
           <Route path="/signup/member" element={<MemberSignIn />} />
           <Route path="/*" element={<ProtectedRoute element={CommonRoute} />} />
         </Routes>
-      </BrowserRouter>
-    </>
+      </ApiClientProvider>
+    </BrowserRouter>
   );
 };
 

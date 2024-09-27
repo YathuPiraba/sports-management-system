@@ -8,6 +8,7 @@ import {
   deleteProfileAPI,
   updateAdminDetailsApi,
 } from "../../Services/apiServices";
+import { GridLoader } from "react-spinners";
 
 const UpdateProfile = lazy(() =>
   import("../../Components/settings/UpdateProfile")
@@ -21,6 +22,7 @@ const AdminSettings = () => {
   const auth = useSelector((state) => state.auth);
   const user = auth?.userdata;
   const roleID = user?.role_id;
+  const loading = auth?.loading;
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
@@ -81,6 +83,20 @@ const AdminSettings = () => {
     fetchDetails();
   }, [dispatch]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[75vh]">
+        <GridLoader
+          loading={loading}
+          size={15}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          color="#4682B4"
+        />
+      </div>
+    );
+  }
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <>
@@ -96,7 +112,7 @@ const AdminSettings = () => {
               <h1 className="text-3xl text-center font-medium py-4 text-cyan-600">
                 Admin Profile
               </h1>
-              <div className="flex justify-center gap-3 ml-28">
+              <div className="flex flex-col items-center md:flex-row lg:flex-row justify-center gap-3">
                 <span
                   className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
                   style={{ width: 100, height: 100 }}
@@ -155,7 +171,7 @@ const AdminSettings = () => {
                 <p className="text-slate-400">{user.email}</p>
               </header>
             </div>
-            <div className="flex justify-center gap-2 p-6 pt-0">
+            <div className="flex justify-center flex-col items-center md:flex-row lg:flex-row gap-2 p-6 pt-0">
               <Button
                 onClick={showPasswordModal}
                 className="h-10 px-5 w-40 bg-emerald-500 text-base text-white hover:bg-emerald-800"

@@ -70,6 +70,16 @@ class TokenService
 
     public function setRefreshTokenCookie($token)
     {
-        return Cookie::make('refresh_token', $token, $this->refreshTokenExpiry / 60, null, null, true, true, false, 'None');
+        return Cookie::make(
+            'refresh_token',              // Cookie name
+            $token,                       // Token value
+            $this->refreshTokenExpiry / 60, // Expiry time in minutes
+            '/',                          // Path, making the cookie available site-wide
+            null,                         // Domain (null defaults to current domain)
+            false,                        // Secure (set to true in production for HTTPS)
+            true,                         // HttpOnly (prevents client-side access to the cookie)
+            false,                        // Raw (leave as false)
+            'Lax'                         // SameSite policy, 'Lax' is more permissive than 'Strict'
+        );
     }
 }
