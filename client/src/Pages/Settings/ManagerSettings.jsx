@@ -215,11 +215,11 @@ const ManagerSettings = () => {
                       key={index}
                       className="flex flex-col md:flex-row border-b border-gray-200 text-black py-1.5"
                     >
-                      <span className="font-medium w-full  flex  items-center">
+                      <span className="font-medium w-full md:w-1/2  flex  items-center">
                         {detail.icon}
-                        {detail.label}:
+                        {detail.label}
                       </span>
-                      <span className="w-full pl-[35px] md:pl-0 text-gray-600 ">{detail.value || "N/A"}</span>
+                      <span className="w-full pl-[35px] md:pl-0 text-gray-700 ">:  &nbsp; {detail.value || "N/A"}</span>
                     </li>
                   ))}
                 </ul>
