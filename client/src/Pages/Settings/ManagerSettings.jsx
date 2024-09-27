@@ -91,12 +91,12 @@ const ManagerSettings = () => {
       value: `${managerDetails.firstName || ""} ${
         managerDetails.lastName || ""
       }`,
-      icon: <CgRename size={19} className="mr-5" />,
+      icon: <CgRename size={19} className="mr-4" />,
     },
     {
       label: "Username",
       value: user.userName,
-      icon: <MdPermIdentity size={19} className="mr-5" />,
+      icon: <MdPermIdentity size={19} className="mr-4" />,
     },
     {
       label: "Email",
@@ -167,7 +167,7 @@ const ManagerSettings = () => {
                 : "bg-gray-300 text-white"
             } rounded-lg shadow-md px-6 py-3`}
           >
-            <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex flex-col lg:flex-row gap-8">
               <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
                 <img
                   src={
@@ -213,13 +213,13 @@ const ManagerSettings = () => {
                   {profileDetails?.map((detail, index) => (
                     <li
                       key={index}
-                      className="flex border-b border-gray-200 text-black py-1.5"
+                      className="flex flex-col md:flex-row border-b border-gray-200 text-black py-1.5"
                     >
-                      <span className="font-medium w-1/3 flex items-center">
+                      <span className="font-medium w-full  flex  items-center">
                         {detail.icon}
                         {detail.label}:
                       </span>
-                      <span className="w-2/3">{detail.value || "N/A"}</span>
+                      <span className="w-full pl-[35px] md:pl-0 text-gray-600 ">{detail.value || "N/A"}</span>
                     </li>
                   ))}
                 </ul>
