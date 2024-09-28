@@ -19,7 +19,7 @@ const AdminApprovalTable = lazy(() =>
 const clubColumns = [
   "Club Image",
   "Club Name",
-  "GS Division Name",
+  "G.N Division",
   "Address",
   "Contact No",
 ];
