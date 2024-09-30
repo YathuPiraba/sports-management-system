@@ -37,7 +37,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
             {field.type === "select" ? (
               <select
                 name={field.name}
-                value={details[field.name]}
+                value={details[field.name] || ""}
                 onChange={handleChange}
                 className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               >
@@ -54,7 +54,10 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
                 name={field.name}
                 onChange={(e) =>
                   handleChange({
-                    target: { name: field.name, value: e.target.files[0] },
+                    target: {
+                      name: field.name,
+                      value: e.target.files[0] || "",
+                    },
                   })
                 }
                 className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -63,7 +66,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
               <input
                 type={field.type}
                 name={field.name}
-                value={details[field.name]}
+                value={details[field.name] || ""}
                 onChange={handleChange}
                 max={field.type === "date" ? maxDateString : undefined}
                 maxLength={field.maxLength || undefined}
@@ -79,7 +82,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
           </label>
           <textarea
             name="address"
-            value={details.address}
+            value={details.address || ""}
             onChange={handleChange}
             className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"
             rows="5"
@@ -99,7 +102,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
             <input
               type="text"
               name={field.name}
-              value={details[field.name]}
+              value={details[field.name] || ""}
               onChange={handleChange}
               maxLength={15}
               className="w-full p-1 border rounded-md focus:ring-blue-500 focus:border-blue-500"

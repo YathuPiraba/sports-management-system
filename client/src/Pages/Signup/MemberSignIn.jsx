@@ -113,7 +113,7 @@ const MemberSignIn = () => {
       toast.success("Successfully Applied for Registration");
     } catch (error) {
       console.error("Error creating request", error);
-      toast.error("Error while applying Request");
+      toast.error(error?.message);
     }
   };
 
