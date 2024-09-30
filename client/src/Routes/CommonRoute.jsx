@@ -10,9 +10,9 @@ import Club from "../Pages/Club/Club";
 import PageNotFound from "../Pages/PageNotFound";
 import MemberProfile from "../Pages/Member/MemberProfile";
 
-
 const CommonRoute = () => {
-  const role_id = useSelector((state) => state.auth.userdata.role_id);
+  const user = useSelector((state) => state.auth.userdata);
+  const role_id = user?.role_id;
 
   return (
     <Routes>

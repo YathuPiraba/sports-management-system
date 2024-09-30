@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { TbPlayerTrackPrev } from "react-icons/tb";
 import useGsDivisions from "../../hooks/useGsDivisions";
 import { Button } from "antd";
-import "../../App.css"
+import "../../App.css";
 
 const SignInHeader = lazy(() => import("../../Components/Signup/SignInHeader"));
 const PersonalDetails = lazy(() =>
@@ -65,7 +65,7 @@ const ManagerSignIn = () => {
       navigate("/home");
     } catch (error) {
       console.error("Error creating request", error);
-      toast.error("Error while applying Request");
+      toast.error(error?.message);
     }
   };
 

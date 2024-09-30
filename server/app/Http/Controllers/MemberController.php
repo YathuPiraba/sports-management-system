@@ -499,16 +499,16 @@ class MemberController extends Controller
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('firstName', 'like', "%{$search}%")
-                      ->orWhere('lastName', 'like', "%{$search}%")
-                      ->orWhere('contactNo', 'like', "%{$search}%")
-                      ->orWhere('whatsappNo', 'like', "%{$search}%");
+                        ->orWhere('lastName', 'like', "%{$search}%")
+                        ->orWhere('contactNo', 'like', "%{$search}%")
+                        ->orWhere('whatsappNo', 'like', "%{$search}%");
                 });
             }
 
             // Apply sorting
             if ($sortBy === 'name') {
                 $query->orderBy('firstName', $sort)
-                      ->orderBy('lastName', $sort);
+                    ->orderBy('lastName', $sort);
             } elseif ($sortBy === 'created_at') {
                 $query->orderBy('created_at', $sort);
             }
@@ -569,7 +569,14 @@ class MemberController extends Controller
     {
         try {
             // Find the member by memberId
-            $member = Member::with(['memberSports.sport', 'memberSports.skills', 'user'])
+            $member = Member::with([
+                'memberSports.sport',
+                'memberSports.skills',
+                'club',
+                'user' => function ($query) {
+                    $query->withTrashed();
+                }
+            ])
                 ->where('id', $memberId)
                 ->first();
 
@@ -617,6 +624,7 @@ class MemberController extends Controller
                 'created_at' => $member->created_at->toDateString(),
                 'user' => $member->user->safeAttributes(),
                 'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
+                'club' => $member->club,
             ];
 
             return response()->json([
