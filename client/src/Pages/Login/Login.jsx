@@ -57,19 +57,21 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      switch (role_id) {
-        case 1:
-          navigate("/admin/dashboard", { replace: true });
-          break;
-        case 2:
-          navigate("/manager/club", { replace: true });
-          break;
-        case 3:
-          navigate("/member/dashboard", { replace: true });
-          break;
-        default:
-          navigate("/", { replace: true });
-          break;
+      if (role_id) {
+        switch (role_id) {
+          case 1:
+            navigate("/admin/dashboard", { replace: true });
+            break;
+          case 2:
+            navigate("/manager/club", { replace: true });
+            break;
+          case 3:
+            navigate("/member/dashboard", { replace: true });
+            break;
+          default:
+            navigate("/", { replace: true });
+            break;
+        }
       }
     }
   }, [isAuthenticated]);
