@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAdmin, fetchUserDetails } from "../../features/authslice";
 import { Input, Space } from "antd";
-import { FadeLoader } from "react-spinners";
+import { FadeLoader, PropagateLoader } from "react-spinners";
 import { getAllClubsAPI } from "../../Services/apiServices";
 const ForgotPassword = lazy(() =>
   import("../../Components/Login/ForgotPassword")
@@ -19,13 +19,18 @@ const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isForgotPasswordModalVisible, setIsForgotPasswordModalVisible] =
     useState(false);
+  const [clubLoading, setClubLoading] = useState(true);
 
   const [clubs, setClubs] = useState([]);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
+  const isAuthenticated = !!auth.token;
   const loading = auth?.loginLoading;
+  const user = auth?.userdata;
+  const role_id = user?.role_id;
+
   const {
     control,
     register,
@@ -35,17 +40,39 @@ const Login = () => {
   } = useForm();
 
   const fetchAllClubs = async () => {
+    setClubLoading(true);
     try {
       const res = await getAllClubsAPI();
       setClubs(res.data);
     } catch (error) {
       console.error("Error fetching clubs:", error);
+    } finally {
+      setClubLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAllClubs();
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      switch (role_id) {
+        case 1:
+          navigate("/admin/dashboard", { replace: true });
+          break;
+        case 2:
+          navigate("/manager/club", { replace: true });
+          break;
+        case 3:
+          navigate("/member/dashboard", { replace: true });
+          break;
+        default:
+          navigate("/", { replace: true });
+          break;
+      }
+    }
+  }, [isAuthenticated]);
 
   // Login User
   const onSubmit = async (data) => {
@@ -233,29 +260,37 @@ const Login = () => {
             footer={null}
             width={400}
           >
-            <div className="signup-options">
-              <Button
-                onClick={() => navigate("/signup/manager")}
-                type="primary"
-                block
-                style={{ width: "150px", margin: "10px auto 0" }}
-              >
-                Manager
-              </Button>
-              <Button
-                onClick={() => navigate("/signup/member")}
-                type="primary"
-                block
-                style={{ width: "150px", margin: "10px auto 0" }}
-                disabled={clubs.length === 0}
-                title={
-                  clubs.length === 0
-                    ? "Can't register since no managers are registered"
-                    : ""
-                }
-              >
-                Member
-              </Button>
+            <div className="signup-options flex justify-center">
+              {clubLoading ? (
+                <div>
+                  <PropagateLoader color="blue" />
+                </div>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => navigate("/signup/manager")}
+                    type="primary"
+                    block
+                    style={{ width: "150px", margin: "10px auto 0" }}
+                  >
+                    Manager
+                  </Button>
+                  <Button
+                    onClick={() => navigate("/signup/member")}
+                    type="primary"
+                    block
+                    style={{ width: "150px", margin: "10px auto 0" }}
+                    disabled={clubs?.length === 0}
+                    title={
+                      clubs?.length === 0
+                        ? "Can't register since no managers are registered"
+                        : ""
+                    }
+                  >
+                    Member
+                  </Button>
+                </>
+              )}
             </div>
           </Modal>
         </div>
