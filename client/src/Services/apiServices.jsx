@@ -153,10 +153,14 @@ export const updateManagerDetailsApi = (userId, data) => {
   });
 };
 
+export const getCountsAPI = () => {
+  return authApiClient.get(`/sports/counts`);
+};
+
 //deleteProfile
-export const deleteProfileAPI =(userId) =>{
+export const deleteProfileAPI = (userId) => {
   return authApiClient.delete(`/image/${userId}`);
-}
+};
 
 //Forgot-Password API
 export const forgotPasswordAPI = (data) => {
