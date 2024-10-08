@@ -6,6 +6,7 @@ import {
   TrophyOutlined,
   FlagOutlined,
 } from "@ant-design/icons";
+import { GridLoader } from "react-spinners";
 
 const AdminDashboard = () => {
   const [totalClubs, setTotalClubs] = useState(null);
@@ -30,7 +31,20 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchCounts();
   }, []);
-  
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[75vh]">
+        <GridLoader
+          loading={loading}
+          size={15}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          color="#4682B4"
+        />
+      </div>
+    );
+  }
   return (
     <div className="p-6 min-h-screen ">
       <h2 className="text-2xl font-semibold mb-6">Dashboard</h2>
