@@ -60,7 +60,10 @@ const ApiClientProvider = ({ children }) => {
         } catch (refreshError) {
           console.error("Refresh token failed:", refreshError);
           localStorage.removeItem("access_token");
-          setIsSessionExpired(true);
+          // Check if the refresh token has expired
+          if (refreshError.response && refreshError.response.status === 401) {
+            setIsSessionExpired(true);
+          }
           return Promise.reject(refreshError);
         }
       }
