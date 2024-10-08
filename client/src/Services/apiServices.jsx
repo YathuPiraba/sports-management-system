@@ -405,3 +405,14 @@ export const fetchNotificationsAPI = () => {
 export const readNotificationAPI = (notificationId) => {
   return authApiClient.post(`/notifications/${notificationId}/read`);
 };
+
+export const downloadClubDetailsAPI = async (clubId) => {
+  try {
+    const response = await authApiClient.get(`/download-club-details/${clubId}`, {
+      responseType: "blob",
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

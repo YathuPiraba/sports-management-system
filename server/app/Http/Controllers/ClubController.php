@@ -10,6 +10,7 @@ use App\Models\Sports_Categories;
 use App\Models\Sports_Arena;
 use App\Models\Gs_Division;
 use App\Models\Member;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Cloudinary\Cloudinary;
 use Illuminate\Support\Facades\Validator;
@@ -574,5 +575,19 @@ class ClubController extends Controller
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function downloadDetails($id)
+    {
+        $club = Club::with(['gsDivision', 'clubManagers', 'members'])->findOrFail($id);
+
+        // Generate the PDF
+        $pdf = PDF::loadView('club_details_pdf', compact('club'));
+
+        // Generate a filename
+        $filename = 'club_details_' . $club->clubName . '.pdf';
+
+        // Return the PDF for download
+        return $pdf->download($filename);
     }
 }

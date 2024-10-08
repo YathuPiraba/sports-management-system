@@ -66,11 +66,12 @@ Route::middleware('auth.token')->group(function () {
 
     Route::delete('/user/{id}', [UserController::class, 'deactivateUser']);
     Route::patch('/user/{id}/restore', [UserController::class, 'restoreUser']);
-
-
 });
 
 Route::put('/club/{id}', [ClubController::class, 'clubUpdate']);
+
+
+Route::get('/download-club-details/{id}', [ClubController::class, 'downloadDetails']);
 
 Route::get('/clubs/list', [ClubController::class, 'getAllClubs']);
 Route::get('/clubs/details', [ClubController::class, 'getAllClubsDetails']);

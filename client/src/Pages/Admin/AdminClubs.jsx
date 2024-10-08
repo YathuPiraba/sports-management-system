@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getAllClubsDetailsAPI } from "../../Services/apiServices";
+import {
+  getAllClubsDetailsAPI,
+  downloadClubDetailsAPI,
+} from "../../Services/apiServices";
 import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 import { IoSearchCircleOutline } from "react-icons/io5";
 import { GridLoader, PropagateLoader } from "react-spinners";
@@ -79,6 +82,26 @@ const AdminClubs = () => {
         ? prevExpandedRowIds.filter((rowId) => rowId !== id)
         : [...prevExpandedRowIds, id]
     );
+  };
+
+  const handleDownload = async (clubId) => {
+    try {
+      const response = await downloadClubDetailsAPI(clubId);
+
+      // Create a Blob from the response data
+      const blob = new Blob([response.data], { type: "application/pdf" });
+
+      // Create a link element and trigger the download
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `club_details_${clubId}.pdf`;
+      link.click();
+
+      message.success("Club details downloaded successfully");
+    } catch (error) {
+      console.error("Error downloading club details:", error);
+      message.error("Failed to download club details. Please try again.");
+    }
   };
 
   if (initialLoading) {
@@ -189,6 +212,14 @@ const AdminClubs = () => {
                       {expandedRowIds.includes(club.id)
                         ? "Hide Details"
                         : "Show Details"}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => handleDownload(club.id)}
+                    >
+                      Download PDF
                     </button>
                   </td>
                 </tr>
