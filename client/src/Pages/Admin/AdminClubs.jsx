@@ -6,7 +6,14 @@ import {
 import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 import { IoSearchCircleOutline } from "react-icons/io5";
 import { GridLoader, PropagateLoader } from "react-spinners";
-import { message } from "antd";
+import { Button, message } from "antd";
+import {
+  FaChevronUp,
+  FaChevronCircleUp,
+  FaChevronCircleDown,
+  FaChevronDown,
+  FaFilePdf,
+} from "react-icons/fa";
 
 const AdminClubs = () => {
   const [clubs, setClubs] = useState([]);
@@ -22,6 +29,7 @@ const AdminClubs = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState({});
 
   const fetchClubData = async (
     page = pagination.currentPage,
@@ -84,7 +92,11 @@ const AdminClubs = () => {
     );
   };
 
-  const handleDownload = async (clubId) => {
+  const handleDownload = async (clubId, clubName) => {
+    setDownloadLoading((prevState) => ({
+      ...prevState,
+      [clubId]: true,
+    }));
     try {
       const response = await downloadClubDetailsAPI(clubId);
 
@@ -94,13 +106,18 @@ const AdminClubs = () => {
       // Create a link element and trigger the download
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
-      link.download = `club_details_${clubId}.pdf`;
+      link.download = `${clubName} - club details.pdf`;
       link.click();
 
       message.success("Club details downloaded successfully");
     } catch (error) {
       console.error("Error downloading club details:", error);
       message.error("Failed to download club details. Please try again.");
+    } finally {
+      setDownloadLoading((prevState) => ({
+        ...prevState,
+        [clubId]: false,
+      }));
     }
   };
 
@@ -122,32 +139,38 @@ const AdminClubs = () => {
 
   return (
     <div className="px-6">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-        <div className="flex gap-5 mb-4 lg:mb-0 items-center">
-          <h1 className="text-2xl mt-3 font-bold mb-4">Clubs</h1>
-          <p>Sort By:</p>
-          <button
-            onClick={() => handleSort("clubName")}
-            className={`ml-2 px-2 py-1 border rounded ${
-              sortBy === "clubName"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-black"
-            }`}
-          >
-            Club Name{" "}
-            {sortBy === "clubName" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-          </button>
-          <button
-            onClick={() => handleSort("divisionName")}
-            className={`ml-2 px-2 py-1 border rounded ${
-              sortBy === "divisionName"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-black"
-            }`}
-          >
-            Division Name{" "}
-            {sortBy === "divisionName" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
-          </button>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between items-center mb-4">
+        <div className="flex gap-2 mb-4 lg:mb-0 items-center">
+          <h1 className="text-2xl mt-4 font-bold mb-4  font-poppins">Clubs</h1>
+          <div className=" flex items-center font-sans ">
+            <p>Sort By:</p>
+            <button
+              onClick={() => handleSort("clubName")}
+              className={`ml-2 px-2 py-1 border rounded hover:bg-blue-700 text-sm ${
+                sortBy === "clubName"
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              Club Name{" "}
+              {sortBy === "clubName" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
+            </button>
+            <button
+              onClick={() => handleSort("divisionName")}
+              className={`ml-2 px-2 py-1 border rounded hover:bg-blue-600 hover:text-white text-sm ${
+                sortBy === "divisionName"
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              Division Name{" "}
+              {sortBy === "divisionName"
+                ? sortOrder === "asc"
+                  ? "↑"
+                  : "↓"
+                : ""}
+            </button>
+          </div>
         </div>
         <div className="relative lg:ml-auto">
           <input
@@ -164,13 +187,14 @@ const AdminClubs = () => {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200 font-poppins">
           <thead>
-            <tr>
+            <tr className="text-left">
+              <th className="px-6 py-3 bg-gray-50">No</th>
               <th className="px-6 py-3 bg-gray-50">Club Name</th>
               <th className="px-6 py-3 bg-gray-50">Address</th>
               <th className="px-6 py-3 bg-gray-50">Contact No.</th>
-              <th className="px-6 py-3 bg-gray-50">Division</th>
+              <th className="px-6 py-3 bg-gray-50">G.N Division</th>
               <th className="px-6 py-3 bg-gray-50">Actions</th>
             </tr>
           </thead>
@@ -189,9 +213,10 @@ const AdminClubs = () => {
                 </td>
               </tr>
             )}
-            {clubs.map((club) => (
+            {clubs.map((club, index) => (
               <React.Fragment key={club.id}>
                 <tr>
+                  <td className="px-6 py-4 whitespace-nowrap"> {index + 1} </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {club.clubName}
                   </td>
@@ -204,22 +229,23 @@ const AdminClubs = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {club.gs_division.divisionName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap flex justify-between ">
+                    <Button
+                      className="bg-red-500 hover:bg-red-700 text-white font-semibold font-sans tracking-wide py-1 px-1 rounded text-sm flex items-center gap-1.5 dwnld-btn"
+                      onClick={() => handleDownload(club.id, club.clubName)}
+                      loading={downloadLoading[club.id]}
+                    >
+                      <FaFilePdf /> Download
+                    </Button>
                     <button
                       className="text-blue-500 hover:text-blue-700"
                       onClick={() => toggleRow(club.id)}
                     >
-                      {expandedRowIds.includes(club.id)
-                        ? "Hide Details"
-                        : "Show Details"}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => handleDownload(club.id)}
-                    >
-                      Download PDF
+                      {expandedRowIds.includes(club.id) ? (
+                        <FaChevronUp />
+                      ) : (
+                        <FaChevronDown />
+                      )}
                     </button>
                   </td>
                 </tr>
