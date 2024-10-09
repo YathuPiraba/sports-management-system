@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { getEventParticipantsAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import PropagateLoader from "react-spinners/PropagateLoader";
-import { Tree } from "antd";
+import { Button, Tree } from "antd";
 const { DirectoryTree } = Tree;
+import { FaDownload, FaFilePdf } from "react-icons/fa";
 
 const EventParticipantList = () => {
   const [loading, setLoading] = useState(false);
@@ -26,11 +27,31 @@ const EventParticipantList = () => {
     }
   };
 
+  const handleDownloadPDF = (e, eventId) => {
+    e.stopPropagation();
+    // Here you would typically make an API call to your Laravel backend
+    // to generate and download the PDF
+    console.log(`Downloading PDF for event ID: ${eventId}`);
+    // Example of how you might call your Laravel route:
+    // window.location.href = `/api/download-event-pdf/${eventId}`;
+  };
+
   const formatTreeData = (data) => {
     if (!data || !data.length) return [];
 
     return data.map((event) => ({
-      title: event.event_sports.name,
+      title: (
+        <div className="flex items-center justify-between">
+          <span>{event.event_sports.name}</span>
+          <Button
+            icon={<FaFilePdf />}
+            onClick={(e) => handleDownloadPDF(e, event.event_sports.id)}
+            className="ml-2 text-red-500 event-part-btn"
+          >
+           <FaDownload />
+          </Button>
+        </div>
+      ),
       key: `event-${event.event_sports.id}`,
       children: event.event_sports.clubs.map((club) => ({
         title: club.clubName,
@@ -66,9 +87,6 @@ const EventParticipantList = () => {
         setSelectedKeys(() => [selectedKey]);
       }
     }
-
-    console.log("Selected keys:", validKeys);
-    console.log("Updated selected keys:", selectedKeys);
   };
 
   if (loading) {

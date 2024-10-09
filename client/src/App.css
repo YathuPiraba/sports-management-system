@@ -73,3 +73,26 @@
 .dwnld-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default {
   border: none !important;
 }
+
+.event-part-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  color: red !important;
+  border-color: red !important;
+}
+
+.event-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: blue !important;
+  color: white;
+  border-color: blue !important;
+}
+
+.event-dlt.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: red !important;
+  color: white;
+  border-color: red !important;
+}
+
+.event-add.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: blue !important;
+  color: white;
+  border-color: blue !important;
+}

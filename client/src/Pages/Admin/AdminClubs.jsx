@@ -129,7 +129,6 @@ const AdminClubs = () => {
       </div>
     );
   }
-console.log(clubs,"kk");
 
   return (
     <div className="px-6">
@@ -225,7 +224,7 @@ console.log(clubs,"kk");
                   </td>
                   <td className="px-3 py-4 whitespace-nowrap flex justify-between ">
                     <Button
-                      className="bg-red-500 hover:bg-red-700 text-white font-semibold font-sans tracking-wide py-1 px-1 rounded text-sm flex items-center gap-1.5 dwnld-btn"
+                      className="bg-red-500 text-white font-semibold font-sans tracking-wide py-1 px-1 rounded text-sm flex items-center gap-1.5 dwnld-btn"
                       onClick={() => handleDownload(club.id, club.clubName)}
                       loading={downloadLoading[club.id]}
                     >

@@ -165,7 +165,7 @@ const Events = () => {
             <Button
               icon={<PlusOutlined />}
               onClick={() => showEventModal(false)}
-              className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none"
+              className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none event-add"
             >
               Add Events
             </Button>
@@ -186,7 +186,7 @@ const Events = () => {
             <>
               <Button
                 onClick={() => showEventModal(true)}
-                className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none mt-2 md:mt-0"
+                className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none mt-2 md:mt-0 event-btn"
                 icon={<EditOutlined />}
               >
                 Edit Event
@@ -198,7 +198,7 @@ const Events = () => {
                 cancelText="No"
               >
                 <Button
-                  className="bg-red-500 text-white hover:bg-red-600 flex-grow md:flex-none mt-2 md:mt-0"
+                  className="bg-red-500 text-white hover:bg-red-600 flex-grow md:flex-none mt-2 md:mt-0 event-dlt"
                   icon={<DeleteOutlined />}
                 >
                   Delete Event
