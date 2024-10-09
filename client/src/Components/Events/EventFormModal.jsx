@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button } from "antd";
 import { addEventAPI, editEventAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
-import { FadeLoader } from "react-spinners";
 
 const EventFormModal = ({ open, onOk, onCancel, event }) => {
   const [formData, setFormData] = useState({
@@ -96,11 +95,6 @@ const EventFormModal = ({ open, onOk, onCancel, event }) => {
         onSubmit={handleSubmit}
         className="flex flex-col space-y-1 mt-2 text-left"
       >
-        {loading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
-            <FadeLoader className="ml-1 mt-1" color="skyblue" />
-          </div>
-        )}
         <div className="flex flex-col space-y-2">
           <label htmlFor="name" className="font-semibold text-gray-700">
             Event Name
@@ -161,7 +155,8 @@ const EventFormModal = ({ open, onOk, onCancel, event }) => {
           <Button
             type="primary"
             htmlType="submit"
-            className="bg-blue-500 hover:bg-blue-600"
+            className="bg-blue-500 hover:bg-blue-700"
+            loading={loading}
           >
             {event ? "Update Event" : "Create Event"}
           </Button>

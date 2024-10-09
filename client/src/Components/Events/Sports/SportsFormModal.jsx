@@ -6,7 +6,6 @@ import {
   getAllSportsAPI,
   editEventSportsAPI,
 } from "../../../Services/apiServices";
-import { FadeLoader } from "react-spinners";
 
 const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
   const [formData, setFormData] = useState({
@@ -133,13 +132,9 @@ const SportsFormModal = ({ visible, onCancel, sport, event, onOk }) => {
       confirmLoading={loading}
       className="text-center"
       maskClosable={false}
+      okText={sport ? "Update Sport" : "Add Sport"}
     >
       <form className="mt-0 text-left">
-        {loading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
-            <FadeLoader className="ml-1 mt-1" color="skyblue" />
-          </div>
-        )}
         <div className="mb-4">
           <label htmlFor="name" className="block font-medium">
             Event Sport Name
