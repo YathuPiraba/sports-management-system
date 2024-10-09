@@ -10,47 +10,46 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            margin: 0;
-            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .logo-left {
             position: absolute;
             top: 10px;
             left: 10px;
+            width: 100px;
         }
 
         .logo-right {
             position: absolute;
             top: 10px;
             right: 10px;
-            width: 50px;
-        }
-
-        .logo {
-            width: 50px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .club-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            width: 100px;
         }
 
         .club-image {
-            width: 50px;
-            vertical-align: middle;
-            margin-right: 10px;
+            max-width: 200px;
+            margin-bottom: 10px;
         }
 
         h1 {
             color: #2c3e50;
-            display: inline-block;
-            margin: 0;
-            vertical-align: middle;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 20px;
+        }
+
+        ul {
+            padding-left: 20px;
         }
 
         .info {
@@ -59,14 +58,6 @@
 
         .info strong {
             color: #2c3e50;
-        }
-
-        ul {
-            padding-left: 20px;
-        }
-
-        li {
-            margin-bottom: 5px;
         }
 
         .squad {
@@ -107,16 +98,16 @@
 
 <body>
     <div class="logo-left">
-        <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1727243516/logo2-1_pyhk2h.png"
-            alt="Club Connect Logo" style="width: 50px;">
+        <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png" alt="Club Connect Logo"
+            style="width: 50px;">
     </div>
     <div class="logo-right">
         <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1728452512/11396-removebg-preview_q9leix.png"
-            alt="Footer Logo" style="width: 50px;">
+            alt="DS_Office Logo" style="width: 50px;">
     </div>
 
-    <div class="club-header">
-        <img src="{{ $club->clubImage }}" alt="{{ $club->clubName }}" class="club-image">
+    <div class="header">
+        <img src="{{ $club->clubImage }}" alt="{{ $club->clubName }}" class="club-image" style="width: 50px;">
         <h1>{{ $club->clubName }}</h1>
     </div>
 
@@ -126,17 +117,12 @@
 
     <h2>Sports and Arenas</h2>
     <ul>
-        @php
-            $groupedSports = $club->clubSports->groupBy('sportsCategory.name');
-        @endphp
-        @foreach ($groupedSports as $sportName => $sportGroups)
+        @foreach ($club->clubSports as $clubSport)
             <li>
-                {{ $sportName }}
+                {{ optional($clubSport->sportsCategory)->name }}
                 <ul>
-                    @foreach ($sportGroups as $sport)
-                        @if ($sport->sportsArena)
-                            <li>Arena: {{ $sport->sportsArena->name }}</li>
-                        @endif
+                    @foreach ($clubSport->sportsArena ?? [] as $arena)
+                        Arena: {{ optional($arena)->name }}
                     @endforeach
                 </ul>
             </li>

@@ -15,6 +15,7 @@ use Exception;
 use Cloudinary\Cloudinary;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB; // Import the DB facade
+use Illuminate\Support\Facades\Log;
 
 class ClubController extends Controller
 {
@@ -580,6 +581,8 @@ class ClubController extends Controller
     public function downloadDetails($id)
     {
         $club = Club::with(['gsDivision', 'clubManagers', 'members', 'clubSports.sportsCategory', 'clubSports.sportsArena'])->findOrFail($id);
+
+        Log::info($club);
 
         // Generate the PDF
         $pdf = PDF::loadView('club_details_pdf', compact('club'));
