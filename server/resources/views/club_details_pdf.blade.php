@@ -34,20 +34,29 @@
     <h1>{{ $club->clubName }}</h1>
     <div class="info"><strong>Address:</strong> {{ $club->clubAddress }}</div>
     <div class="info"><strong>Contact No:</strong> {{ $club->clubContactNo }}</div>
-    <div class="info"><strong>Division:</strong> {{ $club->gs_division->divisionName }}</div>
+    <div class="info"><strong>Division:</strong> {{ $club->gsDivision->divisionName }}</div>
 
     <h2>Managers</h2>
     <ul>
-        @foreach($club->club_managers as $manager)
-            <li>{{ $manager->firstName }} {{ $manager->lastName }} - {{ $manager->contactNo }}</li>
-        @endforeach
+        @if(isset($club->club_managers) && count($club->club_managers) > 0)
+            @foreach($club->club_managers as $manager)
+                <li>{{ $manager->firstName }} {{ $manager->lastName }} - {{ $manager->contactNo }}</li>
+            @endforeach
+        @else
+            <li>No managers available.</li>
+        @endif
     </ul>
 
     <h2>Members</h2>
     <ul>
-        @foreach($club->members as $member)
-            <li>{{ $member->firstName }} {{ $manager->lastName }} - {{ $member->contactNo }}</li>
-        @endforeach
+        @if(isset($club->members) && count($club->members) > 0)
+            @foreach($club->members as $member)
+                <li>{{ $member->firstName }} {{ $member->lastName }} - {{ $member->contactNo }}</li>
+            @endforeach
+        @else
+            <li>No members available.</li>
+        @endif
     </ul>
+
 </body>
 </html>
