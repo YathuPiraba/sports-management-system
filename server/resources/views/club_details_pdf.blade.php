@@ -37,7 +37,7 @@
             text-align: center;
             margin-bottom: 20px;
             border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            padding-bottom: 2px;
         }
 
         .club-image {
@@ -50,7 +50,13 @@
             color: #2c3e50;
             display: inline-block;
             margin: 0;
+            padding-bottom: 2px;
             vertical-align: middle;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin: 20px 0 10px;
         }
 
         .info {
@@ -69,31 +75,59 @@
             margin-bottom: 5px;
         }
 
-        .squad {
-            display: flex;
-            flex-wrap: wrap;
+        .squad-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .squad-member {
-            display: flex;
-            align-items: center;
-            width: 48%;
-            margin: 10px 1%;
-            padding: 10px;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        .squad-table td {
+            padding: 5px;
+            vertical-align: top;
+            border: 1px solid #ddd;
         }
 
-        .squad-member img {
-            width: 100px;
-            height: 100px;
+        .squad-table img {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             object-fit: cover;
-            margin-right: 10px;
         }
 
-        .squad-member-info {
-            display: flex;
-            flex-direction: column;
+        .page-break {
+            page-break-before: always;
+        }
+
+
+        .members-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .members-table td {
+            vertical-align: top;
+            padding: 5px;
+        }
+
+        .member-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .member-info {
+            padding-left: 10px;
+        }
+
+        .member-name {
+            font-weight: bold;
+        }
+
+        .member-position,
+        .member-contact {
+            font-size: 0.9em;
+            color: #666;
         }
 
         .footer {
@@ -108,11 +142,11 @@
 <body>
     <div class="logo-left">
         <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1727243516/logo2-1_pyhk2h.png"
-            alt="Club Connect Logo" style="width: 50px;">
+            alt="Club Connect Logo" style="width: 75px;">
     </div>
     <div class="logo-right">
         <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1728452512/11396-removebg-preview_q9leix.png"
-            alt="Footer Logo" style="width: 50px;">
+            alt="DSOffice Logo" style="width: 40px;">
     </div>
 
     <div class="club-header">
@@ -143,43 +177,81 @@
         @endforeach
     </ul>
 
-    <h2>Managers</h2>
-    <div class="squad">
-        @if (isset($club->clubManagers) && count($club->clubManagers) > 0)
+    <h2>Manager</h2>
+    @if (isset($club->clubManagers) && count($club->clubManagers) > 0)
+        <table class="squad-table">
             @foreach ($club->clubManagers as $manager)
-                <div class="squad-member">
-                    <img src="{{ $manager->user->image ?? 'https://res.cloudinary.com/dmonsn0ga/image/upload/v1724126491/v17anurj1zsu4cu3hae7.png' }}"
-                        alt="{{ $manager->firstName }} {{ $manager->lastName }}">
-                    <div class="squad-member-info">
-                        <p><strong>{{ $manager->firstName }} {{ $manager->lastName }}</strong></p>
-                        <p>{{ $manager->position }}</p>
-                        <p>{{ $manager->contactNo }}</p>
-                    </div>
-                </div>
+                <tr>
+                    <td>
+                        <img src="{{ $manager->user->image ?? 'https://res.cloudinary.com/dmonsn0ga/image/upload/v1724126491/v17anurj1zsu4cu3hae7.png' }}"
+                            alt="{{ $manager->firstName }} {{ $manager->lastName }}">
+                    </td>
+                    <td>
+                        <strong>{{ $manager->firstName }} {{ $manager->lastName }}</strong><br>
+                        {{ $manager->contactNo }}
+                    </td>
+                </tr>
             @endforeach
-        @else
-            <li>No managers available.</li>
-        @endif
-    </div>
+        </table>
+    @else
+        <p>No managers available.</p>
+    @endif
 
+    <div class="page-break"></div>
     <h2>Members</h2>
-    <div class="squad">
-        @if (isset($club->members) && count($club->members) > 0)
-            @foreach ($club->members as $member)
-                <div class="squad-member">
-                    <img src="{{ $member->user->image ?? 'https://res.cloudinary.com/dmonsn0ga/image/upload/v1724126491/v17anurj1zsu4cu3hae7.png' }}"
-                        alt="{{ $member->firstName }} {{ $member->lastName }}">
-                    <div class="squad-member-info">
-                        <p><strong>{{ $member->firstName }} {{ $member->lastName }}</strong></p>
-                        <p>{{ $member->position }}</p>
-                        <p>{{ $member->contactNo }}</p>
-                    </div>
-                </div>
-            @endforeach
-        @else
-            <li>No members available.</li>
-        @endif
-    </div>
+    @if (isset($club->members) && count($club->members) > 0)
+        @php
+            $totalMembers = count($club->members);
+            $halfMembers = ceil($totalMembers / 2);
+        @endphp
+        <table class="members-table">
+            <tr>
+                <td style="width: 50%; vertical-align: top;">
+                    <table style="width: 100%;">
+                        @for ($i = 0; $i < $halfMembers; $i++)
+                            @php $member = $club->members[$i]; @endphp
+                            <tr>
+                                <td style="width: 20px;">{{ $i + 1 }}.</td>
+                                <td style="width: 50px;">
+                                    <img class="member-image"
+                                        src="{{ $member->user->image ?? 'https://res.cloudinary.com/dmonsn0ga/image/upload/v1724126491/v17anurj1zsu4cu3hae7.png' }}"
+                                        alt="{{ $member->firstName }} {{ $member->lastName }}">
+                                </td>
+                                <td class="member-info">
+                                    <div class="member-name">{{ $member->firstName }} {{ $member->lastName }}</div>
+                                    <div class="member-position">{{ $member->position }}</div>
+                                    <div class="member-contact">{{ $member->contactNo }}</div>
+                                </td>
+                            </tr>
+                        @endfor
+                    </table>
+                </td>
+                <td style="width: 50%; vertical-align: top;">
+                    <table style="width: 100%;">
+                        @for ($i = $halfMembers; $i < $totalMembers; $i++)
+                            @php $member = $club->members[$i]; @endphp
+                            <tr>
+                                <td style="width: 20px;">{{ $i + 1 }}.</td>
+                                <td style="width: 50px;">
+                                    <img class="member-image"
+                                        src="{{ $member->user->image ?? 'https://res.cloudinary.com/dmonsn0ga/image/upload/v1724126491/v17anurj1zsu4cu3hae7.png' }}"
+                                        alt="{{ $member->firstName }} {{ $member->lastName }}">
+                                </td>
+                                <td class="member-info">
+                                    <div class="member-name">{{ $member->firstName }} {{ $member->lastName }}</div>
+                                    <div class="member-position">{{ $member->position }}</div>
+                                    <div class="member-contact">{{ $member->contactNo }}</div>
+                                </td>
+                            </tr>
+                        @endfor
+                    </table>
+                </td>
+            </tr>
+        </table>
+    @else
+        <p>No members available.</p>
+    @endif
+
 
     <div class="footer">
         <p>&copy; {{ date('Y') }} ClubConnect. All rights reserved.</p>

@@ -135,8 +135,6 @@ const AdminClubs = () => {
     );
   }
 
-  console.log(sortBy, sortOrder);
-
   return (
     <div className="px-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between items-center mb-4">
