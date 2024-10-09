@@ -48,7 +48,7 @@ const EventParticipantList = () => {
             onClick={(e) => handleDownloadPDF(e, event.event_sports.id)}
             className="ml-2 text-red-500 event-part-btn"
           >
-           <FaDownload />
+            <FaDownload />
           </Button>
         </div>
       ),
