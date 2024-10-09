@@ -580,7 +580,17 @@ class ClubController extends Controller
 
     public function downloadDetails($id)
     {
-        $club = Club::with(['gsDivision', 'clubManagers', 'members', 'clubSports.sportsCategory', 'clubSports.sportsArena'])->findOrFail($id);
+        $club = Club::with([
+            'gsDivision',
+            'clubManagers',
+            'members' => function ($query) {
+                $query->whereHas('user', function ($userQuery) {
+                    $userQuery->whereNull('deleted_at');
+                });
+            },
+            'clubSports.sportsCategory',
+            'clubSports.sportsArena'
+        ])->findOrFail($id);
 
         // Generate the PDF
         $pdf = PDF::loadView('club_details_pdf', compact('club'));

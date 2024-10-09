@@ -7,13 +7,8 @@ import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 import { IoSearchCircleOutline } from "react-icons/io5";
 import { GridLoader, PropagateLoader } from "react-spinners";
 import { Button, message } from "antd";
-import {
-  FaChevronUp,
-  FaChevronCircleUp,
-  FaChevronCircleDown,
-  FaChevronDown,
-  FaFilePdf,
-} from "react-icons/fa";
+import { FaChevronUp, FaChevronDown, FaFilePdf } from "react-icons/fa";
+import { FaMobileRetro } from "react-icons/fa6";
 
 const AdminClubs = () => {
   const [clubs, setClubs] = useState([]);
@@ -134,6 +129,7 @@ const AdminClubs = () => {
       </div>
     );
   }
+console.log(clubs,"kk");
 
   return (
     <div className="px-6">
@@ -249,15 +245,18 @@ const AdminClubs = () => {
                 </tr>
                 {expandedRowIds.includes(club.id) && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-4 bg-gray-100">
-                      <div className="mb-2">
-                        <strong>Managers:</strong>
+                    <td colSpan={6} className="px-6 py-4 bg-gray-100">
+                      <div className="mb-2 flex">
+                        <strong>Manager:</strong>
                         {club.club_managers.length > 0 ? (
                           <ul className="list-disc pl-5">
                             {club.club_managers.map((manager) => (
-                              <li key={manager.id}>
-                                {manager.firstName} {manager.lastName} -{" "}
-                                {manager.contactNo}
+                              <li
+                                key={manager.id}
+                                className="flex items-center gap-2"
+                              >
+                                {manager.firstName} {manager.lastName} :
+                                <FaMobileRetro /> {manager.contactNo}
                               </li>
                             ))}
                           </ul>
@@ -265,17 +264,21 @@ const AdminClubs = () => {
                           <p>No manager available</p>
                         )}
                       </div>
-                      <div>
+                      <div className="flex">
                         <strong>Members:</strong>
                         {club.members.length > 0 ? (
-                          <ul className="list-disc pl-5">
-                            {club.members.map((member) => (
-                              <li key={member.id}>
-                                {member.firstName} {member.lastName} -{" "}
+                          <ol className=" pl-5">
+                            {club.members.map((member, index) => (
+                              <li
+                                key={member.id}
+                                className="flex items-center  gap-2"
+                              >
+                                {index + 1}. {member.firstName}{" "}
+                                {member.lastName} :<FaMobileRetro />{" "}
                                 {member.contactNo}
                               </li>
                             ))}
-                          </ul>
+                          </ol>
                         ) : (
                           <p>No members available</p>
                         )}
