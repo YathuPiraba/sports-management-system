@@ -582,8 +582,6 @@ class ClubController extends Controller
     {
         $club = Club::with(['gsDivision', 'clubManagers', 'members', 'clubSports.sportsCategory', 'clubSports.sportsArena'])->findOrFail($id);
 
-        Log::info($club);
-
         // Generate the PDF
         $pdf = PDF::loadView('club_details_pdf', compact('club'));
 
