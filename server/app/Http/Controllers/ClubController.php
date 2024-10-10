@@ -581,22 +581,40 @@ class ClubController extends Controller
     public function downloadDetails($id)
     {
         $club = Club::with([
-            'gsDivision',
-            'clubManagers',
+            // Fetch only required fields from gsDivision
+            'gsDivision:id,divisionName',
+
+            // Fetch only managers where user has not been soft-deleted
+            'clubManagers' => function ($query) {
+                $query->whereHas('user', function ($userQuery) {
+                    $userQuery->whereNull('deleted_at');
+                })->select('id', 'club_id', 'firstName', 'lastName', 'contactNo', 'user_id')
+                    ->with(['user:id,image']);
+            },
+
+            // Fetch only required fields from clubSports and related relationships
+            'clubSports' => function ($query) {
+                $query->select('id', 'club_id', 'sports_id', 'sports_arena_id')
+                    ->with([
+                        'sportsCategory:id,name',
+                        'sportsArena:id,name'
+                    ]);
+            },
+
+            // Fetch only members where user has not been soft-deleted
             'members' => function ($query) {
                 $query->whereHas('user', function ($userQuery) {
                     $userQuery->whereNull('deleted_at');
-                });
-            },
-            'clubSports.sportsCategory',
-            'clubSports.sportsArena'
+                })->select('id', 'club_id', 'firstName', 'lastName', 'position', 'contactNo', 'user_id')
+                    ->with(['user:id,image']);
+            }
         ])->findOrFail($id);
 
         // Generate the PDF
         $pdf = PDF::loadView('club_details_pdf', compact('club'));
 
-        // Generate a filename
-        $filename = 'club_details_' . $club->clubName . '.pdf';
+        // Generate a filename (sanitize club name to avoid issues)
+        $filename = 'club_details_' . preg_replace('/[^A-Za-z0-9\-]/', '_', $club->clubName) . '.pdf';
 
         // Return the PDF for download
         return $pdf->download($filename);

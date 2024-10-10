@@ -66,17 +66,9 @@
 }
 
 .dwnld-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
-  background-color: #f83123 !important;
+  background-color: #12b0b6 !important;
   color: white;
-  border: none !important;
-}
-.dwnld-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default {
-  border: none !important;
-}
-
-.event-part-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
-  color: red !important;
-  border-color: red !important;
+  border: #12b0b6 !important;
 }
 
 .event-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {

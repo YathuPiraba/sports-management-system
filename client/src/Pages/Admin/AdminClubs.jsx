@@ -224,11 +224,11 @@ const AdminClubs = () => {
                   </td>
                   <td className="px-3 py-4 whitespace-nowrap flex justify-between ">
                     <Button
-                      className="bg-red-500 text-white font-semibold font-sans tracking-wide py-1 px-1 rounded text-sm flex items-center gap-1.5 dwnld-btn"
+                      className="bg-sky-500 border-blue-400 text-white font-semibold font-sans tracking-wide py-1 px-1 rounded text-sm flex items-center gap-1.5 dwnld-btn"
                       onClick={() => handleDownload(club.id, club.clubName)}
                       loading={downloadLoading[club.id]}
                     >
-                      <FaFilePdf /> Download
+                      <FaFilePdf className="text-white" /> Download
                     </Button>
                     <button
                       className="text-blue-500 hover:text-blue-700"

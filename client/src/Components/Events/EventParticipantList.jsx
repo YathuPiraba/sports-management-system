@@ -4,7 +4,9 @@ import toast from "react-hot-toast";
 import PropagateLoader from "react-spinners/PropagateLoader";
 import { Button, Tree } from "antd";
 const { DirectoryTree } = Tree;
-import { FaDownload, FaFilePdf } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa";
+import pdfDownload from "../../assets/download-pdf-10130.svg";
+import { TbFileExport } from "react-icons/tb";
 
 const EventParticipantList = () => {
   const [loading, setLoading] = useState(false);
@@ -44,11 +46,10 @@ const EventParticipantList = () => {
         <div className="flex items-center justify-between">
           <span>{event.event_sports.name}</span>
           <Button
-            icon={<FaFilePdf />}
             onClick={(e) => handleDownloadPDF(e, event.event_sports.id)}
-            className="ml-2 text-red-500 event-part-btn"
+            className="ml-2 text-sky-500 event-part-btn border-sky-500 px-2"
           >
-            <FaDownload />
+            <TbFileExport size={20} />
           </Button>
         </div>
       ),
