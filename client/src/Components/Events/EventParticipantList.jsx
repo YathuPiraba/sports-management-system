@@ -130,7 +130,7 @@ const EventParticipantList = ({ eventId }) => {
 
   return (
     <div className="px-5 text-lg font-medium text-black mb-2 font-poppins flex gap-2 flex-wrap">
-       {treeData.length === 0 ? (
+      {treeData.length === 0 ? (
         <div className="w-full h-[50vh] flex justify-center items-center">
           <p className="text-gray-500 text-xl">No participants until now</p>
         </div>
