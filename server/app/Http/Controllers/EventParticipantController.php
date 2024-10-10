@@ -367,7 +367,7 @@ class EventParticipantController extends Controller
             ];
 
             // Generate PDF
-            $pdf = PDF::loadView('pdf.event_participants', ['eventSports' => $eventData]);
+            $pdf = PDF::loadView('event_participants', ['eventSports' => $eventData]);
 
             // Generate a filename
             $filename = 'event_participants_' . $eventId . '.pdf';
