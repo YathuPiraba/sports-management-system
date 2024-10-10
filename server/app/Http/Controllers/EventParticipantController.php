@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EventParticipantController extends Controller
 {
@@ -172,6 +173,14 @@ class EventParticipantController extends Controller
                     'sportsCategory:id,name,image',
                 ])->get();
 
+                if ($eventSports->isEmpty()) {
+                    return response()->json([
+                        'success' => true,
+                        'data' => [],
+                        'message' => 'No event sports data found.',
+                    ], 200);
+                }
+
             // Transform the data to a simplified structure
             $flattenedData = $eventSports->map(function ($eventSport) {
                 return [
@@ -313,71 +322,65 @@ class EventParticipantController extends Controller
         }
     }
 
-    public function getEventParticipantDetails($eventId)
+    public function generateEventParticipantsPDF($eventId)
     {
         try {
-            // Fetch data from multiple tables with relationships based on eventId
-            $eventSports = EventSports::where('event_id', $eventId) // Filter by eventId
+            // Fetch event data (using your existing getEventParticipantDetails logic)
+            $eventSports = EventSports::where('event_id', $eventId)
                 ->with([
-                    'eventClubs.club:id,clubName', // Fetch clubs associated with the event sport
-                    'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
-                    'eventClubs.participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
-                    'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
-                ])->findOrFail($eventId);
+                    'eventClubs.club:id,clubName',
+                    'eventClubs.participants.memberSport:id,sports_id,member_id',
+                    'eventClubs.participants.memberSport.member:id,firstName,lastName,position',
+                    'eventClubs.participants.memberSport.sport:id,name,image',
+                ])->first();
 
-            // Transform the data to a simplified structure
+            if (!$eventSports) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Event not found.',
+                ], 404);
+            }
+
+            // Transform data (similar to your existing logic)
             $eventData = [
-                'event_sports' => [
-                    'id' => $eventSports->id,
-                    'name' => $eventSports->name,
-                    'start_date' => $eventSports->start_date,
-                    'end_date' => $eventSports->end_date,
-                    'place' => $eventSports->place,
-                    'sports' => [
-                        'sports_id' => $eventSports->sportsCategory->id,
-                        'name' => $eventSports->sportsCategory->name,
-                        'image' => $eventSports->sportsCategory->image,
-                    ],
-                    'clubs' => $eventSports->eventClubs->map(function ($eventClub) {
-                        return [
-                            'club_id' => $eventClub->club_id,
-                            'clubName' => $eventClub->club->clubName,
-                            'event_clubs_id' => $eventClub->id,
-                            'participants' => $eventClub->participants->map(function ($participant) {
-                                return [
-                                    'member' => [
-                                        'id' => $participant->memberSport->member->id,
-                                        'firstName' => $participant->memberSport->member->firstName,
-                                        'lastName' => $participant->memberSport->member->lastName,
-                                        'position' => $participant->memberSport->member->position,
-                                    ],
-                                    'sport' => [
-                                        'id' => $participant->memberSport->sport->id,
-                                        'name' => $participant->memberSport->sport->name,
-                                        'image' => $participant->memberSport->sport->image,
-                                    ],
-                                ];
-                            }),
-                        ];
-                    }),
+                'name' => $eventSports->name,
+                'start_date' => $eventSports->start_date,
+                'end_date' => $eventSports->end_date,
+                'place' => $eventSports->place,
+                'sports' => [
+                    'name' => $eventSports->sportsCategory->name,
                 ],
+                'clubs' => $eventSports->eventClubs->map(function ($eventClub) {
+                    return [
+                        'clubName' => $eventClub->club->clubName,
+                        'participants' => $eventClub->participants->map(function ($participant) {
+                            return [
+                                'member' => [
+                                    'firstName' => $participant->memberSport->member->firstName,
+                                    'lastName' => $participant->memberSport->member->lastName,
+                                    'position' => $participant->memberSport->member->position,
+                                ],
+                            ];
+                        }),
+                    ];
+                }),
             ];
 
-            return response()->json([
-                'success' => true,
-                'data' => $eventData,
-            ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Event not found.',
-            ], 404);
+            // Generate PDF
+            $pdf = PDF::loadView('pdf.event_participants', ['eventSports' => $eventData]);
+
+            // Generate a filename
+            $filename = 'event_participants_' . $eventId . '.pdf';
+
+            // Return the PDF for download
+            return $pdf->download($filename);
+
         } catch (\Exception $e) {
-            Log::error('Error fetching event details: ' . $e->getMessage());
+            Log::error('Error generating event participants PDF: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching event details: ' . $e->getMessage(),
+                'message' => 'Error generating PDF: ' . $e->getMessage(),
             ], 500);
         }
     }
