@@ -385,8 +385,8 @@ export const addEventParticipantsAPI = (data) => {
   return authApiClient.post(`/addEventParticipants`, data);
 };
 
-export const getEventParticipantsAPI = () => {
-  return authApiClient.get(`/getEventParticipants`);
+export const getEventParticipantsAPI = (eventId) => {
+  return authApiClient.get(`/getEventParticipants/${eventId}`);
 };
 
 export const getAClubEventParticipantsAPI = (userId, selectedEvent) => {
@@ -408,9 +408,26 @@ export const readNotificationAPI = (notificationId) => {
 
 export const downloadClubDetailsAPI = async (clubId) => {
   try {
-    const response = await authApiClient.get(`/download-club-details/${clubId}`, {
-      responseType: "blob",
-    });
+    const response = await authApiClient.get(
+      `/download-club-details/${clubId}`,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const downloadEventSportsDetailsAPI = async (eventId) => {
+  try {
+    const response = await authApiClient.get(
+      `/download-eventsports-details/${eventId}`,
+      {
+        responseType: "blob",
+      }
+    );
     return response;
   } catch (error) {
     throw error;

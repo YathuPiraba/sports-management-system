@@ -158,17 +158,19 @@ class EventParticipantController extends Controller
         }
     }
 
-    //GET => http://127.0.0.1:8000/api/getEventParticipants
-    public function getEventParticipants()
+    //GET => http://127.0.0.1:8000/api/getEventParticipants/{eventId}
+    public function getEventParticipants($eventId)
     {
         try {
-            // Fetch data from multiple tables with relationships
-            $eventSports = EventSports::with([
-                'eventClubs.club:id,clubName', // Fetch clubs associated with the event sport
-                'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
-                'eventClubs.participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
-                'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
-            ])->get();
+            // Fetch data from multiple tables with relationships based on eventId
+            $eventSports = EventSports::where('event_id', $eventId)
+                ->with([
+                    'eventClubs.club:id,clubName',
+                    'eventClubs.participants.memberSport:id,sports_id,member_id',
+                    'eventClubs.participants.memberSport.member:id,firstName,lastName,position',
+                    'eventClubs.participants.memberSport.sport:id,name,image',
+                    'sportsCategory:id,name,image',
+                ])->get();
 
             // Transform the data to a simplified structure
             $flattenedData = $eventSports->map(function ($eventSport) {
@@ -179,24 +181,24 @@ class EventParticipantController extends Controller
                         'start_date' => $eventSport->start_date,
                         'end_date' => $eventSport->end_date,
                         'place' => $eventSport->place,
-                        'sports' => [
+                        'sports' => $eventSport->sportsCategory ? [
                             'sports_id' => $eventSport->sportsCategory->id,
                             'name' => $eventSport->sportsCategory->name,
                             'image' => $eventSport->sportsCategory->image,
-                        ],
+                        ] : null,
                         'clubs' => $eventSport->eventClubs->map(function ($eventClub) {
                             return [
                                 'club_id' => $eventClub->club_id,
-                                'clubName' => $eventClub->club->clubName,
+                                'clubName' => $eventClub->club->clubName ?? null,
                                 'event_clubs_id' => $eventClub->id,
                                 'participants' => $eventClub->participants->map(function ($participant) {
                                     return [
-                                        'member' => [
+                                        'member' => $participant->memberSport->member ? [
                                             'id' => $participant->memberSport->member->id,
                                             'firstName' => $participant->memberSport->member->firstName,
                                             'lastName' => $participant->memberSport->member->lastName,
                                             'position' => $participant->memberSport->member->position,
-                                        ],
+                                        ] : null,
                                     ];
                                 }),
                             ];
@@ -307,6 +309,75 @@ class EventParticipantController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching specific event participants: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getEventParticipantDetails($eventId)
+    {
+        try {
+            // Fetch data from multiple tables with relationships based on eventId
+            $eventSports = EventSports::where('event_id', $eventId) // Filter by eventId
+                ->with([
+                    'eventClubs.club:id,clubName', // Fetch clubs associated with the event sport
+                    'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
+                    'eventClubs.participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
+                    'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
+                ])->findOrFail($eventId);
+
+            // Transform the data to a simplified structure
+            $eventData = [
+                'event_sports' => [
+                    'id' => $eventSports->id,
+                    'name' => $eventSports->name,
+                    'start_date' => $eventSports->start_date,
+                    'end_date' => $eventSports->end_date,
+                    'place' => $eventSports->place,
+                    'sports' => [
+                        'sports_id' => $eventSports->sportsCategory->id,
+                        'name' => $eventSports->sportsCategory->name,
+                        'image' => $eventSports->sportsCategory->image,
+                    ],
+                    'clubs' => $eventSports->eventClubs->map(function ($eventClub) {
+                        return [
+                            'club_id' => $eventClub->club_id,
+                            'clubName' => $eventClub->club->clubName,
+                            'event_clubs_id' => $eventClub->id,
+                            'participants' => $eventClub->participants->map(function ($participant) {
+                                return [
+                                    'member' => [
+                                        'id' => $participant->memberSport->member->id,
+                                        'firstName' => $participant->memberSport->member->firstName,
+                                        'lastName' => $participant->memberSport->member->lastName,
+                                        'position' => $participant->memberSport->member->position,
+                                    ],
+                                    'sport' => [
+                                        'id' => $participant->memberSport->sport->id,
+                                        'name' => $participant->memberSport->sport->name,
+                                        'image' => $participant->memberSport->sport->image,
+                                    ],
+                                ];
+                            }),
+                        ];
+                    }),
+                ],
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data' => $eventData,
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Event not found.',
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Error fetching event details: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching event details: ' . $e->getMessage(),
             ], 500);
         }
     }

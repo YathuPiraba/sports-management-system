@@ -297,7 +297,9 @@ const Events = () => {
                         {(() => {
                           switch (role_id) {
                             case 1:
-                              return <EventParticipantList />;
+                              return (
+                                <EventParticipantList eventId={selectedEvent} />
+                              );
                             case 2:
                               return (
                                 <ClubParticipants
