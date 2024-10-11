@@ -20,9 +20,7 @@ const EventParticipantList = ({ eventId }) => {
     try {
       const res = await getEventParticipantsAPI(eventId);
       const clubsData = res.data.data;
-      const formattedTreeData = formatTreeData(clubsData);
-      setTreeData(formattedTreeData);
-      console.log(res.data.data);
+      setTreeData(formatTreeData(clubsData)); // format the tree data once
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");
@@ -37,13 +35,11 @@ const EventParticipantList = ({ eventId }) => {
       ...prevState,
       [eventSportsId]: true,
     }));
+
     try {
       const response = await downloadEventSportsDetailsAPI(eventSportsId);
 
-      // Create a Blob from the response data
       const blob = new Blob([response.data], { type: "application/pdf" });
-
-      // Create a link element and trigger the download
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
       link.download = `${eventSportsName} - participation details.pdf`;
@@ -77,7 +73,7 @@ const EventParticipantList = ({ eventId }) => {
               )
             }
             className="ml-2 text-sky-500 event-part-btn border-sky-500 px-2"
-            loading={downloadLoading[event.id]}
+            loading={downloadLoading[event.event_sports.id]} // loading state for each specific button
           >
             <TbFileExport size={20} />
           </Button>
@@ -100,12 +96,10 @@ const EventParticipantList = ({ eventId }) => {
   }, []);
 
   const onSelect = (keys) => {
-    // Filter out invalid or undefined keys
     const validKeys = keys.filter(
       (key) => key !== "undefined" && key !== undefined
     );
 
-    // Handle key toggling
     if (validKeys.length === 0) {
       setSelectedKeys([]);
     } else {

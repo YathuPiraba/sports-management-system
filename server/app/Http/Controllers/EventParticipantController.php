@@ -361,6 +361,7 @@ class EventParticipantController extends Controller
                 'place' => $eventSports->place,
                 'sports' => [
                     'name' => $eventSports->sportsCategory->name,
+                    'image' => $eventSports->sportsCategory->image,
                 ],
                 'clubs' => $eventSports->eventClubs->map(function ($eventClub) {
                     return [
@@ -382,7 +383,7 @@ class EventParticipantController extends Controller
             $pdf = PDF::loadView('event_participants', ['eventSports' => $eventData]);
 
             // Generate a filename
-            $filename = 'event_participants_' . $eventSportsId . '.pdf';
+            $filename = 'event_participants_' . preg_replace('/[^A-Za-z0-9\-]/', '_',$eventSports->name) . '.pdf';
 
             // Return the PDF for download
             return $pdf->download($filename);
