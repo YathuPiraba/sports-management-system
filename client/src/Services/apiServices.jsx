@@ -420,10 +420,10 @@ export const downloadClubDetailsAPI = async (clubId) => {
   }
 };
 
-export const downloadEventSportsDetailsAPI = async (eventId) => {
+export const downloadEventSportsDetailsAPI = async (eventSportsId) => {
   try {
     const response = await authApiClient.get(
-      `/download-eventsports-details/${eventId}`,
+      `/download-eventsports-details/${eventSportsId}`,
       {
         responseType: "blob",
       }

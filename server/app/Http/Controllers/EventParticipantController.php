@@ -6,6 +6,7 @@ use App\Events\EventApplied;
 use App\Models\Club_Manager;
 use App\Models\Event_Participants;
 use App\Models\EventClub;
+use App\Models\Events;
 use App\Models\EventSports;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -173,13 +174,13 @@ class EventParticipantController extends Controller
                     'sportsCategory:id,name,image',
                 ])->get();
 
-                if ($eventSports->isEmpty()) {
-                    return response()->json([
-                        'success' => true,
-                        'data' => [],
-                        'message' => 'No event sports data found.',
-                    ], 200);
-                }
+            if ($eventSports->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                    'message' => 'No event sports data found.',
+                ], 200);
+            }
 
             // Transform the data to a simplified structure
             $flattenedData = $eventSports->map(function ($eventSport) {
@@ -322,11 +323,11 @@ class EventParticipantController extends Controller
         }
     }
 
-    public function generateEventParticipantsPDF($eventId)
+    public function generateEventParticipantsPDF($eventSportsId)
     {
         try {
-            // Fetch event data (using your existing getEventParticipantDetails logic)
-            $eventSports = EventSports::where('event_id', $eventId)
+            // Fetch the specific EventSports using the eventSportsId as primary key
+            $eventSports = EventSports::where('id', $eventSportsId)
                 ->with([
                     'eventClubs.club:id,clubName',
                     'eventClubs.participants.memberSport:id,sports_id,member_id',
@@ -337,12 +338,23 @@ class EventParticipantController extends Controller
             if (!$eventSports) {
                 return response()->json([
                     'success' => false,
+                    'message' => 'Event Sport not found.',
+                ], 404);
+            }
+
+            // Now, get the associated event details using the event_id from EventSports
+            $event = Events::find($eventSports->event_id);
+
+            if (!$event) {
+                return response()->json([
+                    'success' => false,
                     'message' => 'Event not found.',
                 ], 404);
             }
 
             // Transform data (similar to your existing logic)
             $eventData = [
+                'eventName' => $event->name,
                 'name' => $eventSports->name,
                 'start_date' => $eventSports->start_date,
                 'end_date' => $eventSports->end_date,
@@ -370,11 +382,10 @@ class EventParticipantController extends Controller
             $pdf = PDF::loadView('event_participants', ['eventSports' => $eventData]);
 
             // Generate a filename
-            $filename = 'event_participants_' . $eventId . '.pdf';
+            $filename = 'event_participants_' . $eventSportsId . '.pdf';
 
             // Return the PDF for download
             return $pdf->download($filename);
-
         } catch (\Exception $e) {
             Log::error('Error generating event participants PDF: ' . $e->getMessage());
 

@@ -38,7 +38,7 @@ const EventParticipantList = ({ eventId }) => {
       [eventSportsId]: true,
     }));
     try {
-      const response = await downloadEventSportsDetailsAPI(eventId);
+      const response = await downloadEventSportsDetailsAPI(eventSportsId);
 
       // Create a Blob from the response data
       const blob = new Blob([response.data], { type: "application/pdf" });
