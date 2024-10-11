@@ -85,6 +85,13 @@
         .participant-number::before {
             content: counter(participant-counter) ". ";
         }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 
@@ -141,6 +148,10 @@
             </tbody>
         </table>
     @endforeach
+
+    <div class="footer">
+        <p>&copy; {{ date('Y') }} ClubConnect. All rights reserved.</p>
+    </div>
 </body>
 
 </html>
