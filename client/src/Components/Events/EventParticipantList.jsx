@@ -4,7 +4,7 @@ import {
   getEventParticipantsAPI,
 } from "../../Services/apiServices";
 import toast from "react-hot-toast";
-import PropagateLoader from "react-spinners/PropagateLoader";
+import { FadeLoader, PropagateLoader } from "react-spinners";
 import { Button, message, Tree } from "antd";
 const { DirectoryTree } = Tree;
 import { TbFileExport } from "react-icons/tb";
@@ -14,13 +14,14 @@ const EventParticipantList = ({ eventId }) => {
   const [treeData, setTreeData] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [downloadLoading, setDownloadLoading] = useState({});
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const fetchParticipatingClubs = async () => {
     setLoading(true);
     try {
       const res = await getEventParticipantsAPI(eventId);
       const clubsData = res.data.data;
-      setTreeData(formatTreeData(clubsData)); // format the tree data once
+      setTreeData(formatTreeData(clubsData));
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");
@@ -35,6 +36,7 @@ const EventParticipantList = ({ eventId }) => {
       ...prevState,
       [eventSportsId]: true,
     }));
+    setIsDownloading(true);
 
     try {
       const response = await downloadEventSportsDetailsAPI(eventSportsId);
@@ -54,6 +56,7 @@ const EventParticipantList = ({ eventId }) => {
         ...prevState,
         [eventSportsId]: false,
       }));
+      setIsDownloading(false);
     }
   };
 
@@ -73,7 +76,7 @@ const EventParticipantList = ({ eventId }) => {
               )
             }
             className="ml-2 text-sky-500 event-part-btn border-sky-500 px-2"
-            loading={downloadLoading[event.event_sports.id]} // loading state for each specific button
+            loading={downloadLoading[event.event_sports.id]}
           >
             <TbFileExport size={20} />
           </Button>
@@ -123,25 +126,32 @@ const EventParticipantList = ({ eventId }) => {
   }
 
   return (
-    <div className="px-5 text-lg font-medium text-black mb-2 font-poppins flex gap-2 flex-wrap">
-      {treeData.length === 0 ? (
-        <div className="w-full h-[50vh] flex justify-center items-center">
-          <p className="text-gray-500 text-xl">No participants until now</p>
+    <>
+      {isDownloading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
+          <FadeLoader color="skyblue" />
         </div>
-      ) : (
-        treeData.map((event) => (
-          <div key={event.key} className="mb-4">
-            <DirectoryTree
-              treeData={[event]}
-              showIcon={false}
-              onSelect={onSelect}
-              selectedKeys={selectedKeys}
-              className="border rounded-md border-blue-400 w-fit p-2 bg-blue-50"
-            />
-          </div>
-        ))
       )}
-    </div>
+      <div className="px-5 text-lg font-medium text-black mb-2 font-poppins flex gap-2 flex-wrap">
+        {treeData.length === 0 ? (
+          <div className="w-full h-[50vh] flex justify-center items-center">
+            <p className="text-gray-500 text-xl">No participants until now</p>
+          </div>
+        ) : (
+          treeData.map((event) => (
+            <div key={event.key} className="mb-4">
+              <DirectoryTree
+                treeData={[event]}
+                showIcon={false}
+                onSelect={onSelect}
+                selectedKeys={selectedKeys}
+                className="border rounded-md border-blue-400 w-fit p-2 bg-blue-50"
+              />
+            </div>
+          ))
+        )}
+      </div>
+    </>
   );
 };
 

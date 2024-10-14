@@ -235,7 +235,7 @@ const Events = () => {
                   End Date: {selectedEventDetails.end_date}
                 </p>
                 <Button
-                  className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
+                  className="mt-2 bg-sky-500 text-white border-blue-400 next-btn"
                   onClick={handleToggleDiv}
                 >
                   Click to see {showFirstDiv ? ">" : "<"}

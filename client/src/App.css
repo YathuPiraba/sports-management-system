@@ -88,3 +88,9 @@
   color: white;
   border-color: blue !important;
 }
+
+.next-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: rgb(28, 101, 238) !important;
+  color: white;
+  border-color: rgb(64, 127, 245) !important;
+}
