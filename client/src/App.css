@@ -56,12 +56,41 @@
 }
 
 .signinbtn.css-dev-only-do-not-override-1pg9a38.ant-btn:hover {
-  background-color: #23f871 !important;
+  background-color: #0caa46 !important;
   color: white !important;
   border: none !important;
 }
-.signinbtn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:disabled:hover{
-background-color: #ccc !important;
-color: rgba(0, 0, 0, 0.25) !important;
+.signinbtn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:disabled:hover {
+  background-color: #ccc !important;
+  color: rgba(0, 0, 0, 0.25) !important;
 }
 
+.dwnld-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: #12b0b6 !important;
+  color: white;
+  border: #12b0b6 !important;
+}
+
+.event-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: blue !important;
+  color: white;
+  border-color: blue !important;
+}
+
+.event-dlt.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: red !important;
+  color: white;
+  border-color: red !important;
+}
+
+.event-add.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: blue !important;
+  color: white;
+  border-color: blue !important;
+}
+
+.next-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: rgb(28, 101, 238) !important;
+  color: white;
+  border-color: rgb(64, 127, 245) !important;
+}

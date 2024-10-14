@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { getEventParticipantsAPI } from "../../Services/apiServices";
+import {
+  downloadEventSportsDetailsAPI,
+  getEventParticipantsAPI,
+} from "../../Services/apiServices";
 import toast from "react-hot-toast";
-import PropagateLoader from "react-spinners/PropagateLoader";
-import { Tree } from "antd";
+import { FadeLoader, PropagateLoader } from "react-spinners";
+import { Button, message, Tree } from "antd";
 const { DirectoryTree } = Tree;
+import { TbFileExport } from "react-icons/tb";
 
-const EventParticipantList = () => {
+const EventParticipantList = ({ eventId }) => {
   const [loading, setLoading] = useState(false);
   const [treeData, setTreeData] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
+  const [downloadLoading, setDownloadLoading] = useState({});
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const fetchParticipatingClubs = async () => {
     setLoading(true);
     try {
-      const res = await getEventParticipantsAPI();
+      const res = await getEventParticipantsAPI(eventId);
       const clubsData = res.data.data;
-      const formattedTreeData = formatTreeData(clubsData);
-      setTreeData(formattedTreeData);
-      console.log(res.data.data);
+      setTreeData(formatTreeData(clubsData));
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");
@@ -26,11 +30,58 @@ const EventParticipantList = () => {
     }
   };
 
+  const handleDownloadPDF = async (e, eventSportsId, eventSportsName) => {
+    e.stopPropagation();
+    setDownloadLoading((prevState) => ({
+      ...prevState,
+      [eventSportsId]: true,
+    }));
+    setIsDownloading(true);
+
+    try {
+      const response = await downloadEventSportsDetailsAPI(eventSportsId);
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `${eventSportsName} - participation details.pdf`;
+      link.click();
+
+      message.success("Event details downloaded successfully");
+    } catch (error) {
+      console.error("Error downloading club details:", error);
+      message.error("Failed to download club details. Please try again.");
+    } finally {
+      setDownloadLoading((prevState) => ({
+        ...prevState,
+        [eventSportsId]: false,
+      }));
+      setIsDownloading(false);
+    }
+  };
+
   const formatTreeData = (data) => {
     if (!data || !data.length) return [];
 
     return data.map((event) => ({
-      title: event.event_sports.name,
+      title: (
+        <div className="flex items-center justify-between">
+          <span>{event.event_sports.name}</span>
+          <Button
+            onClick={(e) =>
+              handleDownloadPDF(
+                e,
+                event.event_sports.id,
+                event.event_sports.name
+              )
+            }
+            className="ml-2 text-sky-500 event-part-btn border-sky-500 px-2"
+            loading={downloadLoading[event.event_sports.id]}
+          >
+            <TbFileExport size={20} />
+          </Button>
+        </div>
+      ),
       key: `event-${event.event_sports.id}`,
       children: event.event_sports.clubs.map((club) => ({
         title: club.clubName,
@@ -48,12 +99,10 @@ const EventParticipantList = () => {
   }, []);
 
   const onSelect = (keys) => {
-    // Filter out invalid or undefined keys
     const validKeys = keys.filter(
       (key) => key !== "undefined" && key !== undefined
     );
 
-    // Handle key toggling
     if (validKeys.length === 0) {
       setSelectedKeys([]);
     } else {
@@ -66,9 +115,6 @@ const EventParticipantList = () => {
         setSelectedKeys(() => [selectedKey]);
       }
     }
-
-    console.log("Selected keys:", validKeys);
-    console.log("Updated selected keys:", selectedKeys);
   };
 
   if (loading) {
@@ -80,19 +126,32 @@ const EventParticipantList = () => {
   }
 
   return (
-    <div className="px-5 text-lg font-medium text-black mb-2 font-poppins flex gap-2 flex-wrap">
-      {treeData.map((event) => (
-        <div key={event.key} className="mb-4">
-          <DirectoryTree
-            treeData={[event]}
-            showIcon={false}
-            onSelect={onSelect}
-            selectedKeys={selectedKeys}
-            className="border rounded-md border-blue-400 w-fit p-2 bg-blue-50"
-          />
+    <>
+      {isDownloading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
+          <FadeLoader color="skyblue" />
         </div>
-      ))}
-    </div>
+      )}
+      <div className="px-5 text-lg font-medium text-black mb-2 font-poppins flex gap-2 flex-wrap">
+        {treeData.length === 0 ? (
+          <div className="w-full h-[50vh] flex justify-center items-center">
+            <p className="text-gray-500 text-xl">No participants until now</p>
+          </div>
+        ) : (
+          treeData.map((event) => (
+            <div key={event.key} className="mb-4">
+              <DirectoryTree
+                treeData={[event]}
+                showIcon={false}
+                onSelect={onSelect}
+                selectedKeys={selectedKeys}
+                className="border rounded-md border-blue-400 w-fit p-2 bg-blue-50"
+              />
+            </div>
+          ))
+        )}
+      </div>
+    </>
   );
 };
 

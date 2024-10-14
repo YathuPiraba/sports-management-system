@@ -6,12 +6,14 @@ use App\Events\EventApplied;
 use App\Models\Club_Manager;
 use App\Models\Event_Participants;
 use App\Models\EventClub;
+use App\Models\Events;
 use App\Models\EventSports;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EventParticipantController extends Controller
 {
@@ -158,17 +160,27 @@ class EventParticipantController extends Controller
         }
     }
 
-    //GET => http://127.0.0.1:8000/api/getEventParticipants
-    public function getEventParticipants()
+    //GET => http://127.0.0.1:8000/api/getEventParticipants/{eventId}
+    public function getEventParticipants($eventId)
     {
         try {
-            // Fetch data from multiple tables with relationships
-            $eventSports = EventSports::with([
-                'eventClubs.club:id,clubName', // Fetch clubs associated with the event sport
-                'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
-                'eventClubs.participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
-                'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
-            ])->get();
+            // Fetch data from multiple tables with relationships based on eventId
+            $eventSports = EventSports::where('event_id', $eventId)
+                ->with([
+                    'eventClubs.club:id,clubName',
+                    'eventClubs.participants.memberSport:id,sports_id,member_id',
+                    'eventClubs.participants.memberSport.member:id,firstName,lastName,position',
+                    'eventClubs.participants.memberSport.sport:id,name,image',
+                    'sportsCategory:id,name,image',
+                ])->get();
+
+            if ($eventSports->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                    'message' => 'No event sports data found.',
+                ], 200);
+            }
 
             // Transform the data to a simplified structure
             $flattenedData = $eventSports->map(function ($eventSport) {
@@ -179,24 +191,24 @@ class EventParticipantController extends Controller
                         'start_date' => $eventSport->start_date,
                         'end_date' => $eventSport->end_date,
                         'place' => $eventSport->place,
-                        'sports' => [
+                        'sports' => $eventSport->sportsCategory ? [
                             'sports_id' => $eventSport->sportsCategory->id,
                             'name' => $eventSport->sportsCategory->name,
                             'image' => $eventSport->sportsCategory->image,
-                        ],
+                        ] : null,
                         'clubs' => $eventSport->eventClubs->map(function ($eventClub) {
                             return [
                                 'club_id' => $eventClub->club_id,
-                                'clubName' => $eventClub->club->clubName,
+                                'clubName' => $eventClub->club->clubName ?? null,
                                 'event_clubs_id' => $eventClub->id,
                                 'participants' => $eventClub->participants->map(function ($participant) {
                                     return [
-                                        'member' => [
+                                        'member' => $participant->memberSport->member ? [
                                             'id' => $participant->memberSport->member->id,
                                             'firstName' => $participant->memberSport->member->firstName,
                                             'lastName' => $participant->memberSport->member->lastName,
                                             'position' => $participant->memberSport->member->position,
-                                        ],
+                                        ] : null,
                                     ];
                                 }),
                             ];
@@ -307,6 +319,80 @@ class EventParticipantController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching specific event participants: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function generateEventParticipantsPDF($eventSportsId)
+    {
+        try {
+            // Fetch the specific EventSports using the eventSportsId as primary key
+            $eventSports = EventSports::where('id', $eventSportsId)
+                ->with([
+                    'eventClubs.club:id,clubName',
+                    'eventClubs.participants.memberSport:id,sports_id,member_id',
+                    'eventClubs.participants.memberSport.member:id,firstName,lastName,position',
+                    'eventClubs.participants.memberSport.sport:id,name,image',
+                ])->first();
+
+            if (!$eventSports) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Event Sport not found.',
+                ], 404);
+            }
+
+            // Now, get the associated event details using the event_id from EventSports
+            $event = Events::find($eventSports->event_id);
+
+            if (!$event) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Event not found.',
+                ], 404);
+            }
+
+            // Transform data (similar to your existing logic)
+            $eventData = [
+                'eventName' => $event->name,
+                'name' => $eventSports->name,
+                'start_date' => $eventSports->start_date,
+                'end_date' => $eventSports->end_date,
+                'place' => $eventSports->place,
+                'sports' => [
+                    'name' => $eventSports->sportsCategory->name,
+                    'image' => $eventSports->sportsCategory->image,
+                ],
+                'clubs' => $eventSports->eventClubs->map(function ($eventClub) {
+                    return [
+                        'clubName' => $eventClub->club->clubName,
+                        'participants' => $eventClub->participants->map(function ($participant) {
+                            return [
+                                'member' => [
+                                    'firstName' => $participant->memberSport->member->firstName,
+                                    'lastName' => $participant->memberSport->member->lastName,
+                                    'position' => $participant->memberSport->member->position,
+                                ],
+                            ];
+                        }),
+                    ];
+                }),
+            ];
+
+            // Generate PDF
+            $pdf = PDF::loadView('event_participants', ['eventSports' => $eventData]);
+
+            // Generate a filename
+            $filename = 'event_participants_' . preg_replace('/[^A-Za-z0-9\-]/', '_',$eventSports->name) . '.pdf';
+
+            // Return the PDF for download
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            Log::error('Error generating event participants PDF: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error generating PDF: ' . $e->getMessage(),
             ], 500);
         }
     }

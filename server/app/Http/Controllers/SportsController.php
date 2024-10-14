@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Club;
+use App\Models\Club_Manager;
+use App\Models\Member;
 use App\Models\Skills;
 use Illuminate\Http\Request;
 use App\Models\Sports_Categories;
@@ -136,6 +139,33 @@ class SportsController extends Controller
         } catch (Exception $e) {
             // Handle any errors that occur
             return response()->json(['error' => 'Failed to update sports category.', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+  //GET =>  http://127.0.0.1:8000/api/sports/counts
+    public function getTotalCounts()
+    {
+        try {
+            // Get total counts for each entity
+            $totalSports = Sports_Categories::count();
+            $totalClubs = Club::count();
+            $totalClubManagers = Club_Manager::count();
+            $totalMembers = Member::count();
+            $totalMembersIncludingManagers = $totalClubManagers + $totalMembers;
+
+            // Return the result in a JSON response
+            return response()->json([
+                'message' => 'Counts fetched successfully',
+                'totalSports' => $totalSports,
+                'totalClubs' => $totalClubs,
+                'totalMembers' => $totalMembersIncludingManagers,
+            ], 200);
+        } catch (\Exception $e) {
+            // Handle errors
+            return response()->json([
+                'error' => 'Failed to fetch counts',
+                'details' => $e->getMessage()
+            ], 500);
         }
     }
 }

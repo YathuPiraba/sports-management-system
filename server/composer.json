@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "barryvdh/laravel-dompdf": "^2.2",
         "cloudinary/cloudinary_php": "^2.14",
         "doctrine/dbal": "^3.9",
         "firebase/php-jwt": "^6.10",

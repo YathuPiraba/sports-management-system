@@ -153,10 +153,14 @@ export const updateManagerDetailsApi = (userId, data) => {
   });
 };
 
+export const getCountsAPI = () => {
+  return authApiClient.get(`/sports/counts`);
+};
+
 //deleteProfile
-export const deleteProfileAPI =(userId) =>{
+export const deleteProfileAPI = (userId) => {
   return authApiClient.delete(`/image/${userId}`);
-}
+};
 
 //Forgot-Password API
 export const forgotPasswordAPI = (data) => {
@@ -381,8 +385,8 @@ export const addEventParticipantsAPI = (data) => {
   return authApiClient.post(`/addEventParticipants`, data);
 };
 
-export const getEventParticipantsAPI = () => {
-  return authApiClient.get(`/getEventParticipants`);
+export const getEventParticipantsAPI = (eventId) => {
+  return authApiClient.get(`/getEventParticipants/${eventId}`);
 };
 
 export const getAClubEventParticipantsAPI = (userId, selectedEvent) => {
@@ -400,4 +404,32 @@ export const fetchNotificationsAPI = () => {
 
 export const readNotificationAPI = (notificationId) => {
   return authApiClient.post(`/notifications/${notificationId}/read`);
+};
+
+export const downloadClubDetailsAPI = async (clubId) => {
+  try {
+    const response = await authApiClient.get(
+      `/download-club-details/${clubId}`,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const downloadEventSportsDetailsAPI = async (eventSportsId) => {
+  try {
+    const response = await authApiClient.get(
+      `/download-eventsports-details/${eventSportsId}`,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

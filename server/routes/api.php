@@ -66,11 +66,12 @@ Route::middleware('auth.token')->group(function () {
 
     Route::delete('/user/{id}', [UserController::class, 'deactivateUser']);
     Route::patch('/user/{id}/restore', [UserController::class, 'restoreUser']);
-
-
 });
 
 Route::put('/club/{id}', [ClubController::class, 'clubUpdate']);
+
+
+Route::get('/download-club-details/{id}', [ClubController::class, 'downloadDetails']);
 
 Route::get('/clubs/list', [ClubController::class, 'getAllClubs']);
 Route::get('/clubs/details', [ClubController::class, 'getAllClubsDetails']);
@@ -78,6 +79,7 @@ Route::get('/clubs/details', [ClubController::class, 'getAllClubsDetails']);
 Route::get('/sports/list', [SportsController::class, 'getSports']);
 Route::post('/sports/create', [SportsController::class, 'createSports']);
 Route::put('/sport/{id}', [SportsController::class, 'updateSports']);
+Route::get('/sports/counts', [SportsController::class, 'getTotalCounts']);
 
 Route::get('/clubs-sports/list', [ClubController::class, 'getAllClubSports']);
 Route::post('/clubs-sports/create', [ClubController::class, 'createClubSports']);
@@ -126,8 +128,9 @@ Route::prefix('events')->group(function () {
 });
 
 Route::post('/addEventParticipants', [EventParticipantController::class, 'addEventParticipants']);
-Route::get('/getEventParticipants', [EventParticipantController::class, 'getEventParticipants']);
+Route::get('/getEventParticipants/{eventId}', [EventParticipantController::class, 'getEventParticipants']);
 Route::get('/getSpecificEventParticipants', [EventParticipantController::class, 'getSpecificEventParticipants']);
+Route::get('/download-eventsports-details/{eventSportsId}', [EventParticipantController::class, 'generateEventParticipantsPDF']);
 
 Route::prefix('events/{eventId}/sports')->group(function () {
     Route::post('/', [EventSportController::class, 'store']); // Add a new sport to an event

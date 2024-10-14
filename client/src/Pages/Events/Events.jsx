@@ -165,7 +165,7 @@ const Events = () => {
             <Button
               icon={<PlusOutlined />}
               onClick={() => showEventModal(false)}
-              className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none"
+              className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none event-add"
             >
               Add Events
             </Button>
@@ -186,7 +186,7 @@ const Events = () => {
             <>
               <Button
                 onClick={() => showEventModal(true)}
-                className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none mt-2 md:mt-0"
+                className="bg-blue-500 text-white hover:bg-blue-600 flex-grow md:flex-none mt-2 md:mt-0 event-btn"
                 icon={<EditOutlined />}
               >
                 Edit Event
@@ -198,7 +198,7 @@ const Events = () => {
                 cancelText="No"
               >
                 <Button
-                  className="bg-red-500 text-white hover:bg-red-600 flex-grow md:flex-none mt-2 md:mt-0"
+                  className="bg-red-500 text-white hover:bg-red-600 flex-grow md:flex-none mt-2 md:mt-0 event-dlt"
                   icon={<DeleteOutlined />}
                 >
                   Delete Event
@@ -235,7 +235,7 @@ const Events = () => {
                   End Date: {selectedEventDetails.end_date}
                 </p>
                 <Button
-                  className="mt-2 bg-blue-500 text-white hover:bg-blue-600"
+                  className="mt-2 bg-sky-500 text-white border-blue-400 next-btn"
                   onClick={handleToggleDiv}
                 >
                   Click to see {showFirstDiv ? ">" : "<"}
@@ -297,7 +297,9 @@ const Events = () => {
                         {(() => {
                           switch (role_id) {
                             case 1:
-                              return <EventParticipantList />;
+                              return (
+                                <EventParticipantList eventId={selectedEvent} />
+                              );
                             case 2:
                               return (
                                 <ClubParticipants
