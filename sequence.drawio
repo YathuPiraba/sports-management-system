@@ -1,0 +1,114 @@
+<mxfile host="65bd71144e">
+    <diagram id="20n_zxh1f1fSnLZ_H3jt" name="Page-1">
+        <mxGraphModel dx="1046" dy="167" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Club Manager" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="-20" y="40" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="System" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="250" y="40" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="780" y="40" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Register Account" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Store club info (Pending)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="3" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Notify Admin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Approve Manager &amp; Club" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="4" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Update Status (Approved)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="3" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Notify Club Manager" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="3" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Club Member" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="20" y="140" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="System" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="250" y="140" width="270" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Club Manager" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="870" y="140" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Register Account" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="11" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Store club member info (Pending)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="12" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Notify Club Manager" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="12" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Approve Member" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="13" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Update Status (Approved)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="12" target="12" edge="1">
+                    <mxGeometry x="-1" y="56" relative="1" as="geometry">
+                        <mxPoint x="-50" y="31" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" value="Notify Club Member" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="12" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="80" y="240" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="System" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="250" y="240" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="Create Event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="20" target="21" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="Store Event Info" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="21" target="21" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="Notify Admin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="21" target="20" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="Club Manager" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="80" y="340" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="Event" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="747" y="340" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="Request to Add Participants" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="25" target="26" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="Fetch Club Members" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="26" target="26" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="Select Participants" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="25" target="26" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="Add Participants" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="26" target="27" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="Update Event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12;startArrow=none;" parent="1" source="26" target="27" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="Notify Manager" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12" parent="1" source="26" target="25" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;html=1;fontSize=12;endArrow=none;" edge="1" parent="1" source="27" target="26">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="827" y="345" as="sourcePoint"/>
+                        <mxPoint x="827" y="365" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="26" value="System" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12" parent="1" vertex="1">
+                    <mxGeometry x="1230" y="340" width="80" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
