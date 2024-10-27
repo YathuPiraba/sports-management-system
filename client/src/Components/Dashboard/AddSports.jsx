@@ -9,7 +9,7 @@ const AddSports = ({ onClose }) => {
     name: "",
     type: "",
     description: "",
-    minPlayers: "",
+    min_Players: "", // Changed from minPlayers to match API
     image: null,
     skills: [{ skill: "" }]
   });
@@ -18,10 +18,22 @@ const AddSports = ({ onClose }) => {
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file") {
-      setFormData((prevState) => ({
-        ...prevState,
-        image: files[0]  // Store the selected file directly as `image`
-      }));
+      // Validate file type and size
+      const file = files[0];
+      if (file) {
+        if (!file.type.match(/^image\/(jpeg|png|jpg|gif)$/)) {
+          toast.error("Please upload a valid image file (JPEG, PNG, JPG, GIF)");
+          return;
+        }
+        if (file.size > 2 * 1024 * 1024) { // 2MB in bytes
+          toast.error("Image size should be less than 2MB");
+          return;
+        }
+        setFormData((prevState) => ({
+          ...prevState,
+          image: file
+        }));
+      }
     } else {
       setFormData((prevState) => ({
         ...prevState,
@@ -47,10 +59,12 @@ const AddSports = ({ onClose }) => {
   };
 
   const removeSkillField = (index) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      skills: prevState.skills.filter((_, i) => i !== index)
-    }));
+    if (formData.skills.length > 1) {
+      setFormData((prevState) => ({
+        ...prevState,
+        skills: prevState.skills.filter((_, i) => i !== index)
+      }));
+    }
   };
 
   const resetForm = () => {
@@ -58,52 +72,76 @@ const AddSports = ({ onClose }) => {
       name: "",
       type: "",
       description: "",
-      minPlayers: "",
+      min_Players: "",
       image: null,
       skills: [{ skill: "" }]
     });
     if (fileInputRef.current) {
-      fileInputRef.current.value = null;  // Reset file input
+      fileInputRef.current.value = null;
     }
+  };
+
+  const validateForm = () => {
+    if (!formData.name.trim()) return "Sport name is required";
+    if (!formData.type) return "Sport type is required";
+    if (!formData.description.trim()) return "Description is required";
+    if (!formData.min_Players) return "Minimum players is required";
+    
+    const invalidSkills = formData.skills.some(skill => !skill.skill.trim());
+    if (invalidSkills) return "All skill fields must be filled";
+    
+    return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const validationError = validateForm();
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("type", formData.type);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("min_Players", formData.minPlayers);
-      
-      if (formData.image) {
-        formDataToSend.append("image", formData.image); // Append image file
+        // Create skills array first
+        const skillsArray = formData.skills.map(item => ({
+          skill: item.skill.trim()
+        }));
+  
+        // Create form data
+        const formDataToSend = new FormData();
+        formDataToSend.append("name", formData.name.trim());
+        formDataToSend.append("type", formData.type);
+        formDataToSend.append("description", formData.description.trim());
+        formDataToSend.append("min_Players", formData.min_Players);
+        
+        if (formData.image) {
+          formDataToSend.append("image", formData.image);
+        }
+        
+        // Append each skill separately to the FormData
+        skillsArray.forEach((skill, index) => {
+          formDataToSend.append(`skills[${index}][skill]`, skill.skill);
+        });
+  
+        const response = await createSportsAPI(formDataToSend);
+        
+        if (response && (response.status === 201 || response.status === 200)) {
+          toast.success("Sport category added successfully");
+          resetForm();
+          onClose();
+        } else {
+          throw new Error(response?.data?.message || "Failed to create sports category");
+        }
+      } catch (error) {
+        console.error("Error creating sports category:", error);
+        const errorMessage = error?.response?.data?.message || error.message || "Failed to create sports category";
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
       }
-      
-      formDataToSend.append("skills", JSON.stringify(formData.skills));
-
-      // Log FormData contents for debugging
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
-      const response = await createSportsAPI(formDataToSend);
-      if (response && response.status === 200) {
-        toast.success("Sports added Successfully");
-        resetForm();
-        onClose();
-      } else {
-        toast.error("Failed to create sports category");
-      }
-    } catch (error) {
-      console.error("Failed to create sports category", error);
-      const errorMessage = error?.response?.data?.message || "Failed to create sports category";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -128,6 +166,7 @@ const AddSports = ({ onClose }) => {
                 value={formData.name}
                 onChange={handleInputChange}
                 className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                maxLength={255}
                 required
               />
             </div>
@@ -165,9 +204,9 @@ const AddSports = ({ onClose }) => {
               <label className="font-semibold text-gray-700">Minimum Players</label>
               <input
                 type="number"
-                name="minPlayers"
+                name="min_Players"
                 min="1"
-                value={formData.minPlayers}
+                value={formData.min_Players}
                 onChange={handleInputChange}
                 className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -175,11 +214,11 @@ const AddSports = ({ onClose }) => {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <label className="font-semibold text-gray-700">Image</label>
+              <label className="font-semibold text-gray-700">Image (Max 2MB)</label>
               <input
                 type="file"
                 name="image"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/jpg,image/gif"
                 onChange={handleInputChange}
                 ref={fileInputRef}
                 className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -196,6 +235,7 @@ const AddSports = ({ onClose }) => {
                     onChange={(e) => handleSkillChange(index, e.target.value)}
                     className="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    maxLength={255}
                     placeholder="Enter skill"
                   />
                   {formData.skills.length > 1 && (
