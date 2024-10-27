@@ -94,3 +94,24 @@
   color: white;
   border-color: rgb(64, 127, 245) !important;
 }
+
+
+.sports-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sports-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.sports-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #66696c;
+  border-radius: 10px;
+}
+
+
+.sports-btn.css-dev-only-do-not-override-1pg9a38.ant-btn-default:hover {
+  background-color: rgb(17, 135, 219) !important;
+  color: white;
+  border-color: rgb(17, 135, 219) !important;
+}
