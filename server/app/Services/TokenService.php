@@ -75,11 +75,11 @@ class TokenService
             $token,                       // Token value
             $this->refreshTokenExpiry / 60, // Expiry time in minutes
             '/',                          // Path, making the cookie available site-wide
-            env('COOKIE_DOMAIN'),         // Domain (null defaults to current domain)
-            env('COOKIE_SECURE', true),    // Import from env with true as default
+            null,         // Domain (null defaults to current domain)
+            false,    // Import from env with true as default
             true,                          // HttpOnly
             false,                         // Raw
-            env('COOKIE_SAME_SITE', 'None') // Import SameSite setting from env
+            'Lax' // Import SameSite setting from env
         );
     }
 }
