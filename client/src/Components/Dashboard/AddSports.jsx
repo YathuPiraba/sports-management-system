@@ -9,7 +9,7 @@ const AddSports = ({ onClose }) => {
     name: "",
     type: "",
     description: "",
-    min_Players: "", // Changed from minPlayers to match API
+    min_Players: "",
     image: null,
     skills: [{ skill: "" }],
   });
@@ -111,8 +111,6 @@ const AddSports = ({ onClose }) => {
 
       // Append image if it exists
       if (formData.image instanceof File) {
-        console.log("kk", formData.image);
-
         formDataToSend.append("image", formData.image);
       }
 
@@ -120,9 +118,7 @@ const AddSports = ({ onClose }) => {
       skillsArray.forEach((skill, index) => {
         formDataToSend.append(`skills[${index}][skill]`, skill.skill);
       });
-      console.log("====================================");
-      console.log(formDataToSend);
-      console.log("====================================");
+
       const response = await createSportsAPI(formDataToSend);
 
       for (let pair of formDataToSend.entries()) {
