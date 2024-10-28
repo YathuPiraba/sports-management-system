@@ -41,7 +41,9 @@ class SportsController extends Controller
                 'name' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
                 'description' => 'required|string',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                // 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'skills' => 'required|array',
+                'skills.*.skill' => 'required|string|max:255'
             ]);
 
             $imageUrl = null;
@@ -57,10 +59,17 @@ class SportsController extends Controller
                 'name' => $request->input('name'),
                 'type' => $request->input('type'),
                 'description' => $request->input('description'),
+                'min_Players' => $request->input('min_Players'),
                 'image' => $imageUrl,
             ]);
 
-            return response()->json($sportsCategory, 201);
+            foreach ($request->input('skills') as $skillData) {
+                $sportsCategory->skills()->create([
+                    'skill' => $skillData['skill']
+                ]);
+            }
+
+            return response()->json($sportsCategory->load('skills'), 201);
         } catch (Exception $e) {
             // Handle any errors that occur
             return response()->json(['error' => 'Failed to create sports category.', 'message' => $e->getMessage()], 500);
@@ -142,7 +151,7 @@ class SportsController extends Controller
         }
     }
 
-  //GET =>  http://127.0.0.1:8000/api/sports/counts
+    //GET =>  http://127.0.0.1:8000/api/sports/counts
     public function getTotalCounts()
     {
         try {
