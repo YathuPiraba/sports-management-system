@@ -11,33 +11,25 @@ const AddSports = ({ onClose }) => {
     description: "",
     min_Players: "", // Changed from minPlayers to match API
     image: null,
-    skills: [{ skill: "" }]
+    skills: [{ skill: "" }],
   });
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
-    const { name, value, type, files } = e.target;
-    if (type === "file") {
-      // Validate file type and size
-      const file = files[0];
-      if (file) {
-        if (!file.type.match(/^image\/(jpeg|png|jpg|gif)$/)) {
-          toast.error("Please upload a valid image file (JPEG, PNG, JPG, GIF)");
-          return;
-        }
-        if (file.size > 2 * 1024 * 1024) { // 2MB in bytes
-          toast.error("Image size should be less than 2MB");
-          return;
-        }
-        setFormData((prevState) => ({
-          ...prevState,
-          image: file
-        }));
-      }
-    } else {
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: value
+    const { name, value } = e.target;
+
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
       }));
     }
   };
@@ -47,14 +39,14 @@ const AddSports = ({ onClose }) => {
     newSkills[index].skill = value;
     setFormData((prevState) => ({
       ...prevState,
-      skills: newSkills
+      skills: newSkills,
     }));
   };
 
   const addSkillField = () => {
     setFormData((prevState) => ({
       ...prevState,
-      skills: [...prevState.skills, { skill: "" }]
+      skills: [...prevState.skills, { skill: "" }],
     }));
   };
 
@@ -62,7 +54,7 @@ const AddSports = ({ onClose }) => {
     if (formData.skills.length > 1) {
       setFormData((prevState) => ({
         ...prevState,
-        skills: prevState.skills.filter((_, i) => i !== index)
+        skills: prevState.skills.filter((_, i) => i !== index),
       }));
     }
   };
@@ -74,7 +66,7 @@ const AddSports = ({ onClose }) => {
       description: "",
       min_Players: "",
       image: null,
-      skills: [{ skill: "" }]
+      skills: [{ skill: "" }],
     });
     if (fileInputRef.current) {
       fileInputRef.current.value = null;
@@ -86,16 +78,16 @@ const AddSports = ({ onClose }) => {
     if (!formData.type) return "Sport type is required";
     if (!formData.description.trim()) return "Description is required";
     if (!formData.min_Players) return "Minimum players is required";
-    
-    const invalidSkills = formData.skills.some(skill => !skill.skill.trim());
+
+    const invalidSkills = formData.skills.some((skill) => !skill.skill.trim());
     if (invalidSkills) return "All skill fields must be filled";
-    
+
     return null;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const validationError = validateForm();
     if (validationError) {
       toast.error(validationError);
@@ -105,43 +97,57 @@ const AddSports = ({ onClose }) => {
     setLoading(true);
 
     try {
-        // Create skills array first
-        const skillsArray = formData.skills.map(item => ({
-          skill: item.skill.trim()
-        }));
-  
-        // Create form data
-        const formDataToSend = new FormData();
-        formDataToSend.append("name", formData.name.trim());
-        formDataToSend.append("type", formData.type);
-        formDataToSend.append("description", formData.description.trim());
-        formDataToSend.append("min_Players", formData.min_Players);
-        
-        if (formData.image) {
-          formDataToSend.append("image", formData.image);
-        }
-        
-        // Append each skill separately to the FormData
-        skillsArray.forEach((skill, index) => {
-          formDataToSend.append(`skills[${index}][skill]`, skill.skill);
-        });
-  
-        const response = await createSportsAPI(formDataToSend);
-        
-        if (response && (response.status === 201 || response.status === 200)) {
-          toast.success("Sport category added successfully");
-          resetForm();
-          onClose();
-        } else {
-          throw new Error(response?.data?.message || "Failed to create sports category");
-        }
-      } catch (error) {
-        console.error("Error creating sports category:", error);
-        const errorMessage = error?.response?.data?.message || error.message || "Failed to create sports category";
-        toast.error(errorMessage);
-      } finally {
-        setLoading(false);
+      // Create skills array first
+      const skillsArray = formData.skills.map((item) => ({
+        skill: item.skill.trim(),
+      }));
+
+      // Create form data
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name.trim());
+      formDataToSend.append("type", formData.type);
+      formDataToSend.append("description", formData.description.trim());
+      formDataToSend.append("min_Players", formData.min_Players);
+
+      // Append image if it exists
+      if (formData.image instanceof File) {
+        console.log("kk", formData.image);
+
+        formDataToSend.append("image", formData.image);
       }
+
+      // Append each skill separately to the FormData
+      skillsArray.forEach((skill, index) => {
+        formDataToSend.append(`skills[${index}][skill]`, skill.skill);
+      });
+      console.log("====================================");
+      console.log(formDataToSend);
+      console.log("====================================");
+      const response = await createSportsAPI(formDataToSend);
+
+      for (let pair of formDataToSend.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
+      if (response && (response.status === 201 || response.status === 200)) {
+        toast.success("Sport category added successfully");
+        resetForm();
+        onClose();
+      } else {
+        throw new Error(
+          response?.data?.message || "Failed to create sports category"
+        );
+      }
+    } catch (error) {
+      console.error("Error creating sports category:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Failed to create sports category";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -154,10 +160,16 @@ const AddSports = ({ onClose }) => {
           ×
         </button>
 
-        <h3 className="text-xl font-semibold text-center mb-4">Add New Sport</h3>
-        
+        <h3 className="text-xl font-semibold text-center mb-4">
+          Add New Sport
+        </h3>
+
         <div className="max-h-[80vh] overflow-y-auto sports-scrollbar py-2 px-6">
-          <form onSubmit={handleSubmit} className="space-y-4 mt-0" encType="multipart/form-data">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 mt-0"
+            encType="multipart/form-data"
+          >
             <div className="flex flex-col space-y-2">
               <label className="font-semibold text-gray-700">Sport Name</label>
               <input
@@ -201,7 +213,9 @@ const AddSports = ({ onClose }) => {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <label className="font-semibold text-gray-700">Minimum Players</label>
+              <label className="font-semibold text-gray-700">
+                Minimum Players
+              </label>
               <input
                 type="number"
                 name="min_Players"
@@ -214,12 +228,14 @@ const AddSports = ({ onClose }) => {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <label className="font-semibold text-gray-700">Image (Max 2MB)</label>
+              <label className="font-semibold text-gray-700">
+                Image (Max 2MB)
+              </label>
               <input
                 type="file"
                 name="image"
                 accept="image/jpeg,image/png,image/jpg,image/gif"
-                onChange={handleInputChange}
+                onChange={handleFileChange}
                 ref={fileInputRef}
                 className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

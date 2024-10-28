@@ -179,7 +179,11 @@ export const resetPasswordAPI = (data) => {
 
 // create a new sports category
 export const createSportsAPI = (data) => {
-  return apiClient.post("/sports/create", data);
+  return apiClient.post("/sports/create", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 // update sports category

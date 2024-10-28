@@ -41,7 +41,7 @@ class SportsController extends Controller
                 'name' => 'required|string|max:255',
                 'type' => 'required|string|max:255',
                 'description' => 'required|string',
-                // 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'skills' => 'required|array',
                 'skills.*.skill' => 'required|string|max:255'
             ]);
