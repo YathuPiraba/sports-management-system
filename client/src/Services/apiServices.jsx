@@ -189,7 +189,7 @@ export const createSportsAPI = (data) => {
 // update sports category
 export const updateSportsAPI = (sportsId, data) => {
   data.append("_method", "PUT");
-  return authApiClient.post(`/sports-arenas/${sportsId}`, data, {
+  return authApiClient.post(`/sport/${sportsId}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -306,6 +306,10 @@ export const getSportsArenasByClubAPI = (clubId) => {
 
 export const deleteSportsArenaAPI = (clubId, arenaId) => {
   return authApiClient.delete(`/arena/${clubId}/${arenaId}`);
+};
+
+export const deleteSportsAPI = (sportId) => {
+  return authApiClient.delete(`/sport/${sportId}`);
 };
 
 export const deleteClubSportsAPI = (clubId, sportsId) => {

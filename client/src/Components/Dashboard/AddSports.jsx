@@ -1,9 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "antd";
 import toast from "react-hot-toast";
-import { createSportsAPI } from "../../Services/apiServices";
+import { createSportsAPI, updateSportsAPI } from "../../Services/apiServices";
 
-const AddSports = ({ onClose }) => {
+const AddSports = ({ onClose, initialData, fetchSports }) => {
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -15,9 +15,22 @@ const AddSports = ({ onClose }) => {
   });
   const [loading, setLoading] = useState(false);
 
+  // Populate form data if initialData is present (edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name,
+        type: initialData.type,
+        description: initialData.description,
+        min_Players: initialData.min_Players,
+        image: initialData.image || null,
+        skills: initialData.skills || [{ skill: "" }],
+      });
+    }
+  }, [initialData]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -35,11 +48,12 @@ const AddSports = ({ onClose }) => {
   };
 
   const handleSkillChange = (index, value) => {
-    const newSkills = [...formData.skills];
-    newSkills[index].skill = value;
+    const updatedSkills = formData.skills.map((skill, idx) =>
+      idx === index ? { skill: value } : skill
+    );
     setFormData((prevState) => ({
       ...prevState,
-      skills: newSkills,
+      skills: updatedSkills,
     }));
   };
 
@@ -51,37 +65,22 @@ const AddSports = ({ onClose }) => {
   };
 
   const removeSkillField = (index) => {
-    if (formData.skills.length > 1) {
-      setFormData((prevState) => ({
-        ...prevState,
-        skills: prevState.skills.filter((_, i) => i !== index),
-      }));
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      type: "",
-      description: "",
-      min_Players: "",
-      image: null,
-      skills: [{ skill: "" }],
-    });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = null;
-    }
+    const updatedSkills = formData.skills.filter((_, idx) => idx !== index);
+    setFormData((prevState) => ({
+      ...prevState,
+      skills: updatedSkills,
+    }));
   };
 
   const validateForm = () => {
-    if (!formData.name.trim()) return "Sport name is required";
-    if (!formData.type) return "Sport type is required";
-    if (!formData.description.trim()) return "Description is required";
-    if (!formData.min_Players) return "Minimum players is required";
-
-    const invalidSkills = formData.skills.some((skill) => !skill.skill.trim());
-    if (invalidSkills) return "All skill fields must be filled";
-
+    if (
+      !formData.name ||
+      !formData.type ||
+      !formData.description ||
+      !formData.min_Players
+    ) {
+      return "Please fill in all fields.";
+    }
     return null;
   };
 
@@ -95,55 +94,59 @@ const AddSports = ({ onClose }) => {
     }
 
     setLoading(true);
-
     try {
-      // Create skills array first
-      const skillsArray = formData.skills.map((item) => ({
-        skill: item.skill.trim(),
-      }));
-
-      // Create form data
       const formDataToSend = new FormData();
       formDataToSend.append("name", formData.name.trim());
       formDataToSend.append("type", formData.type);
       formDataToSend.append("description", formData.description.trim());
       formDataToSend.append("min_Players", formData.min_Players);
-
-      // Append image if it exists
       if (formData.image instanceof File) {
         formDataToSend.append("image", formData.image);
       }
-
-      // Append each skill separately to the FormData
-      skillsArray.forEach((skill, index) => {
+      formData.skills.forEach((skill, index) => {
         formDataToSend.append(`skills[${index}][skill]`, skill.skill);
       });
-
-      const response = await createSportsAPI(formDataToSend);
-
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0], pair[1]);
-      }
+      
+      const response = initialData
+        ? await updateSportsAPI(initialData.id, formDataToSend)
+        : await createSportsAPI(formDataToSend);
 
       if (response && (response.status === 201 || response.status === 200)) {
-        toast.success("Sport category added successfully");
+        fetchSports();
+        toast.success(
+          initialData
+            ? "Sport category updated successfully"
+            : "Sport category added successfully"
+        );
         resetForm();
         onClose();
       } else {
         throw new Error(
-          response?.data?.message || "Failed to create sports category"
+          response?.data?.message || "Failed to save sports category"
         );
       }
     } catch (error) {
-      console.error("Error creating sports category:", error);
+      console.error("Error saving sports category:", error);
       const errorMessage =
         error?.response?.data?.message ||
         error.message ||
-        "Failed to create sports category";
+        "Failed to save sports category";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      type: "",
+      description: "",
+      min_Players: "",
+      image: null,
+      skills: [{ skill: "" }],
+    });
+    if (fileInputRef.current) fileInputRef.current.value = null;
   };
 
   return (
@@ -157,7 +160,7 @@ const AddSports = ({ onClose }) => {
         </button>
 
         <h3 className="text-xl font-semibold text-center mb-4">
-          Add New Sport
+          {initialData ? "Edit Sport" : "Add Sport"}
         </h3>
 
         <div className="max-h-[80vh] overflow-y-auto sports-scrollbar py-2 px-6">
@@ -284,7 +287,7 @@ const AddSports = ({ onClose }) => {
                 loading={loading}
                 className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600"
               >
-                Add Sport
+                {initialData ? "Update Sport" : "Add Sport"}
               </Button>
             </div>
           </form>

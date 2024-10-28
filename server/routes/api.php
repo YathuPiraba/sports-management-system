@@ -79,6 +79,7 @@ Route::get('/clubs/details', [ClubController::class, 'getAllClubsDetails']);
 Route::get('/sports/list', [SportsController::class, 'getSports']);
 Route::post('/sports/create', [SportsController::class, 'createSports']);
 Route::put('/sport/{id}', [SportsController::class, 'updateSports']);
+Route::delete('/sport/{id}', [SportsController::class, 'deleteSports']);
 Route::get('/sports/counts', [SportsController::class, 'getTotalCounts']);
 
 Route::get('/clubs-sports/list', [ClubController::class, 'getAllClubSports']);
