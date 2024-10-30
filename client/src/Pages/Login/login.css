@@ -5,25 +5,23 @@
 }
 
 .body-container {
-  background: linear-gradient(to right, rgba(42, 85, 105, 1), rgb(7, 13, 17));
-  display: flex;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
+  background-image: url('../../assets/Frame6.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   min-height: 100vh;
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 .outter {
+  top: 2rem;
+  right: 10rem;
   display: flex;
-  background-color: rgba(34, 52, 76);
-  border-radius: 20px;
-  border: 0.5px solid rgba(10, 18, 24, 0.26);
-  height: 90%;
-  justify-content: center;
   align-items: center;
-  align-content: center;
+  justify-content: flex-end;
+  height: 90%;
 }
 
 .heading {
@@ -36,9 +34,7 @@
   margin-left: 10px;
 }
 
-.topic {
-  margin-left: 70px;
-}
+
 
 @keyframes fadeIn {
   from {
@@ -54,13 +50,6 @@
   width: 400px;
   height: 400px;
   animation: fadeIn 1.5s ease-in forwards;
-}
-
-.sep {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  width: 100%;
 }
 
 .logo {
@@ -81,7 +70,7 @@
   animation: fadeIn 1.5s ease-in forwards;
 }
 
-.heading p {
+.topic p {
   font-size: small;
   margin-left: 38px;
   font-family: "Merriweather", serif;
@@ -99,14 +88,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.sep h2 {
-  margin-top: 75px;
-  margin-left: 20px;
-  letter-spacing: 0.5px;
-  font-size: x-large;
-  font-weight: bold;
 }
 
 .logo h1 .title {
@@ -135,33 +116,35 @@ form {
   gap: 10px;
 }
 
-.forgot-btn button {
-  color: rgba(32, 42, 62);
-  background-color: #5fc4ee;
+.forgot-btn  {
+  color: #ffffff !important;
+  /* background-color: #5fc4ee; */
   border: none;
   padding-bottom: 3px;
   border-radius: 7px;
-  width: 70px;
-  height: 40px;
-  font-weight: bold;
+  /* width: 70px; */
+  /* height: 40px; */
+  font-weight: 400;
   cursor: pointer;
-  margin-left: auto;
+  font-size: small;
+  font-style: italic;
+  
+  /* margin-left: auto; */
 }
 
-.forgot-btn button:hover {
-  background-color: #499cc0;
-}
+
 
 .loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn:hover {
-  background-color: #499cc0 !important;
-  color: rgb(0, 0, 0) !important;
+  background-color: #d87504 !important;
+  color: rgb(255, 255, 255) !important;
   border: none !important;
 }
 
-.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn:active {
-  background-color: #499cc0 !important;
-  color: rgb(0, 0, 0) !important;
+.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn {
+  background-color: #f48301 !important;
+  color: rgb(255, 255, 255) !important;
   border: none !important;
+  font-weight: 600;
 }
 
 .forgot-btn {
@@ -177,11 +160,10 @@ form {
 }
 
 .login form input {
-  background-color: rgba(32, 42, 62);
   border: none;
   padding: 12px;
   border-radius: 7px;
-  color: white;
+  color: black;
 }
 
 form input:focus,
@@ -264,20 +246,24 @@ form input:hover {
   border: none;
 }
 
+@media (max-width: 1023px) {
+
+  .outter {
+    top: 1rem;
+    right: 1rem;
+
+  }
+  .loginform{
+    margin-left: 4rem;
+  }
+  form {
+    margin-top: 20px;
+  }
+}
 @media (max-width: 767px) {
+
   .pic img {
     display: none;
-  }
-  .sep {
-    display: flex;
-    flex-direction: column;
-  }
-  .sep h2 {
-    margin-top: 10px;
-    margin-left: 0px;
-    letter-spacing: 0.5px;
-    font-size: x-large;
-    font-weight: bold;
   }
   .topic {
     margin-left: 0px;
@@ -294,4 +280,19 @@ form input:hover {
     margin-top: 40px;
     margin-bottom: 40px;
 }
+
+.outter {
+  top: 0rem;
+  right: 1rem;
+}
+
+}
+
+@media (max-width: 374px) {
+
+  .outter {
+    top: 0rem;
+    right: 0rem;
+  }
+  
 }
