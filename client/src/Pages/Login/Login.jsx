@@ -167,63 +167,65 @@ const Login = () => {
               </div>
               <p>Unite Every Club, Connect Every Player...!</p>
             </div>
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-              <input
-                type="text"
-                name="userName"
-                placeholder="Enter your username"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                {...register("userName", { required: true })}
+            <div className="loginform">
+              <form onSubmit={handleFormSubmit} className="space-y-2 lg:space-y-4 ">
+                <input
+                  type="text"
+                  name="userName"
+                  placeholder="Enter your username"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  {...register("userName", { required: true })}
+                />
+                {errors.username && <span>Username is required</span>}
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <Input.Password
+                      {...field}
+                      placeholder="Enter your password"
+                      visibilityToggle={{
+                        visible: passwordVisible,
+                        onVisibleChange: setPasswordVisible,
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  )}
+                />
+                {errors.password && <span>Password is required</span>}
+                <div className="flex justify-between gap-1 items-center">
+                  <span
+                    onClick={showForgotPasswordModal}
+                    className="forgot-btn cursor-pointer hover:underline"
+                  >
+                    Forgot Password?
+                  </span>
+                  <Button
+                    htmlType="submit"
+                    className=" text-white px-6 py-2 rounded-md loginbtn"
+                    loading={loading}
+                  >
+                    Login
+                  </Button>
+                </div>
+              </form>
+              <ForgotPassword
+                isVisible={isForgotPasswordModalVisible}
+                onClose={handleForgotPasswordCancel}
               />
-              {errors.username && <span>Username is required</span>}
-              <Controller
-                name="password"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Input.Password
-                    {...field}
-                    placeholder="Enter your password"
-                    visibilityToggle={{
-                      visible: passwordVisible,
-                      onVisibleChange: setPasswordVisible,
-                    }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  />
-                )}
-              />
-              {errors.password && <span>Password is required</span>}
-              <div className="flex justify-between gap-1 items-center">
-                <span
-                  onClick={showForgotPasswordModal}
-                  className="forgot-btn cursor-pointer hover:underline"
-                >
-                  Forgot Password?
-                </span>
-                <Button
-                  htmlType="submit"
-                  className=" text-white px-6 py-2 rounded-md loginbtn"
-                  loading={loading}
-                >
-                  Login
-                </Button>
+              <div className="mt-4 text-center">
+                <p className="text-sm font-roboto ">
+                  Don't have an account?{" "}
+                  <a
+                    href="#"
+                    className="text-orange-500 hover:underline text-md ml-3"
+                    onClick={showModal}
+                  >
+                    Sign up
+                  </a>
+                </p>
               </div>
-            </form>
-            <ForgotPassword
-              isVisible={isForgotPasswordModalVisible}
-              onClose={handleForgotPasswordCancel}
-            />
-            <div className="mt-4 text-center">
-              <p className="text-sm font-roboto ">
-                Don't have an account?{" "}
-                <a
-                  href="#"
-                  className="text-orange-500 hover:underline text-md ml-3"
-                  onClick={showModal}
-                >
-                  Sign up
-                </a>
-              </p>
             </div>
           </div>
         </div>
