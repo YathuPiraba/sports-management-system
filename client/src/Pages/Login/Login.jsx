@@ -151,106 +151,79 @@ const Login = () => {
     <Suspense fallback={<div className="bg-customDark">Loading...</div>}>
       <div className="body-container">
         <div className="outter relative">
-          {/* {loading && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm z-50">
-              <FadeLoader className="ml-1 mt-1" color="skyblue" />
-            </div>
-          )} */}
-          <div className="sep">
-            <div className="heading">
-              <div className="topic">
-                <div className="logo">
-                  <img
-                    src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png"
-                    alt="Club Connect Logo"
-                  />
-                  <h1>
-                    <span className="title">C</span>
-                    <span className="title3">lub </span>
-                    <span className="title1">C</span>
-                    <span className="title3">onnect</span>
-                  </h1>
-                </div>
-                <p>Unite Every Club, Connect Every Player...!</p>
-              </div>
-              <div className="pic">
+          <div className="login">
+            <div className="topic">
+              <div className="logo">
                 <img
-                  src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798479/sample-removebg_j1e38u.png"
-                  alt="Cover pic"
+                  src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png"
+                  alt="Club Connect Logo"
                 />
+                <h1>
+                  <span className="title">C</span>
+                  <span className="title3">lub </span>
+                  <span className="title1">C</span>
+                  <span className="title3">onnect</span>
+                </h1>
               </div>
+              <p>Unite Every Club, Connect Every Player...!</p>
             </div>
-            <div className="login">
-              <h2 className=" ">Login</h2>
-              <div>
-                <form onSubmit={handleFormSubmit}>
-                  <input
-                    type="text"
-                    name="userName"
-                    placeholder="Enter your username"
-                    {...register("userName", { required: true })}
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <input
+                type="text"
+                name="userName"
+                placeholder="Enter your username"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                {...register("userName", { required: true })}
+              />
+              {errors.username && <span>Username is required</span>}
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Input.Password
+                    {...field}
+                    placeholder="Enter your password"
+                    visibilityToggle={{
+                      visible: passwordVisible,
+                      onVisibleChange: setPasswordVisible,
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
-                  {errors.username && <span>Username is required</span>}
-                  <Space direction="vertical">
-                    <Space direction="horizontal">
-                      <Controller
-                        name="password"
-                        control={control}
-                        rules={{ required: true }}
-                        render={({ field }) => (
-                          <Input.Password
-                            {...field}
-                            placeholder="Enter your password"
-                            visibilityToggle={{
-                              visible: passwordVisible,
-                              onVisibleChange: setPasswordVisible,
-                            }}
-                            className="pass"
-                          />
-                        )}
-                      />
-                    </Space>
-                    {errors.password && <span>Password is required</span>}
-                  </Space>
-                  <div className="forgot-btn">
-                    <span
-                      onClick={showForgotPasswordModal}
-                      className="white cursor-pointer forgot mt-2 hover:underline ml-2 "
-                    >
-                      Forgot Password?
-                    </span>
-                    <ForgotPassword
-                      isVisible={isForgotPasswordModalVisible}
-                      onClose={handleForgotPasswordCancel}
-                    />
-                    <Button
-                      htmlType="submit"
-                      className="loginbtn"
-                      loading={loading}
-                      style={{ padding: "10px", height: "40px" }}
-                    >
-                      {" "}
-                      Login
-                    </Button>
-                  </div>
-                </form>
-                {/* <div className="intersect">
-                <p>_______________</p>
-                <p id="or">Or</p>
-                <p>_______________</p>
+                )}
+              />
+              {errors.password && <span>Password is required</span>}
+              <div className="flex justify-between gap-1 items-center">
+                <span
+                  onClick={showForgotPasswordModal}
+                  className="forgot-btn cursor-pointer hover:underline"
+                >
+                  Forgot Password?
+                </span>
+                <Button
+                  htmlType="submit"
+                  className=" text-white px-6 py-2 rounded-md loginbtn"
+                  loading={loading}
+                >
+                  Login
+                </Button>
               </div>
-              < >
-               <FbGmailSignin/>
-              </> */}
-                <div className="signup">
-                  <p>
-                    Don&apos;t have an account?{" "}
-                    <a href="#" onClick={showModal}>
-                      Sign up
-                    </a>
-                  </p>
-                </div>
-              </div>
+            </form>
+            <ForgotPassword
+              isVisible={isForgotPasswordModalVisible}
+              onClose={handleForgotPasswordCancel}
+            />
+            <div className="mt-4 text-center">
+              <p className="text-sm font-roboto ">
+                Don't have an account?{" "}
+                <a
+                  href="#"
+                  className="text-orange-500 hover:underline text-md ml-3"
+                  onClick={showModal}
+                >
+                  Sign up
+                </a>
+              </p>
             </div>
           </div>
         </div>

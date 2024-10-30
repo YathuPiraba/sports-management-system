@@ -84,14 +84,6 @@ const Welcome = () => {
         </div>
       </div>
 
-      {/* Decorative dots */}
-      <div className="absolute bottom-8 left-8">
-        <div className="grid grid-cols-3 gap-2">
-          {[...Array(9)].map((_, i) => (
-            <div key={i} className="w-2 h-2 rounded-full bg-orange-500/50" />
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
