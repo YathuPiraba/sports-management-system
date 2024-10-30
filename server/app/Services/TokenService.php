@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Redis;
 class TokenService
 {
 
-    private $accessTokenExpiry = 10; // 15 minutes
+    private $accessTokenExpiry = 900; // 15 minutes
     private $refreshTokenExpiry = 604800; // 1 week
     private $redisPrefix = 'refresh_token:';
 
