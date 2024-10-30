@@ -134,16 +134,15 @@ form {
 
 
 
-.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn:hover {
-  background-color: #d87504 !important;
-  color: rgb(255, 255, 255) !important;
+.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn.ant-btn-default:hover {
+  background-color:rgb(250, 134, 11);
+  color: rgb(0, 0, 0) !important;
   border: none !important;
 }
 
-.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn {
-  background-color: #f48301 !important;
+.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn.ant-btn-default{
+  background-color: transparent;
   color: rgb(255, 255, 255) !important;
-  border: none !important;
   font-weight: 600;
 }
 
