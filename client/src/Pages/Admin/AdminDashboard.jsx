@@ -7,14 +7,15 @@ import {
   FlagOutlined,
 } from "@ant-design/icons";
 import { GridLoader } from "react-spinners";
-const AddSports = lazy(() => import("../../Components/Dashboard/AddSports"));
+const DisplaySports = lazy(() =>
+  import("../../Components/Dashboard/DisplaySports")
+);
 
 const AdminDashboard = () => {
   const [totalClubs, setTotalClubs] = useState(null);
   const [totalMembers, setTotalMembers] = useState(null);
   const [totalSports, setTotalSports] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [openSportsModal, setOpenSportsModel] = useState(false);
 
   const fetchCounts = async () => {
     setLoading(true);
@@ -34,14 +35,6 @@ const AdminDashboard = () => {
     fetchCounts();
   }, []);
 
-  const handleSportsModal = () => {
-    setOpenSportsModel(true);
-  };
-
-  const closeSportsModal = () => {
-    setOpenSportsModel(false);
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full h-[75vh]">
@@ -58,7 +51,7 @@ const AdminDashboard = () => {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="px-6 max-h-screen ">
+      <div className="px-6 min-h-screen ">
         <h2 className="text-2xl font-semibold mb-6">Dashboard</h2>
 
         <div className="flex flex-wrap gap-4 mb-6">
@@ -91,20 +84,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <button
-          className="bg-blue-500 text-white rounded-md px-4 py-2 text-lg flex items-center hover:bg-blue-600"
-          onClick={handleSportsModal}
-        >
-          <PlusOutlined className="mr-2" /> Add Sport
-        </button>
-
-        {openSportsModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-            <div className="bg-white rounded-lg p-4 w-full max-w-lg max-h-[80vh] overflow-y-auto">
-              <AddSports onClose={closeSportsModal} />
-            </div>
-          </div>
-        )}
+        <DisplaySports />
       </div>
     </Suspense>
   );

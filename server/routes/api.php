@@ -37,14 +37,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::post('/logout', [UserController::class, 'logout']);
-Route::post('/refresh', [UserController::class, 'refresh']);
+
+
 Route::delete('/image/{id}', [UserController::class, 'deleteImage']);
 
 Route::middleware('auth.token')->group(function () {
+    Route::post('/refresh', [UserController::class, 'refresh'])->name('token.refresh');
     Route::get('/details', [UserController::class, 'getUserDetails']);
     Route::put('/user/admin-update/{id}', [UserController::class, 'updateAdminDetails']);
-
-
     Route::post('/clubs/create', [ClubController::class, 'clubCreate']);
     Route::delete('clubs/{id}', [ClubController::class, 'clubDelete']);
 
@@ -79,6 +79,7 @@ Route::get('/clubs/details', [ClubController::class, 'getAllClubsDetails']);
 Route::get('/sports/list', [SportsController::class, 'getSports']);
 Route::post('/sports/create', [SportsController::class, 'createSports']);
 Route::put('/sport/{id}', [SportsController::class, 'updateSports']);
+Route::delete('/sport/{id}', [SportsController::class, 'deleteSports']);
 Route::get('/sports/counts', [SportsController::class, 'getTotalCounts']);
 
 Route::get('/clubs-sports/list', [ClubController::class, 'getAllClubSports']);
