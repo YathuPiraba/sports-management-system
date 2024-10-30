@@ -32,10 +32,6 @@ const Welcome = () => {
 
   return (
     <div className="welcome-container relative">
-      {/* Orange accent shapes */}
-      {/* <div className="absolute left-0 top-0 h-full w-32 bg-orange-500 transform -skew-x-12" />
-      <div className="absolute right-0 bottom-0 h-64 w-64 bg-orange-500 transform rotate-45 translate-x-32 translate-y-32" />
-       */}
       {/* Main content container */}
       <div className="relative z-10 w-full h-screen flex items-center px-8 md:px-16">
         {/* Left content */}
@@ -80,9 +76,9 @@ const Welcome = () => {
             <img
               src={frontPic}
               alt="Sports"
-              className="w-full h-full object-cover object-center rounded-lg transform 
+              className="w-full h-[100vh] object-cover object-center rounded-lg transform 
                          transition-transform duration-700 ease-in-out scale-90 
-                         group-hover:scale-100"
+                         group-hover:scale-95"
             />
           </div>
         </div>
