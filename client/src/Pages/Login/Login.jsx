@@ -148,7 +148,7 @@ const Login = () => {
   };
 
   return (
-    <Suspense fallback={<div className="bg-customDark">Loading...</div>}>
+    <Suspense fallback={<div >Loading...</div>}>
       <div className="body-container">
         <div className="outter relative">
           <div className="login">
@@ -203,7 +203,7 @@ const Login = () => {
                   </span>
                   <Button
                     htmlType="submit"
-                    className="px-6 py-2 rounded-md bg-transparent loginbtn"
+                    className="px-6 text-white py-2 rounded-md bg-transparent loginbtn"
                     loading={loading}
                   >
                     Login
