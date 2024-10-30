@@ -203,7 +203,7 @@ const Login = () => {
                   </span>
                   <Button
                     htmlType="submit"
-                    className=" text-white px-6 py-2 rounded-md loginbtn"
+                    className="px-6 py-2 rounded-md bg-transparent loginbtn"
                     loading={loading}
                   >
                     Login
