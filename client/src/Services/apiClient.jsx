@@ -1,9 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, createContext, useContext } from "react";
 import { ConfigProvider } from "antd";
 import SessionExpiredPopup from "./SessionExpiredPopup";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
+const AuthContext = createContext(null);
 
 const apiClient = axios.create({
   baseURL: baseURL,
@@ -33,6 +34,23 @@ const setAuthToken = (token) => {
 
 const ApiClientProvider = ({ children }) => {
   const [isSessionExpired, setIsSessionExpired] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [refreshSubscribers, setRefreshSubscribers] = useState([]);
+
+  const processQueue = (error, token = null) => {
+    refreshSubscribers.forEach((callback) => {
+      if (error) {
+        callback(error, null);
+      } else {
+        callback(null, token);
+      }
+    });
+    setRefreshSubscribers([]);
+  };
+
+  const addSubscriber = (callback) => {
+    setRefreshSubscribers((prev) => [...prev, callback]);
+  };
 
   authApiClient.interceptors.request.use(
     (config) => {
@@ -49,37 +67,77 @@ const ApiClientProvider = ({ children }) => {
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
-      if (error.response.status === 401 && !originalRequest._retry) {
+
+      // Handle 401 errors
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        if (isRefreshing) {
+          // Wait for the token refresh
+          return new Promise((resolve, reject) => {
+            addSubscriber((error, token) => {
+              if (error) {
+                reject(error);
+              } else {
+                originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                resolve(authApiClient(originalRequest));
+              }
+            });
+          });
+        }
+
         originalRequest._retry = true;
+        setIsRefreshing(true);
+
         try {
           const res = await apiClient.post("/refresh");
           const { access_token } = res.data;
-          localStorage.setItem("access_token", access_token);
-          originalRequest.headers["Authorization"] = `Bearer ${access_token}`;
+          setAuthToken(access_token);
+
+          // Notify all subscribers about the new token
+          processQueue(null, access_token);
+
           return authApiClient(originalRequest);
         } catch (refreshError) {
           console.error("Refresh token failed:", refreshError);
-          localStorage.removeItem("access_token");
-          // Check if the refresh token has expired
-          if (refreshError.response && refreshError.response.status === 401) {
+          setAuthToken(null);
+
+          // Notify subscribers about the error
+          processQueue(refreshError);
+
+          if (refreshError.response?.status === 401) {
             setIsSessionExpired(true);
           }
           return Promise.reject(refreshError);
+        } finally {
+          setIsRefreshing(false);
         }
       }
+
       return Promise.reject(error);
     }
   );
 
+  const contextValue = {
+    setIsSessionExpired,
+    isSessionExpired,
+  };
+
   return (
-    <ConfigProvider>
-      {children}
-      <SessionExpiredPopup
-        isOpen={isSessionExpired}
-        onClose={() => setIsSessionExpired(false)}
-      />
-    </ConfigProvider>
+    <AuthContext.Provider value={contextValue}>
+      <ConfigProvider>
+        {children}
+        <SessionExpiredPopup
+          isOpen={isSessionExpired}
+          onClose={() => setIsSessionExpired(false)}
+        />
+      </ConfigProvider>
+    </AuthContext.Provider>
   );
 };
 
-export { ApiClientProvider, apiClient, authApiClient, setAuthToken };
+export {
+  ApiClientProvider,
+  apiClient,
+  authApiClient,
+  setAuthToken,
+  AuthContext,
+};

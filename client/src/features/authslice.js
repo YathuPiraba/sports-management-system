@@ -8,19 +8,33 @@ import {
 } from "../Services/apiServices";
 import { setAuthToken } from "../Services/apiClient";
 
-// Thunk to handle login and token storage
 export const loginAdmin = createAsyncThunk(
   "/login",
   async (data, { rejectWithValue }) => {
     try {
       const res = await loginApi(data);
-      const { access_token } = res.data;
-      console.log(res.data);
+      const { access_token, session_id } = res.data;
 
+      // Store access token
       setAuthToken(access_token);
-      return access_token;
+
+      return { access_token, session_id };
     } catch (error) {
-      const errorMessage = error.response?.data || "Login failed";
+      const errorMessage = error.response?.data?.message || "Login failed";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const logOutAdmin = createAsyncThunk(
+  "/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await logoutApi();
+      setAuthToken(null);
+      return {};
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Logout failed";
       return rejectWithValue(errorMessage);
     }
   }
@@ -69,41 +83,31 @@ export const applyMember = createAsyncThunk(
   }
 );
 
-export const logOutAdmin = createAsyncThunk(
-  "/logout",
-  async (_, { rejectWithValue }) => {
-    try {
-      await logoutApi();
-      setAuthToken(null);
-      return {};
-    } catch (error) {
-      const errorMessage = error.response?.data || "Logout failed";
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
 const initialState = {
   token: null,
+  sessionId: null,
   userdata: null,
   loading: false,
   error: null,
   logoutLoading: false,
-  loginLoading:false,
+  loginLoading: false,
 };
 
-// Auth slice to manage authentication state
 const authSlice = createSlice({
   name: "user",
-  initialState: initialState,
+  initialState,
   reducers: {
     logout: (state) => {
       state.token = null;
+      state.sessionId = null;
       state.userdata = null;
       state.loading = false;
       state.error = null;
       state.logoutLoading = false;
       state.loginLoading = false;
+    },
+    refreshToken: (state, action) => {
+      state.token = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -113,7 +117,8 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginAdmin.fulfilled, (state, action) => {
-        state.token = action.payload;
+        state.token = action.payload.access_token;
+        state.sessionId = action.payload.session_id;
         state.loginLoading = false;
         state.error = null;
       })
@@ -178,4 +183,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { logout } = authSlice.actions;
+export const { logout,refreshToken } = authSlice.actions;
