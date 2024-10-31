@@ -11,7 +11,7 @@ import { Popconfirm } from "antd";
 import AddSports from "./AddSports";
 import { GridLoader } from "react-spinners";
 
-const DisplaySports = () => {
+const DisplaySports = ({ theme }) => {
   const [sports, setSports] = useState([]);
   const [openSportsModal, setOpenSportsModel] = useState(false);
   const [sportsLoading, setSportsLoading] = useState(false);
@@ -70,7 +70,7 @@ const DisplaySports = () => {
     <>
       <div>
         <button
-          className="bg-blue-500 text-white rounded-md px-4 py-2 text-lg flex items-center hover:bg-blue-600"
+          className={`bg-blue-500 text-white rounded-md px-4 py-2 text-lg flex items-center hover:bg-blue-600`}
           onClick={() => handleSportsModal()}
         >
           <PlusOutlined className="mr-2" /> Add Sport
@@ -80,7 +80,9 @@ const DisplaySports = () => {
         {sports.map((sport) => (
           <div
             key={sport.id}
-            className="bg-white rounded-lg shadow-md p-4 flex flex-col items-start"
+            className={` ${
+              theme === "light" ? "bg-white" : "bg-gray-200 text-black"
+            }  rounded-lg shadow-md p-4 flex flex-col items-start`}
           >
             <img
               src={sport.image}
