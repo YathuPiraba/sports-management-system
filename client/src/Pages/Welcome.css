@@ -1,0 +1,102 @@
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-image: url("../assets/Frame4.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.weltext {
+  text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black,
+    1px 1px 0 black;
+}
+.welLeft {
+  width: 46%;
+}
+
+.welLeft p {
+  /* color: rgb(0, 162, 255); */
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.548), 1px -1px 0 rgba(0, 0, 0, 0.514),
+    -1px 1px 0 rgba(0, 0, 0, 0.596), 1px 1px 0 rgba(0, 0, 0, 0.486);
+}
+
+
+.welTitle h1 {
+  font-size: 55px;
+  padding: 0;
+}
+
+.welTitle {
+  display: flex;
+  flex-direction: column;  
+}
+
+
+
+@media (max-width: 1024px) {
+  .welLeft {
+    padding: 0;
+   }
+  }
+@media (max-width: 767px) {
+  .welLeft p {
+   text-align: justify;
+  }
+
+  .welTitle {
+    gap: 20px;
+    flex-direction: row; 
+  }
+  .welTitle h1 {
+    font-size: 50px;
+  }
+
+  .welLeft {
+    width: 80%;
+  }
+
+  .welRight {
+    width: 20%;
+  }
+  .welTitle {
+    display: flex;
+  }
+  .welLogin{
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 430px) {
+  .welTitle h1 {
+    font-size: 48px;
+  }
+  .imgcont {
+    display: none;
+  }
+  .welLeft {
+    width: 95%;
+    position: absolute;
+    top: -8%;
+  }
+
+  .welRight {
+    width: 5%;
+  }
+}
+
+@media (max-width: 390px) {
+
+.welTitle h1 {
+  font-size: 43px;
+}
+}
+@media (max-width: 374px) {
+  .welTitle h1 {
+    font-size: 30px;
+  }
+}

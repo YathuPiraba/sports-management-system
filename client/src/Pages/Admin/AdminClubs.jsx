@@ -9,6 +9,7 @@ import { GridLoader, PropagateLoader } from "react-spinners";
 import { Button, message } from "antd";
 import { FaChevronUp, FaChevronDown, FaFilePdf } from "react-icons/fa";
 import { FaMobileRetro } from "react-icons/fa6";
+import { useTheme } from "../../context/ThemeContext";
 
 const AdminClubs = () => {
   const [clubs, setClubs] = useState([]);
@@ -25,6 +26,7 @@ const AdminClubs = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState({});
+  const { theme } = useTheme();
 
   const fetchClubData = async (
     page = pagination.currentPage,
@@ -182,7 +184,7 @@ const AdminClubs = () => {
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 font-poppins">
           <thead>
-            <tr className="text-left">
+            <tr className={` text-black text-left`}>
               <th className="px-6 py-3 bg-gray-50">No</th>
               <th className="px-6 py-3 bg-gray-50">Club Name</th>
               <th className="px-6 py-3 bg-gray-50">Address</th>
@@ -191,12 +193,16 @@ const AdminClubs = () => {
               <th className="px-6 py-3 bg-gray-50">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody
+            className={` ${
+              theme === "light" ? "bg-white" : "bg-gray-200 text-black"
+            } divide-y divide-gray-200`}
+          >
             {loading && (
               <tr>
                 <td
                   colSpan="5"
-                  className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 z-50"
+                  className="fixed inset-0 flex items-center justify-center bg-opacity-20 z-50"
                 >
                   <PropagateLoader
                     className="ml-1 mt-1"
