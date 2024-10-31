@@ -71,7 +71,7 @@
 }
 
 .topic p {
-  font-size: small;
+  font-size: 15px;
   justify-content: center;
   font-family: "Merriweather", serif;
   font-style: italic;
@@ -169,7 +169,7 @@ form input:hover {
 
 .moto {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .signup {
