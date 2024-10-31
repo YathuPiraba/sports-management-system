@@ -15,13 +15,21 @@
   position: relative;
 }
 
+.sep {
+  width: 50%;
+}
+
+.cont {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+}
+
 .outter {
-  top: 2rem;
-  right: 10rem;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  height: 90%;
+  justify-content: center;
+  height: 80%;
 }
 
 .heading {
@@ -41,13 +49,6 @@
   to {
     opacity: 1;
   }
-}
-
-.pic img {
-  margin-top: 20px;
-  width: 400px;
-  height: 400px;
-  animation: fadeIn 1.5s ease-in forwards;
 }
 
 .logo {
@@ -117,18 +118,13 @@ form {
 
 .forgot-btn {
   color: #ffffff !important;
-  /* background-color: #5fc4ee; */
   border: none;
   padding-bottom: 3px;
   border-radius: 7px;
-  /* width: 70px; */
-  /* height: 40px; */
   font-weight: 400;
   cursor: pointer;
   font-size: medium;
   font-style: italic;
-
-  /* margin-left: auto; */
 }
 
 .loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn.ant-btn-default:hover {
@@ -171,41 +167,9 @@ form input:hover {
   color: black;
 }
 
-.ex-login {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  margin-top: 30px;
-}
-
-.ex-login img {
-  width: 32px;
-  height: 32px;
-}
-
 .moto {
   display: flex;
   justify-content: center;
-}
-
-.ex-login button {
-  cursor: pointer;
-  border: none;
-  background-color: rgba(34, 52, 76);
-}
-
-.intersect {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  display: flex;
-  color: rgb(107, 108, 110);
-  justify-content: center;
-}
-
-#or {
-  margin-top: 7px;
-  margin-left: 20px;
-  margin-right: 20px;
 }
 
 .signup {
@@ -249,17 +213,6 @@ form input:hover {
 }
 
 @media (max-width: 1023px) {
-  .topic {
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .outter {
-    top: 1rem;
-    right: 1rem;
-  }
   .loginform {
     justify-content: center;
   }
@@ -268,14 +221,11 @@ form input:hover {
   }
 }
 @media (max-width: 767px) {
-  .pic img {
-    display: none;
+  .sep {
+    width: 25%;
   }
-  .topic {
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .cont {
+    width: 75%;
   }
   .heading {
     margin-top: 5px;
@@ -286,24 +236,40 @@ form input:hover {
     margin-top: 40px;
     margin-bottom: 40px;
   }
+}
 
-  .outter {
-    top: 2rem;
-    right: 2rem;
+@media (max-width: 424px) {
+  .sep {
+    width: 10%;
   }
-
-  .loginform {
-    margin-left: 20px;
+  .cont {
+    width: 90%;
   }
 }
 
-@media (max-width: 375px) {
-  .outter {
-    top: 0rem;
-    right: 0rem;
+@media (max-width: 324px) {
+  .sep {
+    width: 5%;
+  }
+  .cont {
+    width: 95%;
   }
 
-  .loginform {
-    margin-left: 40px;
+  .logo h1 .title3 {
+    font-size: x-large;
   }
+
+  .logo h1 .title {
+    font-size: x-large;
+  }
+
+  .logo h1 .title1 {
+    font-size: x-large;
+  }
+
+  .forgot-btn {
+    font-size: small;
+  }
+
+
 }
