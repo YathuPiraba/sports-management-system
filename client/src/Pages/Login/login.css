@@ -5,7 +5,7 @@
 }
 
 .body-container {
-  background-image: url('../../assets/Frame6.svg');
+  background-image: url("../../assets/Frame6.svg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -34,8 +34,6 @@
   margin-left: 10px;
 }
 
-
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -55,10 +53,11 @@
 .logo {
   display: flex;
   font-family: "Poppins", sans-serif;
+  justify-content: center;
 }
 
 .logo h1 {
-  margin-left: 2px;
+  /* margin-left: 2px; */
   margin-top: 19px;
   font-size: xx-large;
   font-weight: bold;
@@ -72,7 +71,7 @@
 
 .topic p {
   font-size: small;
-  margin-left: 38px;
+  justify-content: center;
   font-family: "Merriweather", serif;
   font-style: italic;
 }
@@ -116,7 +115,7 @@ form {
   gap: 10px;
 }
 
-.forgot-btn  {
+.forgot-btn {
   color: #ffffff !important;
   /* background-color: #5fc4ee; */
   border: none;
@@ -126,21 +125,20 @@ form {
   /* height: 40px; */
   font-weight: 400;
   cursor: pointer;
-  font-size: small;
+  font-size: medium;
   font-style: italic;
-  
+
   /* margin-left: auto; */
 }
 
-
-
-.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn.ant-btn-default.css-1pg9a38:hover {
-  background-color:rgb(250, 134, 11) !important;
-  color: rgb(0, 0, 0) !important;
+.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn.ant-btn-default:hover {
+  background-color: rgb(11, 174, 250) !important;
+  color: rgb(255, 255, 255) !important;
   border: none !important;
+  font-weight: 600;
 }
 
-.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn.ant-btn-default.css-1pg9a38{
+.loginbtn.css-dev-only-do-not-override-1pg9a38.ant-btn.ant-btn-default.css-1pg9a38 {
   background-color: transparent !important;
   color: rgb(255, 255, 255) !important;
   font-weight: 600;
@@ -183,6 +181,11 @@ form input:hover {
 .ex-login img {
   width: 32px;
   height: 32px;
+}
+
+.moto {
+  display: flex;
+  justify-content: center;
 }
 
 .ex-login button {
@@ -246,26 +249,30 @@ form input:hover {
 }
 
 @media (max-width: 1023px) {
+  .topic {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   .outter {
     top: 1rem;
     right: 1rem;
-
   }
-  .loginform{
-    margin-left: 4rem;
+  .loginform {
+    justify-content: center;
   }
   form {
     margin-top: 20px;
   }
 }
 @media (max-width: 767px) {
-
   .pic img {
     display: none;
   }
   .topic {
-    margin-left: 0px;
+    justify-content: center;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -278,20 +285,25 @@ form input:hover {
   .signup {
     margin-top: 40px;
     margin-bottom: 40px;
+  }
+
+  .outter {
+    top: 2rem;
+    right: 2rem;
+  }
+
+  .loginform {
+    margin-left: 20px;
+  }
 }
 
-.outter {
-  top: 0rem;
-  right: 1rem;
-}
-
-}
-
-@media (max-width: 374px) {
-
+@media (max-width: 375px) {
   .outter {
     top: 0rem;
     right: 0rem;
   }
-  
+
+  .loginform {
+    margin-left: 40px;
+  }
 }

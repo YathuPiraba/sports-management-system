@@ -151,6 +151,7 @@ const Login = () => {
     <Suspense fallback={<div >Loading...</div>}>
       <div className="body-container">
         <div className="outter relative">
+          
           <div className="login">
             <div className="topic">
               <div className="logo">
@@ -165,7 +166,9 @@ const Login = () => {
                   <span className="title3">onnect</span>
                 </h1>
               </div>
+              <div className="moto">
               <p>Unite Every Club, Connect Every Player...!</p>
+              </div>
             </div>
             <div className="loginform">
               <form onSubmit={handleFormSubmit} className="space-y-2 lg:space-y-4 ">
@@ -215,11 +218,11 @@ const Login = () => {
                 onClose={handleForgotPasswordCancel}
               />
               <div className="mt-4 text-center">
-                <p className="text-sm font-roboto ">
+                <p className="text-md font-roboto ac ">
                   Don't have an account?{" "}
                   <a
                     href="#"
-                    className="text-orange-500 hover:underline text-md ml-3"
+                    className="text-blue-400 hover:underline text-md ml-3"
                     onClick={showModal}
                   >
                     Sign up
