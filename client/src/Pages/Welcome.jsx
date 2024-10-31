@@ -33,9 +33,9 @@ const Welcome = () => {
   return (
     <div className="welcome-container relative">
       {/* Main content container */}
-      <div className="relative z-10 w-full h-screen flex items-center pl-2 md:pl-8">
+      <div className="relative z-10 w-full h-screen flex items-center pl-2">
         {/* Left content */}
-        <div className="welLeft relative md:pr-8 pl-10 z-10">
+        <div className="welLeft relative pl-2 md:pr-8 lg:pl-10 z-10">
           <div className="welTitle  mb-2">
             <h1 className="font-bold text-white">CLUB</h1>
             <h1 className="font-bold text-orange-500 weltext">CONNECT</h1>
