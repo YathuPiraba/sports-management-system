@@ -142,7 +142,7 @@ form {
 
 .forgot-btn {
   display: flex;
-  gap: 50px;
+  justify-content: space-between;
 }
 
 .forgot-btn p {
@@ -246,6 +246,9 @@ form input:hover {
     display: flex;
     justify-content: flex-end;
   }
+  .forgot-btn {
+    justify-content: space-evenly;
+  }
 }
 
 @media (max-width: 424px) {
@@ -254,6 +257,16 @@ form input:hover {
   }
   .cont {
     width: 90%;
+  }
+
+  .forgot-btn {
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .ac {
+    flex-direction: column;
+    align-items: center;
+    margin-left: 30px;
   }
 }
 

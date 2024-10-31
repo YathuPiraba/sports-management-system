@@ -201,10 +201,10 @@ const Login = () => {
                     )}
                   />
                   {errors.password && <span>Password is required</span>}
-                  <div className="flex justify-between gap-1 items-center">
+                  <div className="forgot-btn items-center">
                     <span
                       onClick={showForgotPasswordModal}
-                      className="forgot-btn cursor-pointer hover:underline"
+                      className=" cursor-pointer hover:underline"
                     >
                       Forgot Password?
                     </span>
