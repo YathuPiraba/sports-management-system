@@ -212,6 +212,11 @@ form input:hover {
   border: none;
 }
 
+.ac {
+  display: flex;
+  justify-content: center;
+}
+
 @media (max-width: 1023px) {
   .loginform {
     justify-content: center;
@@ -235,6 +240,11 @@ form input:hover {
   .signup {
     margin-top: 40px;
     margin-bottom: 40px;
+  }
+
+  .ac {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
@@ -270,6 +280,4 @@ form input:hover {
   .forgot-btn {
     font-size: small;
   }
-
-
 }
