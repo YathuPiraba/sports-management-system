@@ -18,7 +18,13 @@ import {
   MdPhoneInTalk,
 } from "react-icons/md";
 import { CgRename } from "react-icons/cg";
-import { FaRegIdCard, FaMapMarkerAlt, FaBuilding } from "react-icons/fa";
+import {
+  FaRegIdCard,
+  FaMapMarkerAlt,
+  FaBuilding,
+  FaRunning,
+  FaFutbol,
+} from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
 import { BsWhatsapp } from "react-icons/bs";
 import { useMemberDetail } from "../../hooks/useMemberDetail";
@@ -80,8 +86,6 @@ const MemberSettings = () => {
     }
   };
 
-  console.log(memberDetails);
-
   const profileDetails = [
     {
       label: "Full Name",
@@ -128,7 +132,51 @@ const MemberSettings = () => {
       value: memberDetails.address,
       icon: <FaMapMarkerAlt className="mr-5" />,
     },
+    {
+      label: "Position",
+      value: memberDetails.position,
+      icon: <FaFutbol className="mr-5" />,
+    },
+    // Only add experience if it is not null
+    ...(memberDetails.experience
+      ? [
+          {
+            label: "Experience",
+            value: memberDetails.experience,
+            icon: <FaRunning className="mr-5" />, // Sports-related icon for experience
+          },
+        ]
+      : []),
   ];
+
+  const sportDetails = [
+    {
+      name: "Sports Details",
+      content: (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {memberDetails.sports && memberDetails.sports.length > 0 ? (
+            memberDetails.sports.map((sport, index) => (
+              <div key={index} className="p-4 border border-gray-300 rounded-lg">
+                <h3 className="font-semibold text-gray-800">
+                  {sport.sport_name}
+                </h3>
+                <ul className="mt-2 space-y-1">
+                  {sport.skills.map((skill, idx) => (
+                    <li key={idx} className="text-gray-600">
+                      - {skill.skill_name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-600">No sports details available</div>
+          )}
+        </div>
+      ),
+    },
+  ];
+  
 
   const cancel = (e) => {
     console.log(e);
@@ -152,70 +200,75 @@ const MemberSettings = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="max-w-screen-xl mx-auto px-4 py-2 font-poppins">
-        <h1 className="text-2xl font-bold mb-3">Member profile</h1>
+        <h1 className="text-2xl font-bold mb-3">Member Profile</h1>
         <div
           className={`${
             theme === "light" ? "bg-white" : "bg-gray-300 "
           } rounded-lg shadow-md px-8 py-3`}
         >
-          <Tabs
-            defaultActiveKey="1"
-            centered
-            items={[
-              {
-                key: "1",
-                label: "Personal Details",
-                children: (
-                  <>
-                    <div className="flex flex-col lg:flex-row gap-8">
-                      <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
-                        <img
-                          src={
-                            image
-                              ? image
-                              : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
-                          }
-                          alt="User Profile"
-                          className="w-44 h-44 rounded-full object-cover mb-3"
-                        />
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={handleFileChange}
-                          style={{ display: "none" }}
-                          accept="image/*"
-                        />
-                        <Button
-                          onClick={handleChangePicture}
-                          className="bg-indigo-900 text-white mb-2 w-full py-1"
-                          loading={imageLoading}
-                        >
-                          Change picture
-                        </Button>
-                        <Popconfirm
-                          title="Deleting Profile"
-                          description="Are you sure you want to delete this Profile?"
-                          onConfirm={handleDeletePicture}
-                          onCancel={cancel}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <Button
-                            className="border border-gray-300 w-full py-1"
-                            disabled={!image}
-                          >
-                            Delete picture
-                          </Button>
-                        </Popconfirm>
-                      </div>
-                      <div className="flex-grow">
+          {/* Profile Section */}
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Profile Picture and Buttons */}
+            <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
+              <img
+                src={
+                  image
+                    ? image
+                    : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                }
+                alt="User Profile"
+                className="w-44 h-44 rounded-full object-cover mb-3"
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+                accept="image/*"
+              />
+              <Button
+                onClick={handleChangePicture}
+                className="bg-indigo-900 text-white mb-2 w-full py-1"
+                loading={imageLoading}
+              >
+                Change Picture
+              </Button>
+              <Popconfirm
+                title="Deleting Profile"
+                description="Are you sure you want to delete this Profile?"
+                onConfirm={handleDeletePicture}
+                onCancel={cancel}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  className="border border-gray-300 w-full py-1"
+                  disabled={!image}
+                >
+                  Delete Picture
+                </Button>
+              </Popconfirm>
+            </div>
+
+            {/* Tabs for Personal Details and Sports Details */}
+            <div className="flex-grow">
+              <Tabs
+                defaultActiveKey="1"
+                centered
+                items={[
+                  {
+                    key: "1",
+                    label: "Personal Details",
+                    children: (
+                      <>
+                        {" "}
                         <ul className="space-y-1">
                           {profileDetails?.map((detail, index) => (
                             <li
                               key={index}
                               className="flex flex-col md:flex-row border-b border-gray-200 text-black py-1.5"
                             >
-                              <span className="font-medium w-full md:w-1/2  flex  items-center">
+                              <span className="font-medium w-full md:w-1/2 flex items-center">
                                 {detail.icon}
                                 {detail.label}
                               </span>
@@ -225,59 +278,61 @@ const MemberSettings = () => {
                             </li>
                           ))}
                         </ul>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row  gap-3 mt-4">
-                      <Button
-                        onClick={showPasswordModal}
-                        className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
-                      >
-                        Change Password
-                      </Button>
-                      <Button
-                        onClick={showProfileModal}
-                        className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
-                      >
-                        Update Profile
-                      </Button>
-                    </div>
-                  </>
-                ),
-              },
-              {
-                key: "2",
-                label: "Sports Details",
-              },
-            ]}
-            tabBarStyle={{
-              fontFamily: "Poppins, sans-serif",
-              borderBottom: "none",
-            }}
-            className="customTab"
-          />
+                      </>
+                    ),
+                  },
+                  {
+                    key: "2",
+                    label: sportDetails[0].name,
+                    children: <>{sportDetails[0].content}</>,
+                  },
+                ]}
+                tabBarStyle={{
+                  fontFamily: "Poppins, sans-serif",
+                  borderBottom: "none",
+                  width: "100%",
+                }}
+                className="customTab"
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row gap-3 mt-4">
+            <Button
+              onClick={showPasswordModal}
+              className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
+            >
+              Change Password
+            </Button>
+            <Button
+              onClick={showProfileModal}
+              className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
+            >
+              Update Profile
+            </Button>
+          </div>
         </div>
 
-        <div>
-          {" "}
-          <Modal
-            title={
-              <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
-                Change Password
-              </div>
-            }
-            style={{ textAlign: "center" }}
-            open={isPasswordModalOpen}
-            onCancel={handleCancelPassword}
-            footer={null}
-            className="lg:mr-72"
-          >
-            <ChangePassword
-              setIsModalOpen={setIsPasswordModalOpen}
-              userId={user.userId}
-              roleID={roleID}
-            />
-          </Modal>
-        </div>
+        {/* Change Password Modal */}
+        <Modal
+          title={
+            <div className="font-poppins tracking-wide pt-6 text-2xl text-gray-600">
+              Change Password
+            </div>
+          }
+          style={{ textAlign: "center" }}
+          open={isPasswordModalOpen}
+          onCancel={handleCancelPassword}
+          footer={null}
+          className="lg:mr-72"
+        >
+          <ChangePassword
+            setIsModalOpen={setIsPasswordModalOpen}
+            userId={user.userId}
+            roleID={roleID}
+          />
+        </Modal>
       </div>
     </Suspense>
   );
