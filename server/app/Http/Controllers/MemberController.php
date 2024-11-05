@@ -735,4 +735,256 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
+    // GET => http://127.0.0.1:8000/api/memberDetailsByUserId/{userId}
+    public function getMemberDetailsByUserId($userId)
+    {
+        try {
+            // Find the member by userId
+            $member = Member::with([
+                'memberSports.sport',
+                'memberSports.skills',
+                'club',
+                'user' => function ($query) {
+                    $query->withTrashed();
+                }
+            ])
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$member) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Member not found for the given userId',
+                ], 404);
+            }
+
+            // Get the member's division details
+            $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
+
+            // Get the sports details associated with the member
+            $sportsDetails = $member->memberSports->map(function ($memberSport) {
+                $skills = $memberSport->skills->map(function ($skill) {
+                    return [
+                        'skill_id' => $skill->id ?? null,
+                        'skill_name' => $skill->skill ?? null,
+                    ];
+                })->values();
+
+                return [
+                    'sport_id' => $memberSport->sport->id,
+                    'sport_name' => $memberSport->sport->name,
+                    'skills' => $skills,
+                ];
+            })->values();
+
+            // Prepare the response data
+            $memberData = [
+                'member_id' => $member->id,
+                'firstName' => $member->firstName,
+                'lastName' => $member->lastName,
+                'date_of_birth' => $member->date_of_birth,
+                'address' => $member->address,
+                'nic' => $member->nic,
+                'contactNo' => $member->contactNo,
+                'whatsappNo' => $member->whatsappNo,
+                'experience' => $member->experience,
+                'age' => $member->age,
+                'position' => $member->position,
+                'gs_id' => $member->gs_id,
+                'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
+                'created_at' => $member->created_at->toDateString(),
+                'user' => $member->user->safeAttributes(),
+                'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
+                'club' => $member->club,
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data' => $memberData,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching member details: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching member details: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function updateMemberDetails(Request $request, $userId)
+    {
+        $request->validate([
+            'firstName' => 'sometimes|string|max:255',
+            'lastName' => 'sometimes|string|max:255',
+            'date_of_birth' => 'sometimes|date',
+            'address' => 'sometimes|string|max:255',
+            'nic' => 'sometimes|string|max:20',
+            'contactNo' => 'sometimes|string|max:15',
+            'whatsappNo' => 'nullable|string|max:15',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $userId,
+            'userName' => 'sometimes|string|max:255|unique:users,userName,' . $userId,
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg,webp|max:2048',
+            'divisionName' => 'sometimes|string|max:255',
+            'currentPassword' => 'required_with:password|string',
+            'password' => 'sometimes|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $user = User::findOrFail($userId);
+            $member = Member::where('user_id', $userId)->firstOrFail();
+
+            // Update Member details
+            if ($request->has('firstName')) {
+                $member->firstName = $request->firstName;
+            }
+            if ($request->has('lastName')) {
+                $member->lastName = $request->lastName;
+            }
+            if ($request->has('date_of_birth')) {
+                $member->date_of_birth = $request->date_of_birth;
+                // Recalculate age
+                $dateOfBirth = Carbon::parse($request->date_of_birth)->startOfDay();
+                $today = Carbon::now('UTC')->startOfDay();
+                $member->age = $today->diffInYears($dateOfBirth);
+            }
+            if ($request->has('address')) {
+                $member->address = $request->address;
+            }
+            if ($request->has('nic')) {
+                $member->nic = $request->nic;
+            }
+            if ($request->has('contactNo')) {
+                $member->contactNo = $request->contactNo;
+            }
+            if ($request->has('whatsappNo')) {
+                $member->whatsappNo = $request->whatsappNo;
+            }
+            if ($request->has('divisionName')) {
+                $gsDivision = Gs_Division::where('divisionName', $request->divisionName)->firstOrFail();
+                $member->gs_id = $gsDivision->id;
+            }
+
+            $member->save();
+
+            // Update User details
+            if ($request->has('email')) {
+                $user->email = $request->email;
+            }
+            if ($request->has('userName')) {
+                $user->userName = $request->userName;
+            }
+            // Handle image upload if provided
+            if ($request->hasFile('image')) {
+                if ($user->image) {
+                    // Optionally delete the old image from Cloudinary
+                    $this->cloudinary->uploadApi()->destroy($user->image);
+                }
+
+                $result = $this->cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $user->image = $result['secure_url'];
+            }
+
+            // Update password if provided
+            if ($request->has('password')) {
+                if (!$request->has('currentPassword')) {
+                    return response()->json(['error' => 'Current password is required to change password'], 400);
+                }
+
+                if (!Hash::check($request->currentPassword, $user->password)) {
+                    return response()->json(['error' => 'Current password is incorrect'], 400);
+                }
+
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Member details updated successfully',
+                'member' => $member,
+                'user' => $user->safeAttributes()
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update member details: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to update member details', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+
+    public function updateMemberSports(Request $request, $userId)
+    {
+        $request->validate([
+            'sports' => 'required|array',
+            'sports.*.sport_id' => 'required|integer|exists:sports,id',
+            'sports.*.skills' => 'nullable|array',
+            'sports.*.skills.*.skill_id' => 'nullable|integer|exists:skills,id',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Find the member by user_id
+            $member = Member::where('user_id', $userId)->firstOrFail();
+
+            // Get the sport IDs included in the request
+            $newSportIds = array_column($request->sports, 'sport_id');
+
+            // Find existing sports for the member that are not in the request and delete them
+            $existingSports = $member->memberSports->pluck('sport_id')->toArray();
+            $sportsToDelete = array_diff($existingSports, $newSportIds);
+
+            // Delete sports that are no longer associated with the member
+            if (!empty($sportsToDelete)) {
+                Member_Sports::where('member_id', $member->id)
+                    ->whereIn('sport_id', $sportsToDelete)
+                    ->each(function ($memberSport) {
+                        $memberSport->skills()->detach(); // Detach skills
+                        $memberSport->delete(); // Delete the MemberSport entry
+                    });
+            }
+
+            // Update or create each sport and skill association
+            foreach ($request->sports as $sportData) {
+                $sportId = $sportData['sport_id'];
+
+                // Find or create the MemberSport entry
+                $memberSport = Member_Sports::updateOrCreate(
+                    [
+                        'member_id' => $member->id,
+                        'sport_id' => $sportId
+                    ]
+                );
+
+                if (isset($sportData['skills'])) {
+                    $skillIds = array_column($sportData['skills'], 'skill_id');
+                    // Sync the skills with the MemberSport
+                    $memberSport->skills()->sync($skillIds);
+                } else {
+                    // Clear skills if no skills are provided for the sport
+                    $memberSport->skills()->detach();
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Member sports and skills updated successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating member sports and skills: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating member sports and skills: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }

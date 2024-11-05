@@ -8,6 +8,8 @@ use App\Models\Event_Participants;
 use App\Models\EventClub;
 use App\Models\Events;
 use App\Models\EventSports;
+use App\Models\Member;
+use App\Models\Member_Sports;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -383,7 +385,7 @@ class EventParticipantController extends Controller
             $pdf = PDF::loadView('event_participants', ['eventSports' => $eventData]);
 
             // Generate a filename
-            $filename = 'event_participants_' . preg_replace('/[^A-Za-z0-9\-]/', '_',$eventSports->name) . '.pdf';
+            $filename = 'event_participants_' . preg_replace('/[^A-Za-z0-9\-]/', '_', $eventSports->name) . '.pdf';
 
             // Return the PDF for download
             return $pdf->download($filename);
@@ -393,6 +395,101 @@ class EventParticipantController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error generating PDF: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSpecificUserEventParticipants(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'user_id' => 'required|integer',
+                'event_id' => 'required|integer',
+            ]);
+
+            $userId = $request->input('user_id');
+            $eventId = $request->input('event_id');
+
+            // Find the member_id using user_id
+            $member = Member::where('user_id', $userId)->first();
+            if (!$member) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Member not found for the provided user.',
+                ], 404);
+            }
+
+            $memberId = $member->id;
+            $clubId = $member->club_id;
+
+            // Get member_sports IDs for this member
+            $memberSportsIds = Member_Sports::where('member_id', $memberId)->pluck('id')->toArray();
+
+            // Fetch event sports for the given event_id
+            $eventSports = EventSports::with([
+                'eventClubs' => function ($query) use ($clubId) {
+                    $query->where('club_id', $clubId); // Only get event clubs that belong to the member's club
+                },
+                'eventClubs.participants' => function ($query) use ($memberSportsIds) {
+                    $query->whereIn('member_sport_id', $memberSportsIds); // Only participants with matching member_sports ID
+                },
+                'sportsCategory' // Fetch sports category for the event sport
+            ])->where('event_id', $eventId)->get();
+
+            if ($eventSports->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                    'message' => 'No event sports data found.',
+                ], 200);
+            }
+
+            // Transform the data to the desired structure
+            $filteredData = $eventSports->map(function ($eventSport) {
+                return [
+                    'event_sports' => [
+                        'id' => $eventSport->id,
+                        'name' => $eventSport->name,
+                        'start_date' => $eventSport->start_date,
+                        'end_date' => $eventSport->end_date,
+                        'place' => $eventSport->place,
+                        'sports' => [
+                            'sports_id' => $eventSport->sportsCategory->id,
+                            'name' => $eventSport->sportsCategory->name,
+                            'image' => $eventSport->sportsCategory->image,
+                        ],
+                        'event_clubs' => $eventSport->eventClubs->map(function ($eventClub) {
+                            return [
+                                'club_id' => $eventClub->club_id,
+                                'event_club_id' => $eventClub->id,
+                                'participants' => $eventClub->participants->map(function ($participant) {
+                                    return [
+                                        'member' => [
+                                            'id' => $participant->memberSport->member->id,
+                                            'firstName' => $participant->memberSport->member->firstName,
+                                            'lastName' => $participant->memberSport->member->lastName,
+                                            'position' => $participant->memberSport->member->position,
+                                        ],
+                                        'member_sport_id' => $participant->member_sport_id,
+                                    ];
+                                }),
+                            ];
+                        }),
+                    ],
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $filteredData,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching specific user event participants: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching specific user event participants: ' . $e->getMessage(),
             ], 500);
         }
     }

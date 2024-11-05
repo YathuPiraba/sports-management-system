@@ -100,6 +100,9 @@ Route::get('/membersList', [MemberController::class, 'membersList']);
 Route::get('/queryMembers', [MemberController::class, 'queryMembers']);
 Route::get('/memberDetails/{memberId}', [MemberController::class, 'getMemberDetails']);
 Route::get('/membersBySport', [MemberController::class, 'membersBySport']);
+Route::get('/memberDetails/{userId}', [MemberController::class, 'getMemberDetailsByUserId']);
+Route::post('/member/update/personal/{userId}', [ManagerController::class, 'updateMemberDetails']);
+Route::post('/member/update/sports/{userId}', [ManagerController::class, 'updateMemberSports']);
 
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);
@@ -132,6 +135,7 @@ Route::post('/addEventParticipants', [EventParticipantController::class, 'addEve
 Route::get('/getEventParticipants/{eventId}', [EventParticipantController::class, 'getEventParticipants']);
 Route::get('/getSpecificEventParticipants', [EventParticipantController::class, 'getSpecificEventParticipants']);
 Route::get('/download-eventsports-details/{eventSportsId}', [EventParticipantController::class, 'generateEventParticipantsPDF']);
+Route::get('/getSpecificUserEventParticipants', [EventParticipantController::class, 'getSpecificEventParticipants']);
 
 Route::prefix('events/{eventId}/sports')->group(function () {
     Route::post('/', [EventSportController::class, 'store']); // Add a new sport to an event

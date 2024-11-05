@@ -1,59 +1,69 @@
 <mxfile host="65bd71144e">
     <diagram id="mD2tzZAaCmhHmnnn9W-B" name="Page-1">
-        <mxGraphModel dx="1567" dy="1699" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="4463" dy="3307" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="users" value="users&#10;------------------&#10;PK id&#10;userName&#10;email&#10;password&#10;role_id (FK)&#10;is_verified&#10;image&#10;password_reset_token&#10;password_reset_expires_at&#10;deleted_at" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="users" value="users&#10;------------------&#10;PK id&#10;userName&#10;email&#10;password&#10;role_id (FK)&#10;is_verified&#10;image&#10;password_reset_token&#10;password_reset_expires_at&#10;deleted_at" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="-10" y="10" width="200" height="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="roles" value="roles&#10;------------------&#10;PK id&#10;name" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="roles" value="roles&#10;------------------&#10;PK id&#10;name" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="40" y="280" width="200" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="members" value="members&#10;------------------&#10;PK id&#10;user_id (FK)&#10;club_id (FK)&#10;gs_id (FK)&#10;manager_id (FK)&#10;firstName&#10;lastName&#10;date_of_birth&#10;age&#10;address&#10;nic&#10;contactNo&#10;whatsappNo&#10;position&#10;experience" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="280" y="-20" width="200" height="270" as="geometry"/>
+                <mxCell id="members" value="members&#10;------------------&#10;PK id&#10;user_id (FK)&#10;club_id (FK)&#10;gs_id (FK)&#10;manager_id (FK)&#10;firstName&#10;lastName&#10;date_of_birth&#10;age&#10;address&#10;nic&#10;contactNo&#10;whatsappNo&#10;position&#10;experience" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="-25" width="200" height="270" as="geometry"/>
                 </mxCell>
-                <mxCell id="club_managers" value="club_managers&#10;------------------&#10;PK id&#10;user_id (FK)&#10;club_id (FK)&#10;gs_id (FK)&#10;firstName&#10;lastName&#10;date_of_birth&#10;age&#10;address&#10;nic&#10;contactNo&#10;whatsappNo" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="570" y="40" width="200" height="260" as="geometry"/>
+                <mxCell id="club_managers" value="club_managers&#10;------------------&#10;PK id&#10;user_id (FK)&#10;club_id (FK)&#10;gs_id (FK)&#10;firstName&#10;lastName&#10;date_of_birth&#10;age&#10;address&#10;nic&#10;contactNo&#10;whatsappNo" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-290" y="-40" width="200" height="260" as="geometry"/>
                 </mxCell>
-                <mxCell id="sports_categories" value="sports_categories&#10;------------------&#10;PK id&#10;name&#10;type&#10;min_Players&#10;description&#10;image" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="sports_categories" value="sports_categories&#10;------------------&#10;PK id&#10;name&#10;type&#10;min_Players&#10;description&#10;image" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="40" y="420" width="200" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="sports_arenas" value="sports_arenas&#10;------------------&#10;PK id&#10;name&#10;location&#10;address&#10;image" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="260" y="380" width="200" height="140" as="geometry"/>
+                <mxCell id="sports_arenas" value="sports_arenas&#10;------------------&#10;PK id&#10;name&#10;location&#10;address&#10;image" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-460" y="300" width="200" height="140" as="geometry"/>
                 </mxCell>
-                <mxCell id="club_sports" value="club_sports&#10;------------------&#10;PK id&#10;club_id (FK)&#10;sports_id (FK)&#10;sports_arena_id (FK)" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="550" y="410" width="200" height="120" as="geometry"/>
+                <mxCell id="club_sports" value="club_sports&#10;------------------&#10;PK id&#10;club_id (FK)&#10;sports_id (FK)&#10;sports_arena_id (FK)" style="shape=table;startSize=20;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-720" y="390" width="200" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="gs_divisions" value="gs_divisions&#10;------------------&#10;PK id&#10;divisionName&#10;divisionNo&#10;gs_Name&#10;contactNo" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="830" y="40" width="200" height="140" as="geometry"/>
+                <mxCell id="gs_divisions" value="gs_divisions&#10;------------------&#10;PK id&#10;divisionName&#10;divisionNo&#10;gs_Name&#10;contactNo" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="-230" width="200" height="140" as="geometry"/>
                 </mxCell>
-                <mxCell id="skills" value="skills&#10;------------------&#10;PK id&#10;sports_id (FK)&#10;skill" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="830" y="200" width="200" height="100" as="geometry"/>
+                <mxCell id="skills" value="skills&#10;------------------&#10;PK id&#10;sports_id (FK)&#10;skill" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="370" width="200" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="member_skills" value="member_skills&#10;------------------&#10;PK id&#10;member_sport_id (FK)&#10;skill_id (FK)" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="830" y="330" width="200" height="100" as="geometry"/>
+                <mxCell id="member_skills" value="member_skills&#10;------------------&#10;PK id&#10;member_sport_id (FK)&#10;skill_id (FK)" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1010" y="160" width="200" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="events" value="events&#10;------------------&#10;PK id&#10;name&#10;image&#10;start_date&#10;end_date" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="events" value="events&#10;------------------&#10;PK id&#10;name&#10;image&#10;start_date&#10;end_date" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="-10" y="630" width="200" height="140" as="geometry"/>
                 </mxCell>
-                <mxCell id="event_sports" value="event_sports&#10;------------------&#10;PK id&#10;sports_id (FK)&#10;event_id (FK)&#10;name&#10;place&#10;start_date&#10;end_date&#10;apply_due_date" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="event_sports" value="event_sports&#10;------------------&#10;PK id&#10;sports_id (FK)&#10;event_id (FK)&#10;name&#10;place&#10;start_date&#10;end_date&#10;apply_due_date" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="280" y="620" width="200" height="180" as="geometry"/>
                 </mxCell>
-                <mxCell id="event_clubs" value="event_clubs&#10;------------------&#10;PK id&#10;club_id (FK)&#10;event_sports_id (FK)" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="event_clubs" value="event_clubs&#10;------------------&#10;PK id&#10;club_id (FK)&#10;event_sports_id (FK)" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="620" y="630" width="200" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="event_participants" value="event_participants&#10;------------------&#10;PK id&#10;member_id (FK)&#10;event_clubs_id (FK)&#10;participation_date&#10;attendance_status" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;" parent="1" vertex="1">
+                <mxCell id="event_participants" value="event_participants&#10;------------------&#10;PK id&#10;member_id (FK)&#10;event_clubs_id (FK)&#10;participation_date&#10;attendance_status" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="1030" y="630" width="200" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="fk_users_roles" value="FK: users(role_id) → roles(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="users" target="roles" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="fk_users_roles" value="FK: users(role_id) → roles(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;fontColor=#000000;strokeColor=#000000;" parent="1" source="users" target="roles" edge="1">
+                    <mxGeometry x="-0.0625" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="fk_members_users" value="FK: members(user_id) → users(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="members" target="users" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="fk_members_users" value="FK: members(user_id) → users(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.336;entryY=-0.001;fontColor=#000000;strokeColor=#000000;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="members" target="users" edge="1">
+                    <mxGeometry x="-0.1063" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
                 </mxCell>
-                <mxCell id="fk_club_managers_members" value="FK: club_managers(user_id) → members(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="club_managers" target="members" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="fk_club_managers_members" value="FK: club_managers(user_id) → users(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;strokeColor=#000000;labelBackgroundColor=default;" parent="1" source="club_managers" target="users" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="100" y="-20" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="-190" y="-120"/>
+                            <mxPoint x="40" y="-120"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="fk_member_sports_members" value="FK: member_sports(member_id) → members(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" target="members" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -61,17 +71,162 @@
                 <mxCell id="fk_club_sports_clubs" value="FK: club_sports(club_id) → clubs(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="club_sports" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="fk_club_sports_sports" value="FK: club_sports(sports_id) → sports_categories(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="club_sports" target="sports_categories" edge="1">
+                <mxCell id="fk_club_sports_sports" value="FK: club_sports(sports_id) → sports_categories(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;fontColor=#000000;strokeColor=#000000;" parent="1" source="club_sports" target="sports_categories" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="-620" y="370"/>
+                            <mxPoint x="-240" y="370"/>
+                            <mxPoint x="-240" y="590"/>
+                            <mxPoint x="140" y="590"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="fk_event_sports_events" value="FK: event_sports(event_id) → events(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;fontColor=#000000;strokeColor=#000000;" parent="1" source="event_sports" target="events" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="fk_event_sports_events" value="FK: event_sports(event_id) → events(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="event_sports" target="events" edge="1">
+                <mxCell id="fk_event_clubs_event_sports" value="FK: event_clubs(event_sports_id) → event_sports(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;fontColor=#000000;strokeColor=#000000;" parent="1" source="event_clubs" target="event_sports" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="fk_event_clubs_event_sports" value="FK: event_clubs(event_sports_id) → event_sports(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="event_clubs" target="event_sports" edge="1">
+                <mxCell id="fk_event_participants_event_clubs" value="FK: event_participants(event_clubs_id) → event_clubs(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;fontColor=#000000;strokeColor=#000000;" parent="1" source="event_participants" target="event_clubs" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="fk_event_participants_event_clubs" value="FK: event_participants(event_clubs_id) → event_clubs(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" parent="1" source="event_participants" target="event_clubs" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="2" value="FK: members(gs_id) → gs_divisions(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;strokeColor=#000000;" parent="1" source="members" target="gs_divisions" edge="1">
+                    <mxGeometry x="0.283" relative="1" as="geometry">
+                        <mxPoint x="680" y="-250" as="sourcePoint"/>
+                        <mxPoint x="670" y="-260" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="550" y="-280"/>
+                            <mxPoint x="700" y="-280"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="4" value="FK: club_managers(gs_id) → gs_divisions(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;strokeColor=#000000;" parent="1" source="club_managers" target="gs_divisions" edge="1">
+                    <mxGeometry x="0.1011" relative="1" as="geometry">
+                        <mxPoint x="710" y="-220" as="sourcePoint"/>
+                        <mxPoint x="450" y="-380" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="-240" y="-330"/>
+                            <mxPoint x="750" y="-330"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="5" value="FK: member_skills(skill_id) → skills(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;fontColor=#000000;strokeColor=#000000;" parent="1" source="member_skills" target="skills" edge="1">
+                    <mxGeometry x="-0.2414" relative="1" as="geometry">
+                        <mxPoint x="1240" y="400" as="sourcePoint"/>
+                        <mxPoint x="1200" y="310" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="1060" y="310"/>
+                            <mxPoint x="1090" y="310"/>
+                        </Array>
+                        <mxPoint x="-1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6" value="FK: member_skills(skill_id) → skills(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;fontColor=#000000;strokeColor=#000000;" parent="1" source="skills" target="sports_categories" edge="1">
+                    <mxGeometry x="0.4737" relative="1" as="geometry">
+                        <mxPoint x="330" y="560" as="sourcePoint"/>
+                        <mxPoint x="840" y="320" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="1090" y="540"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" value="FK: memberskills(member_sports_id) → member_sports(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontSize=9;fontColor=#000000;strokeColor=#000000;" parent="1" source="member_skills" target="10" edge="1">
+                    <mxGeometry x="0.1373" relative="1" as="geometry">
+                        <mxPoint x="870" y="400" as="sourcePoint"/>
+                        <mxPoint x="1201.333251953125" y="-70" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="870" y="210"/>
+                            <mxPoint x="870" y="320"/>
+                            <mxPoint x="650" y="320"/>
+                        </Array>
+                        <mxPoint x="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="member_sports&#10;------------------&#10;PK id&#10;member_id (FK)&#10;sports_id (FK)&#10;" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="360" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="FK: member_sports(member_id) → members(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;fontColor=#000000;strokeColor=#000000;" parent="1" source="10" target="members" edge="1">
+                    <mxGeometry x="0.5135" y="-30" relative="1" as="geometry">
+                        <mxPoint x="430" y="360" as="sourcePoint"/>
+                        <mxPoint x="730" y="50" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="330" y="450"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="12" value="FK: members(manager_id) → club_managers(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.664;entryY=-0.01;entryDx=0;entryDy=0;entryPerimeter=0;fontColor=#000000;strokeColor=#000000;labelBackgroundColor=default;" parent="1" source="members" target="club_managers" edge="1">
+                    <mxGeometry x="-0.3545" relative="1" as="geometry">
+                        <mxPoint x="470" y="-100" as="sourcePoint"/>
+                        <mxPoint x="680" y="10" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="500" y="-80"/>
+                            <mxPoint x="-157" y="-80"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="13" value="FK: member_sports(member_id) → sports categories(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=1;exitDx=0;exitDy=0;fontColor=#000000;strokeColor=#000000;" parent="1" source="10" target="sports_categories" edge="1">
+                    <mxGeometry x="-0.357" y="30" relative="1" as="geometry">
+                        <mxPoint x="510" y="460" as="sourcePoint"/>
+                        <mxPoint x="340" y="260.0000000000002" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="340" y="480"/>
+                            <mxPoint x="340" y="500"/>
+                        </Array>
+                        <mxPoint x="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="clubs&#10;------------------&#10;PK id&#10;clubName,&#10; clubImage,&#10; gs_id, &#10;clubAddress,&#10; club_history,&#10; clubContactNo, &#10;isVerified," style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;verticalAlign=top;fontColor=#000000;strokeColor=#000000;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-670" y="-170" width="200" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="FK: club_managers(club_id) → clubs(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;exitX=0;exitY=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;fontColor=#000000;strokeColor=#000000;labelBackgroundColor=default;" parent="1" source="club_managers" target="15" edge="1">
+                    <mxGeometry x="0.36" relative="1" as="geometry">
+                        <mxPoint x="-560" y="-190" as="sourcePoint"/>
+                        <mxPoint x="-330" y="-140" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="-290" y="-240"/>
+                            <mxPoint x="-520" y="-240"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="17" value="FK: club_sports(club_id) → clubs(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;fontColor=#000000;strokeColor=#000000;labelBackgroundColor=default;" parent="1" source="club_sports" target="15" edge="1">
+                    <mxGeometry x="0.36" relative="1" as="geometry">
+                        <mxPoint x="-650" y="200" as="sourcePoint"/>
+                        <mxPoint x="-509.9999999999998" y="-160" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="-670" y="110"/>
+                            <mxPoint x="-570" y="110"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="18" value="FK: clubs(gs_id) → gs_divisions(id)" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;fontColor=#000000;strokeColor=#000000;" edge="1" parent="1" source="15" target="gs_divisions">
+                    <mxGeometry x="0.1011" relative="1" as="geometry">
+                        <mxPoint x="-590" y="-240" as="sourcePoint"/>
+                        <mxPoint x="424.99999999999994" y="-380" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="-620" y="-380"/>
+                            <mxPoint x="800" y="-380"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" value="." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1" parent="1">
+                    <mxGeometry x="105" y="-475" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;labelBackgroundColor=#FFFFFF;labelBorderColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="205" y="835" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#000000;fillColor=none;fontColor=#000000;" vertex="1" parent="1">
+                    <mxGeometry x="1315" y="545" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1" parent="1">
+                    <mxGeometry x="-825" y="185" width="30" height="30" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

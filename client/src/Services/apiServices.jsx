@@ -153,6 +153,18 @@ export const updateManagerDetailsApi = (userId, data) => {
   });
 };
 
+export const updateMemberDetailsApi = (userId, data) => {
+  return authApiClient.post(`/member/update/personal/${userId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const updateMemberSportsAPI = (userId, data) => {
+  return authApiClient.put(`/member/update/sports/${userId}`, data);
+};
+
 export const getCountsAPI = () => {
   return authApiClient.get(`/sports/counts`);
 };
@@ -399,6 +411,15 @@ export const getEventParticipantsAPI = (eventId) => {
 
 export const getAClubEventParticipantsAPI = (userId, selectedEvent) => {
   return authApiClient.get("/getSpecificEventParticipants", {
+    params: {
+      user_id: userId,
+      event_id: selectedEvent,
+    },
+  });
+};
+
+export const getAMemberEventParticipantsAPI = (userId, selectedEvent) => {
+  return authApiClient.get("/getSpecificUserEventParticipants", {
     params: {
       user_id: userId,
       event_id: selectedEvent,

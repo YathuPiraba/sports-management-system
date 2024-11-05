@@ -13,7 +13,7 @@ const MemberSideBar = () => {
     >
       <div>
         <ul className="flex flex-1 flex-col gap-2 pt-0">
-          <div className="list">
+          {/* <div className="list">
             <li className="px-3 ">
               <Link
                 to="/member/dashboard"
@@ -27,7 +27,7 @@ const MemberSideBar = () => {
                 </div>
               </Link>
             </li>
-          </div>
+          </div> */}
           <div className="list ">
             <li className="px-3">
               <Link
