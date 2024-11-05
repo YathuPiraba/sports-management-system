@@ -11,6 +11,7 @@ import GridLoader from "react-spinners/GridLoader";
 import { useSelector } from "react-redux";
 import "../../Components/Navbar/Navbar.css";
 import useClubEvents from "../../hooks/useClubEvents";
+import { useTheme } from "../../context/ThemeContext";
 
 const ClubParticipants = lazy(() =>
   import("../../Components/Events/ClubParticipants")
@@ -49,6 +50,7 @@ const Events = () => {
   const [selectedSport, setSelectedSport] = useState(null);
   const role_id = useSelector((state) => state.auth.userdata.role_id);
   const userId = useSelector((state) => state.auth.userdata.userId);
+  const { theme } = useTheme();
 
   let eventSportsWithParticipants = [];
   let clubEventsLoading = false;
@@ -310,6 +312,7 @@ const Events = () => {
                                   participants={eventSportsWithParticipants}
                                   fetchClubEvents={fetchClubEvents}
                                   loading={clubEventsLoading}
+                                  theme={theme}
                                 />
                               );
                             case 3:
@@ -317,6 +320,7 @@ const Events = () => {
                                 <MemberParticipants
                                   eventId={selectedEvent}
                                   userId={userId}
+                                  theme={theme}
                                 />
                               );
                             default:

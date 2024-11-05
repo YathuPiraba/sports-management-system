@@ -3,7 +3,7 @@ import { getAMemberEventParticipantsAPI } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import { PropagateLoader } from "react-spinners";
 
-const MemberParticipants = ({ eventId, userId }) => {
+const MemberParticipants = ({ eventId, userId, theme }) => {
   const [loading, setLoading] = useState(false);
   const [memberData, setMemberData] = useState(null);
 
@@ -47,7 +47,11 @@ const MemberParticipants = ({ eventId, userId }) => {
   return (
     <div className="container mx-auto p-4">
       {/* Compact Member Profile Row */}
-      <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+      <div
+        className={`${
+          theme === "light" ? "bg-gray-100" : "bg-gray-200"
+        }  rounded-lg shadow-md p-4 mb-6 `}
+      >
         <div className="flex items-center space-x-6">
           <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-blue-100 flex-shrink-0">
             <img
@@ -84,7 +88,9 @@ const MemberParticipants = ({ eventId, userId }) => {
         {memberData.event_sports.map((event) => (
           <div
             key={event.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            className={`${
+              theme === "light" ? "bg-gray-100" : "bg-gray-200"
+            }  rounded-lg shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}
           >
             <div className="relative h-40">
               <img

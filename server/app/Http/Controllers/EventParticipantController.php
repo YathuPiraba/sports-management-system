@@ -261,9 +261,9 @@ class EventParticipantController extends Controller
 
             // Fetch all event sports data with participants based on event_id and club_id
             $eventSports = EventSports::with([
-                'eventClubs.club:id,clubName', // Fetch club details
+                'eventClubs.club:id,clubName,clubImage', // Fetch club details including clubImage
                 'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
-                'eventClubs.participants.memberSport.member:id,firstName,lastName,position', // Fetch member details
+                'eventClubs.participants.memberSport.member:id,firstName,lastName,position,user_id', // Fetch member details
                 'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
             ])
                 ->where('event_id', $eventId)
@@ -294,7 +294,11 @@ class EventParticipantController extends Controller
                             'name' => $eventSport->sportsCategory->name,
                             'image' => $eventSport->sportsCategory->image, // Ensure this field exists in the sportsCategory model
                         ],
-                        'club_id' => $eventSport->eventClubs->first()->club_id,
+                        'club' => [
+                            'id' => $eventSport->eventClubs->first()->club_id,
+                            'name' => $eventSport->eventClubs->first()->club->clubName,
+                            'image' => $eventSport->eventClubs->first()->club->clubImage, // Include clubImage here
+                        ],
                         'event_club_id' => $eventSport->eventClubs->first()->id,
                         'participants' => $eventSport->eventClubs->flatMap(function ($eventClub) {
                             return $eventClub->participants->map(function ($participant) {
@@ -304,6 +308,7 @@ class EventParticipantController extends Controller
                                         'firstName' => $participant->memberSport->member->firstName,
                                         'lastName' => $participant->memberSport->member->lastName,
                                         'position' => $participant->memberSport->member->position,
+                                        'image' => $participant->memberSport->member->user->image,
                                     ],
                                 ];
                             });
@@ -325,6 +330,7 @@ class EventParticipantController extends Controller
             ], 500);
         }
     }
+
 
     public function generateEventParticipantsPDF($eventSportsId)
     {
