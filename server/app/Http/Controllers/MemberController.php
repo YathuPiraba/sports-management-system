@@ -774,6 +774,7 @@ class MemberController extends Controller
                 return [
                     'sport_id' => $memberSport->sport->id,
                     'sport_name' => $memberSport->sport->name,
+                    'sport_image' => $memberSport->sport->image,
                     'skills' => $skills,
                 ];
             })->values();
@@ -792,11 +793,14 @@ class MemberController extends Controller
                 'age' => $member->age,
                 'position' => $member->position,
                 'gs_id' => $member->gs_id,
-                'divisionName' => $memberDivision ? $memberDivision->divisionName : null,
+                'club' => $member->club,
                 'created_at' => $member->created_at->toDateString(),
                 'user' => $member->user->safeAttributes(),
                 'sports' => $sportsDetails->isEmpty() ? null : $sportsDetails,
-                'club' => $member->club,
+                'gsDivision' => [
+                    'id' => $memberDivision->id,
+                    'divisionName' => $memberDivision->divisionName,
+                ],
             ];
 
             return response()->json([
@@ -811,6 +815,7 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
 
     public function updateMemberDetails(Request $request, $userId)
     {

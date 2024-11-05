@@ -12,6 +12,9 @@ import toast from "react-hot-toast";
 const ChangePassword = lazy(() =>
   import("../../Components/settings/ChangePassword")
 );
+const UpdateMemberProfile = lazy(() =>
+    import("../../Components/settings/UpdateManagerProfile")
+  );
 import {
   MdPermIdentity,
   MdOutlineDateRange,
@@ -124,7 +127,7 @@ const MemberSettings = () => {
     },
     {
       label: "Division Name",
-      value: memberDetails.divisionName,
+      value: memberDetails.gsDivision?.divisionName,
       icon: <FaBuilding className="mr-5" />,
     },
     {
@@ -132,51 +135,82 @@ const MemberSettings = () => {
       value: memberDetails.address,
       icon: <FaMapMarkerAlt className="mr-5" />,
     },
-    {
-      label: "Position",
-      value: memberDetails.position,
-      icon: <FaFutbol className="mr-5" />,
-    },
-    // Only add experience if it is not null
-    ...(memberDetails.experience
-      ? [
-          {
-            label: "Experience",
-            value: memberDetails.experience,
-            icon: <FaRunning className="mr-5" />, // Sports-related icon for experience
-          },
-        ]
-      : []),
   ];
 
   const sportDetails = [
     {
       name: "Sports Details",
       content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {memberDetails.sports && memberDetails.sports.length > 0 ? (
-            memberDetails.sports.map((sport, index) => (
-              <div key={index} className="p-4 border border-gray-300 rounded-lg">
-                <h3 className="font-semibold text-gray-800">
-                  {sport.sport_name}
-                </h3>
-                <ul className="mt-2 space-y-1">
-                  {sport.skills.map((skill, idx) => (
-                    <li key={idx} className="text-gray-600">
-                      - {skill.skill_name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
+        <div>
+          <div className="flex gap-2 mb-4">
+            <h3 className="font-semibold text-gray-800">Position :</h3>
+            <p className="text-gray-600">{memberDetails.position || "N/A"}</p>
+          </div>
+          {memberDetails.experience ? (
+            // If experience is not null, display position and experience
+            <div className={`p-4 border border-gray-200 rounded-lg`}>
+              <h3 className="font-semibold text-gray-800 mt-2">Experience</h3>
+              <p className="text-gray-600">
+                {memberDetails.experience || "N/A"}
+              </p>
+            </div>
           ) : (
-            <div className="text-gray-600">No sports details available</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {memberDetails.sports && memberDetails.sports.length > 0 ? (
+                memberDetails.sports.map((sport, index) => (
+                  <div
+                    key={index}
+                    className={`${
+                      theme === "light" ? "bg-gray-100" : "bg-white"
+                    } p-4 border border-gray-200 rounded-lg flex items-center justify-between`}
+                  >
+                    <div>
+                      <h3 className="font-semibold text-gray-800">
+                        {sport.sport_name}
+                      </h3>
+                      <ul className="mt-2 space-y-1">
+                        {sport.skills.map((skill, idx) => (
+                          <li key={idx} className="text-gray-600">
+                            - {skill.skill_name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    {sport.sport_image && (
+                      <img
+                        src={sport.sport_image}
+                        alt={`${sport.sport_name} image`}
+                        className="ml-4 h-16 w-16 object-cover rounded-full"
+                      />
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-gray-600">No sports details available</div>
+              )}
+            </div>
           )}
+          <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row gap-3 mt-2">
+            {memberDetails.experience ? (
+              <Button
+                onClick={showProfileModal}
+                className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
+              >
+                Update Experience
+              </Button>
+            ) : (
+              <Button
+                onClick={showProfileModal}
+                className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
+              >
+                Update Sports
+              </Button>
+            )}
+          </div>
         </div>
       ),
     },
   ];
-  
 
   const cancel = (e) => {
     console.log(e);
@@ -278,6 +312,20 @@ const MemberSettings = () => {
                             </li>
                           ))}
                         </ul>
+                        <div className="flex flex-col items-center md:flex-row lg:flex-row gap-3 mt-4">
+                          <Button
+                            onClick={showPasswordModal}
+                            className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
+                          >
+                            Change Password
+                          </Button>
+                          <Button
+                            onClick={showProfileModal}
+                            className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
+                          >
+                            Update Profile
+                          </Button>
+                        </div>
                       </>
                     ),
                   },
@@ -295,22 +343,6 @@ const MemberSettings = () => {
                 className="customTab"
               />
             </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row gap-3 mt-4">
-            <Button
-              onClick={showPasswordModal}
-              className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
-            >
-              Change Password
-            </Button>
-            <Button
-              onClick={showProfileModal}
-              className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
-            >
-              Update Profile
-            </Button>
           </div>
         </div>
 
@@ -331,6 +363,26 @@ const MemberSettings = () => {
             setIsModalOpen={setIsPasswordModalOpen}
             userId={user.userId}
             roleID={roleID}
+          />
+        </Modal>
+        <Modal
+          title={
+            <div className="font-poppins tracking-wide w-full pt-1 mb-2 text-2xl text-gray-600">
+              Update Profile
+            </div>
+          }
+          style={{ textAlign: "center" }}
+          open={isProfileModalOpen}
+          onCancel={handleCancelProfile}
+          footer={null}
+          className="lg:mr-72"
+        >
+          <UpdateMemberProfile
+            setIsModalOpen={setIsProfileModalOpen}
+            user={user}
+            fetchDetails={fetchDetails}
+            managerDetails={memberDetails}
+            fetchManagerDetails={refetchMemberDetails}
           />
         </Modal>
       </div>

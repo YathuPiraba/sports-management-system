@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import {
   updateManagerDetailsApi,
   fetchGSDataApi,
+  updateMemberDetailsApi,
 } from "../../Services/apiServices";
 import { fetchUserDetails } from "../../features/authslice";
 import { Button } from "antd";
@@ -17,6 +18,8 @@ const UpdateManagerProfile = ({
   const dispatch = useDispatch();
   const [divisions, setDivisions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const userId = user?.userId;
+  const role_id = user?.role_id;
 
   const fetchGsData = async () => {
     try {
@@ -111,10 +114,13 @@ const UpdateManagerProfile = ({
         }
       });
 
-      const response = await updateManagerDetailsApi(
-        user.userId,
-        formDataToSend
-      );
+      let response;
+      if (role_id == 2) {
+        response = await updateManagerDetailsApi(userId, formDataToSend);
+      } else if (role_id == 3)  {
+        response = await updateMemberDetailsApi(userId, formDataToSend);
+      }
+
       fetchManagerDetails();
 
       await dispatch(fetchUserDetails());
