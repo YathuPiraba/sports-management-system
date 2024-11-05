@@ -13,8 +13,12 @@ const ChangePassword = lazy(() =>
   import("../../Components/settings/ChangePassword")
 );
 const UpdateMemberProfile = lazy(() =>
-    import("../../Components/settings/UpdateManagerProfile")
-  );
+  import("../../Components/settings/UpdateManagerProfile")
+);
+
+const UpdateMemberSports = lazy(() =>
+  import("../../Components/settings/UpdateMemberSports")
+);
 import {
   MdPermIdentity,
   MdOutlineDateRange,
@@ -41,16 +45,19 @@ const MemberSettings = () => {
   const fileInputRef = useRef(null);
   const image = user?.image;
 
+  const fetchDetails = () => dispatch(fetchUserDetails());
+  const [imageLoading, setImageLoading] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isSportsModalOpen, setIsSportsModalOpen] = useState(false);
   const { memberDetails, loading, refetchMemberDetails } = useMemberDetail();
 
   const showPasswordModal = () => setIsPasswordModalOpen(true);
   const showProfileModal = () => setIsProfileModalOpen(true);
+  const showSportsModal = () => setIsSportsModalOpen(true);
+  const handleCancelSports = () => setIsSportsModalOpen(false);
   const handleCancelPassword = () => setIsPasswordModalOpen(false);
   const handleCancelProfile = () => setIsProfileModalOpen(false);
-  const fetchDetails = () => dispatch(fetchUserDetails());
-  const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
     fetchDetails();
@@ -191,21 +198,12 @@ const MemberSettings = () => {
             </div>
           )}
           <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row gap-3 mt-2">
-            {memberDetails.experience ? (
-              <Button
-                onClick={showProfileModal}
-                className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
-              >
-                Update Experience
-              </Button>
-            ) : (
-              <Button
-                onClick={showProfileModal}
-                className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
-              >
-                Update Sports
-              </Button>
-            )}
+            <Button
+              onClick={showSportsModal}
+              className="h-10 px-4 text-base bg-blue-500 text-white hover:bg-blue-800"
+            >
+              {memberDetails.experience ? "Update Experience" : "Update Sports"}
+            </Button>
           </div>
         </div>
       ),
@@ -383,6 +381,26 @@ const MemberSettings = () => {
             fetchDetails={fetchDetails}
             managerDetails={memberDetails}
             fetchManagerDetails={refetchMemberDetails}
+          />
+        </Modal>
+        <Modal
+          title={
+            <div className="font-poppins tracking-wide w-full pt-1 mb-2 text-2xl text-gray-600">
+              {memberDetails.experience ? "Update Experience" : "Update Sports"}
+            </div>
+          }
+          style={{ textAlign: "center" }}
+          open={isSportsModalOpen}
+          onCancel={handleCancelSports}
+          footer={null}
+          className="lg:mr-72"
+        >
+          <UpdateMemberSports
+            setIsModalOpen={setIsSportsModalOpen}
+            user={user}
+            fetchDetails={fetchDetails}
+            managerDetails={memberDetails}
+            fetchMemberDetails={refetchMemberDetails}
           />
         </Modal>
       </div>

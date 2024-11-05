@@ -74,24 +74,6 @@ const UpdateManagerProfile = ({
     }));
   };
 
-  const handleClear = (e) => {
-    e.preventDefault();
-    if (user && managerDetails) {
-      setFormData({
-        firstName: managerDetails.firstName || "",
-        lastName: managerDetails.lastName || "",
-        userName: user.userName || "",
-        email: user.email || "",
-        contactNo: managerDetails.contactNo || "",
-        whatsappNo: managerDetails.whatsappNo || "",
-        address: managerDetails.address || "",
-        nic: managerDetails.nic || "",
-        date_of_birth: managerDetails.date_of_birth || "",
-        divisionName: managerDetails.gsDivision?.divisionName || "",
-      });
-    }
-  };
-
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
@@ -117,7 +99,7 @@ const UpdateManagerProfile = ({
       let response;
       if (role_id == 2) {
         response = await updateManagerDetailsApi(userId, formDataToSend);
-      } else if (role_id == 3)  {
+      } else if (role_id == 3) {
         response = await updateMemberDetailsApi(userId, formDataToSend);
       }
 
@@ -203,14 +185,7 @@ const UpdateManagerProfile = ({
           </label>
         </div>
 
-        <div className="relative my-2 flex flex-row gap-2">
-          <button
-            type="button"
-            onClick={handleClear}
-            className="text-base bg-sky-500 hover:bg-sky-700 w-full px-4 py-2 rounded-md text-white"
-          >
-            Clear
-          </button>
+        <div className="relative my-2 flex justify-center flex-row gap-2">
           <Button
             htmlType="submit"
             className="text-base bg-emerald-500 hover:bg-emerald-700 w-full px-4 py-2 rounded-md text-white"
