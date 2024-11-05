@@ -132,6 +132,10 @@ export const fetchMemberDetailsApi = (memberId) => {
   return authApiClient.get(`/memberDetails/${memberId}`);
 };
 
+export const fetchMemberDetailsByUserIdApi = (userId) => {
+  return authApiClient.get(`/member_Details/${userId}`);
+};
+
 // Update Admin Details API
 export const updateAdminDetailsApi = (userId, data) => {
   data.append("_method", "PUT");

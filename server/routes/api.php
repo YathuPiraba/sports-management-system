@@ -100,9 +100,9 @@ Route::get('/membersList', [MemberController::class, 'membersList']);
 Route::get('/queryMembers', [MemberController::class, 'queryMembers']);
 Route::get('/memberDetails/{memberId}', [MemberController::class, 'getMemberDetails']);
 Route::get('/membersBySport', [MemberController::class, 'membersBySport']);
-Route::get('/memberDetails/{userId}', [MemberController::class, 'getMemberDetailsByUserId']);
-Route::post('/member/update/personal/{userId}', [ManagerController::class, 'updateMemberDetails']);
-Route::post('/member/update/sports/{userId}', [ManagerController::class, 'updateMemberSports']);
+Route::get('/member_Details/{userId}', [MemberController::class, 'getMemberDetailsByUserId']);
+Route::post('/member/update/personal/{userId}', [MemberController::class, 'updateMemberDetails']);
+Route::post('/member/update/sports/{userId}', [MemberController::class, 'updateMemberSports']);
 
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);

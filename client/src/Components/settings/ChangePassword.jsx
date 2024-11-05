@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import {
   updateAdminDetailsApi,
   updateManagerDetailsApi,
+  updateMemberDetailsApi,
 } from "../../Services/apiServices";
 import { Button } from "antd";
 
@@ -44,6 +45,8 @@ const ChangePassword = ({ setIsModalOpen, userId, roleID }) => {
         res = await updateAdminDetailsApi(userId, formData);
       } else if (roleID == 2) {
         res = await updateManagerDetailsApi(userId, formData);
+      } else if (roleID == 3) {
+        res = await updateMemberDetailsApi(userId, formData);
       }
       toast.success("Password Updated Successfully");
       setCurrentPassword("");

@@ -821,6 +821,8 @@ class MemberController extends Controller
             'address' => 'sometimes|string|max:255',
             'nic' => 'sometimes|string|max:20',
             'contactNo' => 'sometimes|string|max:15',
+            'position' => 'sometimes|string|max:15',
+            'experience' => 'sometimes|string|max:255',
             'whatsappNo' => 'nullable|string|max:15',
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $userId,
             'userName' => 'sometimes|string|max:255|unique:users,userName,' . $userId,
@@ -858,6 +860,12 @@ class MemberController extends Controller
             }
             if ($request->has('contactNo')) {
                 $member->contactNo = $request->contactNo;
+            }
+            if ($request->has('position')) {
+                $member->position = $request->position;
+            }
+            if ($request->has('experience')) {
+                $member->experience = $request->experience;
             }
             if ($request->has('whatsappNo')) {
                 $member->whatsappNo = $request->whatsappNo;
