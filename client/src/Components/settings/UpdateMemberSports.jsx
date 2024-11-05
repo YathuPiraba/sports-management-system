@@ -5,7 +5,7 @@ import {
   getSkillsBySportsAPI,
 } from "../../Services/apiServices";
 import { Button, Input, Card, Tag, Select } from "antd";
-import { CloseCircleOutlined, EditOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined } from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 
 const { Option } = Select;
@@ -19,10 +19,9 @@ const UpdateMemberSports = ({
   const userId = user?.userId;
   const [experience, setExperience] = useState(memberDetails.experience || "");
   const [sports, setSports] = useState(memberDetails.sports || []);
-  const [newSportName, setNewSportName] = useState("");
-  const [newSkillId, setNewSkillId] = useState(null);
-  const [skillOptions, setSkillOptions] = useState([]);
+  const [skillOptions, setSkillOptions] = useState({});
 
+  // Fetch skills for a sport based on sport ID
   const fetchSkillOptions = async (sportId) => {
     try {
       const response = await getSkillsBySportsAPI(sportId);
@@ -32,6 +31,30 @@ const UpdateMemberSports = ({
       return [];
     }
   };
+
+  const fetchSkillsForSports = async () => {
+    const updatedSports = await Promise.all(
+      sports.map(async (sport) => {
+        const skills = await fetchSkillOptions(sport.sport_id);
+        return { ...sport, skills };
+      })
+    );
+    setSports(updatedSports);
+
+    // Create a map of skill options for each sport
+    const skillOptionsMap = updatedSports.reduce((acc, sport) => {
+      acc[sport.sport_id] = sport.skills;
+      return acc;
+    }, {});
+    console.log(skillOptionsMap);
+    
+    setSkillOptions(skillOptionsMap);
+  };
+
+  // Fetch skills when sports changes
+  useEffect(() => {
+    fetchSkillsForSports();
+  }, []);
 
   const handleExperienceUpdate = async () => {
     try {
@@ -53,53 +76,17 @@ const UpdateMemberSports = ({
     }
   };
 
-  const handleAddSport = () => {
-    if (newSportName.trim() !== "") {
-      setSports([
-        ...sports,
-        {
-          sport_name: newSportName,
-          sport_id: Date.now(), // Temporary ID, should be replaced with actual ID from API
-          skills: [],
-        },
-      ]);
-      setNewSportName("");
-    }
-  };
-
   const handleRemoveSport = (index) => {
     const updatedSports = [...sports];
     updatedSports.splice(index, 1);
     setSports(updatedSports);
   };
 
+
   const handleRemoveSkill = (sportIndex, skillIndex) => {
     const updatedSports = [...sports];
-    const updatedSkills = [...updatedSports[sportIndex].skills];
-    updatedSkills.splice(skillIndex, 1);
-    updatedSports[sportIndex].skills = updatedSkills;
+    updatedSports[sportIndex].skills.splice(skillIndex, 1);
     setSports(updatedSports);
-  };
-
-  const handleAddSkill = (sportIndex) => {
-    if (newSkillId) {
-      const updatedSports = [...sports];
-      const selectedSkill = skillOptions.find(
-        (skill) => skill.id === newSkillId
-      );
-      updatedSports[sportIndex].skills.push({
-        skill_id: newSkillId,
-        skill_name: selectedSkill.name,
-      });
-      setSports(updatedSports);
-      setNewSkillId(null);
-    }
-  };
-
-  const handleEditSkills = async (sportIndex) => {
-    const sportId = sports[sportIndex].sport_id; // Adjust based on actual ID
-    const skills = await fetchSkillOptions(sportId);
-    setSkillOptions(skills);
   };
 
   return (
@@ -126,72 +113,54 @@ const UpdateMemberSports = ({
         </div>
       ) : (
         <div>
-          <h3 className="font-medium mb-2">Sports</h3>
           {sports.map((sport, sportIndex) => (
-            <Card key={sport.sport_id} className="mb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Meta title={sport.sport_name} />
-                  <div className="flex items-center ml-2">
-                    <EditOutlined
-                      onClick={() => handleEditSkills(sportIndex)}
-                      style={{ cursor: "pointer" }}
-                    />
-                    <CloseCircleOutlined
-                      onClick={() => handleRemoveSport(sportIndex)}
-                      style={{ cursor: "pointer", marginLeft: 8 }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-2">
-                <h5 className="font-medium mb-2">Skills</h5>
-                <div className="flex flex-wrap gap-2">
-                  {sport.skills.map((skill, skillIndex) => (
+            <div
+              key={sportIndex}
+              className="flex items-center justify-between mb-3 border rounded-lg border-gray-200 p-4"
+            >
+              <Meta title={sport.sport_name} />
+              <div className="flex flex-wrap gap-2">
+                {memberDetails.sports[sportIndex].skills.map((skill, skillIndex) => (
+                  <div key={skillIndex} className="flex items-center">
                     <Tag
-                      key={skillIndex}
                       closable
                       onClose={() => handleRemoveSkill(sportIndex, skillIndex)}
-                      className="bg-gray-100 text-gray-800"
+                      className="bg-gray-100 text-gray-800 mr-2"
                     >
                       {skill.skill_name}
                     </Tag>
-                  ))}
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={newSkillId}
-                      onChange={(value) => setNewSkillId(value)}
-                      placeholder="Add new skill"
-                      className="flex-1"
-                    >
-                      {skillOptions.map((skill) => (
-                        <Option key={skill.id} value={skill.id}>
-                          {skill.name}
-                        </Option>
-                      ))}
-                    </Select>
-                    <Button
-                      type="primary"
-                      onClick={() => handleAddSkill(sportIndex)}
-                    >
-                      Add
-                    </Button>
                   </div>
-                </div>
+                ))}
+                <Select
+                  className="w-40"
+                  placeholder="Add new skill"
+                >
+                  {skillOptions[sport.sport_id]?.map((skill) => (
+                    <Option key={skill.skillId} value={skill.skillId}>
+                      {skill.skill}
+                    </Option>
+                  ))}
+                </Select>
               </div>
-            </Card>
+              <div className="flex items-center ml-2">
+                <CloseCircleOutlined
+                  onClick={() => handleRemoveSport(sportIndex)}
+                  style={{ cursor: "pointer", marginLeft: 8 }}
+                />
+              </div>
+            </div>
           ))}
           <div className="flex items-center gap-2">
             <Input
               type="text"
-              value={newSportName}
+            //   value={newSportName}
               onChange={(e) => setNewSportName(e.target.value)}
               placeholder="Add new sport"
               className="flex-1"
             />
-            <Button type="primary" onClick={handleAddSport}>
+            {/* <Button type="primary" onClick={handleAddSport}>
               Add
-            </Button>
+            </Button> */}
           </div>
           <Button type="primary" onClick={handleSportsUpdate} className="mt-2">
             Update Sports

@@ -25,7 +25,6 @@ const UpdateManagerProfile = ({
     try {
       const res = await fetchGSDataApi();
       setDivisions(res.data.data);
-      console.log(res.data.data);
     } catch (error) {
       console.error("Error fetching Gs divisions data:", error);
     }
