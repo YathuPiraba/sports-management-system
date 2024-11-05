@@ -135,7 +135,7 @@ Route::post('/addEventParticipants', [EventParticipantController::class, 'addEve
 Route::get('/getEventParticipants/{eventId}', [EventParticipantController::class, 'getEventParticipants']);
 Route::get('/getSpecificEventParticipants', [EventParticipantController::class, 'getSpecificEventParticipants']);
 Route::get('/download-eventsports-details/{eventSportsId}', [EventParticipantController::class, 'generateEventParticipantsPDF']);
-Route::get('/getSpecificUserEventParticipants', [EventParticipantController::class, 'getSpecificEventParticipants']);
+Route::get('/getSpecificUserEventParticipants', [EventParticipantController::class, 'getMemberEventSportDetails']);
 
 Route::prefix('events/{eventId}/sports')->group(function () {
     Route::post('/', [EventSportController::class, 'store']); // Add a new sport to an event

@@ -21,7 +21,6 @@ const ClubParticipants = ({ participants, fetchClubEvents, loading }) => {
   };
 
   useEffect(() => {
-    // Assuming `participants` is the data fetched from `fetchClubEvents`
     const formattedTreeData = formatTreeData(participants);
     setTreeData(formattedTreeData);
   }, [participants]);

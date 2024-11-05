@@ -9,6 +9,7 @@ use App\Models\EventClub;
 use App\Models\Events;
 use App\Models\EventSports;
 use App\Models\Member;
+use App\Models\Member_Skills;
 use App\Models\Member_Sports;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -399,7 +400,7 @@ class EventParticipantController extends Controller
         }
     }
 
-    public function getSpecificUserEventParticipants(Request $request)
+    public function getMemberEventSportDetails(Request $request)
     {
         try {
             // Validate the incoming request
@@ -411,8 +412,9 @@ class EventParticipantController extends Controller
             $userId = $request->input('user_id');
             $eventId = $request->input('event_id');
 
-            // Find the member_id using user_id
-            $member = Member::where('user_id', $userId)->first();
+            // Find the member and their details from the users table using the user_id
+            $member = Member::where('user_id', $userId)->with(['user', 'club'])->first();
+
             if (!$member) {
                 return response()->json([
                     'success' => false,
@@ -420,76 +422,85 @@ class EventParticipantController extends Controller
                 ], 404);
             }
 
-            $memberId = $member->id;
-            $clubId = $member->club_id;
+            // Get all member sports IDs for this member
+            $memberSportsIds = Member_Sports::where('member_id', $member->id)->pluck('id')->toArray();
 
-            // Get member_sports IDs for this member
-            $memberSportsIds = Member_Sports::where('member_id', $memberId)->pluck('id')->toArray();
-
-            // Fetch event sports for the given event_id
-            $eventSports = EventSports::with([
-                'eventClubs' => function ($query) use ($clubId) {
-                    $query->where('club_id', $clubId); // Only get event clubs that belong to the member's club
-                },
-                'eventClubs.participants' => function ($query) use ($memberSportsIds) {
-                    $query->whereIn('member_sport_id', $memberSportsIds); // Only participants with matching member_sports ID
-                },
-                'sportsCategory' // Fetch sports category for the event sport
-            ])->where('event_id', $eventId)->get();
+            // Fetch all event sports for the specific event that have participants matching the member's sports
+            $eventSports = EventSports::with(['sportsCategory', 'eventClubs.participants.memberSport.skills'])
+                ->where('event_id', $eventId)
+                ->whereHas('eventClubs.participants', function ($query) use ($memberSportsIds) {
+                    $query->whereIn('member_sports_id', $memberSportsIds);
+                })
+                ->get();
 
             if ($eventSports->isEmpty()) {
                 return response()->json([
                     'success' => true,
                     'data' => [],
-                    'message' => 'No event sports data found.',
+                    'message' => 'No event sports data found for this event associated with the member.',
                 ], 200);
             }
 
-            // Transform the data to the desired structure
-            $filteredData = $eventSports->map(function ($eventSport) {
-                return [
-                    'event_sports' => [
+            // Prepare response data with member details and event sports information
+            $responseData = [
+                'member' => [
+                    'id' => $member->id,
+                    'firstName' => $member->firstName,
+                    'lastName' => $member->lastName,
+                    'image' => $member->user->image,
+                    'position' => $member->position,
+                    'clubName' => $member->club->clubName,
+                    'clubImage' => $member->club->clubImage,
+                ],
+                'event_id' => $eventId,
+                'event_sports' => $eventSports->map(function ($eventSport) use ($member) {
+                    return [
                         'id' => $eventSport->id,
                         'name' => $eventSport->name,
                         'start_date' => $eventSport->start_date,
                         'end_date' => $eventSport->end_date,
                         'place' => $eventSport->place,
-                        'sports' => [
-                            'sports_id' => $eventSport->sportsCategory->id,
+                        'sport' => [
+                            'sport_id' => $eventSport->sportsCategory->id,
                             'name' => $eventSport->sportsCategory->name,
                             'image' => $eventSport->sportsCategory->image,
                         ],
-                        'event_clubs' => $eventSport->eventClubs->map(function ($eventClub) {
-                            return [
-                                'club_id' => $eventClub->club_id,
-                                'event_club_id' => $eventClub->id,
-                                'participants' => $eventClub->participants->map(function ($participant) {
-                                    return [
-                                        'member' => [
-                                            'id' => $participant->memberSport->member->id,
-                                            'firstName' => $participant->memberSport->member->firstName,
-                                            'lastName' => $participant->memberSport->member->lastName,
-                                            'position' => $participant->memberSport->member->position,
-                                        ],
-                                        'member_sport_id' => $participant->member_sport_id,
-                                    ];
-                                }),
-                            ];
+                        'participants' => $eventSport->eventClubs->flatMap(function ($eventClub) use ($member) {
+                            return $eventClub->participants->map(function ($participant) use ($member) {
+                                // Fetch the member sports ID for the current participant
+                                $memberSport = Member_Sports::where('id', $participant->member_sports_id)
+                                    ->where('member_id', $member->id)
+                                    ->first();
+
+                                // If a member sport is found, fetch the associated skill
+                                $skillName = null;
+                                if ($memberSport) {
+                                    $skill = Member_Skills::where('member_sport_id', $memberSport->id)->first();
+
+                                    $skillName = $skill->skill->skill; // Get the skill name if it exists
+
+                                }
+
+                                return [
+                                    'member_sports_id' => $participant->member_sports_id,
+                                    'skill_name' => $skillName, // Include the skill name or null
+                                ];
+                            })->filter(); // Remove null values
                         }),
-                    ],
-                ];
-            });
+                    ];
+                }),
+            ];
 
             return response()->json([
                 'success' => true,
-                'data' => $filteredData,
+                'data' => $responseData,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Error fetching specific user event participants: ' . $e->getMessage());
+            Log::error('Error fetching member event sport details: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching specific user event participants: ' . $e->getMessage(),
+                'message' => 'Error fetching member event sport details: ' . $e->getMessage(),
             ], 500);
         }
     }

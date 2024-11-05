@@ -15,6 +15,10 @@ import useClubEvents from "../../hooks/useClubEvents";
 const ClubParticipants = lazy(() =>
   import("../../Components/Events/ClubParticipants")
 );
+const MemberParticipants = lazy(() =>
+  import("../../Components/Events/MemberParticipants")
+);
+
 const EventParticipantList = lazy(() =>
   import("../../Components/Events/EventParticipantList")
 );
@@ -306,6 +310,13 @@ const Events = () => {
                                   participants={eventSportsWithParticipants}
                                   fetchClubEvents={fetchClubEvents}
                                   loading={clubEventsLoading}
+                                />
+                              );
+                            case 3:
+                              return (
+                                <MemberParticipants
+                                  eventId={selectedEvent}
+                                  userId={userId}
                                 />
                               );
                             default:

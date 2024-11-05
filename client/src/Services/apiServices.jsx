@@ -418,11 +418,11 @@ export const getAClubEventParticipantsAPI = (userId, selectedEvent) => {
   });
 };
 
-export const getAMemberEventParticipantsAPI = (userId, selectedEvent) => {
+export const getAMemberEventParticipantsAPI = (userId, eventId) => {
   return authApiClient.get("/getSpecificUserEventParticipants", {
     params: {
       user_id: userId,
-      event_id: selectedEvent,
+      event_id: eventId,
     },
   });
 };
