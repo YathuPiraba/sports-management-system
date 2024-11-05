@@ -356,6 +356,7 @@ const MemberSettings = () => {
           onCancel={handleCancelPassword}
           footer={null}
           className="lg:mr-72"
+          maskClosable={false}
         >
           <ChangePassword
             setIsModalOpen={setIsPasswordModalOpen}
@@ -374,6 +375,7 @@ const MemberSettings = () => {
           onCancel={handleCancelProfile}
           footer={null}
           className="lg:mr-72"
+          maskClosable={false}
         >
           <UpdateMemberProfile
             setIsModalOpen={setIsProfileModalOpen}
@@ -394,12 +396,12 @@ const MemberSettings = () => {
           onCancel={handleCancelSports}
           footer={null}
           className="lg:mr-72"
+          maskClosable={false}
         >
           <UpdateMemberSports
             setIsModalOpen={setIsSportsModalOpen}
             user={user}
-            fetchDetails={fetchDetails}
-            managerDetails={memberDetails}
+            memberDetails={memberDetails}
             fetchMemberDetails={refetchMemberDetails}
           />
         </Modal>

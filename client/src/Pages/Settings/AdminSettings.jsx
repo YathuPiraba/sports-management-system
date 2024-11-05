@@ -189,6 +189,7 @@ const AdminSettings = () => {
                 onCancel={handleCancelPassword}
                 footer={null}
                 className="lg:mr-72"
+                maskClosable={false}
               >
                 <ChangePassword
                   setIsModalOpen={setIsPasswordModalOpen}
@@ -213,6 +214,7 @@ const AdminSettings = () => {
                 onCancel={handleCancelProfile}
                 footer={null}
                 className="lg:mr-72"
+                maskClosable={false}
               >
                 <UpdateProfile
                   setIsModalOpen={setIsProfileModalOpen}

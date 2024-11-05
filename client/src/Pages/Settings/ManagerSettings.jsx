@@ -219,7 +219,9 @@ const ManagerSettings = () => {
                         {detail.icon}
                         {detail.label}
                       </span>
-                      <span className="w-full pl-[35px] md:pl-0 text-gray-700 ">:  &nbsp; {detail.value || "N/A"}</span>
+                      <span className="w-full pl-[35px] md:pl-0 text-gray-700 ">
+                        : &nbsp; {detail.value || "N/A"}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -253,6 +255,7 @@ const ManagerSettings = () => {
           onCancel={handleCancelPassword}
           footer={null}
           className="lg:mr-72"
+          maskClosable={false}
         >
           <ChangePassword
             setIsModalOpen={setIsPasswordModalOpen}
@@ -271,6 +274,7 @@ const ManagerSettings = () => {
           onCancel={handleCancelProfile}
           footer={null}
           className="lg:mr-72"
+          maskClosable={false}
         >
           <UpdateManagerProfile
             setIsModalOpen={setIsProfileModalOpen}
