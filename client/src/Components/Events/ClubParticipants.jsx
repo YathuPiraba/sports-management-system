@@ -23,6 +23,9 @@ const ClubParticipants = ({ participants, loading, theme }) => {
   // Get club info from first event (assuming all events are from same club)
   const clubInfo = participants[0]?.club || {};
 
+  console.log(clubInfo);
+  
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",

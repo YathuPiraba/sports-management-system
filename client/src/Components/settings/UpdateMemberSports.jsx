@@ -8,6 +8,7 @@ import {
 import { Button, Input, Card, Tag, Select } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
+import toast from "react-hot-toast";
 
 const { Option } = Select;
 
@@ -31,9 +32,9 @@ const UpdateMemberSports = ({
     try {
       const res = await getAllSportsAPI();
       // Filter out sports that are already selected
-      const existingSportIds = sports.map(sport => sport.sport_id);
-      const filteredSports = res.data.filter(sport => 
-        !existingSportIds.includes(sport.id)
+      const existingSportIds = sports.map((sport) => sport.sport_id);
+      const filteredSports = res.data.filter(
+        (sport) => !existingSportIds.includes(sport.id)
       );
       setAvailableSports(filteredSports);
     } catch (error) {
@@ -57,7 +58,8 @@ const UpdateMemberSports = ({
     const initialSelectedSkills = {};
     sports.forEach((sport, sportIndex) => {
       if (memberDetails.sports[sportIndex]?.skills?.[0]) {
-        initialSelectedSkills[sport.sport_id] = memberDetails.sports[sportIndex].skills[0];
+        initialSelectedSkills[sport.sport_id] =
+          memberDetails.sports[sportIndex].skills[0];
       }
     });
     setSelectedSkills(initialSelectedSkills);
@@ -84,7 +86,9 @@ const UpdateMemberSports = ({
   // Fetch skills when new sport is selected
   useEffect(() => {
     if (newSportId) {
-      const selectedSport = availableSports.find(sport => sport.id === newSportId);
+      const selectedSport = availableSports.find(
+        (sport) => sport.id === newSportId
+      );
       if (selectedSport?.skills) {
         setNewSportSkills(selectedSport.skills);
       }
@@ -98,8 +102,10 @@ const UpdateMemberSports = ({
     try {
       await updateMemberDetailsApi(userId, { experience });
       fetchMemberDetails();
+      toast.success("Experience Updated Successfully!");
       setIsModalOpen(false);
     } catch (error) {
+      toast.error(error.response?.data?.message || "Error updating experience");
       console.error("Error updating experience:", error);
     }
   };
@@ -113,8 +119,10 @@ const UpdateMemberSports = ({
 
       await updateMemberSportsAPI(userId, { sports: updatedSportsData });
       fetchMemberDetails();
+      toast.success("Sports Updated Successfully!");
       setIsModalOpen(false);
     } catch (error) {
+      toast.error(error.response?.data?.message || "Error updating sports");
       console.error("Error updating sports:", error);
     }
   };
@@ -128,9 +136,9 @@ const UpdateMemberSports = ({
     const updatedSelectedSkills = { ...selectedSkills };
     delete updatedSelectedSkills[removedSport.sport_id];
     setSelectedSkills(updatedSelectedSkills);
-    
+
     // Update available sports
-    setAvailableSports(prev => [...prev, removedSport]);
+    setAvailableSports((prev) => [...prev, removedSport]);
   };
 
   const handleSkillChange = (sportId, newSkillId) => {
@@ -147,25 +155,34 @@ const UpdateMemberSports = ({
 
   const handleAddNewSport = () => {
     if (newSportId && newSkillId) {
-      const selectedSport = availableSports.find(sport => sport.id === newSportId);
-      const selectedSkill = selectedSport.skills.find(skill => skill.id === newSkillId);
-      
+      const selectedSport = availableSports.find(
+        (sport) => sport.id === newSportId
+      );
+      const selectedSkill = selectedSport.skills.find(
+        (skill) => skill.id === newSkillId
+      );
+
       // Add new sport to sports list
       const newSport = {
         sport_id: selectedSport.id,
         sport_name: selectedSport.name,
-        skills: [{ skillId: selectedSkill.id, skill: selectedSkill.skill }]
+        skills: [{ skillId: selectedSkill.id, skill: selectedSkill.skill }],
       };
-      
-      setSports(prev => [...prev, newSport]);
-      setSelectedSkills(prev => ({
+
+      setSports((prev) => [...prev, newSport]);
+      setSelectedSkills((prev) => ({
         ...prev,
-        [selectedSport.id]: { skillId: selectedSkill.id, skill: selectedSkill.skill }
+        [selectedSport.id]: {
+          skillId: selectedSkill.id,
+          skill: selectedSkill.skill,
+        },
       }));
-      
+
       // Remove selected sport from available sports
-      setAvailableSports(prev => prev.filter(sport => sport.id !== newSportId));
-      
+      setAvailableSports((prev) =>
+        prev.filter((sport) => sport.id !== newSportId)
+      );
+
       // Reset selection
       setNewSportId(null);
       setNewSkillId(null);
@@ -269,7 +286,7 @@ const UpdateMemberSports = ({
                 </Option>
               ))}
             </Select>
-            <Button 
+            <Button
               type="primary"
               onClick={handleAddNewSport}
               disabled={!newSportId || !newSkillId}

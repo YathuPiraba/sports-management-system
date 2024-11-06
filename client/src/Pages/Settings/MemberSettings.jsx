@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, Suspense, lazy } from "react";
 import { Button, Modal, Popconfirm, Tabs } from "antd";
+import { TrophyOutlined, StarOutlined, TeamOutlined } from "@ant-design/icons";
 import {
   deleteProfileAPI,
   updateMemberDetailsApi,
@@ -144,26 +145,37 @@ const MemberSettings = () => {
     },
   ];
 
-  console.log(memberDetails.sports);
-  
-
   const sportDetails = [
     {
       name: "Sports Details",
       content: (
         <div>
-          <div className="flex gap-2 mb-4">
-            <h3 className="font-semibold text-gray-800">Position :</h3>
+          <div className="flex gap-2 mb-4 items-center">
+            <FaRunning className="text-lg text-gray-500" />
+            <h3 className="font-semibold text-gray-800">Position:</h3>
             <p className="text-gray-600">{memberDetails.position || "N/A"}</p>
           </div>
+
           {memberDetails.experience ? (
-            // If experience is not null, display position and experience
-            <div className={`p-4 border border-gray-200 rounded-lg`}>
-              <h3 className="font-semibold text-gray-800 mt-2">Experience</h3>
-              <p className="text-gray-600">
-                {memberDetails.experience || "N/A"}
-              </p>
-            </div>
+            <>
+              <div className="flex gap-2 mb-4 items-center">
+                <TrophyOutlined className="text-lg text-gray-500" />
+                <h3 className="font-semibold text-gray-800">Sport:</h3>
+                <p className="text-gray-600">
+                  {memberDetails.sports[0]?.sport_name || "N/A"}
+                </p>
+              </div>
+
+              <div className="p-4 border border-gray-200 rounded-lg">
+                <div className="flex gap-2 items-center">
+                  <StarOutlined className="text-lg text-gray-500" />
+                  <h3 className="font-semibold text-gray-800">Experience:</h3>
+                </div>
+                <p className="text-gray-600 mt-2">
+                  {memberDetails.experience || "N/A"}
+                </p>
+              </div>
+            </>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {memberDetails.sports && memberDetails.sports.length > 0 ? (

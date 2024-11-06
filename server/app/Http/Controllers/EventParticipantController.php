@@ -290,14 +290,14 @@ class EventParticipantController extends Controller
                         'end_date' => $eventSport->end_date,
                         'place' => $eventSport->place,
                         'sports' => [
-                            'sports_id' => $eventSport->sportsCategory->id, // Assuming sportsCategory represents the sport
-                            'name' => $eventSport->sportsCategory->name,
-                            'image' => $eventSport->sportsCategory->image, // Ensure this field exists in the sportsCategory model
+                            'sports_id' => $eventSport->sportsCategory->id ?? null, // Safely access sport ID
+                            'name' => $eventSport->sportsCategory->name ?? 'N/A', // Safely access sport name
+                            'image' => $eventSport->sportsCategory->image ?? null, // Ensure this field exists in the sportsCategory model
                         ],
                         'club' => [
                             'id' => $eventSport->eventClubs->first()->club_id,
                             'name' => $eventSport->eventClubs->first()->club->clubName,
-                            'image' => $eventSport->eventClubs->first()->club->clubImage, // Include clubImage here
+                            'image' => $eventSport->eventClubs->first()->club->clubImage  ?? null, // Include clubImage here
                         ],
                         'event_club_id' => $eventSport->eventClubs->first()->id,
                         'participants' => $eventSport->eventClubs->flatMap(function ($eventClub) {
@@ -308,7 +308,7 @@ class EventParticipantController extends Controller
                                         'firstName' => $participant->memberSport->member->firstName,
                                         'lastName' => $participant->memberSport->member->lastName,
                                         'position' => $participant->memberSport->member->position,
-                                        'image' => $participant->memberSport->member->user->image,
+                                        'image' => $participant->memberSport->member->user->image  ?? null,
                                     ],
                                 ];
                             });
