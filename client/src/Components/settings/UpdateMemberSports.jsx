@@ -3,6 +3,7 @@ import {
   updateMemberDetailsApi,
   updateMemberSportsAPI,
   getSkillsBySportsAPI,
+  getAllSportsAPI,
 } from "../../Services/apiServices";
 import { Button, Input, Card, Tag, Select } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -21,14 +22,29 @@ const UpdateMemberSports = ({
   const [sports, setSports] = useState(memberDetails.sports || []);
   const [skillOptions, setSkillOptions] = useState({});
   const [selectedSkills, setSelectedSkills] = useState({});
+  const [availableSports, setAvailableSports] = useState([]);
+  const [newSportId, setNewSportId] = useState(null);
+  const [newSkillId, setNewSkillId] = useState(null);
+  const [newSportSkills, setNewSportSkills] = useState([]);
+
+  const fetchSports = async () => {
+    try {
+      const res = await getAllSportsAPI();
+      // Filter out sports that are already selected
+      const existingSportIds = sports.map(sport => sport.sport_id);
+      const filteredSports = res.data.filter(sport => 
+        !existingSportIds.includes(sport.id)
+      );
+      setAvailableSports(filteredSports);
+    } catch (error) {
+      console.log("Error fetching sports data:", error);
+    }
+  };
 
   // Fetch skills for a sport based on sport ID
   const fetchSkillOptions = async (sportId) => {
     try {
       const response = await getSkillsBySportsAPI(sportId);
-      console.log('====================================');
-      console.log(response.data);
-      console.log('====================================');
       return response.data;
     } catch (error) {
       console.error("Error fetching skill options:", error);
@@ -38,17 +54,14 @@ const UpdateMemberSports = ({
 
   // Initialize selected skills and fetch all available skills
   const initializeSkillsAndFetch = async () => {
-    // Initialize selected skills from memberDetails
     const initialSelectedSkills = {};
     sports.forEach((sport, sportIndex) => {
       if (memberDetails.sports[sportIndex]?.skills?.[0]) {
-        initialSelectedSkills[sport.sport_id] =
-          memberDetails.sports[sportIndex].skills[0];
+        initialSelectedSkills[sport.sport_id] = memberDetails.sports[sportIndex].skills[0];
       }
     });
     setSelectedSkills(initialSelectedSkills);
 
-    // Fetch all available skills for each sport
     const updatedSports = await Promise.all(
       sports.map(async (sport) => {
         const skills = await fetchSkillOptions(sport.sport_id);
@@ -56,7 +69,6 @@ const UpdateMemberSports = ({
       })
     );
 
-    // Create a map of all skill options for each sport
     const skillOptionsMap = updatedSports.reduce((acc, sport) => {
       acc[sport.sport_id] = sport.allSkills;
       return acc;
@@ -66,7 +78,21 @@ const UpdateMemberSports = ({
 
   useEffect(() => {
     initializeSkillsAndFetch();
+    fetchSports();
   }, []);
+
+  // Fetch skills when new sport is selected
+  useEffect(() => {
+    if (newSportId) {
+      const selectedSport = availableSports.find(sport => sport.id === newSportId);
+      if (selectedSport?.skills) {
+        setNewSportSkills(selectedSport.skills);
+      }
+    } else {
+      setNewSportSkills([]);
+    }
+    setNewSkillId(null);
+  }, [newSportId]);
 
   const handleExperienceUpdate = async () => {
     try {
@@ -80,7 +106,6 @@ const UpdateMemberSports = ({
 
   const handleSportsUpdate = async () => {
     try {
-      // Transform the sports data to include selected skills
       const updatedSportsData = sports.map((sport) => ({
         ...sport,
         skills: [selectedSkills[sport.sport_id]].filter(Boolean),
@@ -100,10 +125,12 @@ const UpdateMemberSports = ({
     updatedSports.splice(index, 1);
     setSports(updatedSports);
 
-    // Clean up selected skills
     const updatedSelectedSkills = { ...selectedSkills };
     delete updatedSelectedSkills[removedSport.sport_id];
     setSelectedSkills(updatedSelectedSkills);
+    
+    // Update available sports
+    setAvailableSports(prev => [...prev, removedSport]);
   };
 
   const handleSkillChange = (sportId, newSkillId) => {
@@ -116,6 +143,33 @@ const UpdateMemberSports = ({
       ...prev,
       [sportId]: newSelectedSkill,
     }));
+  };
+
+  const handleAddNewSport = () => {
+    if (newSportId && newSkillId) {
+      const selectedSport = availableSports.find(sport => sport.id === newSportId);
+      const selectedSkill = selectedSport.skills.find(skill => skill.id === newSkillId);
+      
+      // Add new sport to sports list
+      const newSport = {
+        sport_id: selectedSport.id,
+        sport_name: selectedSport.name,
+        skills: [{ skillId: selectedSkill.id, skill: selectedSkill.skill }]
+      };
+      
+      setSports(prev => [...prev, newSport]);
+      setSelectedSkills(prev => ({
+        ...prev,
+        [selectedSport.id]: { skillId: selectedSkill.id, skill: selectedSkill.skill }
+      }));
+      
+      // Remove selected sport from available sports
+      setAvailableSports(prev => prev.filter(sport => sport.id !== newSportId));
+      
+      // Reset selection
+      setNewSportId(null);
+      setNewSkillId(null);
+    }
   };
 
   const getAvailableSkillOptions = (sportId) => {
@@ -151,6 +205,7 @@ const UpdateMemberSports = ({
         </div>
       ) : (
         <div>
+          {/* Existing Sports */}
           {sports.map((sport, sportIndex) => (
             <div
               key={sportIndex}
@@ -166,7 +221,7 @@ const UpdateMemberSports = ({
                 <Select
                   className="w-40"
                   placeholder="Select skill"
-                  value=""
+                  value={selectedSkills[sport.sport_id]?.skill || ""}
                   onChange={(skillId) =>
                     handleSkillChange(sport.sport_id, skillId)
                   }
@@ -186,7 +241,44 @@ const UpdateMemberSports = ({
               </div>
             </div>
           ))}
-          <Button type="primary" onClick={handleSportsUpdate} className="mt-2">
+
+          {/* Add New Sport */}
+          <div className="flex items-center gap-4 mt-4 border rounded-lg border-gray-200 p-4">
+            <Select
+              className="w-40"
+              placeholder="Select sport"
+              value={newSportId}
+              onChange={setNewSportId}
+            >
+              {availableSports.map((sport) => (
+                <Option key={sport.id} value={sport.id}>
+                  {sport.name}
+                </Option>
+              ))}
+            </Select>
+            <Select
+              className="w-40"
+              placeholder="Select skill"
+              value={newSkillId}
+              onChange={setNewSkillId}
+              disabled={!newSportId}
+            >
+              {newSportSkills.map((skill) => (
+                <Option key={skill.id} value={skill.id}>
+                  {skill.skill}
+                </Option>
+              ))}
+            </Select>
+            <Button 
+              type="primary"
+              onClick={handleAddNewSport}
+              disabled={!newSportId || !newSkillId}
+            >
+              Add Sport
+            </Button>
+          </div>
+
+          <Button type="primary" onClick={handleSportsUpdate} className="mt-4">
             Update Sports
           </Button>
         </div>
