@@ -13,18 +13,24 @@ const ClubParticipants = ({ participants, loading, theme }) => {
     );
   }
 
+  // Get club info from first event (assuming all events are from the same club)
+  const clubInfo = participants[0]?.club || {};
+
+  // Show message if clubInfo is empty
+  if (!clubInfo || Object.keys(clubInfo).length === 0) {
+    return (
+      <div className="text-center font-poppins text-2xl text-gray-600 min-h-[400px] flex items-center justify-center">
+        Your club is not yet participating in this event.
+      </div>
+    );
+  }
+
   const toggleCard = (eventId) => {
     setExpandedCards((prev) => ({
       ...prev,
       [eventId]: !prev[eventId],
     }));
   };
-
-  // Get club info from first event (assuming all events are from same club)
-  const clubInfo = participants[0]?.club || {};
-
-  console.log(clubInfo);
-  
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -56,7 +62,7 @@ const ClubParticipants = ({ participants, loading, theme }) => {
 
       {/* Sports Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {participants.map((event) => (
+        {participants?.map((event) => (
           <div
             key={event.id}
             className={`${
@@ -97,7 +103,7 @@ const ClubParticipants = ({ participants, loading, theme }) => {
                 className="w-full mt-2 pt-2 border-t flex items-center justify-center text-blue-600 hover:text-blue-700 transition-colors"
               >
                 <span className="mr-1">
-                  {event.participants.length} Participants
+                  {event?.participants?.length} Participants
                 </span>
                 {expandedCards[event.id] ? (
                   <FaChevronUp size={20} />
@@ -109,7 +115,7 @@ const ClubParticipants = ({ participants, loading, theme }) => {
               {/* Expandable Participants Section */}
               {expandedCards[event.id] && (
                 <div className="mt-2 pt-2 border-t space-y-2">
-                  {event.participants.map((participant) => (
+                  {event?.participants?.map((participant) => (
                     <div
                       key={participant.member.id}
                       className="flex items-center p-2 hover:bg-gray-50 rounded-lg transition-colors"
