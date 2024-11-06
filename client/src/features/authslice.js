@@ -13,12 +13,12 @@ export const loginAdmin = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await loginApi(data);
-      const { access_token, session_id } = res.data;
+      const { access_token } = res.data;
 
       // Store access token
       setAuthToken(access_token);
 
-      return { access_token, session_id };
+      return { access_token};
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Login failed";
       return rejectWithValue(errorMessage);

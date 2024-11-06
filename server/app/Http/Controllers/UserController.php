@@ -54,6 +54,7 @@ class UserController extends Controller
         if ($user && $user->trashed()) {
             return response()->json([
                 'message' => 'Your account has been deactivated. Please contact your Club Manager.',
+                'code' => 'ACCOUNT_DEACTIVATED'
             ], 403);
         }
 
@@ -67,13 +68,13 @@ class UserController extends Controller
             $response = response()->json([
                 'message' => 'Login successful',
                 'access_token' => $accessToken,
-                'session_id' => $sessionId
             ], 200);
 
             return $response->withCookie($this->tokenService->setRefreshTokenCookie($sessionId));
         } else {
             return response()->json([
-                'message' => 'Invalid login credentials'
+                'message' => 'Invalid login credentials',
+                'code' => 'INVALID_CREDENTIALS'
             ], 401);
         }
     }

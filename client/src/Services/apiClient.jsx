@@ -63,58 +63,75 @@ const ApiClientProvider = ({ children }) => {
     (error) => Promise.reject(error)
   );
 
-  authApiClient.interceptors.response.use(
-    (response) => response,
-    async (error) => {
+  const AUTH_ERROR_CODES = {
+    INVALID_CREDENTIALS: 'Invalid username or password',
+    INVALID_REFRESH_TOKEN: 'Session expired',
+    INVALID_SESSION: 'Session expired',
+    NO_REFRESH_TOKEN: 'Session expired',
+    REFRESH_FAILED: 'Session expired',
+    ACCOUNT_DEACTIVATED: 'Account deactivated'
+};
+
+authApiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
       const originalRequest = error.config;
+      const errorCode = error.response?.data?.code;
+      const errorStatus = error.response?.status;
 
-      // Handle 401 errors
-      if (error.response?.status === 401 && !originalRequest._retry) {
-        if (isRefreshing) {
-          // Wait for the token refresh
-          return new Promise((resolve, reject) => {
-            addSubscriber((error, token) => {
-              if (error) {
-                reject(error);
-              } else {
-                originalRequest.headers["Authorization"] = `Bearer ${token}`;
-                resolve(authApiClient(originalRequest));
-              }
-            });
-          });
-        }
+      // Handle invalid credentials separately
+      if (errorStatus === 401 && errorCode === 'INVALID_CREDENTIALS') {
+          return Promise.reject(error);
+      }
 
-        originalRequest._retry = true;
-        setIsRefreshing(true);
-
-        try {
-          const res = await apiClient.post("/refresh");
-          const { access_token } = res.data;
-          setAuthToken(access_token);
-
-          // Notify all subscribers about the new token
-          processQueue(null, access_token);
-
-          return authApiClient(originalRequest);
-        } catch (refreshError) {
-          console.error("Refresh token failed:", refreshError);
-          setAuthToken(null);
-
-          // Notify subscribers about the error
-          processQueue(refreshError);
-
-          if (refreshError.response?.status === 401) {
-            setIsSessionExpired(true);
+      // Handle token refresh for other 401 errors
+      if (errorStatus === 401 && !originalRequest._retry) {
+          if (isRefreshing) {
+              return new Promise((resolve, reject) => {
+                  addSubscriber((error, token) => {
+                      if (error) {
+                          reject(error);
+                      } else {
+                          originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                          resolve(authApiClient(originalRequest));
+                      }
+                  });
+              });
           }
-          return Promise.reject(refreshError);
-        } finally {
-          setIsRefreshing(false);
-        }
+
+          originalRequest._retry = true;
+          setIsRefreshing(true);
+
+          try {
+              const res = await apiClient.post("/refresh");
+              const { access_token } = res.data;
+              setAuthToken(access_token);
+
+              // Notify all subscribers about the new token
+              processQueue(null, access_token);
+
+              return authApiClient(originalRequest);
+          } catch (refreshError) {
+              console.error("Refresh token failed:", refreshError);
+              setAuthToken(null);
+
+              // Notify subscribers about the error
+              processQueue(refreshError);
+
+              // Show session expired popup only for actual session expiration
+              const refreshErrorCode = refreshError.response?.data?.code;
+              if (refreshErrorCode && refreshErrorCode !== 'INVALID_CREDENTIALS') {
+                  setIsSessionExpired(true);
+              }
+              return Promise.reject(refreshError);
+          } finally {
+              setIsRefreshing(false);
+          }
       }
 
       return Promise.reject(error);
-    }
-  );
+  }
+);
 
   const contextValue = {
     setIsSessionExpired,
