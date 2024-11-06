@@ -144,6 +144,9 @@ const MemberSettings = () => {
     },
   ];
 
+  console.log(memberDetails.sports);
+  
+
   const sportDetails = [
     {
       name: "Sports Details",
@@ -178,7 +181,7 @@ const MemberSettings = () => {
                       <ul className="mt-2 space-y-1">
                         {sport.skills.map((skill, idx) => (
                           <li key={idx} className="text-gray-600">
-                            - {skill.skill_name}
+                            - {skill.skill}
                           </li>
                         ))}
                       </ul>

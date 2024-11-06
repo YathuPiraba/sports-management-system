@@ -102,7 +102,7 @@ Route::get('/memberDetails/{memberId}', [MemberController::class, 'getMemberDeta
 Route::get('/membersBySport', [MemberController::class, 'membersBySport']);
 Route::get('/member_Details/{userId}', [MemberController::class, 'getMemberDetailsByUserId']);
 Route::post('/member/update/personal/{userId}', [MemberController::class, 'updateMemberDetails']);
-Route::post('/member/update/sports/{userId}', [MemberController::class, 'updateMemberSports']);
+Route::put('/member/update/sports/{userId}', [MemberController::class, 'updateMemberSports']);
 
 Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
 Route::post('/verify-otp', [PasswordResetController::class, 'verifyOTP']);

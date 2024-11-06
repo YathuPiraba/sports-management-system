@@ -766,8 +766,8 @@ class MemberController extends Controller
             $sportsDetails = $member->memberSports->map(function ($memberSport) {
                 $skills = $memberSport->skills->map(function ($skill) {
                     return [
-                        'skill_id' => $skill->id ?? null,
-                        'skill_name' => $skill->skill ?? null,
+                        'skillId' => $skill->id ?? null,
+                        'skill' => $skill->skill ?? null,
                     ];
                 })->values();
 
@@ -934,9 +934,9 @@ class MemberController extends Controller
     {
         $request->validate([
             'sports' => 'required|array',
-            'sports.*.sport_id' => 'required|integer|exists:sports,id',
+            'sports.*.sport_id' => 'required|integer|exists:sports_categories,id',
             'sports.*.skills' => 'nullable|array',
-            'sports.*.skills.*.skill_id' => 'nullable|integer|exists:skills,id',
+            'sports.*.skills.*.skillId' => 'nullable|integer|exists:skills,id',
         ]);
 
         DB::beginTransaction();
@@ -949,14 +949,15 @@ class MemberController extends Controller
             $newSportIds = array_column($request->sports, 'sport_id');
 
             // Find existing sports for the member that are not in the request and delete them
-            $existingSports = $member->memberSports->pluck('sport_id')->toArray();
+            $existingSports = $member->memberSports->pluck('sports_id')->toArray();
             $sportsToDelete = array_diff($existingSports, $newSportIds);
 
             // Delete sports that are no longer associated with the member
             if (!empty($sportsToDelete)) {
                 Member_Sports::where('member_id', $member->id)
-                    ->whereIn('sport_id', $sportsToDelete)
+                    ->whereIn('sports_id', $sportsToDelete)
                     ->each(function ($memberSport) {
+                        Log::info("Deleting MemberSport entry and detaching skills: ", ['member_sport_id' => $memberSport->id]);
                         $memberSport->skills()->detach(); // Detach skills
                         $memberSport->delete(); // Delete the MemberSport entry
                     });
@@ -970,15 +971,22 @@ class MemberController extends Controller
                 $memberSport = Member_Sports::updateOrCreate(
                     [
                         'member_id' => $member->id,
-                        'sport_id' => $sportId
+                        'sports_id' => $sportId
                     ]
                 );
+                Log::info("MemberSport entry found or created: ", ['member_sport_id' => $memberSport->id]);
 
                 if (isset($sportData['skills'])) {
-                    $skillIds = array_column($sportData['skills'], 'skill_id');
+                    $skillIds = array_column($sportData['skills'], 'skillId');
+                    Log::info("Syncing skills with MemberSport: ", [
+                        'member_sport_id' => $memberSport->id,
+                        'skill_ids' => $skillIds
+                    ]);
+
                     // Sync the skills with the MemberSport
                     $memberSport->skills()->sync($skillIds);
                 } else {
+                    Log::info("No skills provided, detaching all skills for MemberSport: ", ['member_sport_id' => $memberSport->id]);
                     // Clear skills if no skills are provided for the sport
                     $memberSport->skills()->detach();
                 }
@@ -1000,4 +1008,5 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
 }
