@@ -150,6 +150,8 @@ const AddClubSports = ({
     }));
   };
 
+  console.log(club);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -192,6 +194,8 @@ const AddClubSports = ({
       toast.error(errorMessage);
     }
   };
+
+  console.log(data.selectedArenaClubs);
 
   return (
     <div
@@ -254,17 +258,39 @@ const AddClubSports = ({
               />
               {data.selectedArenaClubs.length > 0 && (
                 <div className="mt-2 text-sm text-gray-700">
-                  <strong>Other Clubs Playing Here: </strong>
                   {Array.from(
                     new Set(
                       data.selectedArenaClubs
-                        .filter((c) => c.club_id !== club.club_id) // Exclude the current club by ID
-                        .map((c) => JSON.stringify(c)) // Convert each club object to a string to ensure uniqueness
+                        .filter((c) => c.club_id !== club.id) // Exclude the current club by ID
+                        .map((c) => c.club_id) // Only keep unique club IDs
                     )
                   )
-                    .map((clubStr) => JSON.parse(clubStr)) // Parse back to object format
-                    .map((c) => c.clubName)
-                    .join(", ")}
+                    .map(
+                      (uniqueClubId) =>
+                        data.selectedArenaClubs.find(
+                          (c) => c.club_id === uniqueClubId
+                        )?.clubName
+                    )
+                    .filter(Boolean).length > 0 ? (
+                    <>
+                      <strong>Other Clubs Playing Here: </strong>
+                      {Array.from(
+                        new Set(
+                          data.selectedArenaClubs
+                            .filter((c) => c.club_id !== club.id)
+                            .map((c) => c.club_id)
+                        )
+                      )
+                        .map(
+                          (uniqueClubId) =>
+                            data.selectedArenaClubs.find(
+                              (c) => c.club_id === uniqueClubId
+                            )?.clubName
+                        )
+                        .filter(Boolean)
+                        .join(", ")}
+                    </>
+                  ) : null}
                 </div>
               )}
             </>
