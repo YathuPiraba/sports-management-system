@@ -24,8 +24,8 @@ const AdminDashboard = () => {
     try {
       const res = await getCountsAPI();
       setTotalSports(res.data.totalSports);
-      setTotalClubs(res.data.totalClubs);
-      setTotalMembers(res.data.totalMembers);
+      setTotalClubs(res.data.totalVerifiedClubs);
+      setTotalMembers(res.data.totalVerifiedMembers);
     } catch (error) {
       console.log("error", error);
     } finally {

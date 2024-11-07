@@ -161,17 +161,27 @@ class SportsController extends Controller
         try {
             // Get total counts for each entity
             $totalSports = Sports_Categories::count();
-            $totalClubs = Club::count();
-            $totalClubManagers = Club_Manager::count();
-            $totalMembers = Member::count();
-            $totalMembersIncludingManagers = $totalClubManagers + $totalMembers;
+            $totalVerifiedClubs = Club::where('isVerified', 1)->count();
+
+            // Count only verified club managers
+            $totalVerifiedClubManagers = Club_Manager::whereHas('user', function ($query) {
+                $query->where('is_verified', 1);
+            })->count();
+
+            // Count only verified members
+            $totalVerifiedMembers = Member::whereHas('user', function ($query) {
+                $query->where('is_verified', 1);
+            })->count();
+
+            // Sum of verified members and managers
+            $totalVerifiedMembersIncludingManagers = $totalVerifiedClubManagers + $totalVerifiedMembers;
 
             // Return the result in a JSON response
             return response()->json([
                 'message' => 'Counts fetched successfully',
                 'totalSports' => $totalSports,
-                'totalClubs' => $totalClubs,
-                'totalMembers' => $totalMembersIncludingManagers,
+                'totalVerifiedClubs' => $totalVerifiedClubs,
+                'totalVerifiedMembers' => $totalVerifiedMembersIncludingManagers,
             ], 200);
         } catch (\Exception $e) {
             // Handle errors
@@ -181,6 +191,7 @@ class SportsController extends Controller
             ], 500);
         }
     }
+
 
     public function deleteSports($id)
     {

@@ -41,28 +41,25 @@ const AddClubSports = ({
         const sportsResponse = await getAllSportsAPI();
         const arenasResponse = await getAllSportArenasAPI();
 
-        const sports = sportsResponse.data.filter((sport) =>
-          sportsDetails.some((detail) => detail.sports_id == sport.id)
-        );
+        // Always show all arenas
+        const arenas = arenasResponse.data.data;
 
-        const arenas = arenasResponse.data.data.filter((arena) =>
-          sportsDetails.some((detail) => detail.sports_arena_id === arena.id)
-        );
+        // If sportsDetails is empty, show all sports
+        // If not empty, show only the remaining sports that aren't in sportsDetails
+        const sports =
+          sportsDetails.length === 0
+            ? sportsResponse.data
+            : sportsResponse.data.filter(
+                (sport) =>
+                  !sportsDetails.some((detail) => detail.sports_id == sport.id)
+              );
 
         setData((prev) => ({
           ...prev,
           sports,
           arenas,
-          filteredSports: sportsResponse.data.filter(
-            (sport) =>
-              !sportsDetails.some((detail) => detail.sports_id == sport.id)
-          ),
-          filteredArenas: arenasResponse.data.data.filter(
-            (arena) =>
-              !sportsDetails.some(
-                (detail) => detail.sports_arena_id === arena.id
-              )
-          ),
+          filteredSports: [], // No need for separate filtered sports now
+          filteredArenas: [], // No need for separate filtered arenas now
         }));
       } catch (error) {
         console.log(error);
@@ -74,9 +71,7 @@ const AddClubSports = ({
   }, [sportsDetails]);
 
   const handleSportChange = (value) => {
-    // Determine if we're adding a new sport or selecting an existing one
     const isAddingNewSport = value === "new";
-
     setData((prev) => ({
       ...prev,
       selectedSport: value,
@@ -121,7 +116,8 @@ const AddClubSports = ({
         selectedArenaClubs: [],
       }));
     } else {
-      const selectedArenaData = data.filteredArenas.find(
+      const selectedArenaData = data.arenas.find(
+        // Changed from filteredArenas to arenas
         (arena) => arena.name === value
       );
 
@@ -233,27 +229,8 @@ const AddClubSports = ({
               />
             </>
           )}
-          {/* <div className="mt-2">
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                checked={data.addNewSport}
-                onChange={handleAddNewSportChange}
-                className="form-checkbox"
-              />
-              <span className="ml-2">Add New Sport</span>
-            </label>
-            {data.addNewSport && (
-              <AddSportsForm
-                data={data}
-                handleNewSportChange={handleNewSportChange}
-                setData={setData}
-              />
-            )}
-          </div> */}
         </div>
 
-        {/* Arena Select */}
         <div>
           {!data.addNewArena && (
             <>
@@ -278,8 +255,14 @@ const AddClubSports = ({
               {data.selectedArenaClubs.length > 0 && (
                 <div className="mt-2 text-sm text-gray-700">
                   <strong>Other Clubs Playing Here: </strong>
-                  {data.selectedArenaClubs
-                    .filter((c) => c.clubName !== club.clubName)
+                  {Array.from(
+                    new Set(
+                      data.selectedArenaClubs
+                        .filter((c) => c.club_id !== club.club_id) // Exclude the current club by ID
+                        .map((c) => JSON.stringify(c)) // Convert each club object to a string to ensure uniqueness
+                    )
+                  )
+                    .map((clubStr) => JSON.parse(clubStr)) // Parse back to object format
                     .map((c) => c.clubName)
                     .join(", ")}
                 </div>
