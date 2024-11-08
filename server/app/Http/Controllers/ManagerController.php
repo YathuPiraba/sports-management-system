@@ -36,11 +36,11 @@ class ManagerController extends Controller
         $roleName = 'Club Manager';
 
         $request->validate([
-            'clubName' => 'required|string|max:255',
+            'clubName' => 'required|string|max:255|unique:clubs,clubName',
             'clubDivisionName' => 'required|string|max:255',
             'clubAddress' => 'required|string|max:255',
             'club_history' => 'nullable|string',
-            'clubContactNo' => 'required|string|max:15',
+            'clubContactNo' => 'required|string|min:9|max:15',
             'clubImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'userName' => 'required|string|max:255|unique:users,userName',
             'email' => 'required|string|email|max:255|unique:users,email',
@@ -51,9 +51,9 @@ class ManagerController extends Controller
             'lastName' => 'required|string|max:255',
             'date_of_birth' => 'required|date',
             'address' => 'required|string|max:255',
-            'nic' => 'required|string|max:20',
-            'contactNo' => 'required|string|max:15',
-            'whatsappNo' => 'nullable|string|max:15',
+            'nic' => 'required|string|min:10|max:12',
+            'contactNo' => 'required|string|min:9|max:15',
+            'whatsappNo' => 'nullable|string|min:9|max:15',
         ]);
 
         DB::beginTransaction();

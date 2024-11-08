@@ -65,7 +65,24 @@ const ManagerSignIn = () => {
       navigate("/home");
     } catch (error) {
       console.error("Error creating request", error);
-      toast.error(error?.message);
+      
+      if (error?.errors) {
+        // Get all error messages from each field
+        const errorFields = Object.entries(error.errors);
+        
+        // Display each field's errors
+        errorFields.forEach(([fieldName, messages]) => {
+          // Handle array of messages for each field
+          if (Array.isArray(messages)) {
+            messages.forEach(message => {
+              toast.error(message);
+            });
+          }
+        });
+      } else {
+        // Display general error message if no field-specific errors exist
+        toast.error(error?.message || "An error occurred");
+      }
     }
   };
 

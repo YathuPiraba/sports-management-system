@@ -49,6 +49,7 @@ const ClubDetails = ({ details, handleChange, divisions }) => (
       <input
         type="text"
         name="clubContactNo"
+        maxLength={15}
         value={details.clubContactNo}
         onChange={handleChange}
         className="mt-1 p-2 w-full border rounded"
