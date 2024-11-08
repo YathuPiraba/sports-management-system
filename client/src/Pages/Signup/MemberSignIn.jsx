@@ -113,7 +113,23 @@ const MemberSignIn = () => {
       toast.success("Successfully Applied for Registration");
     } catch (error) {
       console.error("Error creating request", error);
-      toast.error(error?.message);
+      if (error?.errors) {
+        // Get all error messages from each field
+        const errorFields = Object.entries(error.errors);
+
+        // Display each field's errors
+        errorFields.forEach(([fieldName, messages]) => {
+          // Handle array of messages for each field
+          if (Array.isArray(messages)) {
+            messages.forEach((message) => {
+              toast.error(message);
+            });
+          }
+        });
+      } else {
+        // Display general error message if no field-specific errors exist
+        toast.error(error?.message || "An error occurred");
+      }
     }
   };
 
@@ -184,7 +200,7 @@ const MemberSignIn = () => {
                           backgroundColor: !sportsDetails.selectedSport
                             ? "#ccc"
                             : "#22c55e",
-                          border: 'none',
+                          border: "none",
                         }}
                         className="text-white px-4 py-2 w-max md:w-56 lg:w-64 rounded-md transition-colors signinbtn"
                         disabled={!sportsDetails.selectedSport}
