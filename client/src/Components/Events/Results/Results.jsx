@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const MatchResults = () => {
+const MatchResults = ({ roleId, eventId }) => {
   const sports = ["All Sports", "Football", "Basketball", "Cricket", "Tennis"];
   const [selectedSport, setSelectedSport] = useState("All Sports");
   const [isModalOpen, setIsModalOpen] = useState(false);

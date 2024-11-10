@@ -341,12 +341,19 @@ const Events = () => {
                   {
                     key: "3",
                     label: "Matches",
-                    children: <MatchSchedule />,
+                    children: (
+                      <MatchSchedule
+                        role_id={role_id}
+                        eventId={selectedEvent}
+                      />
+                    ),
                   },
                   {
                     key: "4",
                     label: "Results",
-                    children: <MatchResults />,
+                    children: (
+                      <MatchResults roleId={role_id} eventId={selectedEvent} />
+                    ),
                   },
                 ]}
                 tabBarStyle={{

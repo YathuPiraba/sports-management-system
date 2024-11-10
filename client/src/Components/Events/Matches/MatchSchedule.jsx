@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const MatchSchedule = () => {
+const MatchSchedule = ({ roleId, eventId }) => {
   const [matches, setMatches] = useState([
     {
       date: "November 12, 2024",
