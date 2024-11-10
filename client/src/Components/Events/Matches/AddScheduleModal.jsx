@@ -3,23 +3,21 @@ import React, { useState } from "react";
 const AddScheduleModal = ({ isOpen, onClose, sports, teams, onSave }) => {
   const [formData, setFormData] = useState({
     sport: "",
-    teams: [{ team1: "", team2: "" }],
-    date: "",
-    time: "",
+    teams: [{ team1: "", team2: "", date: "", time: "" }],
     venue: "",
   });
 
   const handleAddTeamFields = () => {
     setFormData((prev) => ({
       ...prev,
-      teams: [...prev.teams, { team1: "", team2: "" }],
+      teams: [...prev.teams, { team1: "", team2: "", date: "", time: "" }],
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData); // Pass form data to parent component
-    onClose(); // Close the modal after saving
+    onSave(formData);
+    onClose();
   };
 
   return (
@@ -71,7 +69,7 @@ const AddScheduleModal = ({ isOpen, onClose, sports, teams, onSave }) => {
                 </select>
               </div>
               {formData.teams.map((team, index) => (
-                <div key={index} className="space-y-4">
+                <div key={index} className="space-y-4 p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-center space-x-4">
                     <div className="flex-1">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -116,6 +114,38 @@ const AddScheduleModal = ({ isOpen, onClose, sports, teams, onSave }) => {
                             </option>
                           ))}
                       </select>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4 mt-4">
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        value={team.date}
+                        onChange={(e) => {
+                          const newTeams = [...formData.teams];
+                          newTeams[index].date = e.target.value;
+                          setFormData({ ...formData, teams: newTeams });
+                        }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Time
+                      </label>
+                      <input
+                        type="time"
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        value={team.time}
+                        onChange={(e) => {
+                          const newTeams = [...formData.teams];
+                          newTeams[index].time = e.target.value;
+                          setFormData({ ...formData, teams: newTeams });
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
