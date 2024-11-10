@@ -183,6 +183,7 @@ class ClubController extends Controller
                     'clubDivisionName' => $clubDivision->divisionName,
                 ],
                 'sports' => $sportsDetails,
+                'gsDivision' => $clubDivision,
             ]);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);

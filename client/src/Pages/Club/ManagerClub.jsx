@@ -9,6 +9,7 @@ import { MdVerified, MdPhone, MdLocationOn } from "react-icons/md";
 const { Title, Text } = Typography;
 
 import SportsArena from "../../Components/Club/Sports_Arena/SportsArena";
+import GSFloatButtons from "../../Components/Club/GSFloatButtons";
 
 const ClubSports = lazy(() =>
   import("../../Components/Club/Club_Sports/ClubSports")
@@ -25,6 +26,7 @@ const AddClubSports = lazy(() => import("../../Components/Club/AddClubSports"));
 const ManagerClub = () => {
   const [club, setClub] = useState(null);
   const [sports, setSports] = useState([]);
+  const [gsDivision, setGsDivision] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeComponent, setActiveComponent] = useState(null);
   const { theme } = useTheme();
@@ -36,8 +38,11 @@ const ManagerClub = () => {
     try {
       const response = await fetchClubDataAPI(userId);
       const data = response.data;
+      console.log(data);
+
       setClub(data.club);
       setSports(data.sports);
+      setGsDivision(data.gsDivision);
     } catch (error) {
       console.error(error);
     } finally {
@@ -229,7 +234,7 @@ const ManagerClub = () => {
         {/* Sports and Arenas Sections */}
         <Tabs defaultActiveKey="1" items={tabItems} size="large" />
       </div>
-
+      {gsDivision && <GSFloatButtons gsDivision={gsDivision} />}
       {renderComponent()}
     </Suspense>
   );
