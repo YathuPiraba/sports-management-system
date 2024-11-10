@@ -44,7 +44,7 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
                 <option value="">Select Division</option>
                 {divisions.map((division) => (
                   <option key={division.id} value={division.divisionName}>
-                    {division.divisionName}
+                    {division.divisionName} ({division.divisionNo})
                   </option>
                 ))}
               </select>
