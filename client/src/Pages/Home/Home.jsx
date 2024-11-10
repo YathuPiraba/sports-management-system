@@ -70,6 +70,10 @@ const Home = () => {
     };
   }, [authenticate.userId]);
 
+  const handleLoginClick = () => {
+    localStorage.removeItem("verified");
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Background Slideshow */}
@@ -93,7 +97,11 @@ const Home = () => {
             ) : (
               <p className="text-green-700 font-medium">
                 You are verified.{" "}
-                <Link to="/login" className="text-blue-700 underline">
+                <Link
+                  to="/login"
+                  className="text-blue-700 underline"
+                  onClick={handleLoginClick}
+                >
                   Click here to log in.
                 </Link>
               </p>
