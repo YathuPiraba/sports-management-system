@@ -131,6 +131,7 @@ const AdminClubs = () => {
       </div>
     );
   }
+  console.log(pagination);
 
   return (
     <div className="px-6">
@@ -215,7 +216,12 @@ const AdminClubs = () => {
             {clubs.map((club, index) => (
               <React.Fragment key={club.id}>
                 <tr>
-                  <td className="px-6 py-4 whitespace-nowrap"> {index + 1} </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {" "}
+                    {(pagination.currentPage - 1) * pagination.perPage +
+                      index +
+                      1}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {club.clubName}
                   </td>
@@ -228,7 +234,7 @@ const AdminClubs = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     {club.gs_division.divisionName}
                   </td>
-                  <td className="px-3 py-4 whitespace-nowrap flex justify-between ">
+                  <td className="px-3 py-4 whitespace-nowrap flex gap-2 justify-between ">
                     <Button
                       className="bg-sky-500 border-blue-400 text-white font-semibold font-sans tracking-wide py-1 px-1 rounded text-sm flex items-center gap-1.5 dwnld-btn"
                       onClick={() => handleDownload(club.id, club.clubName)}
@@ -303,7 +309,7 @@ const AdminClubs = () => {
           goToPage={(page) => fetchClubData(page, pagination.perPage)}
         />
       </div>
-      <div className="flex flex-col justify-end mt-3 font-semibold font-sans">
+      <div className="flex gap-2 justify-between mt-3 font-semibold font-sans">
         <p>
           Page {pagination.currentPage} of {pagination.totalPages}
         </p>

@@ -4,20 +4,26 @@ import { Link } from "react-router-dom";
 import echo from "../../utils/echo";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import "../../App.css"
+import "../../App.css";
 
 const Home = () => {
   const authenticate = useSelector((state) => state.auth.userdata);
   const navigate = useNavigate();
 
-  console.log("aut", authenticate);
+  // Initialize `verified` state from localStorage or authenticate.is_verified
+  const [verified, setVerified] = useState(() => {
+    return (
+      JSON.parse(localStorage.getItem("verified")) || authenticate?.is_verified
+    );
+  });
 
-  const [verified, setVerified] = useState(authenticate?.is_verified);
+  useEffect(() => {
+    localStorage.setItem("verified", JSON.stringify(verified));
+  }, [verified]);
 
   useEffect(() => {
     const channel = echo.channel("reject");
 
-    // Listen for real-time updates
     channel.listen(".user-rejection", (event) => {
       console.log("New user applied:", event.userId);
 
@@ -43,7 +49,6 @@ const Home = () => {
   useEffect(() => {
     const channel = echo.channel("users");
 
-    // Listen for real-time updates
     channel.listen(".user-verification", (event) => {
       console.log("New user applied:", event.userId);
 
@@ -63,7 +68,7 @@ const Home = () => {
     return () => {
       echo.leaveChannel("users");
     };
-  }, []);
+  }, [authenticate.userId]);
 
   return (
     <div className="relative min-h-screen overflow-hidden">

@@ -184,12 +184,19 @@ const ClubMembers = () => {
                       className="px-4 py-2 whitespace-nowrap text-sm"
                     >
                       {column.key === "no" && (
-                        <div className="text-gray-500">{index + 1}</div>
+                        <div className="text-gray-500">
+                          {(pagination.currentPage - 1) * pagination.perPage +
+                            index +
+                            1}
+                        </div>
                       )}
                       {column.key === "profile" && (
                         <div className="flex items-center">
                           <img
-                            src={member.user?.image || "/default-avatar.png"}
+                            src={
+                              member.user?.image ||
+                              "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                            }
                             alt={`${member.firstName} ${member.lastName}`}
                             className="w-12 h-12 rounded-full object-cover"
                           />
