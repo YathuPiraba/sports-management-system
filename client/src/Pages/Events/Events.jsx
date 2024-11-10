@@ -13,6 +13,10 @@ import "../../Components/Navbar/Navbar.css";
 import useClubEvents from "../../hooks/useClubEvents";
 import { useTheme } from "../../context/ThemeContext";
 
+const MatchResults = lazy(() =>
+  import("../../Components/Events/Results/Results")
+);
+
 const MatchSchedule = lazy(() =>
   import("../../Components/Events/Matches/MatchSchedule")
 );
@@ -338,6 +342,11 @@ const Events = () => {
                     key: "3",
                     label: "Matches",
                     children: <MatchSchedule />,
+                  },
+                  {
+                    key: "4",
+                    label: "Results",
+                    children: <MatchResults />,
                   },
                 ]}
                 tabBarStyle={{
