@@ -32,14 +32,15 @@ const AdminApprovalTable = ({
   const renderCell = (data, column, mapping) => {
     const key = mapping[column];
     if (column === "Club Image" || column === "Profile") {
-      return data[key] ? (
+      return  (
         <img
-          src={data[key]}
+          src={
+            data[key] ||
+            "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+          }
           alt={`${column} for ${data.clubName || data.firstName}`}
           className="w-16 h-16 object-cover rounded-full"
         />
-      ) : (
-        "N/A"
       );
     }
 

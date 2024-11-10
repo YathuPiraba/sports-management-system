@@ -29,14 +29,15 @@ const MemberApprovalTable = ({
     }
 
     if (column === "Profile") {
-      return value ? (
+      return (
         <img
-          src={value}
+          src={
+            value ||
+            "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+          }
           alt={`${column} for ${data.firstName} ${data.lastName}`}
           className="w-16 h-16 object-cover rounded-full"
         />
-      ) : (
-        "N/A"
       );
     }
 
