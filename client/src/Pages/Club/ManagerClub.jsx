@@ -148,7 +148,13 @@ const ManagerClub = () => {
       >
         {/* Profile Header */}
         <div className="flex flex-col sm:flex-row items-center mb-8">
-          <Avatar size={80} src={club.clubImage} />
+          <Avatar
+            size={80}
+            src={
+              club.clubImage ||
+              "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+            }
+          />
           <div className="text-center sm:text-left sm:ml-6">
             <div className="flex  justify-center sm:justify-start">
               <Title
