@@ -41,8 +41,7 @@ const AddClubSports = ({
         const sportsResponse = await getAllSportsAPI();
         const arenasResponse = await getAllSportArenasAPI();
 
-        // Always show all arenas
-        const arenas = arenasResponse.data.data;
+        const allArenas = arenasResponse.data.data;
 
         // If sportsDetails is empty, show all sports
         // If not empty, show only the remaining sports that aren't in sportsDetails
@@ -54,12 +53,39 @@ const AddClubSports = ({
                   !sportsDetails.some((detail) => detail.sports_id == sport.id)
               );
 
+        // For the first arena select (existing arenas)
+        const existingArenas =
+          sportsDetails.length === 0
+            ? allArenas // Show all arenas if sportsDetails is empty
+            : allArenas.filter(
+                (
+                  arena // Show only arenas that are in sportsDetails
+                ) =>
+                  sportsDetails.some(
+                    (detail) => detail.sports_arena_id === arena.id
+                  )
+              );
+
+        // For the second arena select (other arenas)
+        const otherArenas =
+          sportsDetails.length === 0
+            ? [] // Don't show any arenas in "other arenas" if sportsDetails is empty
+            : allArenas.filter(
+                (
+                  arena // Show arenas that are not in sportsDetails
+                ) =>
+                  !sportsDetails.some(
+                    (detail) => detail.sports_arena_id === arena.id
+                  )
+              );
+
         setData((prev) => ({
           ...prev,
           sports,
-          arenas,
-          filteredSports: [], // No need for separate filtered sports now
-          filteredArenas: [], // No need for separate filtered arenas now
+          arenas: allArenas,
+          filteredSports: sports,
+          filteredArenas: otherArenas,
+          existingArenas: existingArenas,
         }));
       } catch (error) {
         console.log(error);
@@ -80,22 +106,22 @@ const AddClubSports = ({
     }));
   };
 
-  const handleNewSportChange = (value) => {
-    if (value === "new") {
-      setData((prev) => ({
-        ...prev,
-        isAddingNewSport: true,
-        newSportName: value,
-      }));
-    } else {
-      setData((prev) => ({
-        ...prev,
-        selectedSport: value,
-        isAddingNewSport: false,
-        newSportName: value,
-      }));
-    }
-  };
+  // const handleNewSportChange = (value) => {
+  //   if (value === "new") {
+  //     setData((prev) => ({
+  //       ...prev,
+  //       isAddingNewSport: true,
+  //       newSportName: value,
+  //     }));
+  //   } else {
+  //     setData((prev) => ({
+  //       ...prev,
+  //       selectedSport: value,
+  //       isAddingNewSport: false,
+  //       newSportName: value,
+  //     }));
+  //   }
+  // };
 
   const handleArenaChange = (value) => {
     const selectedArenaData = data.arenas.find((arena) => arena.name === value);
@@ -131,14 +157,14 @@ const AddClubSports = ({
     }
   };
 
-  const handleAddNewSportChange = (e) => {
-    setData((prev) => ({
-      ...prev,
-      addNewSport: e.target.checked,
-      selectedSport: "",
-      newSportName: "",
-    }));
-  };
+  // const handleAddNewSportChange = (e) => {
+  //   setData((prev) => ({
+  //     ...prev,
+  //     addNewSport: e.target.checked,
+  //     selectedSport: "",
+  //     newSportName: "",
+  //   }));
+  // };
 
   const handleAddNewArenaChange = (e) => {
     setData((prev) => ({
@@ -149,8 +175,6 @@ const AddClubSports = ({
       newArenaName: "",
     }));
   };
-
-  console.log(club);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -194,8 +218,6 @@ const AddClubSports = ({
       toast.error(errorMessage);
     }
   };
-
-  console.log(data.selectedArenaClubs);
 
   return (
     <div
@@ -250,7 +272,7 @@ const AddClubSports = ({
                 placeholder="Select a Sports Arena"
                 optionFilterProp="label"
                 onChange={handleArenaChange}
-                options={data.arenas.map((arena) => ({
+                options={data.existingArenas?.map((arena) => ({
                   value: arena.name,
                   label: arena.name,
                 }))}

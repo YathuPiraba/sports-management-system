@@ -38,7 +38,6 @@ const ManagerClub = () => {
     try {
       const response = await fetchClubDataAPI(userId);
       const data = response.data;
-      console.log(data);
 
       setClub(data.club);
       setSports(data.sports);

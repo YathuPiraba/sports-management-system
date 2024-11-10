@@ -29,11 +29,38 @@ const AddArenaForm = ({ data, handleNewArenaChange, setData, club }) => {
 
       {data.selectedArenaClubs.length > 0 && (
         <div className="mt-2 text-sm text-gray-700">
-          <strong>Other Clubs Playing Here: </strong>
-          {data.selectedArenaClubs
-            .filter((c) => c.clubName !== club.clubName)
-            .map((c) => c.clubName)
-            .join(", ")}
+          {Array.from(
+            new Set(
+              data.selectedArenaClubs
+                .filter((c) => c.club_id !== club.id) // Exclude the current club by ID
+                .map((c) => c.club_id) // Only keep unique club IDs
+            )
+          )
+            .map(
+              (uniqueClubId) =>
+                data.selectedArenaClubs.find((c) => c.club_id === uniqueClubId)
+                  ?.clubName
+            )
+            .filter(Boolean).length > 0 ? (
+            <>
+              <strong>Other Clubs Playing Here: </strong>
+              {Array.from(
+                new Set(
+                  data.selectedArenaClubs
+                    .filter((c) => c.club_id !== club.id)
+                    .map((c) => c.club_id)
+                )
+              )
+                .map(
+                  (uniqueClubId) =>
+                    data.selectedArenaClubs.find(
+                      (c) => c.club_id === uniqueClubId
+                    )?.clubName
+                )
+                .filter(Boolean)
+                .join(", ")}
+            </>
+          ) : null}
         </div>
       )}
 
