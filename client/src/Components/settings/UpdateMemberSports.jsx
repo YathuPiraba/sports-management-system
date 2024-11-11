@@ -3,7 +3,6 @@ import {
   updateMemberDetailsApi,
   updateMemberSportsAPI,
   getSkillsBySportsAPI,
-  getAllSportsAPI,
   getAClubSportsAPI,
 } from "../../Services/apiServices";
 import { Button, Input, Card, Tag, Select } from "antd";
@@ -36,15 +35,12 @@ const UpdateMemberSports = ({
         new Map(response.data.map((item) => [item.sports_id, item])).values()
       );
 
-      console.log(uniqueSports);
-      
-
       // Filter out sports that are already selected
       const existingSportIds = sports.map((sport) => sport.sport_id);
       const filteredSports = uniqueSports.filter(
         (sport) => !existingSportIds.includes(sport.sports_id)
       );
-      
+
       setAvailableSports(filteredSports);
     } catch (error) {
       console.log("Error fetching sports data:", error);
@@ -94,16 +90,27 @@ const UpdateMemberSports = ({
 
   // Fetch skills when new sport is selected
   useEffect(() => {
-    if (newSportId) {
-      const selectedSport = availableSports.find(
-        (sport) => sport.id === newSportId
-      );
-      if (selectedSport?.skills) {
-        setNewSportSkills(selectedSport.skills);
+    const fetchAndSetNewSportSkills = async () => {
+      if (newSportId) {
+        try {
+          const skills = await fetchSkillOptions(newSportId);
+          // Ensure the skills data is properly formatted
+          setNewSportSkills(
+            skills.map((skill) => ({
+              id: skill.skillId || skill.id,
+              skill: skill.skill,
+            }))
+          );
+        } catch (error) {
+          console.error("Error fetching skills for the new sport:", error);
+          setNewSportSkills([]);
+        }
+      } else {
+        setNewSportSkills([]);
       }
-    } else {
-      setNewSportSkills([]);
-    }
+    };
+
+    fetchAndSetNewSportSkills();
     setNewSkillId(null);
   }, [newSportId]);
 
@@ -146,8 +153,14 @@ const UpdateMemberSports = ({
     delete updatedSelectedSkills[removedSport.sport_id];
     setSelectedSkills(updatedSelectedSkills);
 
-    // Update available sports
-    setAvailableSports((prev) => [...prev, removedSport]);
+    // Update available sports list with the removed sport
+    const sportToAdd = availableSports.find(
+      (s) => s.sports_id === removedSport.sport_id
+    ) || {
+      sports_id: removedSport.sport_id,
+      sportsName: removedSport.sport_name,
+    };
+    setAvailableSports((prev) => [...prev, sportToAdd]);
   };
 
   const handleSkillChange = (sportId, newSkillId) => {
@@ -165,23 +178,28 @@ const UpdateMemberSports = ({
   const handleAddNewSport = () => {
     if (newSportId && newSkillId) {
       const selectedSport = availableSports.find(
-        (sport) => sport.id === newSportId
+        (sport) => sport.sports_id === newSportId
       );
-      const selectedSkill = selectedSport.skills.find(
+      const selectedSkill = newSportSkills.find(
         (skill) => skill.id === newSkillId
       );
 
+      if (!selectedSport || !selectedSkill) {
+        console.error("Selected sport or skill not found");
+        return;
+      }
+
       // Add new sport to sports list
       const newSport = {
-        sport_id: selectedSport.id,
-        sport_name: selectedSport.name,
+        sport_id: selectedSport.sports_id,
+        sport_name: selectedSport.sportsName,
         skills: [{ skillId: selectedSkill.id, skill: selectedSkill.skill }],
       };
 
       setSports((prev) => [...prev, newSport]);
       setSelectedSkills((prev) => ({
         ...prev,
-        [selectedSport.id]: {
+        [selectedSport.sports_id]: {
           skillId: selectedSkill.id,
           skill: selectedSkill.skill,
         },
@@ -247,7 +265,7 @@ const UpdateMemberSports = ({
                 <Select
                   className="w-40"
                   placeholder="Select skill"
-                  value={selectedSkills[sport.sport_id]?.skill || ""}
+                  value={selectedSkills[sport.sport_id]?.skill || undefined}
                   onChange={(skillId) =>
                     handleSkillChange(sport.sport_id, skillId)
                   }
