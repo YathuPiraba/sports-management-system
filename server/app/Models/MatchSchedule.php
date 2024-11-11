@@ -5,40 +5,41 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MatchSchedule extends Model
+class MatchSchedule extends Model  // Rename the class to SportMatch
 {
     use HasFactory;
 
+    protected $table = 'matches';
+
     protected $fillable = [
-        'event_sport_id',
-        'club_1_id',
-        'club_2_id',
+        'event_sports_id',
+        'home_club_id',
+        'away_club_id',
         'match_date',
-        'match_time',
-        'venue',
+        'time',  // The renamed column
     ];
 
     /**
-     * Get the event sport that owns the MatchSchedule.
+     * Get the event sport associated with the match.
      */
     public function eventSport()
     {
-        return $this->belongsTo(EventSports::class, 'event_sport_id');
+        return $this->belongsTo(EventSports::class, 'event_sports_id');
     }
 
     /**
-     * Get the first club participating in the match.
+     * Get the home club associated with the match.
      */
-    public function club1()
+    public function homeClub()
     {
-        return $this->belongsTo(Club::class, 'club_1_id');
+        return $this->belongsTo(Club::class, 'home_club_id');
     }
 
     /**
-     * Get the second club participating in the match.
+     * Get the away club associated with the match.
      */
-    public function club2()
+    public function awayClub()
     {
-        return $this->belongsTo(Club::class, 'club_2_id');
+        return $this->belongsTo(Club::class, 'away_club_id');
     }
 }
