@@ -4,6 +4,7 @@ import {
   updateMemberSportsAPI,
   getSkillsBySportsAPI,
   getAllSportsAPI,
+  getAClubSportsAPI,
 } from "../../Services/apiServices";
 import { Button, Input, Card, Tag, Select } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
@@ -30,12 +31,20 @@ const UpdateMemberSports = ({
 
   const fetchSports = async () => {
     try {
-      const res = await getAllSportsAPI();
+      const response = await getAClubSportsAPI(memberDetails.club.clubName);
+      const uniqueSports = Array.from(
+        new Map(response.data.map((item) => [item.sports_id, item])).values()
+      );
+
+      console.log(uniqueSports);
+      
+
       // Filter out sports that are already selected
       const existingSportIds = sports.map((sport) => sport.sport_id);
-      const filteredSports = res.data.filter(
-        (sport) => !existingSportIds.includes(sport.id)
+      const filteredSports = uniqueSports.filter(
+        (sport) => !existingSportIds.includes(sport.sports_id)
       );
+      
       setAvailableSports(filteredSports);
     } catch (error) {
       console.log("Error fetching sports data:", error);
@@ -180,7 +189,7 @@ const UpdateMemberSports = ({
 
       // Remove selected sport from available sports
       setAvailableSports((prev) =>
-        prev.filter((sport) => sport.id !== newSportId)
+        prev.filter((sport) => sport.sports_id !== newSportId)
       );
 
       // Reset selection
@@ -268,8 +277,8 @@ const UpdateMemberSports = ({
               onChange={setNewSportId}
             >
               {availableSports.map((sport) => (
-                <Option key={sport.id} value={sport.id}>
-                  {sport.name}
+                <Option key={sport.sports_id} value={sport.sports_id}>
+                  {sport.sportsName}
                 </Option>
               ))}
             </Select>
