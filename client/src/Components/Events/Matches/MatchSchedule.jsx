@@ -32,6 +32,8 @@ const MatchSchedule = ({ roleId, eventId }) => {
     try {
       const res = await getEventClubsAPI(eventId);
       setEventData(res.data.data);
+      console.log(res.data.data);
+      
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");
@@ -100,12 +102,12 @@ const MatchSchedule = ({ roleId, eventId }) => {
               <div className="flex items-center justify-between">
                 <div className="flex flex-col items-center space-y-2">
                   <img
-                    src={match.club1.image}
-                    alt={match.club1.name}
+                    src={match?.club1?.image}
+                    alt={match?.club1?.name}
                     className="w-16 h-16 rounded-full object-cover"
                   />
                   <span className="font-medium text-gray-800">
-                    {match.club1.name}
+                    {match?.club1?.name}
                   </span>
                 </div>
 
@@ -119,12 +121,12 @@ const MatchSchedule = ({ roleId, eventId }) => {
 
                 <div className="flex flex-col items-center space-y-2">
                   <img
-                    src={match.club2.image}
-                    alt={match.club2.name}
+                    src={match?.club2?.image}
+                    alt={match?.club2?.name}
                     className="w-16 h-16 rounded-full object-cover"
                   />
                   <span className="font-medium text-gray-800">
-                    {match.club2.name}
+                    {match?.club2?.name}
                   </span>
                 </div>
               </div>

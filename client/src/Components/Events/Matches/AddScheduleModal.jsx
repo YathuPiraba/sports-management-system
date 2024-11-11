@@ -1,3 +1,4 @@
+import { Button } from "antd";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -5,7 +6,6 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
   const initialFormState = {
     sport: "",
     teams: [{ team1: "", team2: "", date: "", time: "" }],
-    venue: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -76,7 +76,9 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
         throw new Error("Please select a tournament");
       }
 
-      await postScheduleData(formData);
+      console.log(formData);
+
+      // await postScheduleData(formData);
       onSave(formData);
       toast.success("Schedule saved successfully");
       handleClose();
@@ -274,13 +276,14 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-200 disabled:bg-blue-400"
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-5 rounded-lg transition-colors duration-200 disabled:bg-blue-400"
                 >
-                  {loading ? "Saving..." : "Save Schedule"}
-                </button>
+                  Save Schedule
+                </Button>
               </div>
             </form>
           </div>
