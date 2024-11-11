@@ -155,7 +155,6 @@ const MemberSignIn = () => {
     setCurrentStep("personalDetails");
   };
 
-  console.log(sportsDetails.selectedSport);
   return (
     <Suspense fallback={<div className="bg-customGreen">Loading...</div>}>
       <div className="min-h-screen bg-customGreen  text-black ">

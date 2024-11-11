@@ -33,7 +33,13 @@ const SportsDetails = ({ clubs, onSportsDetailsChange }) => {
   const fetchSportsByClub = async (clubName) => {
     try {
       const response = await getAClubSportsAPI(clubName);
-      setSports(response.data);
+
+      // Filter out duplicates based on sports_id
+      const uniqueSports = Array.from(
+        new Map(response.data.map((item) => [item.sports_id, item])).values()
+      );
+
+      setSports(uniqueSports);
     } catch (error) {
       console.error("Error fetching sports for club:", error);
     }

@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddScheduleModal from "./AddScheduleModal";
+import { getEventParticipantsAPI } from "../../../Services/apiServices";
+import toast from "react-hot-toast";
 
 const MatchSchedule = ({ roleId, eventId }) => {
+  const [loading, setLoading] = useState(false);
+
   const [matches, setMatches] = useState([
     {
       date: "November 12, 2024",
@@ -29,6 +33,23 @@ const MatchSchedule = ({ roleId, eventId }) => {
     venue: "",
   });
 
+  const fetchParticipatingClubs = async () => {
+    setLoading(true);
+    try {
+      const res = await getEventParticipantsAPI(eventId);
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching participation list");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchParticipatingClubs();
+  }, []);
+
   // Sample data - in real app, this would come from API
   const sports = ["Football", "Basketball", "Cricket", "Tennis"];
   const teams = {
@@ -54,7 +75,7 @@ const MatchSchedule = ({ roleId, eventId }) => {
   const handleSave = (newMatch) => {
     setMatches([...matches, newMatch]);
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header with Add Schedule button */}
