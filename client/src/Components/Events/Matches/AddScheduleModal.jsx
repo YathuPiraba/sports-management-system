@@ -101,7 +101,7 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
       }
 
       console.log(formData);
-      
+
       await postScheduleData(formData);
       onSave(formData);
       toast.success("Schedule saved successfully");

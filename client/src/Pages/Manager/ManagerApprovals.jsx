@@ -64,7 +64,6 @@ const ManagerApprovals = () => {
     message.error("Process cancelled");
   };
 
- 
   return (
     <Suspense fallback={<div>Loading... </div>}>
       <>
@@ -100,7 +99,10 @@ const ManagerApprovals = () => {
                             className={`w-full text-left text-l border-0 hover:text-white font-semibold p-2 mb-0 rounded-sm mt-0`}
                             onClick={() => handleToggle(member.memberId)}
                           >
-                           {(pagination.currentPage - 1) * pagination.perPage + index + 1}. {member.firstName} {member.lastName} -{" "}
+                            {(pagination.currentPage - 1) * pagination.perPage +
+                              index +
+                              1}
+                            . {member.firstName} {member.lastName} -{" "}
                             {member.position}
                           </button>
                         </div>
