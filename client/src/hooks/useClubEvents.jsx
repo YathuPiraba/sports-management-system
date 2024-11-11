@@ -16,6 +16,8 @@ const useClubEvents = (selectedEvent, userId) => {
           ...item.event_sports,
           participants: item.event_sports.participants || [],
         }));
+        console.log(res.data.data);
+        
         setEventSportsWithParticipants(eventSportsData);
       } catch (error) {
         console.error("Error fetching club events:", error);

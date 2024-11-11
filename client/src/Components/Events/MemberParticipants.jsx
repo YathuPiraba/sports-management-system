@@ -27,11 +27,10 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
   if (!memberData || memberData.length === 0) {
     return (
       <div className="text-center font-poppins text-2xl text-gray-600 min-h-[400px] flex items-center justify-center">
-         Currently, you are not participating in this event.
+        Currently, you are not participating in this event.
       </div>
     );
   }
-
 
   if (loading) {
     return (
@@ -41,7 +40,6 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
     );
   }
 
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -49,6 +47,8 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
       day: "numeric",
     });
   };
+
+  console.log(memberData.event_sports);
 
   return (
     <div className="container mx-auto p-4">
@@ -61,7 +61,10 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
         <div className="flex items-center space-x-6">
           <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-blue-100 flex-shrink-0">
             <img
-              src={memberData.member?.image}
+              src={
+                memberData.member?.image ||
+                "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+              }
               alt={`${memberData.member?.firstName} ${memberData.member?.lastName}`}
               className="object-cover w-full h-full"
             />
@@ -77,7 +80,10 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-100">
               <img
-                src={memberData.member?.clubImage}
+                src={
+                  memberData.member?.clubImage ||
+                  "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                }
                 alt={memberData.member?.clubName}
                 className="object-cover w-full h-full"
               />

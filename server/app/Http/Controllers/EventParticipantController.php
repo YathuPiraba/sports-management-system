@@ -259,12 +259,15 @@ class EventParticipantController extends Controller
 
             $clubId = $clubManager->club_id;
 
-            // Fetch all event sports data with participants based on event_id and club_id
-            $eventSports = EventSports::with([
-                'eventClubs.club:id,clubName,clubImage', // Fetch club details including clubImage
-                'eventClubs.participants.memberSport:id,sports_id,member_id', // Fetch member sport details
-                'eventClubs.participants.memberSport.member:id,firstName,lastName,position,user_id', // Fetch member details
-                'eventClubs.participants.memberSport.sport:id,name,image', // Fetch sport details
+            // Fetch the EventSports data and participants details
+            $eventSportsData = EventSports::with([
+                'sportsCategory:id,name,image', // Sports category details
+                'eventClubs' => function ($query) use ($clubId) {
+                    $query->where('club_id', $clubId)->select('id', 'club_id', 'event_sports_id');
+                },
+                'eventClubs.club:id,clubName,clubImage', // Club details
+                'eventClubs.participants.memberSport.member.user:id,image', // Member profile image
+                'eventClubs.participants.memberSport.member:id,firstName,lastName,position,user_id', // Member details
             ])
                 ->where('event_id', $eventId)
                 ->whereHas('eventClubs', function ($query) use ($clubId) {
@@ -272,7 +275,7 @@ class EventParticipantController extends Controller
                 })
                 ->get();
 
-            if ($eventSports->isEmpty()) {
+            if ($eventSportsData->isEmpty()) {
                 return response()->json([
                     'success' => true,
                     'data' => [],
@@ -281,7 +284,7 @@ class EventParticipantController extends Controller
             }
 
             // Transform the data to the desired structure
-            $flattenedData = $eventSports->map(function ($eventSport) {
+            $flattenedData = $eventSportsData->map(function ($eventSport) {
                 return [
                     'event_sports' => [
                         'id' => $eventSport->id,
@@ -290,16 +293,16 @@ class EventParticipantController extends Controller
                         'end_date' => $eventSport->end_date,
                         'place' => $eventSport->place,
                         'sports' => [
-                            'sports_id' => $eventSport->sportsCategory->id ?? null, // Safely access sport ID
-                            'name' => $eventSport->sportsCategory->name ?? 'N/A', // Safely access sport name
-                            'image' => $eventSport->sportsCategory->image ?? null, // Ensure this field exists in the sportsCategory model
+                            'sports_id' => $eventSport->sportsCategory->id ?? null,
+                            'name' => $eventSport->sportsCategory->name ?? 'N/A',
+                            'image' => $eventSport->sportsCategory->image ?? null,
                         ],
                         'club' => [
-                            'id' => $eventSport->eventClubs->first()->club_id,
-                            'name' => $eventSport->eventClubs->first()->club->clubName,
-                            'image' => $eventSport->eventClubs->first()->club->clubImage  ?? null, // Include clubImage here
+                            'id' => $eventSport->eventClubs->first()->club->id ?? null,
+                            'name' => $eventSport->eventClubs->first()->club->clubName ?? 'N/A',
+                            'image' => $eventSport->eventClubs->first()->club->clubImage ?? null,
                         ],
-                        'event_club_id' => $eventSport->eventClubs->first()->id,
+                        'event_club_id' => $eventSport->eventClubs->first()->id ?? null,
                         'participants' => $eventSport->eventClubs->flatMap(function ($eventClub) {
                             return $eventClub->participants->map(function ($participant) {
                                 return [
@@ -308,7 +311,7 @@ class EventParticipantController extends Controller
                                         'firstName' => $participant->memberSport->member->firstName,
                                         'lastName' => $participant->memberSport->member->lastName,
                                         'position' => $participant->memberSport->member->position,
-                                        'image' => $participant->memberSport->member->user->image  ?? null,
+                                        'image' => $participant->memberSport->member->user->image ?? null,
                                     ],
                                 ];
                             });
@@ -330,7 +333,6 @@ class EventParticipantController extends Controller
             ], 500);
         }
     }
-
 
     public function generateEventParticipantsPDF($eventSportsId)
     {

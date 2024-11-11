@@ -46,7 +46,10 @@ const ClubParticipants = ({ participants, loading, theme }) => {
         <div className="flex items-center space-x-4">
           <div className="w-16 h-16 rounded-lg overflow-hidden">
             <img
-              src={clubInfo.image}
+              src={
+                clubInfo.image ||
+                "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+              }
               alt={clubInfo.name}
               className="w-full h-full object-cover"
             />
@@ -69,11 +72,17 @@ const ClubParticipants = ({ participants, loading, theme }) => {
             >
               {/* Sports Card Header */}
               <div className="relative h-32">
-                <img
-                  src={event.sports.image}
-                  alt={event.sports.name}
-                  className="w-full h-full object-cover"
-                />
+                {event.sports.image ? (
+                  <img
+                    src={event.sports.image}
+                    alt={event.sports.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-32 bg-gray-200 flex items-center justify-center">
+                    <p className="text-gray-500">No Image Available</p>
+                  </div>
+                )}
                 <div className="absolute top-0 right-0 bg-blue-600 text-white px-3 py-1 rounded-bl-lg">
                   {event.sports.name}
                 </div>
@@ -120,7 +129,10 @@ const ClubParticipants = ({ participants, loading, theme }) => {
                       >
                         <div className="w-8 h-8 rounded-full overflow-hidden mr-3 flex-shrink-0">
                           <img
-                            src={participant.member.image}
+                            src={
+                              participant.member.image ||
+                              "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                            }
                             alt={participant.member.firstName}
                             className="w-full h-full object-cover"
                           />
