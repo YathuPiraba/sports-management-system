@@ -158,7 +158,11 @@ const Navbar = () => {
             style={{ width: 30, height: 30, marginRight: 7, flexShrink: 0 }}
           >
             <img
-              src={notification.image}
+              src={
+                notification?.image && notification?.image !== "null"
+                  ? notification?.image
+                  : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+              }
               alt="Image"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
@@ -252,7 +256,7 @@ const Navbar = () => {
                               : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
                           }
                           alt="user"
-                          title="user name"
+                          title={user.userName}
                           className="w-full h-full object-cover"
                         />
                       </span>
