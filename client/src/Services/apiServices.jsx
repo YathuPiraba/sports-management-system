@@ -470,3 +470,8 @@ export const downloadEventSportsDetailsAPI = async (eventSportsId) => {
     throw error;
   }
 };
+
+
+export const addMatchScheduleAPI = (eventSportId, data) => {
+  return authApiClient.post(`event-sports/${eventSportId}/matches`, data);
+};

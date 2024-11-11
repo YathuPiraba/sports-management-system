@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { addMatchScheduleAPI } from "../../../Services/apiServices";
 
 const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
   const initialFormState = {
@@ -47,67 +48,44 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
     onClose();
   };
 
-  const postScheduleData = async (scheduleData) => {
-    try {
-      const response = await fetch("/api/match-schedules", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(scheduleData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to save schedule");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error posting schedule:", error);
-      throw error;
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
       // Validate that all matches have both teams selected
       const isValid = formData.matches.every(
         (match) =>
-          match.home_club_id &&
-          match.away_club_id &&
-          match.match_date &&
-          match.time
+          match.home_club_id && match.away_club_id && match.match_date && match.time
       );
-
+  
       if (!isValid) {
         throw new Error("Please fill in all match details");
       }
-
+  
       if (!formData.event_sports_id) {
         throw new Error("Please select a tournament");
       }
-
+  
       // Check that teams are different
       const hasInvalidMatch = formData.matches.some(
         (match) => match.home_club_id === match.away_club_id
       );
-
+  
       if (hasInvalidMatch) {
         throw new Error("Home and away teams cannot be the same");
       }
-
+  
       console.log(formData);
-
-      await postScheduleData(formData);
+  
+      await addMatchScheduleAPI(formData.event_sports_id, formData);
       onSave(formData);
       toast.success("Schedule saved successfully");
       handleClose();
     } catch (error) {
-      toast.error(error.message || "Failed to save schedule");
+      // Display error messages from the API response
+      const errorMessage = error.response?.data?.message || error.message || "Failed to save schedule";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
