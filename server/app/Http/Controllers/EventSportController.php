@@ -54,61 +54,68 @@ class EventSportController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function getEventSportsWithClubs($eventId)
-    {
-        try {
-            // Fetch event sports with associated clubs for the given event ID
-            $eventSports = EventSports::where('event_id', $eventId)
-                ->with([
-                    'eventClubs.club:id,clubName',
-                    'sportsCategory:id,name,image',
-                ])->get();
+     public function getEventSportsWithClubs($eventId)
+     {
+         try {
+             // Fetch event sports with associated clubs for the given event ID, eager loading clubs
+             $eventSports = EventSports::where('event_id', $eventId)
+                 ->with([
+                     'eventClubs.club:id,clubName,clubImage',
+                     'sportsCategory:id,name,image',
+                 ])
+                 ->get()
+                 ->filter(function ($eventSport) {
+                     // Filter out event sports without associated event clubs
+                     return $eventSport->eventClubs->isNotEmpty();
+                 });
 
-            // Check if any event sports data exists for the event
-            if ($eventSports->isEmpty()) {
-                return response()->json([
-                    'success' => true,
-                    'data' => [],
-                    'message' => 'No event sports data found.',
-                ], 200);
-            }
+             // Check if any filtered event sports data exists
+             if ($eventSports->isEmpty()) {
+                 return response()->json([
+                     'success' => true,
+                     'data' => [],
+                     'message' => 'No event sports with clubs found.',
+                 ], 200);
+             }
 
-            // Transform the data to a simplified structure
-            $data = $eventSports->map(function ($eventSport) {
-                return [
-                    'event_sport_id' => $eventSport->id,
-                    'name' => $eventSport->name,
-                    'start_date' => $eventSport->start_date,
-                    'end_date' => $eventSport->end_date,
-                    'place' => $eventSport->place,
-                    'sports' => $eventSport->sportsCategory ? [
-                        'id' => $eventSport->sportsCategory->id,
-                        'name' => $eventSport->sportsCategory->name,
-                        'image' => $eventSport->sportsCategory->image,
-                    ] : null,
-                    'clubs' => $eventSport->eventClubs->map(function ($eventClub) {
-                        return [
-                            'club_id' => $eventClub->club_id,
-                            'clubName' => $eventClub->club->clubName ?? null,
-                            'event_clubs_id' => $eventClub->id,
-                        ];
-                    }),
-                ];
-            });
+             // Transform the filtered data to a simplified structure
+             $data = $eventSports->map(function ($eventSport) {
+                 return [
+                     'event_sport_id' => $eventSport->id,
+                     'name' => $eventSport->name,
+                     'start_date' => $eventSport->start_date,
+                     'end_date' => $eventSport->end_date,
+                     'place' => $eventSport->place,
+                     'sports' => $eventSport->sportsCategory ? [
+                         'id' => $eventSport->sportsCategory->id,
+                         'name' => $eventSport->sportsCategory->name,
+                         'image' => $eventSport->sportsCategory->image,
+                     ] : null,
+                     'clubs' => $eventSport->eventClubs->map(function ($eventClub) {
+                         return [
+                             'club_id' => $eventClub->club_id,
+                             'clubName' => $eventClub->club->clubName ?? null,
+                             'clubImage' => $eventClub->club->clubImage ?? null,
+                             'event_clubs_id' => $eventClub->id,
+                         ];
+                     }),
+                 ];
+             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Error fetching event sports with clubs: ' . $e->getMessage());
+             return response()->json([
+                 'success' => true,
+                 'data' => $data,
+             ], 200);
+         } catch (\Exception $e) {
+             Log::error('Error fetching event sports with clubs: ' . $e->getMessage());
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error fetching event sports with clubs: ' . $e->getMessage(),
-            ], 500);
-        }
-    }
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Error fetching event sports with clubs: ' . $e->getMessage(),
+             ], 500);
+         }
+     }
+
 
 
     /**

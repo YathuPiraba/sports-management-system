@@ -1,43 +1,37 @@
 import React, { useState, useEffect } from "react";
 import AddScheduleModal from "./AddScheduleModal";
-import { getEventParticipantsAPI } from "../../../Services/apiServices";
+import { getEventClubsAPI } from "../../../Services/apiServices";
 import toast from "react-hot-toast";
 
 const MatchSchedule = ({ roleId, eventId }) => {
   const [loading, setLoading] = useState(false);
+  const [eventData, setEventData] = useState(null);
 
   const [matches, setMatches] = useState([
     {
       date: "November 12, 2024",
-      sport: "Football",
+      sport: "Chess",
       sportImage: "/api/placeholder/80/80",
       club1: {
-        name: "Manchester United",
+        name: "Lambodhara S.C",
         image: "/api/placeholder/64/64",
       },
       club2: {
-        name: "Chelsea",
+        name: "KalaJothi",
         image: "/api/placeholder/64/64",
       },
       time: "20:00",
-      venue: "Old Trafford",
+      venue: "Skantha",
     },
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    sport: "",
-    teams: [{ team1: "", team2: "" }],
-    date: "",
-    time: "",
-    venue: "",
-  });
 
   const fetchParticipatingClubs = async () => {
     setLoading(true);
     try {
-      const res = await getEventParticipantsAPI(eventId);
-      console.log(res.data);
+      const res = await getEventClubsAPI(eventId);
+      setEventData(res.data.data);
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");
@@ -49,28 +43,6 @@ const MatchSchedule = ({ roleId, eventId }) => {
   useEffect(() => {
     fetchParticipatingClubs();
   }, []);
-
-  // Sample data - in real app, this would come from API
-  const sports = ["Football", "Basketball", "Cricket", "Tennis"];
-  const teams = {
-    Football: ["Manchester United", "Chelsea", "Liverpool", "Arsenal"],
-    Basketball: ["Lakers", "Bulls", "Warriors", "Celtics"],
-    Cricket: ["India", "Australia", "England", "South Africa"],
-    Tennis: ["Individual Sport"],
-  };
-
-  const handleAddTeamFields = () => {
-    setFormData((prev) => ({
-      ...prev,
-      teams: [...prev.teams, { team1: "", team2: "" }],
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission here
-    setIsModalOpen(false);
-  };
 
   const handleSave = (newMatch) => {
     setMatches([...matches, newMatch]);
@@ -161,12 +133,11 @@ const MatchSchedule = ({ roleId, eventId }) => {
         </div>
       ))}
 
-      {roleId === 1 && (
+      {roleId === 1 && eventData && (
         <AddScheduleModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          sports={sports}
-          teams={teams}
+          eventData={eventData}
           onSave={handleSave}
         />
       )}

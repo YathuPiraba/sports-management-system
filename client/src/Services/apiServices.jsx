@@ -413,7 +413,7 @@ export const getEventParticipantsAPI = (eventId) => {
   return authApiClient.get(`/getEventParticipants/${eventId}`);
 };
 
-export const getEventClubs = (eventId) => {
+export const getEventClubsAPI = (eventId) => {
   return authApiClient.get(`events/${eventId}/sports`);
 };
 
