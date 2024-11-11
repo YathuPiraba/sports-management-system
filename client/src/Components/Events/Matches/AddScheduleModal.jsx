@@ -110,6 +110,13 @@ const AddScheduleModal = ({
     return selectedEvent ? selectedEvent.clubs : [];
   };
 
+  // Get the start and end dates for the selected event
+  const selectedEvent = eventsArray.find(
+    (event) => event.event_sport_id == formData.event_sports_id
+  );
+  const eventStartDate = selectedEvent?.start_date || "";
+  const eventEndDate = selectedEvent?.end_date || "";
+
   return (
     isOpen && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
@@ -260,6 +267,8 @@ const AddScheduleModal = ({
                         type="date"
                         className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         value={match.match_date || ""}
+                        min={eventStartDate}
+                        max={eventEndDate}
                         onChange={(e) => {
                           const newMatches = [...formData.matches];
                           newMatches[index].match_date = e.target.value;

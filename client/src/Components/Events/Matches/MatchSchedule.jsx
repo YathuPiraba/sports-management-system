@@ -95,18 +95,20 @@ const MatchSchedule = ({ roleId, eventId }) => {
             </div>
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="border-b border-gray-200 p-4 flex items-center space-x-4">
-                <img
-                  src={
-                    match?.sportImage ||
-                    "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
-                  }
-                  alt={match?.sport}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <span className="text-lg font-medium text-gray-700">
-                  {match.sport}
-                </span>
+              <div className="border-b border-gray-200 p-4 flex items-center justify-between space-x-4">
+                <div className=" flex items-center gap-4">
+                  <img
+                    src={
+                      match?.sportImage ||
+                      "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                    }
+                    alt={match?.sport}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <span className="text-lg font-medium text-gray-700">
+                    {match.sport}
+                  </span>
+                </div>
                 <div className="mt-1 font-mono">
                   {match?.event_start_date} - {match?.event_end_date}
                 </div>
