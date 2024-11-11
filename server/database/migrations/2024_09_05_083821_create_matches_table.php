@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('home_club_id')->constrained('clubs')->onDelete('cascade');
             $table->foreignId('away_club_id')->constrained('clubs')->onDelete('cascade');
             $table->dateTime('match_date');
-            $table->string('venue', 255);
             $table->timestamps();
         });
     }
@@ -28,5 +27,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('matches');
     }
-    
+
 };

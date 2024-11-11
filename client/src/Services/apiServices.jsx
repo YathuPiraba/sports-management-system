@@ -475,3 +475,7 @@ export const downloadEventSportsDetailsAPI = async (eventSportsId) => {
 export const addMatchScheduleAPI = (eventSportId, data) => {
   return authApiClient.post(`event-sports/${eventSportId}/matches`, data);
 };
+
+export const getMatchSchedulesAPI = (eventId) => {
+  return authApiClient.get(`/event/${eventId}/match-schedules`);
+};

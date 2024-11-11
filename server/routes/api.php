@@ -156,6 +156,9 @@ Route::prefix('event-sports/{eventSportId}/matches')->group(function () {
     Route::delete('/{id}', [MatchScheduleController::class, 'destroy']); // Delete a specific match schedule
 });
 
+Route::get('/event/{eventId}/match-schedules', [MatchScheduleController::class, 'getMatchSchedulesByEvent']);
+
+
 Route::prefix('matches/{matchScheduleId}/results')->group(function () {
     Route::post('/', [MatchResultController::class, 'store']); // Create a new match result
     Route::get('/', [MatchResultController::class, 'index']); // Get all results for a specific match schedule

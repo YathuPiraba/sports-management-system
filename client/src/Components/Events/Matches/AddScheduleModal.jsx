@@ -3,7 +3,12 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { addMatchScheduleAPI } from "../../../Services/apiServices";
 
-const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
+const AddScheduleModal = ({
+  isOpen,
+  onClose,
+  eventData,
+  fetchMatchSchedule,
+}) => {
   const initialFormState = {
     event_sports_id: "",
     matches: [
@@ -51,40 +56,46 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       // Validate that all matches have both teams selected
       const isValid = formData.matches.every(
         (match) =>
-          match.home_club_id && match.away_club_id && match.match_date && match.time
+          match.home_club_id &&
+          match.away_club_id &&
+          match.match_date &&
+          match.time
       );
-  
+
       if (!isValid) {
         throw new Error("Please fill in all match details");
       }
-  
+
       if (!formData.event_sports_id) {
         throw new Error("Please select a tournament");
       }
-  
+
       // Check that teams are different
       const hasInvalidMatch = formData.matches.some(
         (match) => match.home_club_id === match.away_club_id
       );
-  
+
       if (hasInvalidMatch) {
         throw new Error("Home and away teams cannot be the same");
       }
-  
+
       console.log(formData);
-  
+
       await addMatchScheduleAPI(formData.event_sports_id, formData);
-      onSave(formData);
+      fetchMatchSchedule();
       toast.success("Schedule saved successfully");
       handleClose();
     } catch (error) {
       // Display error messages from the API response
-      const errorMessage = error.response?.data?.message || error.message || "Failed to save schedule";
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to save schedule";
       toast.error(errorMessage);
     } finally {
       setLoading(false);

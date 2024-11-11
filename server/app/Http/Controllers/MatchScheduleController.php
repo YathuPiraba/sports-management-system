@@ -6,6 +6,7 @@ use App\Models\MatchSchedule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class MatchScheduleController extends Controller
 {
@@ -56,7 +57,7 @@ class MatchScheduleController extends Controller
      */
     public function index($eventSportId)
     {
-        $matches = MatchSchedule::where('event_sport_id', $eventSportId)->get();
+        $matches = MatchSchedule::where('event_sports_id', $eventSportId)->get();
         return response()->json($matches);
     }
 
@@ -71,6 +72,63 @@ class MatchScheduleController extends Controller
         $match = MatchSchedule::findOrFail($id);
         return response()->json($match);
     }
+
+    public function getMatchSchedulesByEvent($eventId)
+    {
+        try {
+            // Fetch match schedules for the specific event with related home club, away club, and event sport details
+            $matchSchedules = MatchSchedule::whereHas('eventSport', function ($query) use ($eventId) {
+                $query->where('event_id', $eventId);
+            })
+                ->with([
+                    'homeClub:id,clubName,clubImage',
+                    'awayClub:id,clubName,clubImage',
+                    'eventSport:id,name,start_date,end_date,place,sports_id',
+                ])
+                ->get(); // Fetch all match schedules without grouping
+
+            // Format the response for each match schedule
+            $matchData = $matchSchedules->map(function ($match) {
+                return [
+                    'date' => \Carbon\Carbon::parse($match->match_date)->format('F d, Y'), // format match_date as "November 12, 2024"
+                    'sport' => $match->eventSport->name, // event sport name
+                    'sportImage' => $match->eventSport->sportsCategory ? $match->eventSport->sportsCategory->image : null, // Use sportsCategory image or null
+                    'club1' => [
+                        'id' => $match->homeClub->id, // Home club ID
+                        'name' => $match->homeClub->clubName, // Home club name
+                        'image' => $match->homeClub->clubImage ?? null, // Default placeholder if club image is null
+                    ],
+                    'club2' => [
+                        'id' => $match->awayClub->id, // Away club ID
+                        'name' => $match->awayClub->clubName, // Away club name
+                        'image' => $match->awayClub->clubImage ?? null, // Default placeholder if club image is null
+                    ],
+                    'time' => $match->time, // Match time
+                    'place' => $match->eventSport->place, // Event sport place
+                    'event_sport_id' => $match->eventSport->id,
+                    'event_start_date' => $match->eventSport->start_date,
+                    'event_end_date' => $match->eventSport->end_date,
+                    'home_club_id' => $match->homeClub->id, // Home club ID
+                    'away_club_id' => $match->awayClub->id, // Away club ID
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $matchData, // Return the formatted match schedules directly (without grouping)
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching match schedules by event ID: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching match schedules by event ID: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
 
     /**
      * Update a specific match schedule.
