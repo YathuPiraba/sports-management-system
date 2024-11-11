@@ -412,6 +412,7 @@ const MemberSettings = () => {
           footer={null}
           className="lg:mr-72"
           maskClosable={false}
+          width={700}
         >
           <UpdateMemberSports
             setIsModalOpen={setIsSportsModalOpen}

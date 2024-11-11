@@ -71,8 +71,6 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
     }));
   };
 
-
-
   const getAvailableAwayTeams = (index) => {
       return availableTeams.filter((team) => {
       const isCurrentHomeTeam = team.club_id === formData.matches[index].home_club_id;

@@ -263,7 +263,7 @@ const UpdateMemberSports = ({
                   </Tag>
                 )}
                 <Select
-                  className="w-40"
+                  className="w-72"
                   placeholder="Select skill"
                   value={selectedSkills[sport.sport_id]?.skill || undefined}
                   onChange={(skillId) =>
