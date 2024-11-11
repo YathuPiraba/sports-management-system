@@ -180,7 +180,7 @@ const Login = () => {
                     type="text"
                     name="userName"
                     placeholder="Enter your username"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     {...register("userName", { required: true })}
                   />
                   {errors.username && <span>Username is required</span>}
