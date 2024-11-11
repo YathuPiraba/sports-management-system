@@ -6,6 +6,7 @@ use App\Models\Events;
 use App\Models\EventSports;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class EventSportController extends Controller
 {
@@ -52,11 +53,63 @@ class EventSportController extends Controller
      * @param int $eventId
      * @return \Illuminate\Http\Response
      */
-    public function index($eventId)
+
+    public function getEventSportsWithClubs($eventId)
     {
-        $eventSports = EventSports::where('event_id', $eventId)->get();
-        return response()->json($eventSports);
+        try {
+            // Fetch event sports with associated clubs for the given event ID
+            $eventSports = EventSports::where('event_id', $eventId)
+                ->with([
+                    'eventClubs.club:id,clubName',
+                    'sportsCategory:id,name,image',
+                ])->get();
+
+            // Check if any event sports data exists for the event
+            if ($eventSports->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                    'message' => 'No event sports data found.',
+                ], 200);
+            }
+
+            // Transform the data to a simplified structure
+            $data = $eventSports->map(function ($eventSport) {
+                return [
+                    'event_sport_id' => $eventSport->id,
+                    'name' => $eventSport->name,
+                    'start_date' => $eventSport->start_date,
+                    'end_date' => $eventSport->end_date,
+                    'place' => $eventSport->place,
+                    'sports' => $eventSport->sportsCategory ? [
+                        'id' => $eventSport->sportsCategory->id,
+                        'name' => $eventSport->sportsCategory->name,
+                        'image' => $eventSport->sportsCategory->image,
+                    ] : null,
+                    'clubs' => $eventSport->eventClubs->map(function ($eventClub) {
+                        return [
+                            'club_id' => $eventClub->club_id,
+                            'clubName' => $eventClub->club->clubName ?? null,
+                            'event_clubs_id' => $eventClub->id,
+                        ];
+                    }),
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching event sports with clubs: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching event sports with clubs: ' . $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     /**
      * Get a specific sport for a specific event.
