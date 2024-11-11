@@ -30,6 +30,7 @@ const SportsCard = ({
   place,
   participants,
   fetchClubEvents,
+  applyLoading,
 }) => {
   const [isParticipantModalVisible, setIsParticipantModalVisible] =
     useState(false);
@@ -124,6 +125,7 @@ const SportsCard = ({
                       type="text"
                       className="bg-green-400 !text-white"
                       onClick={() => setIsParticipantModalVisible(true)}
+                      loading={applyLoading}
                     >
                       Apply
                     </Button>

@@ -293,6 +293,7 @@ const Events = () => {
                             )}
                             fetchEventDetails={fetchEventDetails}
                             role_id={role_id}
+                            applyLoading={clubEventsLoading}
                           />
                         ))}
                         {role_id == 1 && (
