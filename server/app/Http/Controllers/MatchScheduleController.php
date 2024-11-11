@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MatchSchedule;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -16,25 +17,35 @@ class MatchScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'event_sport_id' => 'required|exists:event_sports,id',
-            'club_1_id' => 'required|exists:clubs,id',
-            'club_2_id' => 'required|exists:clubs,id',
-            'match_date' => 'required|date',
-            'match_time' => 'required|date_format:H:i',
-            'venue' => 'required|string|max:255',
+        // Validate request for multiple matches
+        $validator = Validator::make($request->all(), [
+            'event_sports_id' => 'required|exists:event_sports,id',
+            'matches' => 'required|array|min:1',
+            'matches.*.home_club_id' => 'required|exists:clubs,id',
+            'matches.*.away_club_id' => 'required|exists:clubs,id',
+            'matches.*.match_date' => 'required|date',
+            'matches.*.time' => 'required|date_format:H:i',
         ]);
 
-        $matchSchedule = MatchSchedule::create([
-            'event_sport_id' => $request->event_sport_id,
-            'club_1_id' => $request->club_1_id,
-            'club_2_id' => $request->club_2_id,
-            'match_date' => $request->match_date,
-            'match_time' => $request->match_time,
-            'venue' => $request->venue,
-        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-        return response()->json($matchSchedule, Response::HTTP_CREATED);
+        $matchSchedules = [];
+
+        foreach ($request->matches as $match) {
+            $matchSchedule = MatchSchedule::create([
+                'event_sports_id' => $request->event_sports_id,
+                'home_club_id' => $match['home_club_id'],
+                'away_club_id' => $match['away_club_id'],
+                'match_date' => $match['match_date'],
+                'time' => $match['time'],
+            ]);
+
+            $matchSchedules[] = $matchSchedule;
+        }
+
+        return response()->json(['data' => $matchSchedules], Response::HTTP_CREATED);
     }
 
     /**

@@ -16,7 +16,7 @@ class MatchSchedule extends Model  // Rename the class to SportMatch
         'home_club_id',
         'away_club_id',
         'match_date',
-        'time',  // The renamed column
+        'time',
     ];
 
     /**
