@@ -1,35 +1,139 @@
 import { Button } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
 const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
   const initialFormState = {
-    sport: "",
-    teams: [{ team1: "", team2: "", date: "", time: "" }],
+    event_sports_id: "",
+    matches: [
+      {
+        home_club_id: "",
+        away_club_id: "",
+        match_date: "",
+        time: "",
+      },
+    ],
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
+  const [availableTeams, setAvailableTeams] = useState([]);
+  const [selectedTeams, setSelectedTeams] = useState({});
 
   // Transform eventData object into array for easier mapping
   const eventsArray = Object.values(eventData || {});
 
-  const handleAddTeamFields = () => {
+  // Update available teams when tournament changes
+  useEffect(() => {
+    if (formData.event_sports_id) {
+      const selectedEvent = eventsArray.find(
+        (event) => event.event_sport_id == formData.event_sports_id
+      );
+      setAvailableTeams(selectedEvent?.clubs || []);
+
+      // Reset selected teams when tournament changes
+      setSelectedTeams({});
+    } else {
+      setAvailableTeams([]);
+      setSelectedTeams({});
+    }
+  }, [formData.event_sports_id]);
+
+  const handleAddMatch = () => {
     setFormData((prev) => ({
       ...prev,
-      teams: [...prev.teams, { team1: "", team2: "", date: "", time: "" }],
+      matches: [
+        ...prev.matches,
+        { home_club_id: "", away_club_id: "", match_date: "", time: "" },
+      ],
     }));
   };
 
-  const handleRemoveTeamFields = (indexToRemove) => {
+  const handleRemoveMatch = (indexToRemove) => {
+    // Clear selected teams for the removed match
+    const newSelectedTeams = { ...selectedTeams };
+    delete newSelectedTeams[indexToRemove];
+
+    // Reindex the remaining matches
+    const reindexedTeams = {};
+    Object.keys(newSelectedTeams)
+      .filter((key) => parseInt(key) > indexToRemove)
+      .forEach((key) => {
+        reindexedTeams[parseInt(key) - 1] = newSelectedTeams[key];
+        delete newSelectedTeams[key];
+      });
+
+    setSelectedTeams({ ...newSelectedTeams, ...reindexedTeams });
+
     setFormData((prev) => ({
       ...prev,
-      teams: prev.teams.filter((_, index) => index !== indexToRemove),
+      matches: prev.matches.filter((_, index) => index !== indexToRemove),
     }));
   };
+
+
+
+  const getAvailableAwayTeams = (index) => {
+      return availableTeams.filter((team) => {
+      const isCurrentHomeTeam = team.club_id === formData.matches[index].home_club_id;
+      
+      // Check if this team is used as a home or away team in any other match
+      const isUsedInOtherMatches = Object.entries(selectedTeams).some(([matchIndex, teams]) => {
+        // Skip checking the current match
+        if (parseInt(matchIndex) === index) return false;
+        
+        // Check if the team is used as either home or away in other matches
+        return teams.home === team.club_id || teams.away === team.club_id;
+      });
+  
+      // Team is available if it's not the current home team and not used in other matches
+      return !isCurrentHomeTeam && !isUsedInOtherMatches;
+    });
+  };
+  
+  // Update handleHomeTeamChange to also clear away team when home team changes
+  const handleHomeTeamChange = (index, teamId) => {
+    const newMatches = [...formData.matches];
+    
+    // Clear the away team when home team changes
+    newMatches[index].away_club_id = "";
+    newMatches[index].home_club_id = teamId;
+    
+    setFormData({ ...formData, matches: newMatches });
+  
+    // Update selected teams
+    const newSelectedTeams = { ...selectedTeams };
+    if (!newSelectedTeams[index]) {
+      newSelectedTeams[index] = { home: null, away: null };
+    }
+    newSelectedTeams[index].home = teamId;
+    newSelectedTeams[index].away = null; // Clear away team selection
+    
+    setSelectedTeams(newSelectedTeams);
+  };
+  
+  
+  const handleAwayTeamChange = (index, teamId) => {
+  
+    const newMatches = [...formData.matches];
+    newMatches[index].away_club_id = teamId;
+    setFormData({ ...formData, matches: newMatches });
+  
+    // Update selected teams
+    const newSelectedTeams = { ...selectedTeams };
+    if (!newSelectedTeams[index]) {
+      newSelectedTeams[index] = { home: null, away: null };
+    }
+    newSelectedTeams[index].away = teamId;
+    setSelectedTeams(newSelectedTeams);
+  
+    console.log("Updated selectedTeams after away team change:", newSelectedTeams); // Log updated selected teams
+  };
+  
 
   const resetForm = () => {
     setFormData(initialFormState);
+    setSelectedTeams({});
   };
 
   const handleClose = () => {
@@ -37,7 +141,6 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
     onClose();
   };
 
-  // Sample API function to send data to backend
   const postScheduleData = async (scheduleData) => {
     try {
       const response = await fetch("/api/match-schedules", {
@@ -49,11 +152,13 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save schedule");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save schedule");
       }
 
       return await response.json();
     } catch (error) {
+      console.error("Error posting schedule:", error);
       throw error;
     }
   };
@@ -63,22 +168,31 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
     setLoading(true);
 
     try {
-      // Validate that all teams have both teams selected
-      const isValid = formData.teams.every(
-        (team) => team.team1 && team.team2 && team.date && team.time
+      const isValid = formData.matches.every(
+        (match) =>
+          match.home_club_id &&
+          match.away_club_id &&
+          match.match_date &&
+          match.time
       );
 
       if (!isValid) {
         throw new Error("Please fill in all match details");
       }
 
-      if (!formData.sport) {
+      if (!formData.event_sports_id) {
         throw new Error("Please select a tournament");
       }
 
-      console.log(formData);
+      const hasInvalidMatch = formData.matches.some(
+        (match) => match.home_club_id === match.away_club_id
+      );
 
-      // await postScheduleData(formData);
+      if (hasInvalidMatch) {
+        throw new Error("Home and away teams cannot be the same");
+      }
+
+      await postScheduleData(formData);
       onSave(formData);
       toast.success("Schedule saved successfully");
       handleClose();
@@ -87,12 +201,6 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Get clubs for selected sport
-  const getClubsForSport = (eventName) => {
-    const selectedEvent = eventsArray.find((event) => event.name === eventName);
-    return selectedEvent ? selectedEvent.clubs : [];
   };
 
   return (
@@ -130,20 +238,34 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
                 </label>
                 <select
                   className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={formData.sport}
+                  value={formData.event_sports_id}
                   onChange={(e) =>
-                    setFormData({ ...formData, sport: e.target.value })
+                    setFormData({
+                      ...formData,
+                      event_sports_id: e.target.value,
+                      matches: [
+                        {
+                          home_club_id: "",
+                          away_club_id: "",
+                          match_date: "",
+                          time: "",
+                        },
+                      ],
+                    })
                   }
                 >
                   <option value="">Select a tournament</option>
                   {eventsArray.map((event) => (
-                    <option key={event.event_sport_id} value={event.name}>
+                    <option
+                      key={event.event_sport_id}
+                      value={event.event_sport_id}
+                    >
                       {event.name}
                     </option>
                   ))}
                 </select>
               </div>
-              {formData.teams.map((team, index) => (
+              {formData?.matches?.map((match, index) => (
                 <div
                   key={index}
                   className="space-y-4 p-4 border border-gray-200 rounded-lg relative"
@@ -151,7 +273,7 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
                   {index > 0 && (
                     <button
                       type="button"
-                      onClick={() => handleRemoveTeamFields(index)}
+                      onClick={() => handleRemoveMatch(index)}
                       className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                     >
                       <svg
@@ -172,46 +294,40 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
                   <div className="flex items-center space-x-4">
                     <div className="flex-1">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Team 1
+                        Home Team
                       </label>
                       <select
                         className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={team.team1}
-                        onChange={(e) => {
-                          const newTeams = [...formData.teams];
-                          newTeams[index].team1 = e.target.value;
-                          setFormData({ ...formData, teams: newTeams });
-                        }}
+                        value={match.home_club_id}
+                        onChange={(e) =>
+                          handleHomeTeamChange(index, e.target.value)
+                        }
                       >
-                        <option value="">Select team 1</option>
-                        {formData.sport &&
-                          getClubsForSport(formData.sport).map((club) => (
-                            <option key={club.club_id} value={club.clubName}>
-                              {club.clubName}
-                            </option>
-                          ))}
+                        <option value="">Select home team</option>
+                        {availableTeams.map((club) => (
+                          <option key={club.club_id} value={club.club_id}>
+                            {club.clubName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className="flex-1">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Team 2
+                        Away Team
                       </label>
                       <select
                         className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={team.team2}
-                        onChange={(e) => {
-                          const newTeams = [...formData.teams];
-                          newTeams[index].team2 = e.target.value;
-                          setFormData({ ...formData, teams: newTeams });
-                        }}
+                        value={match.away_club_id}
+                        onChange={(e) =>
+                          handleAwayTeamChange(index, e.target.value)
+                        }
                       >
-                        <option value="">Select team 2</option>
-                        {formData.sport &&
-                          getClubsForSport(formData.sport).map((club) => (
-                            <option key={club.club_id} value={club.clubName}>
-                              {club.clubName}
-                            </option>
-                          ))}
+                        <option value="">Select away team</option>
+                        {getAvailableAwayTeams(index).map((club) => (
+                          <option key={club.club_id} value={club.club_id}>
+                            {club.clubName}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -223,11 +339,11 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
                       <input
                         type="date"
                         className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={team.date}
+                        value={match.match_date}
                         onChange={(e) => {
-                          const newTeams = [...formData.teams];
-                          newTeams[index].date = e.target.value;
-                          setFormData({ ...formData, teams: newTeams });
+                          const newMatches = [...formData.matches];
+                          newMatches[index].match_date = e.target.value;
+                          setFormData({ ...formData, matches: newMatches });
                         }}
                       />
                     </div>
@@ -238,11 +354,11 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
                       <input
                         type="time"
                         className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value={team.time}
+                        value={match.time}
                         onChange={(e) => {
-                          const newTeams = [...formData.teams];
-                          newTeams[index].time = e.target.value;
-                          setFormData({ ...formData, teams: newTeams });
+                          const newMatches = [...formData.matches];
+                          newMatches[index].time = e.target.value;
+                          setFormData({ ...formData, matches: newMatches });
                         }}
                       />
                     </div>
@@ -251,7 +367,7 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
               ))}
               <button
                 type="button"
-                onClick={handleAddTeamFields}
+                onClick={handleAddMatch}
                 className="flex items-center space-x-2 text-blue-600 hover:text-blue-700"
               >
                 <svg
