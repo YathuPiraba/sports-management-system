@@ -433,10 +433,10 @@ class EventParticipantController extends Controller
             // Get all member sports IDs for this member
             $memberSportsIds = Member_Sports::where('member_id', $member->id)->pluck('id')->toArray();
 
-            // Fetch all event sports for the specific event that have participants matching the member's sports
-            $eventSports = EventSports::with(['sportsCategory', 'eventClubs.participants.memberSport.skills'])
+            // Fetch event sports where the member is a participant
+            $eventSports = EventSports::with(['sportsCategory'])
                 ->where('event_id', $eventId)
-                ->whereHas('eventClubs.participants', function ($query) use ($memberSportsIds) {
+                ->whereHas('eventClubs.participants', function($query) use ($memberSportsIds) {
                     $query->whereIn('member_sports_id', $memberSportsIds);
                 })
                 ->get();
@@ -445,7 +445,7 @@ class EventParticipantController extends Controller
                 return response()->json([
                     'success' => true,
                     'data' => [],
-                    'message' => 'No event sports data found for this event associated with the member.',
+                    'message' => 'No event sports data found for this member in the event.',
                 ], 200);
             }
 
@@ -461,7 +461,24 @@ class EventParticipantController extends Controller
                     'clubImage' => $member->club->clubImage,
                 ],
                 'event_id' => $eventId,
-                'event_sports' => $eventSports->map(function ($eventSport) use ($member) {
+                'event_sports' => $eventSports->map(function ($eventSport) use ($memberSportsIds) {
+                    // Find the participant record for this event sport
+                    $participant = Event_Participants::whereIn('member_sports_id', $memberSportsIds)
+                        ->whereHas('eventClub', function($query) use ($eventSport) {
+                            $query->where('event_sports_id', $eventSport->id);
+                        })
+                        ->first();
+
+                    if (!$participant) {
+                        return null;
+                    }
+
+                    // Get skill information
+                    $skill = Member_Skills::where('member_sport_id', $participant->member_sports_id)
+                        ->join('skills', 'member_skills.skill_id', '=', 'skills.id')
+                        ->select('skills.skill')
+                        ->first();
+
                     return [
                         'id' => $eventSport->id,
                         'name' => $eventSport->name,
@@ -473,30 +490,12 @@ class EventParticipantController extends Controller
                             'name' => $eventSport->sportsCategory->name,
                             'image' => $eventSport->sportsCategory->image,
                         ],
-                        'participants' => $eventSport->eventClubs->flatMap(function ($eventClub) use ($member) {
-                            return $eventClub->participants->map(function ($participant) use ($member) {
-                                // Fetch the member sports ID for the current participant
-                                $memberSport = Member_Sports::where('id', $participant->member_sports_id)
-                                    ->where('member_id', $member->id)
-                                    ->first();
-
-                                // If a member sport is found, fetch the associated skill
-                                $skillName = null;
-                                if ($memberSport) {
-                                    $skill = Member_Skills::where('member_sport_id', $memberSport->id)->first();
-
-                                    $skillName = $skill->skill->skill; // Get the skill name if it exists
-
-                                }
-
-                                return [
-                                    'member_sports_id' => $participant->member_sports_id,
-                                    'skill_name' => $skillName, // Include the skill name or null
-                                ];
-                            })->filter(); // Remove null values
-                        }),
+                        'member_sports_id' => $participant->member_sports_id,
+                        'skill_name' => $skill ? $skill->skill : null,
+                        'rank' => $participant->rank,
+                        'participated_date' => $participant->participatedDate,
                     ];
-                }),
+                })->filter(), // Remove any null values
             ];
 
             return response()->json([

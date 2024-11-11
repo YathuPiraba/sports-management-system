@@ -134,7 +134,7 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
                   <div className="flex items-center justify-between pt-1 border-t mt-2">
                     <span className="font-medium">Role:</span>
                     <span className="text-blue-600 font-medium">
-                      {event.participants[0]?.skill_name || "N/A"}
+                      {event.skill_name || "N/A"}
                     </span>
                   </div>
                 </div>
