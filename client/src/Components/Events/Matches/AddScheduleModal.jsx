@@ -100,6 +100,8 @@ const AddScheduleModal = ({ isOpen, onClose, eventData, onSave }) => {
         throw new Error("Home and away teams cannot be the same");
       }
 
+      console.log(formData);
+      
       await postScheduleData(formData);
       onSave(formData);
       toast.success("Schedule saved successfully");

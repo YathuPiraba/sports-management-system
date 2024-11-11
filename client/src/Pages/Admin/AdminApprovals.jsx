@@ -76,6 +76,7 @@ const AdminApprovals = () => {
     console.log(e);
     message.error("Click on No");
   };
+ 
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -114,7 +115,7 @@ const AdminApprovals = () => {
                             className={`w-full text-left text-l border-0 font-semibold  p-2 mb-0 rounded-sm mt-0`}
                             onClick={() => handleToggle(club.clubName)}
                           >
-                            {index + 1}. {club.clubName}
+                           {(pagination.currentPage - 1) * pagination.perPage + index + 1}. {club.clubName}
                           </button>{" "}
                         </div>
                         <div className="ml-auto mt-0.5 mr-4  flex gap-6">

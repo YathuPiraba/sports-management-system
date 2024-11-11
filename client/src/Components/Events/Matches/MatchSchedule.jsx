@@ -32,8 +32,6 @@ const MatchSchedule = ({ roleId, eventId }) => {
     try {
       const res = await getEventClubsAPI(eventId);
       setEventData(res.data.data);
-      console.log(res.data.data);
-      
     } catch (error) {
       console.error(error);
       toast.error("Error fetching participation list");
