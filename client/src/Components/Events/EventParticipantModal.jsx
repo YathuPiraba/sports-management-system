@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal } from "antd";
+import { Button, Modal } from "antd";
 import toast from "react-hot-toast";
 import {
   getMembersBySportsAPI,
@@ -7,7 +7,6 @@ import {
 } from "../../Services/apiServices";
 import { useSelector } from "react-redux";
 import { IoAddCircleOutline, IoCloseCircleOutline } from "react-icons/io5";
-import { FadeLoader } from "react-spinners";
 
 const EventParticipantModal = ({
   open,
@@ -108,17 +107,18 @@ const EventParticipantModal = ({
       okText="Apply"
       footer={
         <div className="flex gap-5 justify-center">
-          <button
+          <Button
             onClick={handleSaveParticipants}
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-5 rounded ${
               neededPlayers === 0
                 ? "bg-blue-500 text-white hover:bg-blue-600"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
             disabled={neededPlayers !== 0}
+            loading={loading}
           >
             Apply
-          </button>
+          </Button>
           <button
             onClick={handleCancel}
             className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400 mr-2"
@@ -129,11 +129,6 @@ const EventParticipantModal = ({
       }
     >
       <div className="flex bg-gray-200 p-4 text-left">
-        {loading && (
-          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-20 backdrop-blur-sm z-50">
-            <FadeLoader className="ml-1 mt-1" color="skyblue" />
-          </div>
-        )}
         {/* Available Members */}
         <div className="w-1/2 p-4 bg-white border border-gray-300 rounded">
           <h3 className="text-lg font-semibold mb-4">Available Members</h3>
