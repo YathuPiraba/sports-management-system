@@ -204,7 +204,7 @@ const MatchSchedule = ({ roleId, eventId }) => {
                 <div className="divide-y divide-gray-200">
                   {Object.entries(sportGroups).map(([sport, sportMatches]) => {
                     const isExpanded = expandedSports[`${dateIndex}-${sport}`];
-
+                    let matchNumber = 1;
                     return (
                       <div key={sport} className="bg-white">
                         {/* Sport Header - Clickable */}
@@ -241,7 +241,7 @@ const MatchSchedule = ({ roleId, eventId }) => {
 
                         {/* Expanded Match Details */}
                         {isExpanded && (
-                          <div className="px-4 pb-4">
+                          <div className="px-4 pb-4 ">
                             {sportMatches.map((match, idx) => (
                               <div
                                 key={match.id}
@@ -251,7 +251,13 @@ const MatchSchedule = ({ roleId, eventId }) => {
                                     : ""
                                 }`}
                               >
-                                <div className="flex items-center justify-between">
+                                <div className="grid grid-cols-3 items-center gap-5 relative">
+                                  {/* Match Number */}
+                                  <span className="text-gray-700 absolute left-8 top-0 font-medium text-center">
+                                    {`${matchNumber++}.`}
+                                  </span>
+
+                                  {/* Club 1 */}
                                   <div className="flex flex-col items-center space-y-2">
                                     <img
                                       src={
@@ -261,11 +267,12 @@ const MatchSchedule = ({ roleId, eventId }) => {
                                       alt={match.club1.name}
                                       className="w-16 h-16 rounded-full object-cover"
                                     />
-                                    <span className="font-medium text-gray-800">
+                                    <span className="font-medium text-gray-800 text-center">
                                       {match.club1.name}
                                     </span>
                                   </div>
 
+                                  {/* VS Section */}
                                   <div className="flex flex-col items-center">
                                     <span className="text-2xl font-bold text-gray-700">
                                       VS
@@ -278,6 +285,7 @@ const MatchSchedule = ({ roleId, eventId }) => {
                                     </span>
                                   </div>
 
+                                  {/* Club 2 */}
                                   <div className="flex flex-col items-center space-y-2">
                                     <img
                                       src={
@@ -287,7 +295,7 @@ const MatchSchedule = ({ roleId, eventId }) => {
                                       alt={match.club2.name}
                                       className="w-16 h-16 rounded-full object-cover"
                                     />
-                                    <span className="font-medium text-gray-800">
+                                    <span className="font-medium text-gray-800 text-center">
                                       {match.club2.name}
                                     </span>
                                   </div>
