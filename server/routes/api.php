@@ -172,4 +172,5 @@ Route::prefix('matches/results')->group(function () {
 });
 
 Route::get('/events/{eventId}/club-stats', [MatchResultController::class, 'getClubStats']);
-
+Route::get('/events/{eventId}/clubs/{clubId}/sports-stats', [MatchResultController::class, 'getClubEventSportsStats']);
+Route::get('/events/{eventId}/clubs/sports-stats', [MatchResultController::class, 'getAllClubsSportsStats']);

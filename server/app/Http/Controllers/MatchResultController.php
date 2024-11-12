@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Club;
+use App\Models\EventSports;
 use App\Models\MatchResult;
 use App\Models\MatchSchedule;
 use Illuminate\Http\Request;
@@ -68,7 +69,7 @@ class MatchResultController extends Controller
             // Get all matches where this club participated
             $matches = MatchSchedule::where(function ($query) use ($club) {
                 $query->where('home_club_id', $club->id)
-                      ->orWhere('away_club_id', $club->id);
+                    ->orWhere('away_club_id', $club->id);
             })->whereHas('eventSport', function ($query) use ($eventId) {
                 $query->where('event_id', $eventId);
             })->with('matchResults')->get();
@@ -109,6 +110,228 @@ class MatchResultController extends Controller
         return response()->json([
             'success' => true,
             'data' => $clubStats,
+        ], 200);
+    }
+
+    public function getClubEventSportsStats($eventId, $clubId)
+    {
+        // First verify the club exists and participated in the event
+        $club = Club::findOrFail($clubId);
+
+        // Get all event sports for the event
+        $eventSportsStats = EventSports::where('event_id', $eventId)
+            ->whereHas('matches', function ($query) use ($clubId) {
+                $query->where('home_club_id', $clubId)
+                    ->orWhere('away_club_id', $clubId);
+            })
+            ->with(['sportCategory', 'matches' => function ($query) use ($clubId) {
+                $query->where('home_club_id', $clubId)
+                    ->orWhere('away_club_id', $clubId);
+                $query->with('matchResults');
+            }])
+            ->get()
+            ->map(function ($eventSport) use ($clubId) {
+                // Initialize stats
+                $stats = [
+                    'event_sports_id' => $eventSport->id,
+                    'sport_name' => $eventSport->sportCategory->name,
+                    'total_matches' => 0,
+                    'wins' => 0,
+                    'draws' => 0,
+                    'losses' => 0,
+                    'points' => 0,
+                    'matches' => []
+                ];
+
+                // Calculate statistics for each match
+                foreach ($eventSport->matches as $match) {
+                    $matchStats = [
+                        'match_id' => $match->id,
+                        'match_date' => $match->match_date,
+                        'time' => $match->time,
+                        'home_club_id' => $match->home_club_id,
+                        'away_club_id' => $match->away_club_id,
+                    ];
+
+                    $stats['total_matches']++;
+
+                    if ($match->matchResults) {
+                        $result = $match->matchResults;
+                        $matchStats['home_score'] = $result->home_score;
+                        $matchStats['away_score'] = $result->away_score;
+
+                        if ($result->winner_club_id === $clubId) {
+                            $stats['wins']++;
+                            $stats['points'] += 3;
+                            $matchStats['result'] = 'win';
+                        } elseif ($result->winner_club_id === null) {
+                            $stats['draws']++;
+                            $stats['points'] += 1;
+                            $matchStats['result'] = 'draw';
+                        } else {
+                            $stats['losses']++;
+                            $matchStats['result'] = 'loss';
+                        }
+                    } else {
+                        $matchStats['result'] = 'pending';
+                    }
+
+                    $stats['matches'][] = $matchStats;
+                }
+
+                // Add performance metrics
+                $stats['win_percentage'] = $stats['total_matches'] > 0
+                    ? round(($stats['wins'] / $stats['total_matches']) * 100, 2)
+                    : 0;
+
+                return $stats;
+            });
+
+        // Calculate overall statistics across all sports
+        $overallStats = [
+            'total_matches' => $eventSportsStats->sum('total_matches'),
+            'total_wins' => $eventSportsStats->sum('wins'),
+            'total_draws' => $eventSportsStats->sum('draws'),
+            'total_losses' => $eventSportsStats->sum('losses'),
+            'total_points' => $eventSportsStats->sum('points'),
+            'overall_win_percentage' => $eventSportsStats->sum('total_matches') > 0
+                ? round(($eventSportsStats->sum('wins') / $eventSportsStats->sum('total_matches')) * 100, 2)
+                : 0
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'club_id' => $clubId,
+                'club_name' => $club->clubName,
+                'event_id' => $eventId,
+                'overall_stats' => $overallStats,
+                'sports_stats' => $eventSportsStats
+            ]
+        ], 200);
+    }
+
+    public function getAllClubsSportsStats($eventId)
+    {
+        // Get all clubs that participated in the event
+        $participatingClubs = Club::whereHas('homeMatches', function ($query) use ($eventId) {
+            $query->whereHas('eventSport', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            });
+        })->orWhereHas('awayMatches', function ($query) use ($eventId) {
+            $query->whereHas('eventSport', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            });
+        })->get();
+
+        // Get all event sports for this event
+        $eventSports = EventSports::where('event_id', $eventId)
+            ->with('sportsCategory')
+            ->get();
+
+        $clubsStats = $participatingClubs->map(function ($club) use ($eventId, $eventSports) {
+            // Initialize club stats structure
+            $clubData = [
+                'club_id' => $club->id,
+                'club_name' => $club->clubName,
+                'overall_stats' => [
+                    'total_matches' => 0,
+                    'total_wins' => 0,
+                    'total_draws' => 0,
+                    'total_losses' => 0,
+                    'total_points' => 0
+                ],
+                'sports_stats' => []
+            ];
+
+            // Calculate stats for each event sport
+            foreach ($eventSports as $eventSport) {
+                // Get matches for this club in this sport
+                $matches = MatchSchedule::where(function ($query) use ($club) {
+                    $query->where('home_club_id', $club->id)
+                        ->orWhere('away_club_id', $club->id);
+                })->where('event_sports_id', $eventSport->id)
+                    ->with('matchResults')
+                    ->get();
+
+                $sportStats = [
+                    'sport_id' => $eventSport->id,
+                    'sport_name' => $eventSport->name,
+                    'matches_played' => 0,
+                    'wins' => 0,
+                    'draws' => 0,
+                    'losses' => 0,
+                    'points' => 0,
+                    // 'goals_for' => 0,      // Total goals/points scored
+                    // 'goals_against' => 0,   // Total goals/points conceded
+                    // 'goal_difference' => 0  // Difference between scored and conceded
+                ];
+
+                foreach ($matches as $match) {
+                    if ($match->matchResults) {
+                        $sportStats['matches_played']++;
+                        $result = $match->matchResults;
+
+                        // Calculate goals for/against
+                        // if ($match->home_club_id === $club->id) {
+                        //     $sportStats['goals_for'] += $result->home_score;
+                        //     $sportStats['goals_against'] += $result->away_score;
+                        // } else {
+                        //     $sportStats['goals_for'] += $result->away_score;
+                        //     $sportStats['goals_against'] += $result->home_score;
+                        // }
+
+                        if ($result->winner_club_id === $club->id) {
+                            $sportStats['wins']++;
+                            $sportStats['points'] += 3;
+                        } elseif ($result->winner_club_id === null) {
+                            $sportStats['draws']++;
+                            $sportStats['points'] += 1;
+                        } else {
+                            $sportStats['losses']++;
+                        }
+                    }
+                }
+
+                // Calculate additional stats
+                // $sportStats['goal_difference'] = $sportStats['goals_for'] - $sportStats['goals_against'];
+                $sportStats['win_percentage'] = $sportStats['matches_played'] > 0
+                    ? round(($sportStats['wins'] / $sportStats['matches_played']) * 100, 2)
+                    : 0;
+
+                // Update overall stats
+                $clubData['overall_stats']['total_matches'] += $sportStats['matches_played'];
+                $clubData['overall_stats']['total_wins'] += $sportStats['wins'];
+                $clubData['overall_stats']['total_draws'] += $sportStats['draws'];
+                $clubData['overall_stats']['total_losses'] += $sportStats['losses'];
+                $clubData['overall_stats']['total_points'] += $sportStats['points'];
+
+                // Only add sports where the club participated
+                if ($sportStats['matches_played'] > 0) {
+                    $clubData['sports_stats'][] = $sportStats;
+                }
+            }
+
+            // Calculate overall win percentage
+            $clubData['overall_stats']['win_percentage'] = $clubData['overall_stats']['total_matches'] > 0
+                ? round(($clubData['overall_stats']['total_wins'] / $clubData['overall_stats']['total_matches']) * 100, 2)
+                : 0;
+
+            return $clubData;
+        });
+
+        // Sort clubs by total points in descending order
+        $clubsStats = $clubsStats->sortByDesc(function ($club) {
+            return $club['overall_stats']['total_points'];
+        })->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'event_id' => $eventId,
+                'total_clubs' => count($clubsStats),
+                'clubs' => $clubsStats
+            ]
         ], 200);
     }
 
