@@ -514,8 +514,8 @@ export const submitMatchResultAPI = async (data) => {
   }
 };
 
-export const getMatchResultAPI = async(eventId, page, perPage, selectedSport) => {
-  return authApiClient.get(`/event-sports-matches/${eventId}`,{
+export const getMatchResultAPI = async (eventId, page, perPage, selectedSport) => {
+  return authApiClient.get(`/event-sports-matches/${eventId}`, {
     params: {
       page,
       per_page: perPage,
@@ -523,7 +523,6 @@ export const getMatchResultAPI = async(eventId, page, perPage, selectedSport) =>
     },
   });
 };
-
 
 export const getMatchLeaderboardAPI = async (eventId) => {
   return authApiClient.get(`/events/${eventId}/sports-winners`);

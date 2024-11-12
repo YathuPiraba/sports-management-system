@@ -552,6 +552,8 @@ class MatchResultController extends Controller
         $perPage = 10;
         $offset = ($page - 1) * $perPage;
 
+        $sports = [];
+
         foreach ($eventSports as $eventSport) {
             // Get all matches for this sport with their results and clubs
             $matches = MatchSchedule::where('event_sports_id', $eventSport->id)
@@ -592,6 +594,8 @@ class MatchResultController extends Controller
                         'winner_id' => $result->winner_club_id,
                         'match_status' => $result->winner_club_id === null ? 'draw' : 'completed'
                     ];
+
+                    $sports[] = $eventSport->name;
                 }
             }
         }
@@ -599,12 +603,14 @@ class MatchResultController extends Controller
         $totalMatches = count($matchResults);
         $lastPage = ceil($totalMatches / $perPage);
 
+        $uniqueSports = array_unique($sports);
+
         return response()->json([
             'success' => true,
             'data' => [
                 'event_id' => $eventId,
                 'event_status' => $tournamentEnded ? 'completed' : 'ongoing',
-                'sports' => array_unique(array_column($matchResults, 'sport_name')),
+                'sports' => $uniqueSports,
                 'match_results' => $matchResults,
                 'pagination' => [
                     'total_matches' => $totalMatches,
@@ -613,7 +619,6 @@ class MatchResultController extends Controller
                     'per_page' => $perPage,
                 ]
             ],
-
         ], 200);
     }
 

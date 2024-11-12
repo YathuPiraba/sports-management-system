@@ -5,8 +5,8 @@ import { PropagateLoader } from "react-spinners";
 import Pagination from "../../Pagination_Sorting_Search/Pagination";
 
 const MatchResults = ({ roleId, eventId }) => {
-  const [sports, setSports] = useState(["All Sports"]);
-  const [selectedSport, setSelectedSport] = useState("All Sports");
+  const [sports, setSports] = useState([]);
+  const [selectedSport, setSelectedSport] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,8 +21,12 @@ const MatchResults = ({ roleId, eventId }) => {
   const fetchMatchResults = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await getMatchResultAPI(eventId, page, searchTerm);
-      setSports(["All Sports", ...new Set(res.data.data.sports)]);
+      const res = await getMatchResultAPI(
+        eventId,
+        page,
+        selectedSport == "all" ? "" : selectedSport
+      );
+      setSports([ ...new Set(res.data.data.sports)]);
       setMatchResults(res.data.data.match_results);
       setPagination({
         currentPage: res.data.data.pagination.current_page,
@@ -40,10 +44,10 @@ const MatchResults = ({ roleId, eventId }) => {
 
   useEffect(() => {
     fetchMatchResults();
-  }, [eventId,searchTerm]);
+  }, [eventId, selectedSport]);
 
   const handlePageChange = (page) => {
-    fetchMatchResults(page, pagination.perPage);
+    fetchMatchResults(page);
   };
 
   if (loading) {
@@ -55,10 +59,7 @@ const MatchResults = ({ roleId, eventId }) => {
   }
 
   const getFilteredResults = () => {
-    if (selectedSport === "All Sports") {
-      return matchResults;
-    }
-    return matchResults.filter((match) => match.sport_name === selectedSport);
+    return matchResults;
   };
 
   return (
@@ -75,6 +76,7 @@ const MatchResults = ({ roleId, eventId }) => {
               onChange={(e) => setSelectedSport(e.target.value)}
               className="w-full md:w-64 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
             >
+              <option value="all">All Sports</option>
               {sports.map((sport) => (
                 <option key={sport} value={sport}>
                   {sport}
@@ -126,9 +128,6 @@ const MatchResults = ({ roleId, eventId }) => {
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
                   Winner
                 </th>
-                {/* <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                  Match Status
-                </th> */}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -177,17 +176,6 @@ const MatchResults = ({ roleId, eventId }) => {
                         : "Tied"}
                     </span>
                   </td>
-                  {/* <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        match.match_status === "draw"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {match.match_status === "draw" ? "Tied" : "Completed"}
-                    </span>
-                  </td> */}
                 </tr>
               ))}
             </tbody>
@@ -195,9 +183,7 @@ const MatchResults = ({ roleId, eventId }) => {
 
           {getFilteredResults().length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">
-                No results found for {selectedSport}
-              </p>
+              <p className="text-gray-500 text-lg">No results found</p>
             </div>
           )}
         </div>
