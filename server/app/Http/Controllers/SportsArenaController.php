@@ -69,7 +69,9 @@ class SportsArenaController extends Controller
             // Retrieve all sports arenas with related club sports and club data
             $sportsArenas = Sports_Arena::with(['clubSports.club' => function ($query) {
                 $query->select('id', 'clubName'); // Select only necessary fields from Club
-            }])->get();
+            }])
+            ->orderBy('name') // Sort by the 'name' of the arena
+            ->get();
 
             if ($sportsArenas->isEmpty()) {
                 return response()->json(['error' => 'Sports Arenas not found'], 404);
