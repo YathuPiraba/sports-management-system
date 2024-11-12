@@ -22,7 +22,7 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
 
   useEffect(() => {
     fetchParticipatingSports();
-  }, []);
+  }, [eventId]);
 
   if (!memberData || memberData.length === 0) {
     return (

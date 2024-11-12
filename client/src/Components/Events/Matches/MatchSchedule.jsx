@@ -103,7 +103,7 @@ const MatchSchedule = ({ roleId, eventId, eventName }) => {
   useEffect(() => {
     fetchParticipatingClubs();
     fetchMatchSchedule();
-  }, []);
+  }, [eventId]);
 
   if (loading) {
     return (

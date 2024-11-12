@@ -30,9 +30,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
   };
 
   useEffect(() => {
-    if (eventId) {
-      fetchMatchSchedule(); // Fetch the match schedules when the eventId changes
-    }
+    fetchMatchSchedule(); // Fetch the match schedules when the eventId changes
   }, [eventId]);
 
   // Group matches by date

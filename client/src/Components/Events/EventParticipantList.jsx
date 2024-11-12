@@ -101,7 +101,7 @@ const EventParticipantList = ({ eventId }) => {
 
   useEffect(() => {
     fetchParticipatingClubs();
-  }, []);
+  }, [eventId]);
 
   const onSelect = (keys) => {
     const validKeys = keys.filter(
