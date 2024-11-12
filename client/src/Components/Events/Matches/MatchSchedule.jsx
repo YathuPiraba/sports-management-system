@@ -81,7 +81,7 @@ const MatchSchedule = ({ roleId, eventId }) => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header with Search and Add Schedule button */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-3 gap-4">
         <h1 className="text-3xl font-bold text-gray-800">Match Schedule</h1>
 
         {roleId === 1 && (
@@ -105,20 +105,20 @@ const MatchSchedule = ({ roleId, eventId }) => {
           </button>
         )}
       </div>
-      <form onSubmit={handleSearch} className="flex-1 md:flex-none">
-        <div className="relative">
+      <form onSubmit={handleSearch} className="m-2 mt-0">
+        <div className="flex items-center gap-2 ">
           <input
             type="date"
             value={searchDate}
             onChange={(e) => setSearchDate(e.target.value)}
-            className="w-full md:w-64 pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full md:w-36 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600"
+            className="transform  text-white hover:bg-blue-600 bg-blue-500 px-2 py-1.5 pr-4 font-semibold rounded-md flex gap-2 items-center"
           >
-            <IoSearchCircleOutline size={20} />
-          </button>
+            <IoSearchCircleOutline size={20} /> Search
+          </button> 
         </div>
       </form>
 
