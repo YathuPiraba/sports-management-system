@@ -351,12 +351,19 @@ class MatchResultController extends Controller
 
         // Get all event sports for this event
         $eventSports = EventSports::where('event_id', $eventId)
+            ->with('sportsCategory')
             ->get();
 
         $sportsWinners = [];
         $tournamentEnded = $event->end_date < now();
 
         foreach ($eventSports as $eventSport) {
+            // Get all matches for this sport with their results and clubs
+            $matches = MatchSchedule::where('event_sports_id', $eventSport->id)
+                ->with(['matchResults', 'homeClub', 'awayClub'])
+                ->orderBy('match_date', 'desc')
+                ->get();
+
             // Get all clubs that participated in this sport
             $participatingClubs = Club::whereHas('homeMatches', function ($query) use ($eventSport) {
                 $query->where('event_sports_id', $eventSport->id);
@@ -365,15 +372,42 @@ class MatchResultController extends Controller
             })->get();
 
             $clubStats = [];
+            $matchResults = [];
+
+            // Process matches and build match results array
+            foreach ($matches as $match) {
+                if ($match->matchResults) {
+                    $result = $match->matchResults;
+                    $homeClub = $match->homeClub;
+                    $awayClub = $match->awayClub;
+
+                    $matchResults[] = [
+                        'match_id' => $match->id,
+                        'match_date' => $match->match_date,
+                        'venue' => $match->venue,
+                        'home_team' => [
+                            'club_id' => $homeClub->id,
+                            'club_name' => $homeClub->clubName,
+                            'score' => $result->home_score,
+                            'result' => $result->winner_club_id === $homeClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
+                        ],
+                        'away_team' => [
+                            'club_id' => $awayClub->id,
+                            'club_name' => $awayClub->clubName,
+                            'score' => $result->away_score,
+                            'result' => $result->winner_club_id === $awayClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
+                        ],
+                        'winner_id' => $result->winner_club_id,
+                        'match_status' => $result->winner_club_id === null ? 'draw' : 'completed'
+                    ];
+                }
+            }
 
             foreach ($participatingClubs as $club) {
                 // Get matches for this club in this sport
-                $matches = MatchSchedule::where(function ($query) use ($club) {
-                    $query->where('home_club_id', $club->id)
-                        ->orWhere('away_club_id', $club->id);
-                })->where('event_sports_id', $eventSport->id)
-                    ->with('matchResults')
-                    ->get();
+                $clubMatches = $matches->filter(function ($match) use ($club) {
+                    return $match->home_club_id === $club->id || $match->away_club_id === $club->id;
+                });
 
                 $stats = [
                     'club_id' => $club->id,
@@ -383,13 +417,24 @@ class MatchResultController extends Controller
                     'draws' => 0,
                     'losses' => 0,
                     'points' => 0,
-                    'win_percentage' => 0
+                    'win_percentage' => 0,
+                    'total_scores_for' => 0,
+                    'total_scores_against' => 0
                 ];
 
-                foreach ($matches as $match) {
+                foreach ($clubMatches as $match) {
                     if ($match->matchResults) {
                         $stats['matches_played']++;
                         $result = $match->matchResults;
+
+                        // Calculate scores for and against
+                        if ($match->home_club_id === $club->id) {
+                            $stats['total_scores_for'] += $result->home_score;
+                            $stats['total_scores_against'] += $result->away_score;
+                        } else {
+                            $stats['total_scores_for'] += $result->away_score;
+                            $stats['total_scores_against'] += $result->home_score;
+                        }
 
                         if ($result->winner_club_id === $club->id) {
                             $stats['wins']++;
@@ -457,10 +502,28 @@ class MatchResultController extends Controller
                             'draws' => $leader['draws'],
                             'losses' => $leader['losses'],
                             'points' => $leader['points'],
-                            'win_percentage' => $leader['win_percentage']
+                            'win_percentage' => $leader['win_percentage'],
+                            'total_scores_for' => $leader['total_scores_for'],
+                            'total_scores_against' => $leader['total_scores_against']
                         ]
                     ],
-                    'total_participants' => count($clubStats)
+                    'total_participants' => count($clubStats),
+                    'match_results' => $matchResults,
+                    'team_standings' => array_map(function ($stat) use ($tournamentEnded) {
+                        return [
+                            'club_id' => $stat['club_id'],
+                            'club_name' => $stat['club_name'],
+                            'rank' => $tournamentEnded ? ($stat['rank'] ?? null) : null,
+                            'matches_played' => $stat['matches_played'],
+                            'wins' => $stat['wins'],
+                            'draws' => $stat['draws'],
+                            'losses' => $stat['losses'],
+                            'points' => $stat['points'],
+                            'win_percentage' => $stat['win_percentage'],
+                            'total_scores_for' => $stat['total_scores_for'],
+                            'total_scores_against' => $stat['total_scores_against']
+                        ];
+                    }, $clubStats)
                 ];
 
                 // Add tournament specific details

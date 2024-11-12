@@ -290,7 +290,7 @@ const MatchResults = ({ roleId, eventId }) => {
         <AddResultModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleAddResult}
+          // onSubmit={handleAddResult}
           teams={teams}
           sports={sports}
           eventId={eventId}
