@@ -486,7 +486,7 @@ export const getMatchSchedulesAPI = (eventId, page, perPage, search) => {
 };
 
 export const matchSchedulesDataAPI = (eventId) => {
-  return authApiClient.get(`/event/match-schedules/${eventId}`, {});
+  return authApiClient.get(`/event/match-schedules/${eventId}`);
 };
 
 export const downloadMatchScheduleAPI = async (eventId) => {
@@ -505,9 +505,15 @@ export const downloadMatchScheduleAPI = async (eventId) => {
 
 export const submitMatchResultAPI = async (data) => {
   try {
-    const response = await authApiClient.post('/matches/results', data);
+    const response = await authApiClient.post("/matches/results", data);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to submit match result');
+    throw new Error(
+      error.response?.data?.message || "Failed to submit match result"
+    );
   }
+};
+
+export const getMatchResultAPI = async (eventId) => {
+  return authApiClient.get(`/events/${eventId}/sports-winners`);
 };
