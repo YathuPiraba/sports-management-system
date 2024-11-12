@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { matchSchedulesDataAPI } from "../../../Services/apiServices";
+import {
+  matchSchedulesDataAPI,
+  submitMatchResultAPI,
+} from "../../../Services/apiServices";
 import { Button } from "antd";
 import toast from "react-hot-toast";
 
-const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
+const AddResultModal = ({ isOpen, onClose, eventId }) => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,22 +62,44 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
 
   const dates = Object.keys(matchesByDate).sort();
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({
-      ...formData.selectedMatch,
-      team1Score: formData.team1Score,
-      team2Score: formData.team2Score,
-      winner: formData.winner,
-    });
-    setFormData({
-      selectedDate: "",
-      selectedMatch: null,
-      team1Score: "",
-      team2Score: "",
-      winner: "",
-    });
-    onClose();
+
+    try {
+      // Determine winner club id
+      const winnerClubId =
+        formData.winner === "Draw"
+          ? null
+          : formData.winner === formData.selectedMatch.club1.name
+          ? formData.selectedMatch.club1.id
+          : formData.selectedMatch.club2.id;
+
+      const payload = {
+        match_id: formData.selectedMatch.id,
+        home_club_id: formData.selectedMatch.home_club_id,
+        away_club_id: formData.selectedMatch.away_club_id,
+        home_score: formData.team1Score,
+        away_score: formData.team2Score,
+        winner_club_id: winnerClubId,
+      };
+
+      console.log(payload);
+
+      // const res = await submitMatchResultAPI(payload);
+
+      toast.success("Match result submitted successfully");
+
+      setFormData({
+        selectedDate: "",
+        selectedMatch: null,
+        team1Score: "",
+        team2Score: "",
+        winner: "",
+      });
+      onClose();
+    } catch (error) {
+      toast.error(error.message || "Failed to submit match result");
+    }
   };
 
   if (!isOpen) return null;

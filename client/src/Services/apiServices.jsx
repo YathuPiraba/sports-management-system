@@ -502,3 +502,12 @@ export const downloadMatchScheduleAPI = async (eventId) => {
     throw error;
   }
 };
+
+export const submitMatchResultAPI = async (data) => {
+  try {
+    const response = await authApiClient.post('/match-results', data);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to submit match result');
+  }
+};
