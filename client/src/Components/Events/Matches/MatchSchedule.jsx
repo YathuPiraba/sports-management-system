@@ -60,9 +60,10 @@ const MatchSchedule = ({ roleId, eventId }) => {
     fetchMatchSchedule(page, pagination.perPage);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    fetchMatchSchedule(1);
+  const handleDateChange = (e) => {
+    const newDate = e.target.value;
+    setSearchDate(newDate);
+    fetchMatchSchedule(1, newDate); // Trigger search immediately when date changes
   };
 
   useEffect(() => {
@@ -105,22 +106,20 @@ const MatchSchedule = ({ roleId, eventId }) => {
           </button>
         )}
       </div>
-      <form onSubmit={handleSearch} className="m-2 mt-0">
-        <div className="flex items-center gap-2 ">
-          <input
-            type="date"
-            value={searchDate}
-            onChange={(e) => setSearchDate(e.target.value)}
-            className="w-full md:w-36 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            className="transform  text-white hover:bg-blue-600 bg-blue-500 px-2 py-1.5 pr-4 font-semibold rounded-md flex gap-2 items-center"
-          >
-            <IoSearchCircleOutline size={20} /> Search
-          </button> 
+      <div className="m-2 mt-0">
+        <div className="flex items-center gap-2">
+          <h5 className="font-poppins">Search by:</h5>
+          <div className=" relative">
+            <IoSearchCircleOutline size={20} className="text-blue-600 absolute left-2 top-3" />
+            <input
+              type="date"
+              value={searchDate}
+              onChange={handleDateChange}
+              className="w-full md:w-40 pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
-      </form>
+      </div>
 
       {/* Match Cards or No Schedules message */}
       {matches.length === 0 ? (
