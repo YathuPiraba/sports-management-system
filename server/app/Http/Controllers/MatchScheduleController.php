@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Events;
 use App\Models\MatchSchedule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MatchScheduleController extends Controller
 {
@@ -99,8 +101,8 @@ class MatchScheduleController extends Controller
 
             // Get sorted results
             $matchSchedules = $query->orderBy('match_date', 'asc')
-                                   ->orderBy('time', 'asc')
-                                   ->get();
+                ->orderBy('time', 'asc')
+                ->get();
 
             // Group matches by date
             $groupedMatches = $matchSchedules->groupBy(function ($match) {
@@ -161,13 +163,93 @@ class MatchScheduleController extends Controller
                     ]
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('Error fetching match schedules by event ID: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching match schedules by event ID: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function generateMatchSchedulePDF($eventId)
+    {
+        try {
+            // Get match schedules with relationships
+            $query = MatchSchedule::whereHas('eventSport', function ($query) use ($eventId) {
+                $query->where('event_id', $eventId);
+            })->with([
+                'homeClub:id,clubName,clubImage',
+                'awayClub:id,clubName,clubImage',
+                'eventSport:id,name,start_date,end_date,place,sports_id',
+            ]);
+
+            // Get sorted results
+            $matchSchedules = $query->orderBy('match_date', 'asc')
+                ->orderBy('time', 'asc')
+                ->get();
+
+            // Get event details
+            $event = Events::find($eventId);
+
+            if (!$event) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Event not found.',
+                ], 404);
+            }
+
+            // Group matches by date
+            $groupedMatches = $matchSchedules->groupBy(function ($match) {
+                return \Carbon\Carbon::parse($match->match_date)->format('Y-m-d');
+            });
+
+            // Format data for PDF
+            $formattedData = [];
+            foreach ($groupedMatches as $date => $matches) {
+                $matchesForDate = $matches->map(function ($match) {
+                    return [
+                        'time' => $match->time,
+                        'sport' => $match->eventSport->name,
+                        'sportImage' => $match->eventSport->sportsCategory ? $match->eventSport->sportsCategory->image : null,
+                        'homeClub' => [
+                            'name' => $match->homeClub->clubName,
+                            'image' => $match->homeClub->clubImage ?? null,
+                        ],
+                        'awayClub' => [
+                            'name' => $match->awayClub->clubName,
+                            'image' => $match->awayClub->clubImage ?? null,
+                        ],
+                        'place' => $match->eventSport->place,
+                    ];
+                });
+
+                $formattedData[] = [
+                    'date' => \Carbon\Carbon::parse($date)->format('F d, Y'),
+                    'matches' => $matchesForDate
+                ];
+            }
+
+            $viewData = [
+                'eventName' => $event->name,
+                'matchDays' => $formattedData
+            ];
+
+            // Generate PDF
+            $pdf = PDF::loadView('match_schedules', ['data' => $viewData]);
+
+            // Generate filename
+            $filename = 'match_schedules_' . preg_replace('/[^A-Za-z0-9\-]/', '_', $event->name) . '.pdf';
+
+            // Return PDF for download
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            Log::error('Error generating match schedules PDF: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error generating PDF: ' . $e->getMessage(),
             ], 500);
         }
     }

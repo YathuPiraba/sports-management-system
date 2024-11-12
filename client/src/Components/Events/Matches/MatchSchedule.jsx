@@ -4,14 +4,17 @@ import AddScheduleModal from "./AddScheduleModal";
 import {
   getMatchSchedulesAPI,
   getEventClubsAPI,
+  downloadMatchScheduleAPI,
 } from "../../../Services/apiServices";
 import toast from "react-hot-toast";
 import { PropagateLoader } from "react-spinners";
 import { FaChevronUp, FaChevronDown, FaFilePdf } from "react-icons/fa";
 import Pagination from "../../Pagination_Sorting_Search/Pagination";
+import { Button } from "antd";
 
-const MatchSchedule = ({ roleId, eventId }) => {
+const MatchSchedule = ({ roleId, eventId, eventName }) => {
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [eventData, setEventData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [matches, setMatches] = useState([]);
@@ -26,23 +29,22 @@ const MatchSchedule = ({ roleId, eventId }) => {
 
   const downloadScheduleAsPDF = async () => {
     try {
-      setLoading(true);
-      // Sample API call - implement in apiServices
-      // const response = await downloadSchedulePDFAPI(eventId);
-      // const blob = new Blob([response.data], { type: 'application/pdf' });
-      // const url = window.URL.createObjectURL(blob);
-      // const link = document.createElement('a');
-      // link.href = url;
-      // link.setAttribute('download', `match-schedule-${eventId}.pdf`);
-      // document.body.appendChild(link);
-      // link.click();
-      // link.remove();
+      setDownloadLoading(true);
+      const response = await downloadMatchScheduleAPI(eventId);
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${eventName}-match-schedule.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       toast.success("Schedule downloaded successfully");
     } catch (error) {
       console.error(error);
       toast.error("Error downloading schedule");
     } finally {
-      setLoading(false);
+      setDownloadLoading(false);
     }
   };
 
@@ -121,13 +123,14 @@ const MatchSchedule = ({ roleId, eventId }) => {
         <h1 className="text-3xl font-bold text-gray-800">Match Schedule</h1>
 
         <div className="flex gap-3">
-          <button
+          <Button
             onClick={downloadScheduleAsPDF}
-            className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg flex items-center space-x-2 whitespace-nowrap"
+            loading={downloadLoading}
+            className="bg-green-600 schedule-btn text-white font-medium px-4 py-5 rounded-lg flex items-center space-x-2 whitespace-nowrap"
           >
             <FaFilePdf className="h-5 w-5" />
             <span>Download Schedule</span>
-          </button>
+          </Button>
 
           {roleId === 1 && (
             <button

@@ -475,7 +475,7 @@ export const addMatchScheduleAPI = (eventSportId, data) => {
   return authApiClient.post(`event-sports/${eventSportId}/matches`, data);
 };
 
-export const getMatchSchedulesAPI = (eventId, page, perPage,search ) => {
+export const getMatchSchedulesAPI = (eventId, page, perPage, search) => {
   return authApiClient.get(`/event/${eventId}/match-schedules`, {
     params: {
       page,
@@ -483,4 +483,18 @@ export const getMatchSchedulesAPI = (eventId, page, perPage,search ) => {
       date: search,
     },
   });
+};
+
+export const downloadMatchScheduleAPI = async (eventId) => {
+  try {
+    const response = await authApiClient.get(
+      `/download-match-schedules/${eventId}`,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

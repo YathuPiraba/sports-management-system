@@ -158,6 +158,8 @@ Route::prefix('event-sports/{eventSportId}/matches')->group(function () {
 
 Route::get('/event/{eventId}/match-schedules', [MatchScheduleController::class, 'getMatchSchedulesByEvent']);
 
+Route::get('/download-match-schedules/{eventId}', [MatchScheduleController::class, 'generateMatchSchedulePDF']);
+
 
 Route::prefix('matches/{matchScheduleId}/results')->group(function () {
     Route::post('/', [MatchResultController::class, 'store']); // Create a new match result

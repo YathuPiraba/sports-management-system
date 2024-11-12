@@ -343,7 +343,11 @@ const Events = () => {
                     key: "3",
                     label: "Matches",
                     children: (
-                      <MatchSchedule roleId={role_id} eventId={selectedEvent} />
+                      <MatchSchedule
+                        roleId={role_id}
+                        eventId={selectedEvent}
+                        eventName={selectedEventDetails.name}
+                      />
                     ),
                   },
                   {
