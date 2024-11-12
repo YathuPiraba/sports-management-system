@@ -105,11 +105,7 @@
 
     <table class="header-table">
         <tr>
-            <td style="width: 100px;"><img src="{{ $eventSports['sports']['image'] }}" alt="Sports Image"
-                    class="header-image"></td>
-            <td>
                 <h2>{{ $eventSports['name'] }} Participants</h2>
-            </td>
         </tr>
     </table>
 
@@ -127,7 +123,7 @@
     </table>
 
     @foreach ($eventSports['clubs'] as $index => $club)
-        <div class="page-break"></div>
+        {{-- <div class="page-break"></div> --}}
         <h2>{{ $index + 1 }}. {{ $club['clubName'] }}</h2>
         <table>
             <thead>

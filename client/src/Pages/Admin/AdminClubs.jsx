@@ -131,7 +131,6 @@ const AdminClubs = () => {
       </div>
     );
   }
-  console.log(pagination);
 
   return (
     <div className="px-6">
