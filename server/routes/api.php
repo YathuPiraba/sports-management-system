@@ -166,7 +166,7 @@ Route::get('/download-match-schedules/{eventId}', [MatchScheduleController::clas
 
 Route::prefix('matches/results')->group(function () {
     Route::post('/', [MatchResultController::class, 'store']); // Create a new match result
-    Route::get('/', [MatchResultController::class, 'index']); // Get all results for a specific match schedule
+     // Get all results for a specific match schedule
     Route::get('/{id}', [MatchResultController::class, 'show']); // Get a specific match result
     Route::put('/{id}', [MatchResultController::class, 'update']); // Update a specific match result
     Route::delete('/{id}', [MatchResultController::class, 'destroy']); // Delete a specific match result
@@ -176,6 +176,6 @@ Route::get('/events/{eventId}/club-stats', [MatchResultController::class, 'getCl
 Route::get('/events/{eventId}/clubs/{clubId}/sports-stats', [MatchResultController::class, 'getClubEventSportsStats']);
 Route::get('/events/{eventId}/clubs/sports-stats', [MatchResultController::class, 'getAllClubsSportsStats']);
 Route::put('/event-clubs/{clubId}/{eventSportsId}', [EventClubController::class, 'update']);
-
+Route::get('/event-sports-matches/{eventId}', [MatchResultController::class, 'getEventMatchesResults']);
 // Add this route in your routes/api.php
 Route::get('/events/{eventId}/sports-winners', [MatchResultController::class, 'getEventSportsWinners']);

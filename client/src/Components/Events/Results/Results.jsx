@@ -2,28 +2,34 @@ import React, { useEffect, useState } from "react";
 import AddResultModal from "./AddResultModal";
 import { getMatchResultAPI } from "../../../Services/apiServices";
 import { PropagateLoader } from "react-spinners";
+import Pagination from "../../Pagination_Sorting_Search/Pagination";
 
 const MatchResults = ({ roleId, eventId }) => {
-  const sports = ["All Sports", "Football", "Basketball", "Cricket", "Tennis"];
+  const [sports, setSports] = useState(["All Sports"]);
   const [selectedSport, setSelectedSport] = useState("All Sports");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    sport: "",
-    team1: "",
-    team2: "",
-    team1Score: "",
-    team2Score: "",
-    date: "",
-    venue: "",
-    winner: "",
+  const [matchResults, setMatchResults] = useState([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    lastPage: 1,
+    perPage: 10,
+    total: 0,
   });
 
-  const fetchMatchResults = async () => {
+  const fetchMatchResults = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await getMatchResultAPI(eventId);
-      console.log(res.data.data);
+      const res = await getMatchResultAPI(eventId, page, searchTerm);
+      setSports(["All Sports", ...new Set(res.data.data.sports)]);
+      setMatchResults(res.data.data.match_results);
+      setPagination({
+        currentPage: res.data.data.pagination.current_page,
+        lastPage: res.data.data.pagination.last_page,
+        perPage: res.data.data.pagination.per_page,
+        total: res.data.data.pagination.total_matches,
+      });
     } catch (error) {
       console.error(error);
       toast.error("Error fetching match schedules list");
@@ -34,7 +40,11 @@ const MatchResults = ({ roleId, eventId }) => {
 
   useEffect(() => {
     fetchMatchResults();
-  }, [eventId]);
+  }, [eventId,searchTerm]);
+
+  const handlePageChange = (page) => {
+    fetchMatchResults(page, pagination.perPage);
+  };
 
   if (loading) {
     return (
@@ -44,83 +54,11 @@ const MatchResults = ({ roleId, eventId }) => {
     );
   }
 
-  // Sample teams data
-  const teams = {
-    Football: ["Manchester United", "Chelsea", "Liverpool", "Arsenal"],
-    Basketball: ["Lakers", "Warriors", "Bulls", "Celtics"],
-    Cricket: ["India", "Australia", "England", "South Africa"],
-    Tennis: ["Djokovic", "Nadal", "Federer", "Murray"],
-  };
-
-  // Sample match results data
-  const results = {
-    Football: [
-      {
-        id: 1,
-        team1: { name: "Manchester United", score: 3 },
-        team2: { name: "Chelsea", score: 1 },
-        date: "Nov 10, 2024",
-        venue: "Old Trafford",
-        winner: "Manchester United",
-      },
-      {
-        id: 2,
-        team1: { name: "Liverpool", score: 2 },
-        team2: { name: "Arsenal", score: 2 },
-        date: "Nov 9, 2024",
-        venue: "Anfield",
-        winner: "Draw",
-      },
-    ],
-    Basketball: [
-      {
-        id: 3,
-        team1: { name: "Lakers", score: 105 },
-        team2: { name: "Warriors", score: 98 },
-        date: "Nov 10, 2024",
-        venue: "Staples Center",
-        winner: "Lakers",
-      },
-    ],
-    Cricket: [
-      {
-        id: 4,
-        team1: { name: "India", score: "287/5" },
-        team2: { name: "Australia", score: "283/8" },
-        date: "Nov 8, 2024",
-        venue: "MCG",
-        winner: "India",
-      },
-    ],
-  };
-
-  // Sample sport winners data
-  const sportWinners = {
-    Football: {
-      winner: "Manchester United",
-      tournament: "Premier League 2024",
-      matches: 15,
-      points: 45,
-    },
-    Basketball: {
-      winner: "Lakers",
-      tournament: "NBA 2024",
-      matches: 20,
-      points: 1560,
-    },
-    Cricket: {
-      winner: "India",
-      tournament: "World Cup 2024",
-      matches: 10,
-      points: 18,
-    },
-  };
-
   const getFilteredResults = () => {
     if (selectedSport === "All Sports") {
-      return Object.values(results).flat();
+      return matchResults;
     }
-    return results[selectedSport] || [];
+    return matchResults.filter((match) => match.sport_name === selectedSport);
   };
 
   return (
@@ -165,150 +103,110 @@ const MatchResults = ({ roleId, eventId }) => {
             )}
           </div>
         </div>
-
-        {/* Sport Winner Section (when specific sport is selected) */}
-        {selectedSport !== "All Sports" && sportWinners[selectedSport] && (
-          <div className="mb-6 bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">
-              {selectedSport} Champion
-            </h2>
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                <img
-                  src="/api/placeholder/64/64"
-                  alt={sportWinners[selectedSport].winner}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-              </div>
-              <div>
-                <p className="text-lg font-semibold text-gray-800">
-                  {sportWinners[selectedSport].winner}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {sportWinners[selectedSport].tournament}
-                </p>
-              </div>
-              <div className="ml-auto space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Matches:</span>
-                  <span className="font-medium">
-                    {sportWinners[selectedSport].matches}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Points:</span>
-                  <span className="font-medium">
-                    {sportWinners[selectedSport].points}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Results Table */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                    Date
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                    Teams
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                    Score
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                    Venue
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                    Winner
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {getFilteredResults().map((result) => (
-                  <tr key={result.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {result.date}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-800">
-                          {result.team1.name}
-                        </span>
-                        <span className="text-sm font-medium text-gray-800 mt-1">
-                          {result.team2.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-800">
-                          {result.team1.score}
-                        </span>
-                        <span className="text-sm font-medium text-gray-800 mt-1">
-                          {result.team2.score}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {result.venue}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          result.winner === "Draw"
-                            ? "bg-gray-100 text-gray-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
-                      >
-                        {result.winner}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {getFilteredResults().length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">
-                  No results found for {selectedSport}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Tournament Winner Section */}
-      <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
-          Tournament Winner
-        </h2>
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-            <img
-              src="/api/placeholder/64/64"
-              alt="Winner"
-              className="w-12 h-12 rounded-full object-cover"
-            />
-          </div>
-          <div>
-            <p className="text-lg font-semibold text-gray-800">
-              Manchester United
-            </p>
-            <p className="text-sm text-gray-600">Premier League 2024</p>
-          </div>
-          <div className="ml-auto">
-            <span className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">
-              Champion
-            </span>
-          </div>
+      {/* Results Table */}
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                  Date
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                  Teams
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                  Score
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                  Venue
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                  Winner
+                </th>
+                {/* <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                  Match Status
+                </th> */}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {getFilteredResults().map((match) => (
+                <tr key={match.match_id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {match.match_date}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-800">
+                        {match.home_team.club_name}
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 mt-1">
+                        {match.away_team.club_name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-800">
+                        {match.home_team.score}
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 mt-1">
+                        {match.away_team.score}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {match.venue}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                        match.home_team.result === "winner"
+                          ? "bg-green-100 text-green-800"
+                          : match.away_team.result === "winner"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {match.home_team.result === "winner"
+                        ? match.home_team.club_name
+                        : match.away_team.result === "winner"
+                        ? match.away_team.club_name
+                        : "Tied"}
+                    </span>
+                  </td>
+                  {/* <td className="px-6 py-4">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                        match.match_status === "draw"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {match.match_status === "draw" ? "Tied" : "Completed"}
+                    </span>
+                  </td> */}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {getFilteredResults().length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">
+                No results found for {selectedSport}
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="mt-6">
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.lastPage}
+            goToPage={handlePageChange}
+          />
         </div>
       </div>
 
@@ -316,9 +214,6 @@ const MatchResults = ({ roleId, eventId }) => {
         <AddResultModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          // onSubmit={handleAddResult}
-          teams={teams}
-          sports={sports}
           eventId={eventId}
         />
       )}

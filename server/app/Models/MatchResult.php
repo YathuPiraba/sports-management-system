@@ -22,7 +22,7 @@ class MatchResult extends Model
      */
     public function matchSchedule()
     {
-        return $this->belongsTo(MatchSchedule::class, 'match_id');
+        return $this->belongsTo(MatchSchedule::class, 'match_id', 'id');
     }
 
     /**

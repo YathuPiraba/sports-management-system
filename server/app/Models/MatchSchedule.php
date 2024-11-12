@@ -45,6 +45,6 @@ class MatchSchedule extends Model  // Rename the class to SportMatch
 
     public function matchResults()
     {
-        return $this->hasOne(MatchResult::class, 'match_id');
+        return $this->hasOne(MatchResult::class, 'match_id', 'id');
     }
 }

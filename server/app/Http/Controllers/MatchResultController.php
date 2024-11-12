@@ -337,6 +337,126 @@ class MatchResultController extends Controller
         ], 200);
     }
 
+    private function calculateClubStats($eventSport, $club)
+    {
+        // Get matches for this club in this sport
+        $matches = MatchSchedule::where('event_sports_id', $eventSport->id)
+            ->where(function ($query) use ($club) {
+                $query->where('home_club_id', $club->id)
+                    ->orWhere('away_club_id', $club->id);
+            })
+            ->with('matchResults')
+            ->get();
+
+        $stats = [
+            'club_id' => $club->id,
+            'club_name' => $club->clubName,
+            'matches_played' => 0,
+            'wins' => 0,
+            'draws' => 0,
+            'losses' => 0,
+            'points' => 0,
+            'win_percentage' => 0,
+            'total_scores_for' => 0,
+            'total_scores_against' => 0
+        ];
+
+        foreach ($matches as $match) {
+            if ($match->matchResults) {
+                $stats['matches_played']++;
+                $result = $match->matchResults;
+
+                // Calculate scores for and against
+                if ($match->home_club_id === $club->id) {
+                    $stats['total_scores_for'] += $result->home_score;
+                    $stats['total_scores_against'] += $result->away_score;
+                } else {
+                    $stats['total_scores_for'] += $result->away_score;
+                    $stats['total_scores_against'] += $result->home_score;
+                }
+
+                if ($result->winner_club_id === $club->id) {
+                    $stats['wins']++;
+                    $stats['points'] += 3;
+                } elseif ($result->winner_club_id === null) {
+                    $stats['draws']++;
+                    $stats['points'] += 1;
+                } else {
+                    $stats['losses']++;
+                }
+            }
+        }
+
+        $stats['win_percentage'] = $stats['matches_played'] > 0
+            ? round(($stats['wins'] / $stats['matches_played']) * 100, 2)
+            : 0;
+
+        return $stats;
+    }
+
+    private function updateClubRanks($eventSport, $clubStats)
+    {
+        foreach ($clubStats as $index => $stat) {
+            $rank = $index + 1;
+            EventClub::where('club_id', $stat['club_id'])
+                ->where('event_sports_id', $eventSport->id)
+                ->update(['rank' => $rank]);
+        }
+    }
+
+
+    private function buildSportWinnerData($eventSport, $leader, $clubStats, $tournamentEnded, $event)
+    {
+        $leaderDetails = Club::find($leader['club_id']);
+
+        $sportWinner = [
+            'sport_id' => $eventSport->id,
+            'sport_name' => $eventSport->name,
+            'tournament_status' => $tournamentEnded ? 'completed' : 'ongoing',
+            'winner' => [
+                'club_id' => $leaderDetails->id,
+                'club_name' => $leaderDetails->clubName,
+                'club_image' => $leaderDetails->clubImage,
+                'performance' => [
+                    'matches_played' => $leader['matches_played'],
+                    'wins' => $leader['wins'],
+                    'draws' => $leader['draws'],
+                    'losses' => $leader['losses'],
+                    'points' => $leader['points'],
+                    'win_percentage' => $leader['win_percentage'],
+                    'total_scores_for' => $leader['total_scores_for'],
+                    'total_scores_against' => $leader['total_scores_against']
+                ]
+            ],
+            'total_participants' => count($clubStats),
+            'team_standings' => array_map(function ($stat) use ($tournamentEnded) {
+                return [
+                    'club_id' => $stat['club_id'],
+                    'club_name' => $stat['club_name'],
+                    'rank' => $tournamentEnded ? $stat['rank'] : null,
+                    'matches_played' => $stat['matches_played'],
+                    'wins' => $stat['wins'],
+                    'draws' => $stat['draws'],
+                    'losses' => $stat['losses'],
+                    'points' => $stat['points'],
+                    'win_percentage' => $stat['win_percentage'],
+                    'total_scores_for' => $stat['total_scores_for'],
+                    'total_scores_against' => $stat['total_scores_against']
+                ];
+            }, $clubStats)
+        ];
+
+        // Add tournament specific details
+        if ($tournamentEnded) {
+            $sportWinner['tournament_name'] = $event->name;
+            $sportWinner['winner']['status'] = 'Champion';
+        } else {
+            $sportWinner['tournament_name'] = $event->name . ' (Ongoing)';
+            $sportWinner['winner']['status'] = 'Current Leader';
+        }
+
+        return $sportWinner;
+    }
 
     public function getEventSportsWinners($eventId)
     {
@@ -358,12 +478,6 @@ class MatchResultController extends Controller
         $tournamentEnded = $event->end_date < now();
 
         foreach ($eventSports as $eventSport) {
-            // Get all matches for this sport with their results and clubs
-            $matches = MatchSchedule::where('event_sports_id', $eventSport->id)
-                ->with(['matchResults', 'homeClub', 'awayClub'])
-                ->orderBy('match_date', 'desc')
-                ->get();
-
             // Get all clubs that participated in this sport
             $participatingClubs = Club::whereHas('homeMatches', function ($query) use ($eventSport) {
                 $query->where('event_sports_id', $eventSport->id);
@@ -372,9 +486,85 @@ class MatchResultController extends Controller
             })->get();
 
             $clubStats = [];
-            $matchResults = [];
 
-            // Process matches and build match results array
+            foreach ($participatingClubs as $club) {
+                // Calculate club stats
+                $stats = $this->calculateClubStats($eventSport, $club);
+                if ($stats['matches_played'] > 0) {
+                    $clubStats[] = $stats;
+                }
+            }
+
+            // Sort clubs by ranking criteria
+            usort($clubStats, function ($a, $b) {
+                if ($a['points'] !== $b['points']) {
+                    return $b['points'] - $a['points'];
+                }
+                if ($a['wins'] !== $b['wins']) {
+                    return $b['wins'] - $a['wins'];
+                }
+                return 0;
+            });
+
+            // Update ranks in database if tournament has ended
+            if ($tournamentEnded) {
+                $this->updateClubRanks($eventSport, $clubStats);
+            }
+
+            // Get leader details (either winner if ended, or current leader if ongoing)
+            $leader = !empty($clubStats) ? $clubStats[0] : null;
+            if ($leader) {
+                $sportWinner = $this->buildSportWinnerData($eventSport, $leader, $clubStats, $tournamentEnded, $event);
+                $sportsWinners[] = $sportWinner;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'event_id' => $eventId,
+                'event_status' => $tournamentEnded ? 'completed' : 'ongoing',
+                'total_sports' => count($sportsWinners),
+                'sports_winners' => $sportsWinners
+            ]
+        ], 200);
+    }
+
+    public function getEventMatchesResults($eventId, $page = 1, $searchTerm = '')
+    {
+        // Get event details first to check end date
+        $event = Events::find($eventId);
+        if (!$event) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Event not found'
+            ], 404);
+        }
+
+        // Get all event sports for this event
+        $eventSports = EventSports::where('event_id', $eventId)
+            ->with('sportsCategory')
+            ->get();
+
+        $matchResults = [];
+        $tournamentEnded = $event->end_date < now();
+
+        $perPage = 10;
+        $offset = ($page - 1) * $perPage;
+
+        foreach ($eventSports as $eventSport) {
+            // Get all matches for this sport with their results and clubs
+            $matches = MatchSchedule::where('event_sports_id', $eventSport->id)
+                ->with(['matchResults', 'homeClub', 'awayClub'])
+                ->when($searchTerm, function ($query) use ($searchTerm, $eventSport) {
+                    return $query->where('event_sports_id', $eventSport->id)
+                        ->where('name', 'like', '%' . $searchTerm . '%');
+                })
+                ->orderBy('match_date', 'desc')
+                ->skip($offset)
+                ->take($perPage)
+                ->get();
+
             foreach ($matches as $match) {
                 if ($match->matchResults) {
                     $result = $match->matchResults;
@@ -384,7 +574,9 @@ class MatchResultController extends Controller
                     $matchResults[] = [
                         'match_id' => $match->id,
                         'match_date' => $match->match_date,
-                        'venue' => $match->venue,
+                        'sport_id' => $eventSport->id,
+                        'sport_name' => $eventSport->name,
+                        'venue' => $eventSport->place,
                         'home_team' => [
                             'club_id' => $homeClub->id,
                             'club_name' => $homeClub->clubName,
@@ -402,151 +594,26 @@ class MatchResultController extends Controller
                     ];
                 }
             }
-
-            foreach ($participatingClubs as $club) {
-                // Get matches for this club in this sport
-                $clubMatches = $matches->filter(function ($match) use ($club) {
-                    return $match->home_club_id === $club->id || $match->away_club_id === $club->id;
-                });
-
-                $stats = [
-                    'club_id' => $club->id,
-                    'club_name' => $club->clubName,
-                    'matches_played' => 0,
-                    'wins' => 0,
-                    'draws' => 0,
-                    'losses' => 0,
-                    'points' => 0,
-                    'win_percentage' => 0,
-                    'total_scores_for' => 0,
-                    'total_scores_against' => 0
-                ];
-
-                foreach ($clubMatches as $match) {
-                    if ($match->matchResults) {
-                        $stats['matches_played']++;
-                        $result = $match->matchResults;
-
-                        // Calculate scores for and against
-                        if ($match->home_club_id === $club->id) {
-                            $stats['total_scores_for'] += $result->home_score;
-                            $stats['total_scores_against'] += $result->away_score;
-                        } else {
-                            $stats['total_scores_for'] += $result->away_score;
-                            $stats['total_scores_against'] += $result->home_score;
-                        }
-
-                        if ($result->winner_club_id === $club->id) {
-                            $stats['wins']++;
-                            $stats['points'] += 3;
-                        } elseif ($result->winner_club_id === null) {
-                            $stats['draws']++;
-                            $stats['points'] += 1;
-                        } else {
-                            $stats['losses']++;
-                        }
-                    }
-                }
-
-                $stats['win_percentage'] = $stats['matches_played'] > 0
-                    ? round(($stats['wins'] / $stats['matches_played']) * 100, 2)
-                    : 0;
-
-                if ($stats['matches_played'] > 0) {
-                    $clubStats[] = $stats;
-                }
-            }
-
-            // Sort clubs by ranking criteria
-            usort($clubStats, function ($a, $b) {
-                if ($a['points'] !== $b['points']) {
-                    return $b['points'] - $a['points'];
-                }
-                if ($a['wins'] !== $b['wins']) {
-                    return $b['wins'] - $a['wins'];
-                }
-                return 0;
-            });
-
-            // Only update ranks in database if tournament has ended
-            if ($tournamentEnded) {
-                foreach ($clubStats as $index => $stat) {
-                    $rank = $index + 1;
-                    EventClub::where('club_id', $stat['club_id'])
-                        ->where('event_sports_id', $eventSport->id)
-                        ->update(['rank' => $rank]);
-
-                    $clubStats[$index]['rank'] = $rank;
-                }
-            }
-
-            // Get leader details (either winner if ended, or current leader if ongoing)
-            $leader = !empty($clubStats) ? $clubStats[0] : null;
-
-            if ($leader) {
-                $leaderDetails = Club::find($leader['club_id']);
-
-                $sportWinner = [
-                    'sport_id' => $eventSport->id,
-                    'sport_name' => $eventSport->name,
-                    'tournament_status' => $tournamentEnded ? 'completed' : 'ongoing',
-                    'winner' => [
-                        'club_id' => $leaderDetails->id,
-                        'club_name' => $leaderDetails->clubName,
-                        'club_address' => $leaderDetails->clubAddress,
-                        'club_contact' => $leaderDetails->clubContactNo,
-                        'club_image' => $leaderDetails->clubImage,
-                        'performance' => [
-                            'matches_played' => $leader['matches_played'],
-                            'wins' => $leader['wins'],
-                            'draws' => $leader['draws'],
-                            'losses' => $leader['losses'],
-                            'points' => $leader['points'],
-                            'win_percentage' => $leader['win_percentage'],
-                            'total_scores_for' => $leader['total_scores_for'],
-                            'total_scores_against' => $leader['total_scores_against']
-                        ]
-                    ],
-                    'total_participants' => count($clubStats),
-                    'match_results' => $matchResults,
-                    'team_standings' => array_map(function ($stat) use ($tournamentEnded) {
-                        return [
-                            'club_id' => $stat['club_id'],
-                            'club_name' => $stat['club_name'],
-                            'rank' => $tournamentEnded ? ($stat['rank'] ?? null) : null,
-                            'matches_played' => $stat['matches_played'],
-                            'wins' => $stat['wins'],
-                            'draws' => $stat['draws'],
-                            'losses' => $stat['losses'],
-                            'points' => $stat['points'],
-                            'win_percentage' => $stat['win_percentage'],
-                            'total_scores_for' => $stat['total_scores_for'],
-                            'total_scores_against' => $stat['total_scores_against']
-                        ];
-                    }, $clubStats)
-                ];
-
-                // Add tournament specific details
-                if ($tournamentEnded) {
-                    $sportWinner['tournament_name'] = $event->name;
-                    $sportWinner['winner']['status'] = 'Champion';
-                } else {
-                    $sportWinner['tournament_name'] = $event->name . ' (Ongoing)';
-                    $sportWinner['winner']['status'] = 'Current Leader';
-                }
-
-                $sportsWinners[] = $sportWinner;
-            }
         }
+
+        $totalMatches = count($matchResults);
+        $lastPage = ceil($totalMatches / $perPage);
 
         return response()->json([
             'success' => true,
             'data' => [
                 'event_id' => $eventId,
                 'event_status' => $tournamentEnded ? 'completed' : 'ongoing',
-                'total_sports' => count($sportsWinners),
-                'sports_winners' => $sportsWinners
-            ]
+                'sports' => array_unique(array_column($matchResults, 'sport_name')),
+                'match_results' => $matchResults,
+                'pagination' => [
+                    'total_matches' => $totalMatches,
+                    'current_page' => $page,
+                    'last_page' => $lastPage,
+                    'per_page' => $perPage,
+                ]
+            ],
+
         ], 200);
     }
 
