@@ -79,6 +79,10 @@ const MatchSchedule = ({ roleId, eventId }) => {
     );
   }
 
+  const startingIndex = (pagination.currentPage - 1) * pagination.perPage + 1;
+  let matchNumber = startingIndex;
+  let dateNumber = startingIndex;
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header with Search and Add Schedule button */}
@@ -110,7 +114,10 @@ const MatchSchedule = ({ roleId, eventId }) => {
         <div className="flex items-center gap-2">
           <h5 className="font-poppins">Search by:</h5>
           <div className=" relative">
-            <IoSearchCircleOutline size={20} className="text-blue-600 absolute left-2 top-3" />
+            <IoSearchCircleOutline
+              size={20}
+              className="text-blue-600 absolute left-2 top-3"
+            />
             <input
               type="date"
               value={searchDate}
@@ -132,7 +139,7 @@ const MatchSchedule = ({ roleId, eventId }) => {
             <div key={index}>
               <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
                 <h2 className="text-xl font-semibold text-gray-700">
-                  {dateGroup.date}
+                  {`${dateNumber++} . ${dateGroup.date}`}
                 </h2>
               </div>
 
@@ -143,6 +150,9 @@ const MatchSchedule = ({ roleId, eventId }) => {
                 >
                   <div className="border-b border-gray-200 p-4 flex items-center justify-between space-x-4">
                     <div className="flex items-center gap-4">
+                      <span className="text-lg font-medium text-gray-700">
+                        {`${matchNumber++} .`}
+                      </span>
                       <img
                         src={
                           match.sportImage ||
