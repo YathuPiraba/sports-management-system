@@ -519,7 +519,7 @@ export const getMatchResultAPI = async (eventId, page, perPage, selectedSport) =
     params: {
       page,
       per_page: perPage,
-      searchTerm: selectedSport,
+      search: selectedSport,
     },
   });
 };

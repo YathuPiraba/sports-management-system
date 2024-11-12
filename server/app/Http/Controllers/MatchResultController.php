@@ -10,6 +10,7 @@ use App\Models\MatchResult;
 use App\Models\MatchSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class MatchResultController extends Controller
 {
@@ -530,97 +531,114 @@ class MatchResultController extends Controller
         ], 200);
     }
 
-    public function getEventMatchesResults($eventId, $page = 1, $searchTerm = '')
+    public function getEventMatchesResults($eventId, Request $request)
     {
-        // Get event details first to check end date
-        $event = Events::find($eventId);
-        if (!$event) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Event not found'
-            ], 404);
-        }
+        try {
+            // Check if the event exists
+            $event = Events::find($eventId);
+            if (!$event) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Event not found'
+                ], 404);
+            }
 
-        // Get all event sports for this event
-        $eventSports = EventSports::where('event_id', $eventId)
-            ->with('sportsCategory')
-            ->get();
+            // Get pagination and search parameters from request
+            $perPage = $request->input('per_page', 10);
+            $page = $request->input('page', 1);
+            $searchTerm = $request->input('search');
 
-        $matchResults = [];
-        $tournamentEnded = $event->end_date < now();
+            // Determine if the tournament has ended
+            $tournamentEnded = $event->end_date < now();
 
-        $perPage = 10;
-        $offset = ($page - 1) * $perPage;
-
-        $sports = [];
-
-        foreach ($eventSports as $eventSport) {
-            // Get all matches for this sport with their results and clubs
-            $matches = MatchSchedule::where('event_sports_id', $eventSport->id)
-                ->with(['matchResults', 'homeClub', 'awayClub'])
-                ->when($searchTerm, function ($query) use ($searchTerm, $eventSport) {
-                    return $query->where('event_sports_id', $eventSport->id)
-                        ->where('name', 'like', '%' . $searchTerm . '%');
+            // Retrieve event sports with optional search by name
+            $eventSports = EventSports::where('event_id', $eventId)
+                ->when($searchTerm, function ($query) use ($searchTerm) {
+                    return $query->where('name', 'like', '%' . $searchTerm . '%');
                 })
-                ->orderBy('match_date', 'desc')
-                ->skip($offset)
-                ->take($perPage)
+                ->with('sportsCategory')
+
                 ->get();
 
-            foreach ($matches as $match) {
-                if ($match->matchResults) {
-                    $result = $match->matchResults;
-                    $homeClub = $match->homeClub;
-                    $awayClub = $match->awayClub;
+            $matchResults = [];
+            $sports = [];
 
-                    $matchResults[] = [
-                        'match_id' => $match->id,
-                        'match_date' => $match->match_date,
-                        'sport_id' => $eventSport->id,
-                        'sport_name' => $eventSport->name,
-                        'venue' => $eventSport->place,
-                        'home_team' => [
-                            'club_id' => $homeClub->id,
-                            'club_name' => $homeClub->clubName,
-                            'score' => $result->home_score,
-                            'result' => $result->winner_club_id === $homeClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
-                        ],
-                        'away_team' => [
-                            'club_id' => $awayClub->id,
-                            'club_name' => $awayClub->clubName,
-                            'score' => $result->away_score,
-                            'result' => $result->winner_club_id === $awayClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
-                        ],
-                        'winner_id' => $result->winner_club_id,
-                        'match_status' => $result->winner_club_id === null ? 'draw' : 'completed'
-                    ];
+            foreach ($eventSports as $eventSport) {
+                // Retrieve matches for the sport with pagination and results
+                $matches = MatchSchedule::where('event_sports_id', $eventSport->id)
+                    ->with(['matchResults', 'homeClub', 'awayClub'])
+                    ->orderBy('match_date', 'desc')
+                    ->skip(($page - 1) * $perPage)
+                    ->take($perPage)
+                    ->get();
 
-                    $sports[] = $eventSport->name;
+                foreach ($matches as $match) {
+                    if ($match->matchResults) {
+                        $result = $match->matchResults;
+                        $homeClub = $match->homeClub;
+                        $awayClub = $match->awayClub;
+
+                        $matchResults[] = [
+                            'match_id' => $match->id,
+                            'match_date' => $match->match_date,
+                            'sport_id' => $eventSport->id,
+                            'sport_name' => $eventSport->name,
+                            'venue' => $eventSport->place,
+                            'home_team' => [
+                                'club_id' => $homeClub->id,
+                                'club_name' => $homeClub->clubName,
+                                'score' => $result->home_score,
+                                'result' => $result->winner_club_id === $homeClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
+                            ],
+                            'away_team' => [
+                                'club_id' => $awayClub->id,
+                                'club_name' => $awayClub->clubName,
+                                'score' => $result->away_score,
+                                'result' => $result->winner_club_id === $awayClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
+                            ],
+                            'winner_id' => $result->winner_club_id,
+                            'match_status' => $result->winner_club_id === null ? 'draw' : 'completed'
+                        ];
+
+                        $sports[] = $eventSport->name;
+                    }
                 }
             }
+
+            // Get unique sports
+            $uniqueSports = array_unique($sports);
+
+            // Paginate the results
+            $totalMatches = count($matchResults);
+            $lastPage = ceil($totalMatches / $perPage);
+            $offset = ($page - 1) * $perPage;
+            $paginatedResults = array_slice($matchResults, $offset, $perPage);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'event_id' => $eventId,
+                    'event_status' => $tournamentEnded ? 'completed' : 'ongoing',
+                    'sports' => $uniqueSports,
+                    'match_results' => $paginatedResults,
+                    'pagination' => [
+                        'total_matches' => $totalMatches,
+                        'current_page' => (int)$page,
+                        'last_page' => $lastPage,
+                        'per_page' => (int)$perPage,
+                    ]
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching event match results: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching event match results: ' . $e->getMessage(),
+            ], 500);
         }
-
-        $totalMatches = count($matchResults);
-        $lastPage = ceil($totalMatches / $perPage);
-
-        $uniqueSports = array_unique($sports);
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'event_id' => $eventId,
-                'event_status' => $tournamentEnded ? 'completed' : 'ongoing',
-                'sports' => $uniqueSports,
-                'match_results' => $matchResults,
-                'pagination' => [
-                    'total_matches' => $totalMatches,
-                    'current_page' => $page,
-                    'last_page' => $lastPage,
-                    'per_page' => $perPage,
-                ]
-            ],
-        ], 200);
     }
+
 
 
 

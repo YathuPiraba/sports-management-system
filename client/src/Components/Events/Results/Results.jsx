@@ -8,7 +8,6 @@ const MatchResults = ({ roleId, eventId }) => {
   const [sports, setSports] = useState([]);
   const [selectedSport, setSelectedSport] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [matchResults, setMatchResults] = useState([]);
   const [pagination, setPagination] = useState({
@@ -18,21 +17,24 @@ const MatchResults = ({ roleId, eventId }) => {
     total: 0,
   });
 
-  const fetchMatchResults = async (page = 1) => {
+  const fetchMatchResults = async (page = 1, perPage = 10) => {
     setLoading(true);
     try {
       const res = await getMatchResultAPI(
         eventId,
         page,
+        perPage,
         selectedSport == "all" ? "" : selectedSport
       );
-      setSports([ ...new Set(res.data.data.sports)]);
-      setMatchResults(res.data.data.match_results);
+      const data = res.data.data;
+
+      setSports([...new Set(data.sports)]);
+      setMatchResults(data.match_results);
       setPagination({
-        currentPage: res.data.data.pagination.current_page,
-        lastPage: res.data.data.pagination.last_page,
-        perPage: res.data.data.pagination.per_page,
-        total: res.data.data.pagination.total_matches,
+        currentPage: data.pagination.current_page,
+        lastPage: data.pagination.last_page,
+        perPage: data.pagination.per_page,
+        total: data.pagination.total_matches,
       });
     } catch (error) {
       console.error(error);
