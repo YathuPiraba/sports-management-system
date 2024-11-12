@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { matchSchedulesDataAPI } from "../../../Services/apiServices";
+import { Button } from "antd";
+import toast from "react-hot-toast";
 
-const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
+const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
+  const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     selectedDate: "",
     selectedMatch: null,
@@ -9,51 +14,29 @@ const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
     winner: "",
   });
 
-  const scheduledMatches = [
-    {
-      date: "2024-11-10",
-      sport: "Football",
-      team1: "Manchester United",
-      team2: "Chelsea",
-      time: "15:00",
-      venue: "Old Trafford",
-    },
-    {
-      date: "2024-11-10",
-      sport: "Basketball",
-      team1: "Lakers",
-      team2: "Warriors",
-      time: "19:30",
-      venue: "Staples Center",
-    },
-    {
-      date: "2024-11-11",
-      sport: "Cricket",
-      team1: "India",
-      team2: "Australia",
-      time: "14:00",
-      venue: "MCG",
-    },
-    {
-      date: "2024-11-12",
-      sport: "Football",
-      team1: "Liverpool",
-      team2: "Arsenal",
-      time: "20:00",
-      venue: "Anfield",
-    },
-    {
-      date: "2024-11-12",
-      sport: "Tennis",
-      team1: "Djokovic",
-      team2: "Nadal",
-      time: "16:00",
-      venue: "Centre Court",
-    },
-  ];
+  // Fetch match schedules from the API
+  const fetchMatchSchedule = async () => {
+    setLoading(true);
+    try {
+      const res = await matchSchedulesDataAPI(eventId);
+      setMatches(res.data.data.matches); // Set fetched matches
+      console.log(res.data.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching match schedules list");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (eventId) {
+      fetchMatchSchedule(); // Fetch the match schedules when the eventId changes
+    }
+  }, [eventId]);
 
   // Group matches by date
-  const matchesByDate = scheduledMatches.reduce((acc, match) => {
+  const matchesByDate = matches.reduce((acc, match) => {
     const date = match.date;
     if (!acc[date]) {
       acc[date] = [];
@@ -62,7 +45,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
     return acc;
   }, {});
 
-  const dates = Object.keys(matchesByDate).sort();
+  const dates = Object.keys(matchesByDate).sort(); // Sort dates
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -142,7 +125,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
             </div>
 
             {/* Match Selection */}
-            {formData.selectedDate && (
+            {formData?.selectedDate && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Match
@@ -167,9 +150,9 @@ const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
                   }
                 >
                   <option value="">Select a match</option>
-                  {matchesByDate[formData.selectedDate].map((match, idx) => (
+                  {matchesByDate[formData.selectedDate]?.map((match, idx) => (
                     <option key={idx} value={JSON.stringify(match)}>
-                      {`${match.sport}: ${match.team1} vs ${match.team2} - ${match.time}`}
+                      {`${match.sport}: ${match.club1?.name} vs ${match?.club2?.name} - ${match.time}`}
                     </option>
                   ))}
                 </select>
@@ -177,11 +160,11 @@ const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
             )}
 
             {/* Score Input */}
-            {formData.selectedMatch && (
+            {formData?.selectedMatch && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {formData.selectedMatch.team1} Score
+                    {formData.selectedMatch.club1.name} Score
                   </label>
                   <input
                     type="number"
@@ -194,7 +177,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {formData.selectedMatch.team2} Score
+                    {formData?.selectedMatch?.club2?.name} Score
                   </label>
                   <input
                     type="number"
@@ -222,11 +205,11 @@ const AddResultModal = ({ isOpen, onClose, onSubmit }) => {
                   }
                 >
                   <option value="">Select winner</option>
-                  <option value={formData.selectedMatch.team1}>
-                    {formData.selectedMatch.team1}
+                  <option value={formData.selectedMatch.club1.name}>
+                    {formData.selectedMatch.club1.name}
                   </option>
-                  <option value={formData.selectedMatch.team2}>
-                    {formData.selectedMatch.team2}
+                  <option value={formData.selectedMatch.club2.name}>
+                    {formData.selectedMatch.club2.name}
                   </option>
                   <option value="Draw">Draw</option>
                 </select>

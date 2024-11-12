@@ -157,6 +157,8 @@ Route::prefix('event-sports/{eventSportId}/matches')->group(function () {
 });
 
 Route::get('/event/{eventId}/match-schedules', [MatchScheduleController::class, 'getMatchSchedulesByEvent']);
+Route::get('/event/match-schedules/{eventId}', [MatchScheduleController::class, 'getMatchSchedules']);
+
 
 Route::get('/download-match-schedules/{eventId}', [MatchScheduleController::class, 'generateMatchSchedulePDF']);
 

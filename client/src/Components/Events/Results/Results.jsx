@@ -301,6 +301,7 @@ const MatchResults = ({ roleId, eventId }) => {
           onSubmit={handleAddResult}
           teams={teams}
           sports={sports}
+          eventId={eventId}
         />
       )}
     </div>

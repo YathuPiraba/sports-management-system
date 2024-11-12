@@ -485,6 +485,10 @@ export const getMatchSchedulesAPI = (eventId, page, perPage, search) => {
   });
 };
 
+export const matchSchedulesDataAPI = (eventId) => {
+  return authApiClient.get(`/event/match-schedules/${eventId}`, {});
+};
+
 export const downloadMatchScheduleAPI = async (eventId) => {
   try {
     const response = await authApiClient.get(

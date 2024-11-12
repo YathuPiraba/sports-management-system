@@ -99,8 +99,10 @@ class ClubController extends Controller
     public function getAllClubs()
     {
         try {
-            // Fetch all club details
-            $clubs = Club::where('isVerified', 1)->get();
+            // Fetch all club details and sort by clubName in ascending order
+            $clubs = Club::where('isVerified', 1)
+                ->orderBy('clubName', 'asc')
+                ->get();
 
             return response()->json($clubs);
         } catch (Exception $e) {
