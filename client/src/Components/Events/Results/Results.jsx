@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddResultModal from "./AddResultModal";
+import { getMatchResultAPI } from "../../../Services/apiServices";
+import { PropagateLoader } from "react-spinners";
 
 const MatchResults = ({ roleId, eventId }) => {
   const sports = ["All Sports", "Football", "Basketball", "Cricket", "Tennis"];
   const [selectedSport, setSelectedSport] = useState("All Sports");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     sport: "",
     team1: "",
@@ -15,6 +18,31 @@ const MatchResults = ({ roleId, eventId }) => {
     venue: "",
     winner: "",
   });
+
+  const fetchMatchResults = async () => {
+    setLoading(true);
+    try {
+      const res = await getMatchResultAPI(eventId);
+      console.log(res.data.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching match schedules list");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMatchResults();
+  }, [eventId]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[50vh]">
+        <PropagateLoader loading={loading} size={10} color="#4682B4" />
+      </div>
+    );
+  }
 
   // Sample teams data
   const teams = {
@@ -94,8 +122,6 @@ const MatchResults = ({ roleId, eventId }) => {
     }
     return results[selectedSport] || [];
   };
-
-
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
