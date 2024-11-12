@@ -19,8 +19,22 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
     setLoading(true);
     try {
       const res = await matchSchedulesDataAPI(eventId);
-      setMatches(res.data.data.matches); // Set fetched matches
-      console.log(res.data.data);
+      // Transform the data structure to match our needs
+      const transformedMatches = res.data.data.matches.reduce(
+        (acc, dateGroup) => {
+          // Add matches from each date group to our accumulated array
+          // with the date included in each match object
+          dateGroup.matches.forEach((match) => {
+            acc.push({
+              ...match,
+              date: dateGroup.date,
+            });
+          });
+          return acc;
+        },
+        []
+      );
+      setMatches(transformedMatches);
     } catch (error) {
       console.error(error);
       toast.error("Error fetching match schedules list");
@@ -30,7 +44,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
   };
 
   useEffect(() => {
-    fetchMatchSchedule(); // Fetch the match schedules when the eventId changes
+    fetchMatchSchedule();
   }, [eventId]);
 
   // Group matches by date
@@ -43,7 +57,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
     return acc;
   }, {});
 
-  const dates = Object.keys(matchesByDate).sort(); // Sort dates
+  const dates = Object.keys(matchesByDate).sort();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -116,14 +130,14 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
                 <option value="">Select a date</option>
                 {dates.map((date) => (
                   <option key={date} value={date}>
-                    {new Date(date).toLocaleDateString()}
+                    {date}
                   </option>
                 ))}
               </select>
             </div>
 
             {/* Match Selection */}
-            {formData?.selectedDate && (
+            {formData.selectedDate && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Match
@@ -148,9 +162,9 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
                   }
                 >
                   <option value="">Select a match</option>
-                  {matchesByDate[formData.selectedDate]?.map((match, idx) => (
-                    <option key={idx} value={JSON.stringify(match)}>
-                      {`${match.sport}: ${match.club1?.name} vs ${match?.club2?.name} - ${match.time}`}
+                  {matchesByDate[formData.selectedDate]?.map((match) => (
+                    <option key={match.id} value={JSON.stringify(match)}>
+                      {`${match.sport}: ${match.club1.name} vs ${match.club2.name} - ${match.time}`}
                     </option>
                   ))}
                 </select>
@@ -158,7 +172,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
             )}
 
             {/* Score Input */}
-            {formData?.selectedMatch && (
+            {formData.selectedMatch && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -175,7 +189,7 @@ const AddResultModal = ({ isOpen, onClose, onSubmit, eventId }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {formData?.selectedMatch?.club2?.name} Score
+                    {formData.selectedMatch.club2.name} Score
                   </label>
                   <input
                     type="number"
