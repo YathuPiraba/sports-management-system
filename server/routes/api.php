@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\EventClubController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -174,3 +175,7 @@ Route::prefix('matches/results')->group(function () {
 Route::get('/events/{eventId}/club-stats', [MatchResultController::class, 'getClubStats']);
 Route::get('/events/{eventId}/clubs/{clubId}/sports-stats', [MatchResultController::class, 'getClubEventSportsStats']);
 Route::get('/events/{eventId}/clubs/sports-stats', [MatchResultController::class, 'getAllClubsSportsStats']);
+Route::put('/event-clubs/{clubId}/{eventSportsId}', [EventClubController::class, 'update']);
+
+// Add this route in your routes/api.php
+Route::get('/events/{eventId}/sports-winners', [MatchResultController::class, 'getEventSportsWinners']);

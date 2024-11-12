@@ -95,15 +95,7 @@ const MatchResults = ({ roleId, eventId }) => {
     return results[selectedSport] || [];
   };
 
-  const handleAddResult = (formData) => {
-    // Handle the form data submitted from the modal
-    console.log("New Match Result:", formData);
-  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsModalOpen(false);
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
