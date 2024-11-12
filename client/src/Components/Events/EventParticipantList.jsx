@@ -21,6 +21,8 @@ const EventParticipantList = ({ eventId }) => {
     try {
       const res = await getEventParticipantsAPI(eventId);
       const clubsData = res.data.data;
+      console.log(res.data.data);
+
       setTreeData(formatTreeData(clubsData));
     } catch (error) {
       console.error(error);
@@ -61,7 +63,10 @@ const EventParticipantList = ({ eventId }) => {
   };
 
   const formatTreeData = (data) => {
-    if (!data || !data.length) return [];
+    if (!Array.isArray(data)) {
+      // If it's not an array, convert the object to an array using Object.values()
+      data = Object.values(data);
+    }
 
     return data.map((event) => ({
       title: (

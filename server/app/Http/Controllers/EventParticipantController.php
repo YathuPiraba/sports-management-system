@@ -175,7 +175,11 @@ class EventParticipantController extends Controller
                     'eventClubs.participants.memberSport.member:id,firstName,lastName,position',
                     'eventClubs.participants.memberSport.sport:id,name,image',
                     'sportsCategory:id,name,image',
-                ])->get();
+                ])->get()
+                ->filter(function ($eventSport) {
+                    // Filter out eventSports without participating clubs
+                    return $eventSport->eventClubs->isNotEmpty();
+                });
 
             if ($eventSports->isEmpty()) {
                 return response()->json([
@@ -436,7 +440,7 @@ class EventParticipantController extends Controller
             // Fetch event sports where the member is a participant
             $eventSports = EventSports::with(['sportsCategory'])
                 ->where('event_id', $eventId)
-                ->whereHas('eventClubs.participants', function($query) use ($memberSportsIds) {
+                ->whereHas('eventClubs.participants', function ($query) use ($memberSportsIds) {
                     $query->whereIn('member_sports_id', $memberSportsIds);
                 })
                 ->get();
@@ -464,7 +468,7 @@ class EventParticipantController extends Controller
                 'event_sports' => $eventSports->map(function ($eventSport) use ($memberSportsIds) {
                     // Find the participant record for this event sport
                     $participant = Event_Participants::whereIn('member_sports_id', $memberSportsIds)
-                        ->whereHas('eventClub', function($query) use ($eventSport) {
+                        ->whereHas('eventClub', function ($query) use ($eventSport) {
                             $query->where('event_sports_id', $eventSport->id);
                         })
                         ->first();
