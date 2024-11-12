@@ -73,50 +73,95 @@ class MatchScheduleController extends Controller
         return response()->json($match);
     }
 
-    public function getMatchSchedulesByEvent($eventId)
+    public function getMatchSchedulesByEvent($eventId, Request $request)
     {
         try {
-            // Fetch match schedules for the specific event with related home club, away club, and event sport details
-            $matchSchedules = MatchSchedule::whereHas('eventSport', function ($query) use ($eventId) {
+            // Get pagination and search parameters from request
+            $perPage = $request->input('per_page', 1);
+            $page = $request->input('page', 1);
+            $searchDate = $request->input('date');
+
+            // Base query
+            $query = MatchSchedule::whereHas('eventSport', function ($query) use ($eventId) {
                 $query->where('event_id', $eventId);
-            })
-                ->with([
-                    'homeClub:id,clubName,clubImage',
-                    'awayClub:id,clubName,clubImage',
-                    'eventSport:id,name,start_date,end_date,place,sports_id',
-                ])
-                ->get(); // Fetch all match schedules without grouping
+            })->with([
+                'homeClub:id,clubName,clubImage',
+                'awayClub:id,clubName,clubImage',
+                'eventSport:id,name,start_date,end_date,place,sports_id',
+            ]);
+
+            // Add date search if provided
+            if ($searchDate) {
+                // Convert the search date to Y-m-d format for consistent comparison
+                $formattedSearchDate = \Carbon\Carbon::parse($searchDate)->format('Y-m-d');
+                $query->whereDate('match_date', $formattedSearchDate);
+            }
+
+            // Get sorted results
+            $matchSchedules = $query->orderBy('match_date', 'asc')
+                                   ->orderBy('time', 'asc')
+                                   ->get();
+
+            // Group matches by date
+            $groupedMatches = $matchSchedules->groupBy(function ($match) {
+                return \Carbon\Carbon::parse($match->match_date)->format('Y-m-d');
+            });
 
             // Format the response for each match schedule
-            $matchData = $matchSchedules->map(function ($match) {
-                return [
-                    'date' => \Carbon\Carbon::parse($match->match_date)->format('F d, Y'), // format match_date as "November 12, 2024"
-                    'sport' => $match->eventSport->name, // event sport name
-                    'sportImage' => $match->eventSport->sportsCategory ? $match->eventSport->sportsCategory->image : null, // Use sportsCategory image or null
-                    'club1' => [
-                        'id' => $match->homeClub->id, // Home club ID
-                        'name' => $match->homeClub->clubName, // Home club name
-                        'image' => $match->homeClub->clubImage ?? null, // Default placeholder if club image is null
-                    ],
-                    'club2' => [
-                        'id' => $match->awayClub->id, // Away club ID
-                        'name' => $match->awayClub->clubName, // Away club name
-                        'image' => $match->awayClub->clubImage ?? null, // Default placeholder if club image is null
-                    ],
-                    'time' => $match->time, // Match time
-                    'place' => $match->eventSport->place, // Event sport place
-                    'event_sport_id' => $match->eventSport->id,
-                    'event_start_date' => $match->eventSport->start_date,
-                    'event_end_date' => $match->eventSport->end_date,
-                    'home_club_id' => $match->homeClub->id, // Home club ID
-                    'away_club_id' => $match->awayClub->id, // Away club ID
+            $formattedData = [];
+            foreach ($groupedMatches as $date => $matches) {
+                $matchesForDate = $matches->map(function ($match) {
+                    return [
+                        'id' => $match->id,
+                        'time' => $match->time,
+                        'sport' => $match->eventSport->name,
+                        'sportImage' => $match->eventSport->sportsCategory ? $match->eventSport->sportsCategory->image : null,
+                        'club1' => [
+                            'id' => $match->homeClub->id,
+                            'name' => $match->homeClub->clubName,
+                            'image' => $match->homeClub->clubImage ?? null,
+                        ],
+                        'club2' => [
+                            'id' => $match->awayClub->id,
+                            'name' => $match->awayClub->clubName,
+                            'image' => $match->awayClub->clubImage ?? null,
+                        ],
+                        'place' => $match->eventSport->place,
+                        'event_sport_id' => $match->eventSport->id,
+                        'event_start_date' => $match->eventSport->start_date,
+                        'event_end_date' => $match->eventSport->end_date,
+                        'home_club_id' => $match->homeClub->id,
+                        'away_club_id' => $match->awayClub->id,
+                    ];
+                });
+
+                $formattedData[] = [
+                    'date' => \Carbon\Carbon::parse($date)->format('F d, Y'),
+                    'matches' => $matchesForDate
                 ];
-            });
+            }
+
+            // Calculate pagination
+            $total = count($formattedData);
+            $lastPage = ceil($total / $perPage);
+            $offset = ($page - 1) * $perPage;
+
+            // Slice the data according to pagination
+            $paginatedData = array_slice($formattedData, $offset, $perPage);
 
             return response()->json([
                 'success' => true,
-                'data' => $matchData, // Return the formatted match schedules directly (without grouping)
+                'data' => [
+                    'matches' => $paginatedData,
+                    'pagination' => [
+                        'current_page' => (int)$page,
+                        'last_page' => $lastPage,
+                        'per_page' => (int)$perPage,
+                        'total' => $total
+                    ]
+                ]
             ], 200);
+
         } catch (\Exception $e) {
             Log::error('Error fetching match schedules by event ID: ' . $e->getMessage());
 
@@ -126,9 +171,6 @@ class MatchScheduleController extends Controller
             ], 500);
         }
     }
-
-
-
 
     /**
      * Update a specific match schedule.

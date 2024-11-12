@@ -84,8 +84,6 @@ const AddScheduleModal = ({
         throw new Error("Home and away teams cannot be the same");
       }
 
-      console.log(formData);
-
       await addMatchScheduleAPI(formData.event_sports_id, formData);
       fetchMatchSchedule();
       toast.success("Schedule saved successfully");

@@ -471,11 +471,16 @@ export const downloadEventSportsDetailsAPI = async (eventSportsId) => {
   }
 };
 
-
 export const addMatchScheduleAPI = (eventSportId, data) => {
   return authApiClient.post(`event-sports/${eventSportId}/matches`, data);
 };
 
-export const getMatchSchedulesAPI = (eventId) => {
-  return authApiClient.get(`/event/${eventId}/match-schedules`);
+export const getMatchSchedulesAPI = (eventId, page, perPage,search ) => {
+  return authApiClient.get(`/event/${eventId}/match-schedules`, {
+    params: {
+      page,
+      per_page: perPage,
+      date: search,
+    },
+  });
 };
