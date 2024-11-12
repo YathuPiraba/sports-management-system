@@ -10,10 +10,11 @@ class MatchResult extends Model
     use HasFactory;
 
     protected $fillable = [
-        'match_schedule_id',
+        'match_id',
         'winner_club_id',
-        'score_club_1',
-        'score_club_2',
+        'home_score',
+        'away_score',
+        'result'
     ];
 
     /**
@@ -21,7 +22,7 @@ class MatchResult extends Model
      */
     public function matchSchedule()
     {
-        return $this->belongsTo(MatchSchedule::class, 'match_schedule_id');
+        return $this->belongsTo(MatchSchedule::class, 'match_id');
     }
 
     /**

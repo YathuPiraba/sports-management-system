@@ -16,22 +16,39 @@ class MatchResultController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate incoming request
         $request->validate([
-            'match_schedule_id' => 'required|exists:match_schedules,id',
-            'winner_club_id' => 'required|exists:clubs,id',
-            'score_club_1' => 'required|integer',
-            'score_club_2' => 'required|integer',
+            'match_id' => 'required|exists:matches,id',
+            'home_club_id' => 'required|exists:clubs,id',
+            'away_club_id' => 'required|exists:clubs,id',
+            'home_score' => 'required|integer',
+            'away_score' => 'required|integer',
+            'winner_club_id' => 'nullable|exists:clubs,id',
         ]);
 
+        // Determine the result based on winner_club_id
+        $result = null;
+        if ($request->winner_club_id) {
+            // If a winner is provided, the result should be a win for that club
+            $result = $request->winner_club_id === $request->home_club_id ? 'Home Win' : 'Away Win';
+        } else {
+            // If no winner, it's a draw
+            $result = 'Draw';
+        }
+
+        // Create a new match result record
         $matchResult = MatchResult::create([
-            'match_schedule_id' => $request->match_schedule_id,
+            'match_id' => $request->match_id,
+            'home_score' => $request->home_score,
+            'away_score' => $request->away_score,
             'winner_club_id' => $request->winner_club_id,
-            'score_club_1' => $request->score_club_1,
-            'score_club_2' => $request->score_club_2,
+            'result' => $result,
         ]);
 
+        // Return the created match result in the response
         return response()->json($matchResult, Response::HTTP_CREATED);
     }
+
 
     /**
      * Get all results for a specific match schedule.

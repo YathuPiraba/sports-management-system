@@ -163,7 +163,7 @@ Route::get('/event/match-schedules/{eventId}', [MatchScheduleController::class, 
 Route::get('/download-match-schedules/{eventId}', [MatchScheduleController::class, 'generateMatchSchedulePDF']);
 
 
-Route::prefix('matches/{matchScheduleId}/results')->group(function () {
+Route::prefix('matches/results')->group(function () {
     Route::post('/', [MatchResultController::class, 'store']); // Create a new match result
     Route::get('/', [MatchResultController::class, 'index']); // Get all results for a specific match schedule
     Route::get('/{id}', [MatchResultController::class, 'show']); // Get a specific match result

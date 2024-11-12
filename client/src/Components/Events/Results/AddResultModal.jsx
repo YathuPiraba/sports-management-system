@@ -83,9 +83,7 @@ const AddResultModal = ({ isOpen, onClose, eventId }) => {
         winner_club_id: winnerClubId,
       };
 
-      console.log(payload);
-
-      // const res = await submitMatchResultAPI(payload);
+      const res = await submitMatchResultAPI(payload);
 
       toast.success("Match result submitted successfully");
 
@@ -254,12 +252,13 @@ const AddResultModal = ({ isOpen, onClose, eventId }) => {
             )}
 
             <div className="flex justify-end">
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-200"
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="bg-blue-600 next-btn hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-200"
               >
                 Save Result
-              </button>
+              </Button>
             </div>
           </form>
         </div>
