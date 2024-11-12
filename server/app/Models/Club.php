@@ -54,4 +54,27 @@ class Club extends Model
     {
         return $this->hasMany(Club_Sports::class);
     }
+
+    public function homeMatches()
+    {
+        return $this->hasMany(MatchSchedule::class, 'home_club_id');
+    }
+
+    // Define relationship for matches where the club is the away team
+    public function awayMatches()
+    {
+        return $this->hasMany(MatchSchedule::class, 'away_club_id');
+    }
+
+    // Define a unified relationship to get all matches involving this club
+    public function allMatches()
+    {
+        return MatchSchedule::where('home_club_id', $this->id)
+            ->orWhere('away_club_id', $this->id);
+    }
+
+    public function matchResults()
+    {
+        return $this->hasMany(MatchResult::class, 'winner_club_id');
+    }
 }

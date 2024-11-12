@@ -42,4 +42,9 @@ class MatchSchedule extends Model  // Rename the class to SportMatch
     {
         return $this->belongsTo(Club::class, 'away_club_id');
     }
+
+    public function matchResults()
+    {
+        return $this->hasOne(MatchResult::class, 'match_id');
+    }
 }

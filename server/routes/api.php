@@ -170,3 +170,6 @@ Route::prefix('matches/results')->group(function () {
     Route::put('/{id}', [MatchResultController::class, 'update']); // Update a specific match result
     Route::delete('/{id}', [MatchResultController::class, 'destroy']); // Delete a specific match result
 });
+
+Route::get('/events/{eventId}/club-stats', [MatchResultController::class, 'getClubStats']);
+

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Club;
 use App\Models\MatchResult;
+use App\Models\MatchSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -49,6 +51,66 @@ class MatchResultController extends Controller
         return response()->json($matchResult, Response::HTTP_CREATED);
     }
 
+    public function getClubStats($eventId)
+    {
+        // First, get all clubs that participated in matches for this event
+        $participatingClubs = Club::whereHas('homeMatches', function ($query) use ($eventId) {
+            $query->whereHas('eventSport', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            });
+        })->orWhereHas('awayMatches', function ($query) use ($eventId) {
+            $query->whereHas('eventSport', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            });
+        })->get();
+
+        $clubStats = $participatingClubs->map(function ($club) use ($eventId) {
+            // Get all matches where this club participated
+            $matches = MatchSchedule::where(function ($query) use ($club) {
+                $query->where('home_club_id', $club->id)
+                      ->orWhere('away_club_id', $club->id);
+            })->whereHas('eventSport', function ($query) use ($eventId) {
+                $query->where('event_id', $eventId);
+            })->with('matchResults')->get();
+
+            // Initialize counters
+            $wins = 0;
+            $draws = 0;
+            $losses = 0;
+
+            foreach ($matches as $match) {
+                if ($match->matchResults) {
+                    $result = $match->matchResults;
+
+                    if ($result->winner_club_id === $club->id) {
+                        // Club won
+                        $wins++;
+                    } elseif ($result->winner_club_id === null) {
+                        // Match was a draw
+                        $draws++;
+                    } else {
+                        // Club lost
+                        $losses++;
+                    }
+                }
+            }
+
+            return [
+                'club_id' => $club->id,
+                'club_name' => $club->clubName,
+                'total_matches' => count($matches),
+                'wins' => $wins,
+                'draws' => $draws,
+                'losses' => $losses,
+                'points' => ($wins * 3) + ($draws * 1) // Standard scoring: 3 points for win, 1 for draw
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $clubStats,
+        ], 200);
+    }
 
     /**
      * Get all results for a specific match schedule.
