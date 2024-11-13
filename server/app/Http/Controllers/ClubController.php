@@ -635,28 +635,48 @@ class ClubController extends Controller
     // Controller method
     public function downloadAllClubs()
     {
-        $clubs = Club::withCount([
-            'members as total_members' => function($query) {
-                $query->whereHas('user', function($q) {
-                    $q->whereNull('deleted_at');
-                });
-            },
-            'clubManagers as total_managers' => function($query) {
-                $query->whereHas('user', function($q) {
-                    $q->whereNull('deleted_at');
-                });
-            }
-        ])
-        ->with([
-            'gsDivision:id,divisionName,divisionNo',
-            'clubSports' => function ($query) {
-                $query->select('id', 'club_id', 'sports_id')
-                    ->with(['sportsCategory:id,name']);
-            }
-        ])
-        ->select('id', 'clubName', 'clubAddress', 'regNo')
-        ->get()
-        ->map(function ($club) {
+        // Retrieve the clubs with necessary relationships and counts
+        $clubs = Club::select('id', 'clubName', 'clubAddress', 'regNo', 'gs_id')
+            ->with([
+                'gsDivision:id,divisionName,divisionNo',
+                'clubSports' => function ($query) {
+                    $query->select('id', 'club_id', 'sports_id')
+                        ->with(['sportsCategory:id,name']);
+                }
+            ])
+            // Count active members and managers
+            ->withCount([
+                'members as total_members' => function($query) {
+                    $query->join('users', 'members.user_id', '=', 'users.id')
+                        ->whereNull('users.deleted_at');
+                }
+            ])
+            ->withCount([
+                'clubManagers as total_managers' => function($query) {
+                    $query->join('users', 'club_managers.user_id', '=', 'users.id')
+                        ->whereNull('users.deleted_at');
+                }
+            ])
+            ->get();
+
+        // Check if all clubs have a `regNo`
+        $allHaveRegNo = $clubs->every(function($club) {
+            return !empty($club->regNo);
+        });
+
+        // Apply sorting logic
+        if ($allHaveRegNo) {
+            // If all clubs have a regNo, sort by regNo
+            $clubs = $clubs->sortBy('regNo');
+        } else {
+            // If at least one club has an empty regNo, sort by clubName
+            $clubs = $clubs->sortBy('clubName');
+        }
+
+        // Map to calculate total people
+        $clubs = $clubs->map(function ($club) {
+            $club->total_members = (int)$club->total_members;
+            $club->total_managers = (int)$club->total_managers;
             $club->total_people = $club->total_members + $club->total_managers;
             return $club;
         });
@@ -670,4 +690,5 @@ class ClubController extends Controller
         // Return the PDF for download
         return $pdf->download($filename);
     }
+
 }

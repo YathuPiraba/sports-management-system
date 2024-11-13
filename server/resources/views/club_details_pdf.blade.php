@@ -34,7 +34,7 @@
         }
 
         .club-header {
-            text-align: center;
+            text-align: left;
             margin-bottom: 20px;
             border-bottom: 2px solid #3498db;
             padding-bottom: 2px;
@@ -44,6 +44,7 @@
             width: 50px;
             vertical-align: middle;
             margin-right: 10px;
+            border-radius: 50%;
         }
 
         h1 {
@@ -78,6 +79,7 @@
         .squad-table {
             width: 100%;
             border-collapse: collapse;
+            border: none
         }
 
         .squad-table td {
@@ -98,6 +100,26 @@
         }
 
 
+        .watermark {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.08;
+            width: 50px;
+            height: auto;
+        }
+
+        .left-watermark {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .right-watermark {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.07;
+        }
         .members-table {
             width: 100%;
             border-collapse: separate;
@@ -140,20 +162,17 @@
 </head>
 
 <body>
-    <div class="logo-left">
-        <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1727243516/logo2-1_pyhk2h.png"
-            alt="Club Connect Logo" style="width: 75px;">
-    </div>
-    <div class="logo-right">
-        <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1728452512/11396-removebg-preview_q9leix.png"
-            alt="DSOffice Logo" style="width: 40px;">
-    </div>
+    <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1727243516/logo2-1_pyhk2h.png" alt="Left Watermark"
+    class="watermark left-watermark">
+<img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1728452512/11396-removebg-preview_q9leix.png"
+    alt="Right Watermark" class="watermark right-watermark">
 
     <div class="club-header">
         <img src="{{ $club->clubImage }}" alt="{{ $club->clubName }}" class="club-image">
-        <h1>{{ $club->clubName }}</h1>
+        <h1>{{ $club->clubName }}  Club Details - {{ date('Y') }}</h1>
     </div>
 
+    <div class="info"><strong>Registered Number:</strong> {{ $club->regNo ?? 'N/A'}}</div>
     <div class="info"><strong>Address:</strong> {{ $club->clubAddress }}</div>
     <div class="info"><strong>Contact No:</strong> {{ $club->clubContactNo }}</div>
     <div class="info"><strong>Division:</strong> {{ $club->gsDivision->divisionName }}</div>
@@ -181,8 +200,8 @@
     @if (isset($club->clubManagers) && count($club->clubManagers) > 0)
         <table class="squad-table">
             @foreach ($club->clubManagers as $manager)
-                <tr>
-                    <td>
+                <tr >
+                    <td style="width: 50%;">
                         <img src="{{ $manager->user->image ?? 'https://res.cloudinary.com/dmonsn0ga/image/upload/v1724126491/v17anurj1zsu4cu3hae7.png' }}"
                             alt="{{ $manager->firstName }} {{ $manager->lastName }}">
                     </td>

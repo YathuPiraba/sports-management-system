@@ -153,10 +153,10 @@ const AdminClubs = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      message.success("Schedule downloaded successfully");
+      message.success("Club details downloaded successfully");
     } catch (error) {
       console.error(error);
-      message.error("Error downloading schedule");
+      message.error("Error downloading club details");
     } finally {
       setClubDownloadLoading(false);
     }
