@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { PropagateLoader } from "react-spinners";
+import { FaFilePdf, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { Button, Popconfirm } from "antd";
 import AddResultModal from "./AddResultModal";
 import Pagination from "../../Pagination_Sorting_Search/Pagination";
 import {
   downloadMatchResultAPI,
   getMatchResultAPI,
+  deleteMatchResultsAPI,
 } from "../../../Services/apiServices";
-import { FaFilePdf } from "react-icons/fa";
-import { Button } from "antd";
+import toast from "react-hot-toast";
 
 const MatchResults = ({
   roleId,
@@ -29,6 +31,7 @@ const MatchResults = ({
     perPage: 5,
     total: 0,
   });
+  const [editingMatch, setEditingMatch] = useState(null);
 
   const getSerialNumber = (index) => {
     return (pagination.currentPage - 1) * pagination.perPage + index + 1;
@@ -66,7 +69,7 @@ const MatchResults = ({
       );
       const data = res.data.data;
       console.log(data);
-      
+
       setMatchResults(data.match_results);
       setPagination({
         currentPage: data.pagination.current_page,
@@ -80,6 +83,23 @@ const MatchResults = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = async (matchId) => {
+    try {
+      await deleteMatchResultsAPI(matchId);
+      toast.success("Match result deleted successfully");
+      fetchMatchResults(pagination.currentPage);
+      fetchMatchStats();
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting match result");
+    }
+  };
+
+  const openEditModal = (match) => {
+    setEditingMatch(match);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
@@ -97,8 +117,6 @@ const MatchResults = ({
       </div>
     );
   }
-
-  console.log(matchResults, pagination);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -143,9 +161,9 @@ const MatchResults = ({
           </div>
         </div>
       </div>
-      <div className="w-full md:w-auto flex flex-col md:flex-row gap-4  font-poppins  items-center mb-2">
+      <div className="w-full md:w-auto flex flex-col md:flex-row gap-4 font-poppins items-center mb-2">
         <div className="flex gap-2 items-center">
-          <h4 className="text-gray-600 ">Filter By:</h4>
+          <h4 className="text-gray-600">Filter By:</h4>
           <select
             value={selectedSport}
             onChange={(e) => setSelectedSport(e.target.value)}
@@ -167,7 +185,7 @@ const MatchResults = ({
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
-              <tr className="bg-gray-50 ">
+              <tr className="bg-gray-50">
                 <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
                   No
                 </th>
@@ -183,9 +201,14 @@ const MatchResults = ({
                 <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Scores
                 </th>
-                <th className="px-6 md:px-3  py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  <span className="ml-2"> Winner</span>
+                <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Winner
                 </th>
+                {roleId == 1 && (
+                  <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -208,7 +231,7 @@ const MatchResults = ({
                     </div>
                     <div className="text-sm text-gray-500">{match.venue}</div>
                   </td>
-                  <td className="px-6 md:px-3 py-4 whitespace-nowrap flex  text-sm text-gray-900">
+                  <td className="px-6 md:px-3 py-4 whitespace-nowrap flex text-sm text-gray-900">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-gray-800">
                         {match.home_team.club_name}
@@ -245,6 +268,28 @@ const MatchResults = ({
                         : "Tied"}
                     </span>
                   </td>
+                  {roleId == 1 && (
+                    <td className="px-6 md:px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="flex gap-2">
+                        <Button
+                          icon={<FaEdit />}
+                          onClick={() => openEditModal(match)}
+                          className="text-blue-600"
+                        />
+                        <Popconfirm
+                          title="Are you sure you want to delete this match result?"
+                          onConfirm={() => handleDelete(match.match_id)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <Button
+                            icon={<FaTrashAlt />}
+                            className="text-red-600"
+                          />
+                        </Popconfirm>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -267,15 +312,19 @@ const MatchResults = ({
         />
       </div>
 
-      {/* Add Results Modal */}
+      {/* Add/Edit Results Modal */}
       {roleId === 1 && (
         <AddResultModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingMatch(null);
+          }}
           matches={matches}
           loading={schedulesLoading}
           fetchMatchResults={fetchMatchResults}
           fetchMatchStats={fetchMatchStats}
+          editingMatch={editingMatch} // Pass the match being edited
         />
       )}
     </div>

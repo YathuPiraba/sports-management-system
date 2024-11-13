@@ -5,6 +5,7 @@ import {
   getMatchSchedulesAPI,
   getEventClubsAPI,
   downloadMatchScheduleAPI,
+  deleteMatchSchedulesAPI,
 } from "../../../Services/apiServices";
 import toast from "react-hot-toast";
 import { PropagateLoader } from "react-spinners";

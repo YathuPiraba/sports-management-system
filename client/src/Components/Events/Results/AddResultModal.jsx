@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { submitMatchResultAPI } from "../../../Services/apiServices";
+import {
+  submitMatchResultAPI,
+  updateMatchResultsAPI,
+} from "../../../Services/apiServices";
 import { Button } from "antd";
 import toast from "react-hot-toast";
 

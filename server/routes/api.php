@@ -155,31 +155,29 @@ Route::prefix('event-sports/{eventSportId}/matches')->group(function () {
     Route::post('/', [MatchScheduleController::class, 'store']); // Create a new match schedule
     Route::get('/', [MatchScheduleController::class, 'index']); // Get all matches for a specific event sport
     Route::get('/{id}', [MatchScheduleController::class, 'show']); // Get a specific match
-    Route::put('/{id}', [MatchScheduleController::class, 'update']); // Update a specific match schedule
-    Route::delete('/{id}', [MatchScheduleController::class, 'destroy']); // Delete a specific match schedule
 });
+
+
 
 Route::get('/event/{eventId}/match-schedules', [MatchScheduleController::class, 'getMatchSchedulesByEvent']);
 Route::get('/event/match-schedules/{eventId}', [MatchScheduleController::class, 'getMatchSchedules']);
-
-
+Route::put('/match-schedules/{matchId}', [MatchScheduleController::class, 'update']);
+Route::delete('/match-schedules/{matchId}', [MatchScheduleController::class, 'destroy']);
 Route::get('/download-match-schedules/{eventId}', [MatchScheduleController::class, 'generateMatchSchedulePDF']);
 
 
 Route::prefix('matches/results')->group(function () {
     Route::post('/', [MatchResultController::class, 'store']); // Create a new match result
-    // Get all results for a specific match schedule
     Route::get('/{id}', [MatchResultController::class, 'show']); // Get a specific match result
-    Route::put('/{id}', [MatchResultController::class, 'update']); // Update a specific match result
-    Route::delete('/{id}', [MatchResultController::class, 'destroy']); // Delete a specific match result
+    Route::put('/{matchId}', [MatchResultController::class, 'updateMatchResult']); // Update a specific match result
+    Route::delete('/{matchId}', [MatchResultController::class, 'deleteMatchResult']); // Delete a specific match result
 });
 
 Route::get('/events/{eventId}/club-stats', [MatchResultController::class, 'getClubStats']);
 Route::get('/events/{eventId}/clubs/{clubId}/sports-stats', [MatchResultController::class, 'getClubEventSportsStats']);
 Route::get('/events/{eventId}/clubs/sports-stats', [MatchResultController::class, 'getAllClubsSportsStats']);
 Route::put('/event-clubs/{clubId}/{eventSportsId}', [EventClubController::class, 'update']);
-Route::get('/event-sports-matches/{eventId}', [MatchResultController::class, 'getEventMatchesResults']);
-// Add this route in your routes/api.php
-Route::get('/events/{eventId}/sports-winners', [MatchResultController::class, 'getEventSportsWinners']);
 
+Route::get('/event-sports-matches/{eventId}', [MatchResultController::class, 'getEventMatchesResults']);
+Route::get('/events/{eventId}/sports-winners', [MatchResultController::class, 'getEventSportsWinners']);
 Route::get('/download-match-results/{eventId}', [MatchResultController::class, 'generateMatchResultsPDF']);

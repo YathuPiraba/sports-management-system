@@ -340,6 +340,48 @@ class MatchScheduleController extends Controller
     }
 
 
+    public function update(Request $request, $matchId)
+    {
+        // Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'home_club_id' => 'required|exists:clubs,id',
+            'away_club_id' => 'required|exists:clubs,id',
+            'match_date' => 'required|date',
+            'time' => 'required|date_format:H:i',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        // Find the match schedule by match_id
+        $matchSchedule = MatchSchedule::find($matchId);
+
+        // Check if the match schedule exists
+        if (!$matchSchedule) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Match schedule not found'
+            ], 404);
+        }
+
+        // Update the match schedule with new data
+        $matchSchedule->home_club_id = $request->home_club_id;
+        $matchSchedule->away_club_id = $request->away_club_id;
+        $matchSchedule->match_date = $request->match_date;
+        $matchSchedule->time = $request->time;
+
+        // Save the updated match schedule
+        $matchSchedule->save();
+
+        // Return the updated match schedule
+        return response()->json([
+            'success' => true,
+            'data' => $matchSchedule
+        ], Response::HTTP_OK);
+    }
+
+
 
     /**
      * Update a specific match schedule.
@@ -348,22 +390,6 @@ class MatchScheduleController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'event_sport_id' => 'sometimes|required|exists:event_sports,id',
-            'club_1_id' => 'sometimes|required|exists:clubs,id',
-            'club_2_id' => 'sometimes|required|exists:clubs,id',
-            'match_date' => 'sometimes|required|date',
-            'match_time' => 'sometimes|required|date_format:H:i',
-            'venue' => 'sometimes|required|string|max:255',
-        ]);
-
-        $match = MatchSchedule::findOrFail($id);
-        $match->update($request->all());
-
-        return response()->json($match);
-    }
 
     /**
      * Delete a specific match schedule.
@@ -371,11 +397,26 @@ class MatchScheduleController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($matchId)
     {
-        $match = MatchSchedule::findOrFail($id);
-        $match->delete();
+        // Find the match schedule by match_id
+        $matchSchedule = MatchSchedule::find($matchId);
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        // Check if the match schedule exists
+        if (!$matchSchedule) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Match schedule not found'
+            ], 404);
+        }
+
+        // Delete the match schedule
+        $matchSchedule->delete();
+
+        // Return success response
+        return response()->json([
+            'success' => true,
+            'message' => 'Match schedule deleted successfully'
+        ], Response::HTTP_OK);
     }
 }

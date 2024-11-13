@@ -731,6 +731,99 @@ class MatchResultController extends Controller
         }
     }
 
+    public function updateMatchResult(Request $request, $matchId)
+    {
+        // Validate incoming request
+        $request->validate([
+            'home_club_id' => 'required|exists:clubs,id',
+            'away_club_id' => 'required|exists:clubs,id',
+            'home_score' => 'required|integer',
+            'away_score' => 'required|integer',
+            'winner_club_id' => 'nullable|exists:clubs,id',
+        ]);
+
+        try {
+            // Find the match result by match_id
+            $matchResult = MatchResult::where('match_id', $matchId)->first();
+
+            // Check if match result exists
+            if (!$matchResult) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Match result not found'
+                ], 404);
+            }
+
+            // Update the match result
+            $matchResult->home_score = $request->home_score;
+            $matchResult->away_score = $request->away_score;
+            $matchResult->home_club_id = $request->home_club_id;
+            $matchResult->away_club_id = $request->away_club_id;
+            $matchResult->winner_club_id = $request->winner_club_id;
+
+            // Determine the result based on winner_club_id
+            if ($request->winner_club_id) {
+                $result = $request->winner_club_id === $request->home_club_id ? 'Home Win' : 'Away Win';
+            } else {
+                $result = 'Draw';
+            }
+            $matchResult->result = $result;
+
+            // Save the updated match result
+            $matchResult->save();
+
+            // Return the updated match result
+            return response()->json([
+                'success' => true,
+                'data' => $matchResult
+            ], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            Log::error('Error updating match result: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating match result: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function deleteMatchResult($matchId)
+    {
+        try {
+            // Find the match by its ID
+            $match = MatchSchedule::find($matchId);
+
+            // Check if the match exists
+            if (!$match) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Match not found'
+                ], 404);
+            }
+
+            // Check if the match result exists and delete it if present
+            if ($match->matchResults) {
+                $match->matchResults->delete();
+            }
+
+            // Delete the match schedule
+            $match->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Match deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error deleting match: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting match: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
     /**
      * Get all results for a specific match schedule.
      *

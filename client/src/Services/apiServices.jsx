@@ -502,6 +502,14 @@ export const matchSchedulesDataAPI = (eventId) => {
   return authApiClient.get(`/event/match-schedules/${eventId}`);
 };
 
+export const updateMatchSchedulesAPI = (matchId) => {
+  return authApiClient.put(`/match-schedules/${matchId}`);
+};
+
+export const deleteMatchSchedulesAPI = (matchId) => {
+  return authApiClient.delete(`/match-schedules/${matchId}`);
+};
+
 export const downloadMatchScheduleAPI = async (eventId) => {
   try {
     const response = await authApiClient.get(
@@ -558,4 +566,12 @@ export const downloadMatchResultAPI = async (eventId) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const updateMatchResultsAPI = (matchId) => {
+  return authApiClient.put(`/matches/results/${matchId}`);
+};
+
+export const deleteMatchResultsAPI = (matchId) => {
+  return authApiClient.delete(`/matches/results/${matchId}`);
 };
