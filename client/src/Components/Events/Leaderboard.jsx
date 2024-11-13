@@ -2,9 +2,9 @@ import React from "react";
 import {
   FaTrophy,
   FaMedal,
-//   FaCrowns,
-//   FaArrowUp,
-//   FaArrowDown,
+  //   FaCrowns,
+  //   FaArrowUp,
+  //   FaArrowDown,
 } from "react-icons/fa"; // Import the icons from react-icons
 import { PropagateLoader } from "react-spinners";
 
@@ -17,8 +17,14 @@ const Leaderboard = ({ stats, statsLoading }) => {
     );
   }
 
-  console.log(stats);
-  
+  if (!stats || stats.sports_winners.length === 0) {
+    return (
+      <div className="flex justify-center items-center w-full h-[50vh]">
+        <p className="text-gray-500">No stats are available for this event.</p>
+      </div>
+    );
+  }
+
   const isCompleted = stats.event_status === "completed";
 
   // Find overall champion (only for completed tournaments)
@@ -89,20 +95,17 @@ const Leaderboard = ({ stats, statsLoading }) => {
         </div>
       )}
 
-     
-       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.sports_winners.map((sport) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {stats?.sports_winners.map((sport) => (
           <div
             key={sport.sport_id}
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
-
             <div className="bg-blue-50 p-4">
               <h3 className="font-bold text-lg mb-1">{sport.sport_name}</h3>
               <p className="text-sm text-gray-600">{sport.tournament_name}</p>
             </div>
 
-         
             <div className="p-4 border-b">
               <div className="flex items-center gap-4">
                 {sport.winner.club_image && (
@@ -119,7 +122,7 @@ const Leaderboard = ({ stats, statsLoading }) => {
                       <FaTrophy className="w-4 h-4 text-yellow-500" />
                     ) : (
                       <FaMedal className="w-4 h-4 text-blue-500" />
-                    )} 
+                    )}
                   </div>
                   <p className="text-sm text-gray-600">{sport.winner.status}</p>
                 </div>
@@ -136,11 +139,10 @@ const Leaderboard = ({ stats, statsLoading }) => {
               </div>
             </div>
 
-           
             <div className="p-4">
               <h4 className="font-semibold mb-2">Team Standings</h4>
               <div className="space-y-2">
-                {sport.team_standings.map((team, index) => (
+                {sport?.team_standings.map((team, index) => (
                   <div
                     key={team.club_id}
                     className={`flex items-center justify-between p-2 rounded ${
@@ -162,7 +164,7 @@ const Leaderboard = ({ stats, statsLoading }) => {
             </div>
           </div>
         ))}
-      </div> 
+      </div>
     </div>
   );
 };

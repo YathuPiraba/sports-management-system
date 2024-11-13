@@ -456,6 +456,19 @@ export const downloadClubDetailsAPI = async (clubId) => {
     throw error;
   }
 };
+export const downloadAllClubDetailsAPI = async (clubId) => {
+  try {
+    const response = await authApiClient.get(
+      `/download-all-club-details`,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const downloadEventSportsDetailsAPI = async (eventSportsId) => {
   try {

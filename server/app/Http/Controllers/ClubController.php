@@ -203,19 +203,20 @@ class ClubController extends Controller
             'club_history' => 'nullable|string',
             'clubContactNo' => 'sometimes|string|max:15',
             'clubImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
+            'regNo' => 'nullable|string|unique:clubs,regNo,' . $id, // Ensure unique regNo except for current club
         ]);
 
         try {
             // Find the club by ID
             $club = Club::findOrFail($id);
 
+            // Update clubName if provided
             if ($request->has('clubName')) {
-
                 $club->clubName = $request->clubName;
             }
 
+            // Update clubDivisionName and set gs_id if provided
             if ($request->has('clubDivisionName')) {
-                // Find the gs_id based on the divisionName
                 $gsDivision = Gs_Division::where('divisionName', $request->clubDivisionName)->first();
 
                 if (!$gsDivision) {
@@ -224,32 +225,39 @@ class ClubController extends Controller
 
                 $club->gs_id = $gsDivision->id;
             }
+
             // Handle the image upload if a new image is provided
             if ($request->hasFile('clubImage')) {
-
-                if ($club->image) {
+                if ($club->clubImage) {
                     // Optionally delete the old image from Cloudinary
-                    $this->cloudinary->uploadApi()->destroy($club->image);
+                    $this->cloudinary->uploadApi()->destroy($club->clubImage);
                 }
 
                 $result = $this->cloudinary->uploadApi()->upload($request->file('clubImage')->getRealPath());
                 $club->clubImage = $result['secure_url'];
             }
 
+            // Update clubAddress if provided
             if ($request->has('clubAddress')) {
-
                 $club->clubAddress = $request->clubAddress;
             }
 
+            // Update club_history if provided
             if ($request->has('club_history')) {
                 $club->club_history = $request->club_history;
             }
 
+            // Update clubContactNo if provided
             if ($request->has('clubContactNo')) {
                 $club->clubContactNo = $request->clubContactNo;
             }
 
-            // Update the club with the new data
+            // Update regNo if provided
+            if ($request->has('regNo')) {
+                $club->regNo = $request->regNo;
+            }
+
+            // Save the updated club data
             $club->save();
 
             return response()->json(['message' => 'Club updated successfully', 'club' => $club], 200);
@@ -258,6 +266,7 @@ class ClubController extends Controller
             return response()->json(['error' => 'Failed to update club', 'details' => $e->getMessage()], 500);
         }
     }
+
 
     //GET => http://127.0.0.1:8000/api/clubs-sports/get
     public function getAllClubSports()
@@ -618,6 +627,45 @@ class ClubController extends Controller
 
         // Generate a filename (sanitize club name to avoid issues)
         $filename = 'club_details_' . preg_replace('/[^A-Za-z0-9\-]/', '_', $club->clubName) . '.pdf';
+
+        // Return the PDF for download
+        return $pdf->download($filename);
+    }
+
+    // Controller method
+    public function downloadAllClubs()
+    {
+        $clubs = Club::withCount([
+            'members as total_members' => function($query) {
+                $query->whereHas('user', function($q) {
+                    $q->whereNull('deleted_at');
+                });
+            },
+            'clubManagers as total_managers' => function($query) {
+                $query->whereHas('user', function($q) {
+                    $q->whereNull('deleted_at');
+                });
+            }
+        ])
+        ->with([
+            'gsDivision:id,divisionName,divisionNo',
+            'clubSports' => function ($query) {
+                $query->select('id', 'club_id', 'sports_id')
+                    ->with(['sportsCategory:id,name']);
+            }
+        ])
+        ->select('id', 'clubName', 'clubAddress', 'regNo')
+        ->get()
+        ->map(function ($club) {
+            $club->total_people = $club->total_members + $club->total_managers;
+            return $club;
+        });
+
+        // Generate the PDF
+        $pdf = PDF::loadView('all_clubs_pdf', compact('clubs'));
+
+        // Generate filename with current date
+        $filename = 'all_clubs_' . date('Y-m-d') . '.pdf';
 
         // Return the PDF for download
         return $pdf->download($filename);

@@ -73,6 +73,8 @@ Route::put('/club/{id}', [ClubController::class, 'clubUpdate']);
 
 
 Route::get('/download-club-details/{id}', [ClubController::class, 'downloadDetails']);
+Route::get('/download-all-club-details', [ClubController::class, 'downloadAllClubs']);
+
 
 Route::get('/clubs/list', [ClubController::class, 'getAllClubs']);
 Route::get('/clubs/details', [ClubController::class, 'getAllClubsDetails']);
