@@ -65,6 +65,8 @@ const MatchResults = ({
         selectedSport === "all" ? "" : selectedSport
       );
       const data = res.data.data;
+      console.log(data);
+      
       setMatchResults(data.match_results);
       setPagination({
         currentPage: data.pagination.current_page,
@@ -95,6 +97,8 @@ const MatchResults = ({
       </div>
     );
   }
+
+  console.log(matchResults, pagination);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -164,22 +168,22 @@ const MatchResults = ({
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr className="bg-gray-50 ">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
                   No
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Sport
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date, Time & Venue
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Teams
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 md:px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Scores
                 </th>
-                <th className="px-6  py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 md:px-3  py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   <span className="ml-2"> Winner</span>
                 </th>
               </tr>
@@ -187,13 +191,13 @@ const MatchResults = ({
             <tbody className="bg-white divide-y divide-gray-200">
               {matchResults.map((match, index) => (
                 <tr key={match.match_id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 md:px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {getSerialNumber(index)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 md:px-3 py-4 whitespace-nowrap text-sm text-gray-900">
                     {match.sport_name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 md:px-3 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
                       {new Date(match.match_date).toLocaleDateString("en-US", {
                         day: "numeric",
@@ -204,7 +208,7 @@ const MatchResults = ({
                     </div>
                     <div className="text-sm text-gray-500">{match.venue}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap flex  text-sm text-gray-900">
+                  <td className="px-6 md:px-3 py-4 whitespace-nowrap flex  text-sm text-gray-900">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-gray-800">
                         {match.home_team.club_name}
@@ -214,7 +218,7 @@ const MatchResults = ({
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 md:px-3 py-4 whitespace-nowrap text-sm text-gray-900">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-gray-800">
                         {match.home_team.score}
@@ -224,7 +228,7 @@ const MatchResults = ({
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 md:px-3 py-4 whitespace-nowrap text-sm text-gray-900">
                     <span
                       className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                         match.home_team.result === "winner"

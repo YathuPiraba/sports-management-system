@@ -555,60 +555,57 @@ class MatchResultController extends Controller
 
             // Build base query for match results
             $baseQuery = MatchSchedule::query()
-                ->join('event_sports', 'matches.event_sports_id', '=', 'event_sports.id')
-                ->join('match_results', 'matches.id', '=', 'match_results.match_id')
-                ->where('event_sports.event_id', $eventId)
-                ->when($sportName && $sportName !== 'all', function ($query) use ($sportName) {
-                    return $query->where('event_sports.name', $sportName);
+                ->with(['matchResults', 'homeClub', 'awayClub', 'eventSport'])
+                ->whereHas('eventSport', function ($query) use ($eventId, $sportName, $searchTerm) {
+                    $query->where('event_id', $eventId);
+                    if ($sportName && $sportName !== 'all') {
+                        $query->where('name', $sportName);
+                    }
+                    if ($searchTerm) {
+                        $query->where('name', 'like', '%' . $searchTerm . '%');
+                    }
                 })
-                ->when($searchTerm, function ($query) use ($searchTerm) {
-                    return $query->where('event_sports.name', 'like', '%' . $searchTerm . '%');
-                })
-                ->orderBy('matches.match_date', 'desc')
+                ->orderBy('match_date', 'desc')
                 ->orderBy('time', 'asc');
 
             // Get total count before pagination
             $totalMatches = $baseQuery->count();
 
-            // Get paginated matches with relationships
-            $matches = $baseQuery->with(['matchResults', 'homeClub', 'awayClub', 'eventSport'])
-                ->skip(($page - 1) * $perPage)
+            // Get paginated matches
+            $matches = $baseQuery->skip(($page - 1) * $perPage)
                 ->take($perPage)
                 ->get();
 
             // Format match results
-            $matchResults = [];
-            foreach ($matches as $match) {
-                if ($match->matchResults) {
-                    $result = $match->matchResults;
-                    $homeClub = $match->homeClub;
-                    $awayClub = $match->awayClub;
-                    $eventSport = $match->eventSport;
+            $matchResults = $matches->map(function ($match) {
+                $result = $match->matchResults;
+                $homeClub = $match->homeClub;
+                $awayClub = $match->awayClub;
+                $eventSport = $match->eventSport;
 
-                    $matchResults[] = [
-                        'match_id' => $match->id,
-                        'match_date' => $match->match_date,
-                        'match_time' => $match->time,
-                        'sport_id' => $eventSport->id,
-                        'sport_name' => $eventSport->name,
-                        'venue' => $eventSport->place,
-                        'home_team' => [
-                            'club_id' => $homeClub->id,
-                            'club_name' => $homeClub->clubName,
-                            'score' => $result->home_score,
-                            'result' => $result->winner_club_id === $homeClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
-                        ],
-                        'away_team' => [
-                            'club_id' => $awayClub->id,
-                            'club_name' => $awayClub->clubName,
-                            'score' => $result->away_score,
-                            'result' => $result->winner_club_id === $awayClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
-                        ],
-                        'winner_id' => $result->winner_club_id,
-                        'match_status' => $result->winner_club_id === null ? 'draw' : 'completed'
-                    ];
-                }
-            }
+                return [
+                    'match_id' => $match->id,
+                    'match_date' => $match->match_date,
+                    'match_time' => $match->time,
+                    'sport_id' => $eventSport->id,
+                    'sport_name' => $eventSport->name,
+                    'venue' => $eventSport->place,
+                    'home_team' => [
+                        'club_id' => $homeClub->id,
+                        'club_name' => $homeClub->clubName,
+                        'score' => $result?->home_score,
+                        'result' => $result?->winner_club_id === $homeClub->id ? 'winner' : ($result?->winner_club_id === null ? 'draw' : 'loser')
+                    ],
+                    'away_team' => [
+                        'club_id' => $awayClub->id,
+                        'club_name' => $awayClub->clubName,
+                        'score' => $result?->away_score,
+                        'result' => $result?->winner_club_id === $awayClub->id ? 'winner' : ($result?->winner_club_id === null ? 'draw' : 'loser')
+                    ],
+                    'winner_id' => $result?->winner_club_id,
+                    'match_status' => $result?->winner_club_id === null ? 'draw' : 'completed'
+                ];
+            });
 
             // Get all sports for the dropdown (keeping original structure)
             $sports = EventSports::where('event_id', $eventId)
