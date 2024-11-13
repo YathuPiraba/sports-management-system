@@ -15,8 +15,8 @@ const MatchResults = ({
   matches,
   sports,
   schedulesLoading,
-  fetchMatchSchedule,
   eventName,
+  fetchMatchStats,
 }) => {
   const [selectedSport, setSelectedSport] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -271,6 +271,7 @@ const MatchResults = ({
           matches={matches}
           loading={schedulesLoading}
           fetchMatchResults={fetchMatchResults}
+          fetchMatchStats={fetchMatchStats}
         />
       )}
     </div>

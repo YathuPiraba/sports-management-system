@@ -9,6 +9,7 @@ const AddResultModal = ({
   matches,
   loading,
   fetchMatchResults,
+  fetchMatchStats,
 }) => {
   const [formData, setFormData] = useState({
     selectedDate: "",
@@ -63,6 +64,7 @@ const AddResultModal = ({
         winner: "",
       });
       fetchMatchResults();
+      fetchMatchStats();
       onClose();
     } catch (error) {
       toast.error(error.message || "Failed to submit match result");

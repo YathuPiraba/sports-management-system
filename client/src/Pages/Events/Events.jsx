@@ -5,6 +5,7 @@ import {
   getAEventAPI,
   getAllEventAPI,
   deleteEventAPI,
+  getMatchLeaderboardAPI,
 } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import GridLoader from "react-spinners/GridLoader";
@@ -13,6 +14,9 @@ import "../../Components/Navbar/Navbar.css";
 import useClubEvents from "../../hooks/useClubEvents";
 import { useTheme } from "../../context/ThemeContext";
 import useMatchSchedules from "../../hooks/useMatchSchedules";
+import useFetchStats from "../../hooks/useFetchStats";
+
+const Leaderboard = lazy(() => import("../../Components/Events/Leaderboard"));
 
 const MatchResults = lazy(() =>
   import("../../Components/Events/Results/Results")
@@ -65,24 +69,6 @@ const Events = () => {
   let clubEventsLoading = false;
   let fetchClubEvents = () => {};
 
-  if (role_id === 2) {
-    const clubEventsData = useClubEvents(selectedEvent, userId);
-    eventSportsWithParticipants = clubEventsData.eventSportsWithParticipants;
-    clubEventsLoading = clubEventsData.loading;
-    fetchClubEvents = clubEventsData.fetchClubEvents;
-  }
-
-  const matchSchedulesData = useMatchSchedules(selectedEvent);
-
-  const matches = matchSchedulesData.matches;
-  const sports = matchSchedulesData.sports;
-  const schedulesLoading = matchSchedulesData.loading;
-  const fetchMatchSchedule = matchSchedulesData.fetchMatchSchedule;
-
-  const handleToggleDiv = () => {
-    setShowFirstDiv(!showFirstDiv);
-  };
-
   const fetchEvents = async () => {
     setLoading(true);
     try {
@@ -95,6 +81,30 @@ const Events = () => {
       console.error("Error fetching events:", error);
       toast.error("Failed to fetch events.");
     }
+  };
+
+  if (role_id === 2) {
+    const clubEventsData = useClubEvents(selectedEvent, userId);
+    eventSportsWithParticipants = clubEventsData.eventSportsWithParticipants;
+    clubEventsLoading = clubEventsData.loading;
+    fetchClubEvents = clubEventsData.fetchClubEvents;
+  }
+
+
+    const matchSchedulesData = useMatchSchedules(selectedEvent);
+    const matches = matchSchedulesData.matches;
+    const sports = matchSchedulesData.sports;
+    const schedulesLoading = matchSchedulesData.loading;
+    const fetchMatchSchedule = matchSchedulesData.fetchMatchSchedule;
+
+    const matchStatsData = useFetchStats(selectedEvent);
+    const statsLoading = matchStatsData.isLoading;
+    const fetchMatchStats = matchStatsData.refetch;
+    const stats = matchStatsData.stats;
+  
+
+  const handleToggleDiv = () => {
+    setShowFirstDiv(!showFirstDiv);
   };
 
   useEffect(() => {
@@ -370,7 +380,21 @@ const Events = () => {
                         sports={sports}
                         eventName={selectedEventDetails.name}
                         schedulesLoading={schedulesLoading}
-                        fetchMatchSchedule={fetchMatchSchedule}
+                        fetchMatchStats={fetchMatchStats}
+                      />
+                    ),
+                  },
+                  {
+                    key: "5",
+                    label: "Leaderboard",
+                    children: (
+                      <Leaderboard
+                        roleId={role_id}
+                        eventId={selectedEvent}
+                        stats={stats}
+                        eventName={selectedEventDetails.name}
+                        statsLoading={statsLoading}
+                        fetchMatchStats={fetchMatchStats}
                       />
                     ),
                   },
