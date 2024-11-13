@@ -11,6 +11,7 @@ use App\Models\MatchSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MatchResultController extends Controller
 {
@@ -642,7 +643,96 @@ class MatchResultController extends Controller
     }
 
 
+    public function generateMatchResultsPDF($eventId)
+    {
+        try {
+            // Get event details
+            $event = Events::find($eventId);
 
+            if (!$event) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Event not found.',
+                ], 404);
+            }
+
+            // Get match results with relationships
+            $query = MatchSchedule::whereHas('eventSport', function ($query) use ($eventId) {
+                $query->where('event_id', $eventId);
+            })->with([
+                'homeClub:id,clubName,clubImage',
+                'awayClub:id,clubName,clubImage',
+                'eventSport:id,name,start_date,end_date,place,sports_id',
+                'matchResults'
+            ])->whereHas('matchResults'); // Only get matches with results
+
+            // Get sorted results
+            $matches = $query->orderBy('match_date', 'asc')
+                ->orderBy('time', 'asc')
+                ->get();
+
+            // Group matches by date
+            $groupedMatches = $matches->groupBy(function ($match) {
+                return \Carbon\Carbon::parse($match->match_date)->format('Y-m-d');
+            });
+
+            // Format data for PDF
+            $formattedData = [];
+            foreach ($groupedMatches as $date => $matches) {
+                $matchesForDate = $matches->map(function ($match) {
+                    $result = $match->matchResults;
+                    $homeClub = $match->homeClub;
+                    $awayClub = $match->awayClub;
+
+                    return [
+                        'time' => $match->time,
+                        'sport' => $match->eventSport->name,
+                        'venue' => $match->eventSport->place,
+                        'homeTeam' => [
+                            'name' => $homeClub->clubName,
+                            'score' => $result->home_score,
+                            'isWinner' => $result->winner_club_id === $homeClub->id,
+                            'image' => $homeClub->clubImage ?? null,
+                        ],
+                        'awayTeam' => [
+                            'name' => $awayClub->clubName,
+                            'score' => $result->away_score,
+                            'isWinner' => $result->winner_club_id === $awayClub->id,
+                            'image' => $awayClub->clubImage ?? null,
+                        ],
+                        'isDraw' => $result->winner_club_id === null,
+                    ];
+                });
+
+                $formattedData[] = [
+                    'date' => \Carbon\Carbon::parse($date)->format('F d, Y'),
+                    'matches' => $matchesForDate
+                ];
+            }
+
+            $viewData = [
+                'eventName' => $event->name,
+                'matchDays' => $formattedData,
+                'eventStatus' => $event->end_date < now() ? 'Completed' : 'Ongoing'
+            ];
+
+            // Generate PDF
+            $pdf = PDF::loadView('match_results', ['data' => $viewData]);
+
+            // Generate filename
+            $filename = 'match_results_' . preg_replace('/[^A-Za-z0-9\-]/', '_', $event->name) . '.pdf';
+
+            // Return PDF for download
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            Log::error('Error generating match results PDF: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error generating PDF: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 
     /**
      * Get all results for a specific match schedule.

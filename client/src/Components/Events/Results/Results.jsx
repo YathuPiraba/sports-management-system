@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { PropagateLoader } from "react-spinners";
 import AddResultModal from "./AddResultModal";
 import Pagination from "../../Pagination_Sorting_Search/Pagination";
-import { getMatchResultAPI } from "../../../Services/apiServices";
+import {
+  downloadMatchResultAPI,
+  getMatchResultAPI,
+} from "../../../Services/apiServices";
+import { FaFilePdf } from "react-icons/fa";
+import { Button } from "antd";
 
 const MatchResults = ({
   roleId,
@@ -11,20 +16,43 @@ const MatchResults = ({
   sports,
   schedulesLoading,
   fetchMatchSchedule,
+  eventName,
 }) => {
   const [selectedSport, setSelectedSport] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [matchResults, setMatchResults] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     lastPage: 1,
-    perPage: 2,
+    perPage: 5,
     total: 0,
   });
 
   const getSerialNumber = (index) => {
     return (pagination.currentPage - 1) * pagination.perPage + index + 1;
+  };
+
+  const downloadMatchResultAsPDF = async () => {
+    try {
+      setDownloadLoading(true);
+      const response = await downloadMatchResultAPI(eventId);
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${eventName}-match-results.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Schedule downloaded successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error downloading schedule");
+    } finally {
+      setDownloadLoading(false);
+    }
   };
 
   const fetchMatchResults = async (page = 1) => {
@@ -78,26 +106,37 @@ const MatchResults = ({
               Match Results
             </h1>
           </div>
-          {roleId === 1 && (
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-2"
+          <div className="flex gap-3">
+            <Button
+              onClick={downloadMatchResultAsPDF}
+              loading={downloadLoading}
+              className="bg-green-600 schedule-btn text-white font-medium px-4 py-5 rounded-lg flex items-center space-x-2 whitespace-nowrap"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+              <FaFilePdf className="h-5 w-5" />
+              <span>Download Results</span>
+            </Button>
+
+            {roleId === 1 && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg flex items-center justify-center gap-2"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Add Results
-            </button>
-          )}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Add Results
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="w-full md:w-auto flex flex-col md:flex-row gap-4  font-poppins  items-center mb-2">

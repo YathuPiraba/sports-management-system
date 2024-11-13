@@ -514,7 +514,12 @@ export const submitMatchResultAPI = async (data) => {
   }
 };
 
-export const getMatchResultAPI = async (eventId, page, perPage, selectedSport) => {
+export const getMatchResultAPI = async (
+  eventId,
+  page,
+  perPage,
+  selectedSport
+) => {
   return authApiClient.get(`/event-sports-matches/${eventId}`, {
     params: {
       page,
@@ -526,4 +531,18 @@ export const getMatchResultAPI = async (eventId, page, perPage, selectedSport) =
 
 export const getMatchLeaderboardAPI = async (eventId) => {
   return authApiClient.get(`/events/${eventId}/sports-winners`);
+};
+
+export const downloadMatchResultAPI = async (eventId) => {
+  try {
+    const response = await authApiClient.get(
+      `/download-match-results/${eventId}`,
+      {
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

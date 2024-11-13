@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Match Schedules: {{ $data['eventName'] }}</title>
+    <title>Match Results: {{ $data['eventName'] }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,6 +16,14 @@
         h3 {
             margin-bottom: 10px;
             text-align: center;
+        }
+
+        .event-status {
+            text-align: center;
+            padding: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #2c3e50;
         }
 
         table {
@@ -43,14 +51,23 @@
             text-align: left;
         }
 
-        .match-card {
-            border: 1px solid #ddd;
-            margin-bottom: 15px;
+        .score {
+            font-weight: bold;
+            font-size: 1.2em;
         }
 
-        .vs {
+        .winner {
+            color: #27ae60;
             font-weight: bold;
-            text-align: center;
+        }
+
+        .loser {
+            color: #c0392b;
+        }
+
+        .draw {
+            color: #f39c12;
+            font-weight: bold;
         }
 
         .watermark {
@@ -90,42 +107,55 @@
         alt="Right Watermark" class="watermark right-watermark">
 
     <h1>{{ $data['eventName'] }}</h1>
-    <h2>Match Schedule</h2>
+    <h2>Match Results</h2>
+    <div class="event-status">Tournament Status: {{ $data['eventStatus'] }}</div>
 
     @foreach ($data['matchDays'] as $matchDay)
         <table>
-            <!-- Match Day Header -->
             <tr>
                 <th colspan="6" class="match-date">
                     {{ $matchDay['date'] }}
                 </th>
             </tr>
-
-            <!-- Column Headers for the Match Details -->
             <tr>
                 <th>No.</th>
                 <th>Time</th>
-                <th>Home Team</th>
-                <th>VS</th>
-                <th>Away Team</th>
                 <th>Sport & Venue</th>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Result</th>
             </tr>
 
-            @php $matchNumber = 1; @endphp <!-- Initialize the match counter for each match day -->
-
-            @foreach ($matchDay['matches'] as $match)
+            @foreach ($matchDay['matches'] as $index => $match)
                 <tr>
-                    <td>{{ $matchNumber }}</td> <!-- Match number -->
-                    <td>{{ $match['time'] }}</td> <!-- Match time -->
-                    <td>{{ $match['homeClub']['name'] }}</td> <!-- Home team -->
-                    <td class="vs">VS</td> <!-- VS label -->
-                    <td>{{ $match['awayClub']['name'] }}</td> <!-- Away team -->
+                    <td>{{ $index + 1 }}</td> <!-- Match numbering for each day -->
+                    <td>{{ $match['time'] }}</td>
                     <td>
-                        <div>Sport: {{ $match['sport'] }}</div>
-                        <div>Venue: {{ $match['place'] }}</div>
+                        <div><strong>{{ $match['sport'] }}</strong></div>
+                        <div>{{ $match['venue'] }}</div>
+                    </td>
+                    <td class="{{ $match['homeTeam']['isWinner'] ? 'winner' : ($match['isDraw'] ? 'draw' : 'loser') }}">
+                        {{ $match['homeTeam']['name'] }}
+                    </td>
+                    <td
+                        class="{{ $match['awayTeam']['isWinner'] ? 'winner' : ($match['isDraw'] ? 'draw' : 'loser') }}">
+                        {{ $match['awayTeam']['name'] }}
+                    </td>
+                    <td>
+                        <span class="score">
+                            {{ $match['homeTeam']['score'] }} - {{ $match['awayTeam']['score'] }}
+                        </span>
+                        <br>
+                        @if ($match['isDraw'])
+                            <span class="draw">Draw</span>
+                        @else
+                            <span class="winner">
+                                Winner:
+                                {{ $match['homeTeam']['isWinner'] ? $match['homeTeam']['name'] : $match['awayTeam']['name'] }}
+                            </span>
+                        @endif
                     </td>
                 </tr>
-                @php $matchNumber++; @endphp <!-- Increment match counter after each match -->
             @endforeach
         </table>
     @endforeach

@@ -368,6 +368,7 @@ const Events = () => {
                         eventId={selectedEvent}
                         matches={matches}
                         sports={sports}
+                        eventName={selectedEventDetails.name}
                         schedulesLoading={schedulesLoading}
                         fetchMatchSchedule={fetchMatchSchedule}
                       />

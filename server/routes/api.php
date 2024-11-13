@@ -166,7 +166,7 @@ Route::get('/download-match-schedules/{eventId}', [MatchScheduleController::clas
 
 Route::prefix('matches/results')->group(function () {
     Route::post('/', [MatchResultController::class, 'store']); // Create a new match result
-     // Get all results for a specific match schedule
+    // Get all results for a specific match schedule
     Route::get('/{id}', [MatchResultController::class, 'show']); // Get a specific match result
     Route::put('/{id}', [MatchResultController::class, 'update']); // Update a specific match result
     Route::delete('/{id}', [MatchResultController::class, 'destroy']); // Delete a specific match result
@@ -179,3 +179,5 @@ Route::put('/event-clubs/{clubId}/{eventSportsId}', [EventClubController::class,
 Route::get('/event-sports-matches/{eventId}', [MatchResultController::class, 'getEventMatchesResults']);
 // Add this route in your routes/api.php
 Route::get('/events/{eventId}/sports-winners', [MatchResultController::class, 'getEventSportsWinners']);
+
+Route::get('/download-match-results/{eventId}', [MatchResultController::class, 'generateMatchResultsPDF']);
