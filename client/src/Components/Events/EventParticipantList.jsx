@@ -21,8 +21,6 @@ const EventParticipantList = ({ eventId }) => {
     try {
       const res = await getEventParticipantsAPI(eventId);
       const clubsData = res.data.data;
-      console.log(res.data.data);
-
       setTreeData(formatTreeData(clubsData));
     } catch (error) {
       console.error(error);

@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import AddResultModal from "./AddResultModal";
-import { getMatchResultAPI } from "../../../Services/apiServices";
+import {
+  getMatchResultAPI,
+  matchSchedulesDataAPI,
+} from "../../../Services/apiServices";
 import { PropagateLoader } from "react-spinners";
 import Pagination from "../../Pagination_Sorting_Search/Pagination";
 
 const MatchResults = ({ roleId, eventId }) => {
+  const [matches, setMatches] = useState([]);
+  const [downloadloading, setDownloadLoading] = useState(false);
   const [sports, setSports] = useState([]);
   const [selectedSport, setSelectedSport] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +22,38 @@ const MatchResults = ({ roleId, eventId }) => {
     total: 0,
   });
 
+  // Fetch match schedules from the API
+  const fetchMatchSchedule = async () => {
+    setDownloadLoading(true);
+    try {
+      const res = await matchSchedulesDataAPI(eventId);
+      console.log(res.data.data);
+
+      // Transform the data structure to match our needs
+      const transformedMatches = res.data.data.matches.reduce(
+        (acc, dateGroup) => {
+          // Add matches from each date group to our accumulated array
+          // with the date included in each match object
+          dateGroup.matches.forEach((match) => {
+            acc.push({
+              ...match,
+              date: dateGroup.date,
+            });
+          });
+          return acc;
+        },
+        []
+      );
+      setMatches(transformedMatches);
+      setSports(res.data.data.uniqueSports || []);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching match schedules list");
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   const fetchMatchResults = async (page = 1, perPage = 10) => {
     setLoading(true);
     try {
@@ -27,8 +64,6 @@ const MatchResults = ({ roleId, eventId }) => {
         selectedSport == "all" ? "" : selectedSport
       );
       const data = res.data.data;
-
-      setSports([...new Set(data.sports)]);
       setMatchResults(data.match_results);
       setPagination({
         currentPage: data.pagination.current_page,
@@ -45,6 +80,10 @@ const MatchResults = ({ roleId, eventId }) => {
   };
 
   useEffect(() => {
+    fetchMatchSchedule();
+  }, [eventId]);
+
+  useEffect(() => {
     fetchMatchResults();
   }, [eventId, selectedSport]);
 
@@ -59,6 +98,8 @@ const MatchResults = ({ roleId, eventId }) => {
       </div>
     );
   }
+
+  console.log(sports);
 
   const getFilteredResults = () => {
     return matchResults;
@@ -80,8 +121,8 @@ const MatchResults = ({ roleId, eventId }) => {
             >
               <option value="all">All Sports</option>
               {sports.map((sport) => (
-                <option key={sport} value={sport}>
-                  {sport}
+                <option key={sport.id} value={sport.name}>
+                  {sport.name}
                 </option>
               ))}
             </select>
@@ -203,6 +244,9 @@ const MatchResults = ({ roleId, eventId }) => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           eventId={eventId}
+          matches={matches}
+          loading={downloadloading}
+          fetchMatchResults={fetchMatchResults}
         />
       )}
     </div>

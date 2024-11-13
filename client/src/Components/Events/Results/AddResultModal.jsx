@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
-import {
-  matchSchedulesDataAPI,
-  submitMatchResultAPI,
-} from "../../../Services/apiServices";
+import React, { useState } from "react";
+import { submitMatchResultAPI } from "../../../Services/apiServices";
 import { Button } from "antd";
 import toast from "react-hot-toast";
 
-const AddResultModal = ({ isOpen, onClose, eventId }) => {
-  const [matches, setMatches] = useState([]);
-  const [loading, setLoading] = useState(false);
+const AddResultModal = ({
+  isOpen,
+  onClose,
+  matches,
+  loading,
+  fetchMatchResults,
+}) => {
   const [formData, setFormData] = useState({
     selectedDate: "",
     selectedMatch: null,
@@ -16,39 +17,6 @@ const AddResultModal = ({ isOpen, onClose, eventId }) => {
     team2Score: "",
     winner: "",
   });
-
-  // Fetch match schedules from the API
-  const fetchMatchSchedule = async () => {
-    setLoading(true);
-    try {
-      const res = await matchSchedulesDataAPI(eventId);
-      // Transform the data structure to match our needs
-      const transformedMatches = res.data.data.matches.reduce(
-        (acc, dateGroup) => {
-          // Add matches from each date group to our accumulated array
-          // with the date included in each match object
-          dateGroup.matches.forEach((match) => {
-            acc.push({
-              ...match,
-              date: dateGroup.date,
-            });
-          });
-          return acc;
-        },
-        []
-      );
-      setMatches(transformedMatches);
-    } catch (error) {
-      console.error(error);
-      toast.error("Error fetching match schedules list");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMatchSchedule();
-  }, [eventId]);
 
   // Group matches by date
   const matchesByDate = matches.reduce((acc, match) => {
@@ -94,6 +62,7 @@ const AddResultModal = ({ isOpen, onClose, eventId }) => {
         team2Score: "",
         winner: "",
       });
+      fetchMatchResults();
       onClose();
     } catch (error) {
       toast.error(error.message || "Failed to submit match result");
@@ -255,6 +224,7 @@ const AddResultModal = ({ isOpen, onClose, eventId }) => {
               <Button
                 type="primary"
                 htmlType="submit"
+                loading={loading}
                 className="bg-blue-600 next-btn hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-200"
               >
                 Save Result

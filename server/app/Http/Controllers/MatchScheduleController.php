@@ -276,10 +276,19 @@ class MatchScheduleController extends Controller
                 return \Carbon\Carbon::parse($match->match_date)->format('Y-m-d');
             });
 
-            // Format the response for each match schedule
+            // Initialize arrays for formatted data and unique sports
             $formattedData = [];
+            $uniqueSports = collect();
+
+            // Format the response for each match schedule
             foreach ($groupedMatches as $date => $matches) {
-                $matchesForDate = $matches->map(function ($match) {
+                $matchesForDate = $matches->map(function ($match) use (&$uniqueSports) {
+                    // Add sport to unique sports collection
+                    $uniqueSports->push([
+                        'id' => $match->eventSport->id,
+                        'name' => $match->eventSport->name,
+                    ]);
+
                     return [
                         'id' => $match->id,
                         'time' => $match->time,
@@ -310,10 +319,14 @@ class MatchScheduleController extends Controller
                 ];
             }
 
+            // Remove duplicate sports based on 'id' and format unique sports
+            $uniqueSports = $uniqueSports->unique('id')->values();
+
             return response()->json([
                 'success' => true,
                 'data' => [
                     'matches' => $formattedData,
+                    'uniqueSports' => $uniqueSports,
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -325,6 +338,7 @@ class MatchScheduleController extends Controller
             ], 500);
         }
     }
+
 
 
     /**
