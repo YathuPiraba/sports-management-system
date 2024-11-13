@@ -12,8 +12,7 @@ const useFetchStats = (selectedEvent) => {
     setError(null);
     try {
       const response = await getMatchLeaderboardAPI(selectedEvent);
-      setStats(response.data);
-      console.log("Stats fetched:", response.data);
+      setStats(response.data.data);
     } catch (err) {
       console.error("Error fetching stats:", err);
       toast.error("Failed to fetch stats.");

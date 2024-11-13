@@ -3,8 +3,8 @@ import {
   FaTrophy,
   FaMedal,
 //   FaCrowns,
-  FaArrowUp,
-  FaArrowDown,
+//   FaArrowUp,
+//   FaArrowDown,
 } from "react-icons/fa"; // Import the icons from react-icons
 import { PropagateLoader } from "react-spinners";
 
@@ -16,6 +16,9 @@ const Leaderboard = ({ stats, statsLoading }) => {
       </div>
     );
   }
+
+  console.log(stats);
+  
   const isCompleted = stats.event_status === "completed";
 
   // Find overall champion (only for completed tournaments)
@@ -62,7 +65,7 @@ const Leaderboard = ({ stats, statsLoading }) => {
       {isCompleted && overallChampion && (
         <div className="mb-8 bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-lg p-6 shadow-md">
           <div className="flex flex-col items-center">
-            {/* <FaCrowns className="w-12 h-12 text-yellow-500 mb-2" /> */}
+            <FaMedal className="w-12 h-12 text-yellow-500 mb-2" />
             <h2 className="text-xl font-bold text-center mb-2">
               Overall Tournament Champion
             </h2>
@@ -87,7 +90,7 @@ const Leaderboard = ({ stats, statsLoading }) => {
       )}
 
      
-       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.sports_winners.map((sport) => (
           <div
             key={sport.sport_id}
@@ -115,7 +118,7 @@ const Leaderboard = ({ stats, statsLoading }) => {
                     {isCompleted ? (
                       <FaTrophy className="w-4 h-4 text-yellow-500" />
                     ) : (
-                      <FaCrowns className="w-4 h-4 text-blue-500" />
+                      <FaMedal className="w-4 h-4 text-blue-500" />
                     )} 
                   </div>
                   <p className="text-sm text-gray-600">{sport.winner.status}</p>
@@ -159,7 +162,7 @@ const Leaderboard = ({ stats, statsLoading }) => {
             </div>
           </div>
         ))}
-      </div>  */}
+      </div> 
     </div>
   );
 };
