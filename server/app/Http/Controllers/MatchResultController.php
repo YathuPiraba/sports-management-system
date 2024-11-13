@@ -563,7 +563,8 @@ class MatchResultController extends Controller
                 ->when($searchTerm, function ($query) use ($searchTerm) {
                     return $query->where('event_sports.name', 'like', '%' . $searchTerm . '%');
                 })
-                ->orderBy('matches.match_date', 'desc');
+                ->orderBy('matches.match_date', 'desc')
+                ->orderBy('time', 'asc');
 
             // Get total count before pagination
             $totalMatches = $baseQuery->count();
@@ -586,6 +587,7 @@ class MatchResultController extends Controller
                     $matchResults[] = [
                         'match_id' => $match->id,
                         'match_date' => $match->match_date,
+                        'match_time' => $match->time,
                         'sport_id' => $eventSport->id,
                         'sport_name' => $eventSport->name,
                         'venue' => $eventSport->place,
@@ -593,15 +595,13 @@ class MatchResultController extends Controller
                             'club_id' => $homeClub->id,
                             'club_name' => $homeClub->clubName,
                             'score' => $result->home_score,
-                            'result' => $result->winner_club_id === $homeClub->id ? 'winner' :
-                                      ($result->winner_club_id === null ? 'draw' : 'loser')
+                            'result' => $result->winner_club_id === $homeClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
                         ],
                         'away_team' => [
                             'club_id' => $awayClub->id,
                             'club_name' => $awayClub->clubName,
                             'score' => $result->away_score,
-                            'result' => $result->winner_club_id === $awayClub->id ? 'winner' :
-                                      ($result->winner_club_id === null ? 'draw' : 'loser')
+                            'result' => $result->winner_club_id === $awayClub->id ? 'winner' : ($result->winner_club_id === null ? 'draw' : 'loser')
                         ],
                         'winner_id' => $result->winner_club_id,
                         'match_status' => $result->winner_club_id === null ? 'draw' : 'completed'
@@ -631,7 +631,6 @@ class MatchResultController extends Controller
                     ]
                 ],
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('Error fetching event match results: ' . $e->getMessage());
 
