@@ -69,8 +69,6 @@ const MatchResults = ({
         selectedSport === "all" ? "" : selectedSport
       );
       const data = res.data.data;
-      console.log(data);
-
       setMatchResults(data.match_results);
       setPagination({
         currentPage: data.pagination.current_page,
