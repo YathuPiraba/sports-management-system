@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import "../../Components/Navbar/Navbar.css";
 import useClubEvents from "../../hooks/useClubEvents";
 import { useTheme } from "../../context/ThemeContext";
+import useMatchSchedules from "../../hooks/useMatchSchedules";
 
 const MatchResults = lazy(() =>
   import("../../Components/Events/Results/Results")
@@ -70,6 +71,13 @@ const Events = () => {
     clubEventsLoading = clubEventsData.loading;
     fetchClubEvents = clubEventsData.fetchClubEvents;
   }
+
+  const matchSchedulesData = useMatchSchedules(selectedEvent);
+
+  const matches = matchSchedulesData.matches;
+  const sports = matchSchedulesData.sports;
+  const schedulesLoading = matchSchedulesData.loading;
+  const fetchMatchSchedule = matchSchedulesData.fetchMatchSchedule;
 
   const handleToggleDiv = () => {
     setShowFirstDiv(!showFirstDiv);
@@ -347,6 +355,7 @@ const Events = () => {
                         roleId={role_id}
                         eventId={selectedEvent}
                         eventName={selectedEventDetails.name}
+                        getMatchSchedule={fetchMatchSchedule}
                       />
                     ),
                   },
@@ -354,7 +363,14 @@ const Events = () => {
                     key: "4",
                     label: "Results",
                     children: (
-                      <MatchResults roleId={role_id} eventId={selectedEvent} />
+                      <MatchResults
+                        roleId={role_id}
+                        eventId={selectedEvent}
+                        matches={matches}
+                        sports={sports}
+                        schedulesLoading={schedulesLoading}
+                        fetchMatchSchedule={fetchMatchSchedule}
+                      />
                     ),
                   },
                 ]}

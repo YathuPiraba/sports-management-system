@@ -8,6 +8,7 @@ const AddScheduleModal = ({
   onClose,
   eventData,
   fetchMatchSchedule,
+  getMatchSchedule,
 }) => {
   const initialFormState = {
     event_sports_id: "",
@@ -86,6 +87,7 @@ const AddScheduleModal = ({
 
       await addMatchScheduleAPI(formData.event_sports_id, formData);
       fetchMatchSchedule();
+      getMatchSchedule();
       toast.success("Schedule saved successfully");
       handleClose();
     } catch (error) {

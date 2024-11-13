@@ -12,7 +12,7 @@ import { FaChevronUp, FaChevronDown, FaFilePdf } from "react-icons/fa";
 import Pagination from "../../Pagination_Sorting_Search/Pagination";
 import { Button } from "antd";
 
-const MatchSchedule = ({ roleId, eventId, eventName }) => {
+const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
   const [loading, setLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [eventData, setEventData] = useState(null);
@@ -91,7 +91,7 @@ const MatchSchedule = ({ roleId, eventId, eventName }) => {
   };
 
   const handlePageChange = (page) => {
-    fetchMatchSchedule(page, pagination.perPage);
+    fetchMatchSchedule(page);
   };
 
   const handleDateChange = (e) => {
@@ -334,6 +334,7 @@ const MatchSchedule = ({ roleId, eventId, eventName }) => {
           onClose={() => setIsModalOpen(false)}
           eventData={eventData}
           fetchMatchSchedule={fetchMatchSchedule}
+          getMatchSchedule={getMatchSchedule}
         />
       )}
     </div>
