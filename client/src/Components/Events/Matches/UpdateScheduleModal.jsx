@@ -9,7 +9,10 @@ const UpdateScheduleModal = ({
   eventData,
   fetchMatchSchedule,
   getMatchSchedule,
+  matchData,
 }) => {
+  console.log(matchData);
+
   const initialFormState = {
     event_sports_id: "",
     matches: [

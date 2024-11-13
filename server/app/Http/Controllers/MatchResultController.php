@@ -556,6 +556,7 @@ class MatchResultController extends Controller
             // Build base query for match results
             $baseQuery = MatchSchedule::query()
                 ->with(['matchResults', 'homeClub', 'awayClub', 'eventSport'])
+                ->whereHas('matchResults')
                 ->whereHas('eventSport', function ($query) use ($eventId, $sportName, $searchTerm) {
                     $query->where('event_id', $eventId);
                     if ($sportName && $sportName !== 'all') {

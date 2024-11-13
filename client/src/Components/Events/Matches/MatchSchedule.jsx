@@ -11,13 +11,15 @@ import toast from "react-hot-toast";
 import { PropagateLoader } from "react-spinners";
 import { FaChevronUp, FaChevronDown, FaFilePdf } from "react-icons/fa";
 import Pagination from "../../Pagination_Sorting_Search/Pagination";
-import { Button } from "antd";
+import { Button, Popconfirm } from "antd";
+import UpdateScheduleModal from "./UpdateScheduleModal";
 
 const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
   const [loading, setLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [eventData, setEventData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [matches, setMatches] = useState([]);
   const [searchDate, setSearchDate] = useState("");
   const [expandedSports, setExpandedSports] = useState({});
@@ -27,6 +29,18 @@ const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
     perPage: 2,
     total: 0,
   });
+
+  const [editingMatchSchedule, setEditingMatchSchedule] = useState(null);
+
+  const openEditModal = (match) => {
+    setEditingMatchSchedule(match);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setEditingMatchSchedule(null);
+    setIsEditModalOpen(false);
+  };
 
   const downloadScheduleAsPDF = async () => {
     try {
@@ -105,6 +119,17 @@ const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
     fetchParticipatingClubs();
     fetchMatchSchedule();
   }, [eventId]);
+
+  const handleDelete = async (matchId) => {
+    try {
+      await deleteMatchSchedulesAPI(matchId);
+      toast.success("Match schedule deleted successfully");
+      fetchMatchSchedule(pagination.currentPage);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting match schedule");
+    }
+  };
 
   if (loading) {
     return (
@@ -255,9 +280,9 @@ const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
                                     : ""
                                 }`}
                               >
-                                <div className="grid grid-cols-3 items-center gap-5 relative">
+                                <div className="grid grid-cols-4 items-center gap-3 relative">
                                   {/* Match Number */}
-                                  <span className="text-gray-700 absolute left-8 top-0 font-medium text-center">
+                                  <span className="text-gray-700 absolute left-4 top-0 font-medium text-center">
                                     {`${matchNumber++}.`}
                                   </span>
 
@@ -303,6 +328,28 @@ const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
                                       {match.club2.name}
                                     </span>
                                   </div>
+
+                                  {/* Edit and Delete Buttons */}
+                                  {roleId === 1 && (
+                                    <div className="flex items-center justify-center space-x-2">
+                                      <button
+                                        onClick={() => openEditModal(match)}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-2 rounded-lg"
+                                      >
+                                        Edit
+                                      </button>
+                                      <Popconfirm
+                                        title="Are you sure you want to delete this match?"
+                                        onConfirm={() => handleDelete(match.id)}
+                                        okText="Yes"
+                                        cancelText="No"
+                                      >
+                                        <button className="bg-red-600 hover:bg-red-700 text-white font-medium px-3 py-2 rounded-lg">
+                                          Delete
+                                        </button>
+                                      </Popconfirm>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             ))}
@@ -329,14 +376,25 @@ const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
         </div>
       )}
 
-      {roleId === 1 && eventData && (
-        <AddScheduleModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          eventData={eventData}
-          fetchMatchSchedule={fetchMatchSchedule}
-          getMatchSchedule={getMatchSchedule}
-        />
+      {roleId === 1 && (
+        <>
+          {eventData && (
+            <AddScheduleModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              eventData={eventData}
+              fetchMatchSchedule={fetchMatchSchedule}
+              getMatchSchedule={getMatchSchedule}
+            />
+          )}
+          <UpdateScheduleModal
+            isOpen={isEditModalOpen}
+            onClose={closeEditModal}
+            fetchMatchSchedule={fetchMatchSchedule}
+            getMatchSchedule={getMatchSchedule}
+            matchData={editingMatchSchedule}
+          />
+        </>
       )}
     </div>
   );
