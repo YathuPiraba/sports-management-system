@@ -12,7 +12,6 @@ const useMatchSchedules = (selectedEvent) => {
     setLoading(true);
     try {
       const res = await matchSchedulesDataAPI(selectedEvent);
-      console.log(res.data.data);
 
       // Transform the data structure to match our needs
       const transformedMatches = res.data.data.matches.reduce(
@@ -39,8 +38,6 @@ const useMatchSchedules = (selectedEvent) => {
       setLoading(false);
     }
   };
-
-  console.log(sports);
 
   useEffect(() => {
     if (selectedEvent) {

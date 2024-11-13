@@ -23,17 +23,20 @@ const MatchResults = ({
     total: 0,
   });
 
-  const fetchMatchResults = async (page = 1, perPage = 10) => {
+  const fetchMatchResults = async (page = 1) => {
     setLoading(true);
     try {
       const res = await getMatchResultAPI(
         eventId,
         page,
-        perPage,
+        pagination.perPage,
         selectedSport == "all" ? "" : selectedSport
       );
       const data = res.data.data;
       setMatchResults(data.match_results);
+
+      console.log(data.pagination);
+
       setPagination({
         currentPage: data.pagination.current_page,
         lastPage: data.pagination.last_page,
@@ -56,7 +59,7 @@ const MatchResults = ({
     fetchMatchResults(page);
   };
 
-  console.log(sports);
+  console.log(pagination);
 
   if (loading) {
     return (
@@ -195,13 +198,13 @@ const MatchResults = ({
             </div>
           )}
         </div>
-        <div className="mt-6">
-          <Pagination
-            currentPage={pagination.currentPage}
-            totalPages={pagination.lastPage}
-            goToPage={handlePageChange}
-          />
-        </div>
+      </div>
+      <div className="mt-6">
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.lastPage}
+          goToPage={handlePageChange}
+        />
       </div>
 
       {roleId === 1 && (
