@@ -179,6 +179,7 @@ class ClubController extends Controller
                     'clubImage' => $club->clubImage,
                     'clubName' => $club->clubName,
                     'club_history' => $club->club_history,
+                    'club_regNo' => $club->regNo,
                     'created_at' => $club->created_at,
                     'gs_id' => $club->gs_id,
                     'isVerified' => $club->isVerified,

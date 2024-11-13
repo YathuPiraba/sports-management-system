@@ -5,7 +5,7 @@ import GridLoader from "react-spinners/GridLoader";
 import { useTheme } from "../../context/ThemeContext";
 import { Tabs, Avatar, Button, Typography, Divider } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { MdVerified, MdPhone, MdLocationOn } from "react-icons/md";
+import { MdVerified, MdPhone, MdLocationOn, MdApproval } from "react-icons/md";
 const { Title, Text } = Typography;
 
 import SportsArena from "../../Components/Club/Sports_Arena/SportsArena";
@@ -38,7 +38,6 @@ const ManagerClub = () => {
     try {
       const response = await fetchClubDataAPI(userId);
       const data = response.data;
-
       setClub(data.club);
       setSports(data.sports);
       setGsDivision(data.gsDivision);
@@ -143,6 +142,8 @@ const ManagerClub = () => {
     );
   }
 
+  console.log(club);
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div
@@ -214,6 +215,12 @@ const ManagerClub = () => {
                 </div>
               </div>
               <div className="flex items-center">
+                <MdApproval className="mr-2 text-blue-500" />
+                <Text strong className="mr-2">
+                  Reg No : {club.club_regNo ? club.club_regNo : "Not allocated"}
+                </Text>
+              </div>
+              <div className="flex items-center mt-3 ">
                 <MdLocationOn className="mr-2 text-red-500" />
                 <Text>{club.clubAddress}</Text>
               </div>
