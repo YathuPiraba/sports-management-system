@@ -1,9 +1,9 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { addMatchScheduleAPI } from "../../../Services/apiServices";
+import { updateMatchSchedulesAPI } from "../../../Services/apiServices";
 
-const AddScheduleModal = ({
+const UpdateScheduleModal = ({
   isOpen,
   onClose,
   eventData,
@@ -338,4 +338,4 @@ const AddScheduleModal = ({
   );
 };
 
-export default AddScheduleModal;
+export default UpdateScheduleModal;
