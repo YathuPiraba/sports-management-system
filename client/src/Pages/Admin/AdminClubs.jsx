@@ -266,6 +266,13 @@ const AdminClubs = () => {
                 </td>
               </tr>
             )}
+            {clubs.length === 0 && !loading && (
+              <tr>
+                <td colSpan="7" className="text-center py-4 text-gray-500">
+                  No clubs added
+                </td>
+              </tr>
+            )}
             {clubs.map((club, index) => (
               <React.Fragment key={club.id}>
                 <tr>
@@ -291,7 +298,15 @@ const AdminClubs = () => {
                     {club.clubName}
                   </td>
                   <td className="px-3 py-4 whitespace-nowrap">
-                    {club.clubAddress}
+                    {club.clubAddress.includes(",") ? (
+                      <>
+                        {club.clubAddress.split(",")[0]}
+                        <br />
+                        {club.clubAddress.split(",").slice(1).join(",")}
+                      </>
+                    ) : (
+                      club.clubAddress
+                    )}
                   </td>
                   <td className="px-3 py-4 whitespace-nowrap">
                     {club.clubContactNo}
@@ -322,17 +337,21 @@ const AdminClubs = () => {
                 {expandedRowIds.includes(club.id) && (
                   <tr>
                     <td colSpan={7} className="px-6 py-4 bg-gray-100">
-                      <div className="mb-2 flex">
+                      <div className="mb-2">
                         <strong>Manager:</strong>
                         {club.club_managers.length > 0 ? (
                           <ul className="list-disc pl-5">
                             {club.club_managers.map((manager) => (
                               <li
                                 key={manager.id}
-                                className="flex items-center gap-2"
+                                className="grid grid-cols-6 gap-4"
                               >
-                                {manager.firstName} {manager.lastName} :{" "}
-                                <FaMobileRetro /> {manager.contactNo}
+                                <span className="col-span-2">
+                                  {manager.firstName} {manager.lastName}
+                                </span>
+                                <span className="flex items-center gap-2">
+                                  : <FaMobileRetro /> {manager.contactNo}
+                                </span>
                               </li>
                             ))}
                           </ul>
@@ -340,18 +359,23 @@ const AdminClubs = () => {
                           <p>No manager available</p>
                         )}
                       </div>
-                      <div className="flex">
+
+                      <div>
                         <strong>Members:</strong>
                         {club.members.length > 0 ? (
                           <ol className="pl-5">
                             {club.members.map((member, index) => (
                               <li
                                 key={member.id}
-                                className="flex items-center gap-2"
+                                className="grid grid-cols-6 gap-4"
                               >
-                                {index + 1}. {member.firstName}{" "}
-                                {member.lastName} : <FaMobileRetro />{" "}
-                                {member.contactNo}
+                                <span className="col-span-2">
+                                  {index + 1}. {member.firstName}{" "}
+                                  {member.lastName}
+                                </span>
+                                <span className="flex items-center gap-2">
+                                  : <FaMobileRetro /> {member.contactNo}
+                                </span>
                               </li>
                             ))}
                           </ol>
