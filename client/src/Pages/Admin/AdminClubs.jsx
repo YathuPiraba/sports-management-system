@@ -238,13 +238,13 @@ const AdminClubs = () => {
         <table className="min-w-full divide-y divide-gray-200 font-poppins">
           <thead>
             <tr className={`text-black text-left`}>
-              <th className="px-6 py-3 bg-gray-50">No</th>
-              <th className="px-6 py-3 bg-gray-50">Registered Number</th>
-              <th className="px-6 py-3 bg-gray-50">Club Name</th>
-              <th className="px-6 py-3 bg-gray-50">Address</th>
-              <th className="px-6 py-3 bg-gray-50">Contact No.</th>
-              <th className="px-6 py-3 bg-gray-50">G.N Division</th>
-              <th className="px-6 py-3 bg-gray-50">Actions</th>
+              <th className="px-3 py-3 bg-gray-50">No</th>
+              <th className="px-3 py-3 bg-gray-50">Registered Number</th>
+              <th className="px-3 py-3 bg-gray-50">Club Name</th>
+              <th className="px-3 py-3 bg-gray-50">Address</th>
+              <th className="px-3 py-3 bg-gray-50">Contact No.</th>
+              <th className="px-3 py-3 bg-gray-50">G.N Division</th>
+              <th className="px-3 py-3 bg-gray-50">Actions</th>
             </tr>
           </thead>
           <tbody
@@ -287,16 +287,16 @@ const AdminClubs = () => {
                       </Button>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {club.clubName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {club.clubAddress}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {club.clubContactNo}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {club.gs_division.divisionName}
                   </td>
                   <td className="px-3 py-4 whitespace-nowrap flex gap-2">

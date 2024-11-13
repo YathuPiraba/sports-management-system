@@ -594,7 +594,7 @@ class ClubController extends Controller
     {
         $club = Club::with([
             // Fetch only required fields from gsDivision
-            'gsDivision:id,divisionName',
+            'gsDivision:id,divisionName,divisionNo',
 
             // Fetch only managers where user has not been soft-deleted
             'clubManagers' => function ($query) {

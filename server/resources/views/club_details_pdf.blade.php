@@ -120,6 +120,7 @@
             transform: translateY(-50%);
             opacity: 0.07;
         }
+
         .members-table {
             width: 100%;
             border-collapse: separate;
@@ -163,19 +164,20 @@
 
 <body>
     <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1727243516/logo2-1_pyhk2h.png" alt="Left Watermark"
-    class="watermark left-watermark">
-<img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1728452512/11396-removebg-preview_q9leix.png"
-    alt="Right Watermark" class="watermark right-watermark">
+        class="watermark left-watermark">
+    <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1728452512/11396-removebg-preview_q9leix.png"
+        alt="Right Watermark" class="watermark right-watermark">
 
     <div class="club-header">
         <img src="{{ $club->clubImage }}" alt="{{ $club->clubName }}" class="club-image">
-        <h1>{{ $club->clubName }}  Club Details - {{ date('Y') }}</h1>
+        <h1>{{ $club->clubName }} Club Details - {{ date('Y') }}</h1>
     </div>
 
-    <div class="info"><strong>Registered Number:</strong> {{ $club->regNo ?? 'N/A'}}</div>
+    <div class="info"><strong>Registered Number:</strong> {{ $club->regNo ?? 'N/A' }}</div>
     <div class="info"><strong>Address:</strong> {{ $club->clubAddress }}</div>
     <div class="info"><strong>Contact No:</strong> {{ $club->clubContactNo }}</div>
-    <div class="info"><strong>Division:</strong> {{ $club->gsDivision->divisionName }}</div>
+    <div class="info"><strong>Division:</strong> {{ $club->gsDivision->divisionNo ?? 'N/A' }} -
+        {{ $club->gsDivision->divisionName ?? 'N/A' }}</div>
 
     <h2>Sports and Arenas</h2>
     <ul>
@@ -200,7 +202,7 @@
     @if (isset($club->clubManagers) && count($club->clubManagers) > 0)
         <table class="squad-table">
             @foreach ($club->clubManagers as $manager)
-                <tr >
+                <tr>
                     <td style="width: 50%;">
                         <img src="{{ $manager->user->image ?? 'https://res.cloudinary.com/dmonsn0ga/image/upload/v1724126491/v17anurj1zsu4cu3hae7.png' }}"
                             alt="{{ $manager->firstName }} {{ $manager->lastName }}">
