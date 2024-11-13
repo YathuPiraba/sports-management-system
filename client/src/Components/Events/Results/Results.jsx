@@ -10,18 +10,19 @@ import {
   deleteMatchResultsAPI,
 } from "../../../Services/apiServices";
 import toast from "react-hot-toast";
+import EditResultsModal from "./EditResultsModal";
 
 const MatchResults = ({
   roleId,
   eventId,
   matches,
   sports,
-  schedulesLoading,
   eventName,
   fetchMatchStats,
 }) => {
   const [selectedSport, setSelectedSport] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [matchResults, setMatchResults] = useState([]);
@@ -99,7 +100,7 @@ const MatchResults = ({
 
   const openEditModal = (match) => {
     setEditingMatch(match);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   useEffect(() => {
@@ -117,6 +118,9 @@ const MatchResults = ({
       </div>
     );
   }
+
+  console.log(editingMatch);
+  
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -314,18 +318,27 @@ const MatchResults = ({
 
       {/* Add/Edit Results Modal */}
       {roleId === 1 && (
-        <AddResultModal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditingMatch(null);
-          }}
-          matches={matches}
-          loading={schedulesLoading}
-          fetchMatchResults={fetchMatchResults}
-          fetchMatchStats={fetchMatchStats}
-          editingMatch={editingMatch} // Pass the match being edited
-        />
+        <>
+          <AddResultModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+            }}
+            matches={matches}
+            fetchMatchResults={fetchMatchResults}
+            fetchMatchStats={fetchMatchStats}
+          />
+          <EditResultsModal
+            isOpen={isEditModalOpen}
+            onClose={() => {
+              setEditingMatch(null);
+              setIsEditModalOpen(false);
+            }}
+            editingMatch={editingMatch}
+            fetchMatchResults={fetchMatchResults}
+            fetchMatchStats={fetchMatchStats}
+          />
+        </>
       )}
     </div>
   );

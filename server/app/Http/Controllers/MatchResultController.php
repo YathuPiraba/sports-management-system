@@ -757,8 +757,8 @@ class MatchResultController extends Controller
             // Update the match result
             $matchResult->home_score = $request->home_score;
             $matchResult->away_score = $request->away_score;
-            $matchResult->home_club_id = $request->home_club_id;
-            $matchResult->away_club_id = $request->away_club_id;
+            // $matchResult->home_club_id = $request->home_club_id;
+            // $matchResult->away_club_id = $request->away_club_id;
             $matchResult->winner_club_id = $request->winner_club_id;
 
             // Determine the result based on winner_club_id

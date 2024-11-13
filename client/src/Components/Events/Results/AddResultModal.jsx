@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import {
-  submitMatchResultAPI,
-  updateMatchResultsAPI,
-} from "../../../Services/apiServices";
+import { submitMatchResultAPI } from "../../../Services/apiServices";
 import { Button } from "antd";
 import toast from "react-hot-toast";
 
@@ -10,7 +7,6 @@ const AddResultModal = ({
   isOpen,
   onClose,
   matches,
-  loading,
   fetchMatchResults,
   fetchMatchStats,
 }) => {
@@ -21,7 +17,7 @@ const AddResultModal = ({
     team2Score: "",
     winner: "",
   });
-
+  const [loading, setLoading] = useState(false);
   // Group matches by date
   const matchesByDate = matches.reduce((acc, match) => {
     const date = match.date;
@@ -36,7 +32,7 @@ const AddResultModal = ({
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       // Determine winner club id
       const winnerClubId =
@@ -71,6 +67,8 @@ const AddResultModal = ({
       onClose();
     } catch (error) {
       toast.error(error.message || "Failed to submit match result");
+    } finally {
+      setLoading(false);
     }
   };
 

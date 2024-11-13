@@ -458,12 +458,9 @@ export const downloadClubDetailsAPI = async (clubId) => {
 };
 export const downloadAllClubDetailsAPI = async (clubId) => {
   try {
-    const response = await authApiClient.get(
-      `/download-all-club-details`,
-      {
-        responseType: "blob",
-      }
-    );
+    const response = await authApiClient.get(`/download-all-club-details`, {
+      responseType: "blob",
+    });
     return response;
   } catch (error) {
     throw error;
@@ -502,8 +499,8 @@ export const matchSchedulesDataAPI = (eventId) => {
   return authApiClient.get(`/event/match-schedules/${eventId}`);
 };
 
-export const updateMatchSchedulesAPI = (matchId) => {
-  return authApiClient.put(`/match-schedules/${matchId}`);
+export const updateMatchSchedulesAPI = (matchId, data) => {
+  return authApiClient.put(`/match-schedules/${matchId}`, data);
 };
 
 export const deleteMatchSchedulesAPI = (matchId) => {
@@ -568,8 +565,8 @@ export const downloadMatchResultAPI = async (eventId) => {
   }
 };
 
-export const updateMatchResultsAPI = (matchId) => {
-  return authApiClient.put(`/matches/results/${matchId}`);
+export const updateMatchResultsAPI = (matchId, data) => {
+  return authApiClient.put(`/matches/results/${matchId}`, data);
 };
 
 export const deleteMatchResultsAPI = (matchId) => {

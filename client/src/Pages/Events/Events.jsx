@@ -94,7 +94,6 @@ const Events = () => {
     const matchSchedulesData = useMatchSchedules(selectedEvent);
     const matches = matchSchedulesData.matches;
     const sports = matchSchedulesData.sports;
-    const schedulesLoading = matchSchedulesData.loading;
     const fetchMatchSchedule = matchSchedulesData.fetchMatchSchedule;
 
     const matchStatsData = useFetchStats(selectedEvent);
@@ -379,7 +378,6 @@ const Events = () => {
                         matches={matches}
                         sports={sports}
                         eventName={selectedEventDetails.name}
-                        schedulesLoading={schedulesLoading}
                         fetchMatchStats={fetchMatchStats}
                       />
                     ),
