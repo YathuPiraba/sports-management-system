@@ -280,9 +280,19 @@ const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
                                     : ""
                                 }`}
                               >
-                                <div className="grid grid-cols-4 items-center gap-3 relative">
+                                <div
+                                  className={`grid ${
+                                    roleId !== 1
+                                      ? "grid-cols-3 gap-4"
+                                      : "grid-cols-4 gap-3"
+                                  } items-center relative`}
+                                >
                                   {/* Match Number */}
-                                  <span className="text-gray-700 absolute left-4 top-0 font-medium text-center">
+                                  <span
+                                    className={`text-gray-700 absolute ${
+                                      roleId !== 1 ? "left-8" : "left-4"
+                                    } top-0 font-medium text-center`}
+                                  >
                                     {`${matchNumber++}.`}
                                   </span>
 
@@ -393,6 +403,7 @@ const MatchSchedule = ({ roleId, eventId, eventName, getMatchSchedule }) => {
             fetchMatchSchedule={fetchMatchSchedule}
             getMatchSchedule={getMatchSchedule}
             matchData={editingMatchSchedule}
+            eventData={eventData}
           />
         </>
       )}

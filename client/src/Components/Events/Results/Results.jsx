@@ -117,9 +117,6 @@ const MatchResults = ({
     );
   }
 
-  console.log(editingMatch);
-  
-
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Header with Sport Selection and Total Results */}
