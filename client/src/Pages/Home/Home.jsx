@@ -30,6 +30,7 @@ const Home = () => {
       if (authenticate.userId == event.userId) {
         navigate("/");
         toast.error("Sorry your request is rejected");
+        localStorage.removeItem("verified");
       }
     });
 
