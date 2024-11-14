@@ -235,7 +235,7 @@ const AdminClubs = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 font-poppins">
+        <table className="min-w-full divide-y divide-gray-200 font-serif">
           <thead>
             <tr className={`text-black text-left`}>
               <th className="px-3 py-3 bg-gray-50">No</th>
@@ -275,13 +275,13 @@ const AdminClubs = () => {
             )}
             {clubs.map((club, index) => (
               <React.Fragment key={club.id}>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr className="font-serif"> 
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {(pagination.currentPage - 1) * pagination.perPage +
                       index +
                       1}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {club.regNo ? (
                       club.regNo
                     ) : (
@@ -314,13 +314,14 @@ const AdminClubs = () => {
                   <td className="px-3 py-4 whitespace-nowrap">
                     {club.gs_division.divisionName}
                   </td>
-                  <td className="px-3 py-4 whitespace-nowrap flex gap-2">
+                  <td className="px-2 py-4 whitespace-nowrap flex gap-2">
                     <Button
+                      icon={<FaFilePdf />}
                       className="bg-sky-500 border-blue-400 text-white text-sm flex items-center gap-1.5"
                       onClick={() => handleDownload(club.id, club.clubName)}
                       loading={downloadLoading[club.id]}
                     >
-                      <FaFilePdf /> Download
+                      Download
                     </Button>
                     <button
                       className="text-blue-500 hover:text-blue-700"

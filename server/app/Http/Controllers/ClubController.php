@@ -602,8 +602,8 @@ class ClubController extends Controller
             'clubManagers' => function ($query) {
                 $query->whereHas('user', function ($userQuery) {
                     $userQuery->whereNull('deleted_at');
-                })->select('id', 'club_id', 'firstName', 'lastName', 'contactNo', 'user_id')
-                    ->with(['user:id,image']);
+                })->select('id', 'club_id', 'firstName', 'lastName', 'contactNo','gender', 'user_id');
+                    // ->with(['user:id,image']);
             },
 
             // Fetch only required fields from clubSports and related relationships
@@ -619,8 +619,9 @@ class ClubController extends Controller
             'members' => function ($query) {
                 $query->whereHas('user', function ($userQuery) {
                     $userQuery->whereNull('deleted_at');
-                })->select('id', 'club_id', 'firstName', 'lastName', 'position', 'contactNo', 'user_id')
-                    ->with(['user:id,image']);
+                })->select('id', 'club_id', 'firstName', 'lastName', 'position','gender', 'contactNo', 'user_id')
+                ->orderBy('firstName', 'asc')
+                ->orderBy('lastName', 'asc');
             }
         ])->findOrFail($id);
 
@@ -646,17 +647,40 @@ class ClubController extends Controller
                         ->with(['sportsCategory:id,name']);
                 }
             ])
-            // Count active members and managers
+            // Count male members
             ->withCount([
-                'members as total_members' => function ($query) {
-                    $query->join('users', 'members.user_id', '=', 'users.id')
-                        ->whereNull('users.deleted_at');
+                'members as male_members' => function ($query) {
+                    $query->where('gender', 'Male')
+                        ->whereHas('user', function($q) {
+                            $q->whereNull('deleted_at');
+                        });
                 }
             ])
+            // Count female members
             ->withCount([
-                'clubManagers as total_managers' => function ($query) {
-                    $query->join('users', 'club_managers.user_id', '=', 'users.id')
-                        ->whereNull('users.deleted_at');
+                'members as female_members' => function ($query) {
+                    $query->where('gender', 'Female')
+                        ->whereHas('user', function($q) {
+                            $q->whereNull('deleted_at');
+                        });
+                }
+            ])
+            // Count male managers
+            ->withCount([
+                'clubManagers as male_managers' => function ($query) {
+                    $query->where('gender', 'Male')
+                        ->whereHas('user', function($q) {
+                            $q->whereNull('deleted_at');
+                        });
+                }
+            ])
+            // Count female managers
+            ->withCount([
+                'clubManagers as female_managers' => function ($query) {
+                    $query->where('gender', 'Female')
+                        ->whereHas('user', function($q) {
+                            $q->whereNull('deleted_at');
+                        });
                 }
             ])
             ->get();
@@ -675,11 +699,10 @@ class ClubController extends Controller
             $clubs = $clubs->sortBy('clubName');
         }
 
-        // Map to calculate total people
+        // Map to calculate total gender counts
         $clubs = $clubs->map(function ($club) {
-            $club->total_members = (int)$club->total_members;
-            $club->total_managers = (int)$club->total_managers;
-            $club->total_people = $club->total_members + $club->total_managers;
+            $club->male_count = (int)$club->male_members + (int)$club->male_managers;
+            $club->female_count = (int)$club->female_members + (int)$club->female_managers;
             return $club;
         });
 

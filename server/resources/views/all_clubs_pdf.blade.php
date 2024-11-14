@@ -11,14 +11,13 @@
             line-height: 1.6;
             color: #333;
             margin: 0;
-            padding: 20px;
+            padding: 20px 10px;
         }
 
         .header {
             text-align: center;
             margin-bottom: 30px;
             position: relative;
-            padding-top: 60px;
         }
 
         .logo-left {
@@ -54,6 +53,18 @@
             padding: 8px;
             text-align: left;
             font-size: 12px;
+        }
+
+        .clubs-table th:nth-child(3),
+        .clubs-table td:nth-child(3) {
+            width: 90px;
+            /* Adjust width as needed */
+        }
+
+        .clubs-table th:nth-child(5),
+        .clubs-table td:nth-child(5) {
+            width: 140px;
+            /* Adjust width as needed */
         }
 
         .clubs-table th {
@@ -107,6 +118,40 @@
             color: #666;
             margin-top: 20px;
         }
+
+        .clubs-table th.total-members {
+            text-align: center;
+        }
+
+        .clubs-table td.gender-count {
+            text-align: center;
+            padding: 4px;
+            font-size: 11px;
+        }
+
+        .gender-header {
+            text-align: center;
+            font-size: 11px;
+            background-color: #f0f0f0;
+        }
+
+        .sports-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sports-list li {
+            margin-bottom: 2px;
+            padding-left: 12px;
+            position: relative;
+        }
+
+        .sports-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
     </style>
 </head>
 
@@ -122,40 +167,44 @@
     <table class="clubs-table">
         <thead>
             <tr>
-                <th>S.N</th>
-                <th>Club Name</th>
-                <th>Sports</th>
-                <th>Address</th>
-                <th>GN Division</th>
-                <th>Registered Number</th>
-                <th>Total Members</th>
+                <th rowspan="2">S.N</th>
+                <th rowspan="2">Club Name</th>
+                <th rowspan="2">Sports</th>
+                <th rowspan="2">Address</th>
+                <th rowspan="2">GN Division</th>
+                <th rowspan="2">Registered Number</th>
+                <th colspan="2" class="total-members">No. of Members</th>
+            </tr>
+            <tr>
+                <th class="gender-header">Male</th>
+                <th class="gender-header">Female</th>
             </tr>
         </thead>
         <tbody>
             @php
-                $serialNumber = 1;
+            $serialNumber = 1;
             @endphp
             @foreach ($clubs as $club)
-                <tr>
-                    <td>{{ $serialNumber++ }}</td> <!-- Use the incremented serial number -->
-                    <td>{{ $club->clubName }}</td>
-                    <td>
-                        <ul class="sports-list">
-                            @if($club->clubSports->isEmpty())
-                                <li>Nil</li>
-                            @else
-                                @foreach ($club->clubSports->groupBy('sportsCategory.name') as $sportName => $sports)
-                                    <li>{{ $sportName }}</li>
-                                @endforeach
-                            @endif
-                        </ul>
-                    </td>
-                    <td>{{ $club->clubAddress }}</td>
-                    <td>{{ $club->gsDivision->divisionNo ?? 'N/A' }} - {{ $club->gsDivision->divisionName ?? 'N/A' }}
-                    </td>
-                    <td>{{ $club->regNo ?? 'N/A' }}</td>
-                    <td>{{ $club->total_people }}</td>
-                </tr>
+            <tr>
+                <td>{{ $serialNumber++ }}</td>
+                <td>{{ $club->clubName }}</td>
+                <td>
+                    <ul class="sports-list">
+                        @if($club->clubSports->isEmpty())
+                        <li>Nil</li>
+                        @else
+                        @foreach ($club->clubSports->groupBy('sportsCategory.name') as $sportName => $sports)
+                        <li>{{ $sportName }}</li>
+                        @endforeach
+                        @endif
+                    </ul>
+                </td>
+                <td>{{ $club->clubAddress }}</td>
+                <td>{{ $club->gsDivision->divisionNo ?? 'N/A' }} - {{ $club->gsDivision->divisionName ?? 'N/A' }}</td>
+                <td>{{ $club->regNo ?? 'N/A' }}</td>
+                <td class="gender-count">{{ $club->male_count > 0 ? $club->male_count : 'Nil' }}</td>
+                <td class="gender-count">{{ $club->female_count > 0 ? $club->female_count : 'Nil' }}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>
