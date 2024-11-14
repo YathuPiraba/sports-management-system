@@ -32,6 +32,7 @@ const ManagerSignIn = () => {
     firstName: "",
     lastName: "",
     date_of_birth: "",
+    gender: "",
     divisionName: "",
     address: "",
     nic: "",
@@ -65,16 +66,16 @@ const ManagerSignIn = () => {
       navigate("/home");
     } catch (error) {
       console.error("Error creating request", error);
-      
+
       if (error?.errors) {
         // Get all error messages from each field
         const errorFields = Object.entries(error.errors);
-        
+
         // Display each field's errors
         errorFields.forEach(([fieldName, messages]) => {
           // Handle array of messages for each field
           if (Array.isArray(messages)) {
-            messages.forEach(message => {
+            messages.forEach((message) => {
               toast.error(message);
             });
           }

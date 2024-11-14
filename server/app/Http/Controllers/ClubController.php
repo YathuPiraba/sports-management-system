@@ -101,6 +101,7 @@ class ClubController extends Controller
         try {
             // Fetch all club details and sort by clubName in ascending order
             $clubs = Club::where('isVerified', 1)
+                ->whereHas('clubSports')
                 ->orderBy('clubName', 'asc')
                 ->get();
 
@@ -647,13 +648,13 @@ class ClubController extends Controller
             ])
             // Count active members and managers
             ->withCount([
-                'members as total_members' => function($query) {
+                'members as total_members' => function ($query) {
                     $query->join('users', 'members.user_id', '=', 'users.id')
                         ->whereNull('users.deleted_at');
                 }
             ])
             ->withCount([
-                'clubManagers as total_managers' => function($query) {
+                'clubManagers as total_managers' => function ($query) {
                     $query->join('users', 'club_managers.user_id', '=', 'users.id')
                         ->whereNull('users.deleted_at');
                 }
@@ -661,7 +662,7 @@ class ClubController extends Controller
             ->get();
 
         // Check if all clubs have a `regNo`
-        $allHaveRegNo = $clubs->every(function($club) {
+        $allHaveRegNo = $clubs->every(function ($club) {
             return !empty($club->regNo);
         });
 
@@ -691,5 +692,4 @@ class ClubController extends Controller
         // Return the PDF for download
         return $pdf->download($filename);
     }
-
 }

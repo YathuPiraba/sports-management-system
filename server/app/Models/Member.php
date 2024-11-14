@@ -15,6 +15,7 @@ class Member extends Model
         'manager_id',
         'firstName',
         'lastName',
+        'gender',
         'date_of_birth',
         'age',
         'address',

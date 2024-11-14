@@ -17,6 +17,7 @@ class Club_Manager extends Model
         'gs_id',
         'firstName',
         'lastName',
+        'gender',
         'date_of_birth',
         'age',
         'address',

@@ -46,6 +46,7 @@ class MemberController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,avif,svg|max:2048',
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
+            'gender' => 'required|string|max:20',
             'date_of_birth' => 'required|date',
             'address' => 'required|string|max:255',
             'experience' => 'nullable|string|max:255',
@@ -105,6 +106,7 @@ class MemberController extends Controller
                 'manager_id' => $managerId,
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
+                'gender' => $request->gender,
                 'position' => $request->position,
                 'date_of_birth' => $request->date_of_birth,
                 'age' => $age,
@@ -146,8 +148,8 @@ class MemberController extends Controller
                 'role_id' => $role->id,
                 'is_verified' => 0,
                 'image' => $user->image,
-                'member' => $member,
-                'sports' => $request->sports
+                // 'member' => $member,
+                // 'sports' => $request->sports
             ], 201);
         } catch (Exception $e) {
             DB::rollBack();
@@ -215,6 +217,7 @@ class MemberController extends Controller
                     'member_id' => $member->id,
                     'firstName' => $member->firstName,
                     'lastName' => $member->lastName,
+                    'gender' => $member->gender,
                     'date_of_birth' => $member->date_of_birth,
                     'address' => $member->address,
                     'nic' => $member->nic,
@@ -423,6 +426,7 @@ class MemberController extends Controller
                     'member_id' => $member->id,
                     'firstName' => $member->firstName,
                     'lastName' => $member->lastName,
+                    'gender' => $member->gender,
                     'date_of_birth' => $member->date_of_birth,
                     'address' => $member->address,
                     'nic' => $member->nic,
@@ -532,6 +536,7 @@ class MemberController extends Controller
                     'member_id' => $member->id,
                     'firstName' => $member->firstName,
                     'lastName' => $member->lastName,
+                    'gender' => $member->gender,
                     'date_of_birth' => $member->date_of_birth,
                     'contactNo' => $member->contactNo,
                     'whatsappNo' => $member->whatsappNo,
@@ -612,6 +617,7 @@ class MemberController extends Controller
                 'firstName' => $member->firstName,
                 'lastName' => $member->lastName,
                 'date_of_birth' => $member->date_of_birth,
+                'gender' => $member->gender,
                 'address' => $member->address,
                 'nic' => $member->nic,
                 'contactNo' => $member->contactNo,
@@ -784,6 +790,7 @@ class MemberController extends Controller
                 'member_id' => $member->id,
                 'firstName' => $member->firstName,
                 'lastName' => $member->lastName,
+                'gender' => $member->gender,
                 'date_of_birth' => $member->date_of_birth,
                 'address' => $member->address,
                 'nic' => $member->nic,
@@ -822,6 +829,7 @@ class MemberController extends Controller
         $request->validate([
             'firstName' => 'sometimes|string|max:255',
             'lastName' => 'sometimes|string|max:255',
+            'gender' => 'sometimes|string|max:20',
             'date_of_birth' => 'sometimes|date',
             'address' => 'sometimes|string|max:255',
             'nic' => 'sometimes|string|max:20',
@@ -850,6 +858,10 @@ class MemberController extends Controller
             if ($request->has('lastName')) {
                 $member->lastName = $request->lastName;
             }
+            if ($request->has('gender')) {
+                $member->gender = $request->gender;
+            }
+
             if ($request->has('date_of_birth')) {
                 $member->date_of_birth = $request->date_of_birth;
                 // Recalculate age

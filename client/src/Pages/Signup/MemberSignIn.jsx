@@ -27,6 +27,7 @@ const MemberSignIn = () => {
     firstName: "",
     lastName: "",
     date_of_birth: "",
+    gender: "",
     divisionName: "",
     address: "",
     nic: "",

@@ -49,6 +49,7 @@ class ManagerController extends Controller
             'divisionName' => 'required|string|max:255',
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
+            'gender' => 'required|string|max:20',
             'date_of_birth' => 'required|date',
             'address' => 'required|string|max:255',
             'nic' => 'required|string|min:10|max:12',
@@ -129,6 +130,7 @@ class ManagerController extends Controller
                 'gs_id' => $gsDivision->id,
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
+                'gender' => $request->gender,
                 'date_of_birth' => $request->date_of_birth,
                 'age' => $age,
                 'address' => $request->address,
@@ -152,7 +154,7 @@ class ManagerController extends Controller
                 'role_id' => $role->id,
                 'is_verified' => 0,
                 'image' => $user->image,
-                'manager' => $manager,
+                // 'manager' => $manager,
                 'club' => $club
             ], 201);
         } catch (Exception $e) {
@@ -360,6 +362,7 @@ class ManagerController extends Controller
                     'managerId' => $manager->id,
                     'firstName' => $manager->firstName,
                     'lastName' => $manager->lastName,
+                    'gender' => $manager->gender,
                     'date_of_birth' => $manager->date_of_birth,
                     'address' => $manager->address,
                     'nic' => $manager->nic,
@@ -479,6 +482,7 @@ class ManagerController extends Controller
                     'firstName' => $manager->firstName,
                     'lastName' => $manager->lastName,
                     'date_of_birth' => $manager->date_of_birth,
+                    'gender' => $manager->gender,
                     'address' => $manager->address,
                     'nic' => $manager->nic,
                     'contactNo' => $manager->contactNo,
@@ -549,6 +553,7 @@ class ManagerController extends Controller
                     'managerId' => $manager->id,
                     'firstName' => $manager->firstName,
                     'lastName' => $manager->lastName,
+                    'gender' => $manager->gender,
                     'date_of_birth' => $manager->date_of_birth,
                     'address' => $manager->address,
                     'nic' => $manager->nic,
@@ -605,6 +610,7 @@ class ManagerController extends Controller
             'firstName' => 'sometimes|string|max:255',
             'lastName' => 'sometimes|string|max:255',
             'date_of_birth' => 'sometimes|date',
+            'gender' => 'sometimes|string|max:20',
             'address' => 'sometimes|string|max:255',
             'nic' => 'sometimes|string|max:20',
             'contactNo' => 'sometimes|string|max:15',
@@ -639,6 +645,9 @@ class ManagerController extends Controller
             }
             if ($request->has('address')) {
                 $manager->address = $request->address;
+            }
+            if ($request->has('gender')) {
+                $manager->gender = $request->gender;
             }
             if ($request->has('nic')) {
                 $manager->nic = $request->nic;
@@ -721,6 +730,7 @@ class ManagerController extends Controller
                     'id' => $manager->id,
                     'firstName' => $manager->firstName,
                     'lastName' => $manager->lastName,
+                    'gender' => $manager->gender,
                     'date_of_birth' => $manager->date_of_birth,
                     'age' => $manager->age,
                     'address' => $manager->address,
