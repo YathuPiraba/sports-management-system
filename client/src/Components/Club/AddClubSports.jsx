@@ -6,7 +6,7 @@ import {
 } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
-import { Select } from "antd";
+import { Button, Select } from "antd";
 import AddSportsForm from "./AddSportsForm";
 import AddArenaForm from "./AddArenaForm";
 
@@ -34,6 +34,8 @@ const AddClubSports = ({
     addNewSport: false,
     addNewArena: false,
   });
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -205,7 +207,7 @@ const AddClubSports = ({
     } else {
       formData.append("sportsArenaName", data.selectedArena);
     }
-
+    setLoading(true);
     try {
       await createClubSportsAPI(formData);
       fetchClubData();
@@ -216,6 +218,8 @@ const AddClubSports = ({
       const errorMessage =
         error.response?.data?.error || "Error in adding club sport.";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -339,12 +343,14 @@ const AddClubSports = ({
         </div>
 
         <div>
-          <button
-            type="submit"
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Add Club Sport
-          </button>
+          </Button>
         </div>
       </form>
     </div>

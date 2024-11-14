@@ -3,9 +3,11 @@ import { updateClubDetailsApi } from "../../Services/apiServices";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import useGsDivisions from "../../hooks/useGsDivisions";
+import { Button } from "antd";
 
 const UpdateClub = ({ club, popClose, fetchClubData, theme }) => {
   const { divisions } = useGsDivisions();
+  const [loading, setLoading] = useState(false);
   const [clubName, setClubName] = useState(club.clubName || "");
   const [clubDivisionName, setClubDivisionName] = useState(
     club.clubDivisionName || ""
@@ -33,7 +35,7 @@ const UpdateClub = ({ club, popClose, fetchClubData, theme }) => {
     formData.append("clubAddress", clubAddress);
     formData.append("club_history", clubHistory);
     formData.append("clubContactNo", clubContactNo);
-
+    setLoading(true);
     try {
       await updateClubDetailsApi(club.id, formData);
       fetchClubData();
@@ -42,6 +44,8 @@ const UpdateClub = ({ club, popClose, fetchClubData, theme }) => {
     } catch (error) {
       console.error(error);
       toast.error("Error in updating club");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -160,12 +164,14 @@ const UpdateClub = ({ club, popClose, fetchClubData, theme }) => {
         </div>
 
         <div>
-          <button
-            type="submit"
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Update Club
-          </button>
+          </Button>
         </div>
       </form>
     </div>

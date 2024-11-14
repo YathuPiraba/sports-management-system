@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { Popconfirm } from "antd";
+import { Button, Popconfirm } from "antd";
 import {
   updateClubSportsAPI,
   deleteClubSportsAPI,
@@ -28,6 +28,7 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
   const [selectedSport, setSelectedSport] = useState(null);
   const [selectedArenas, setSelectedArenas] = useState([]);
   const [availableArenas, setAvailableArenas] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const uniqueSports = getUniqueSports(sports);
 
@@ -81,7 +82,7 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
       sport_id: selectedSport.sports_id,
       sports_arena_ids: selectedArenas,
     };
-
+    setLoading(true);
     try {
       await updateClubSportsAPI(selectedSport.club_id, data);
       fetchClubData();
@@ -90,6 +91,8 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
     } catch (error) {
       console.error(error);
       toast.error("Error in updating Club Sports");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,12 +203,14 @@ const ManageClubSports = ({ sports, popClose, fetchClubData, theme }) => {
         )}
 
         <div className="flex space-x-4 mt-4">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            className="bg-blue-500 text-white px-4 py-5 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Update Club Sports
-          </button>
+          </Button>
 
           <Popconfirm
             title="Are you sure you want to delete this club sports entry?"

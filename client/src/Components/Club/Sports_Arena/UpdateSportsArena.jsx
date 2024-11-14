@@ -1,6 +1,7 @@
-import React from "react";
+import React,{useState} from "react";
 import { updateSportsArenaAPI } from "../../../Services/apiServices";
 import toast from "react-hot-toast";
+import { Button } from "antd";
 
 const UpdateSportsArena = ({
   selectedArena,
@@ -15,6 +16,8 @@ const UpdateSportsArena = ({
   fetchClubData,
   popClose,
 }) => {
+  const [loading, setLoading] = useState(false);
+
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     if (!selectedArena) {
@@ -29,7 +32,7 @@ const UpdateSportsArena = ({
     formdata.append("location", location);
     formdata.append("name", arenaName);
     formdata.append("address", address);
-
+    setLoading(true);
     try {
       await updateSportsArenaAPI(selectedArena.sports_arena_id, formdata);
       fetchClubData();
@@ -38,6 +41,8 @@ const UpdateSportsArena = ({
     } catch (error) {
       console.log(error);
       toast.error("Error in updating sports arena");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,12 +117,14 @@ const UpdateSportsArena = ({
       </div>
 
       <div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={loading}
+          className="w-full bg-blue-500 text-white px-4 py-5 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Update Sports Arena
-        </button>
+        </Button>
       </div>
     </form>
   );

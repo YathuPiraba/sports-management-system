@@ -235,7 +235,7 @@ const AdminClubs = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 font-serif">
+        <table className="min-w-full divide-y divide-gray-200 font-poppins">
           <thead>
             <tr className={`text-black text-left`}>
               <th className="px-3 py-3 bg-gray-50">No</th>
@@ -275,7 +275,7 @@ const AdminClubs = () => {
             )}
             {clubs.map((club, index) => (
               <React.Fragment key={club.id}>
-                <tr className="font-serif"> 
+                <tr className="font-poppins"> 
                   <td className="px-3 py-4 whitespace-nowrap">
                     {(pagination.currentPage - 1) * pagination.perPage +
                       index +

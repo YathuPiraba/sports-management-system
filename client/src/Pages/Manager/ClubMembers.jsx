@@ -95,7 +95,6 @@ const ClubMembers = () => {
     setSearchQuery(query);
   };
 
-  console.log(searchQuery);
 
   const handleAction = async (memberUserId, isDeactivated) => {
     try {
