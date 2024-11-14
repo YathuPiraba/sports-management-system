@@ -523,14 +523,12 @@ class ClubController extends Controller
     {
         try {
             // Get pagination and sorting parameters from the request
-            $perPage = $request->input('per_page', 10); // Default to 10 items per page
-            $clubNameSortOrder = $request->input('club_name_sort'); // Sorting order for clubName
-            $divisionNameSortOrder = $request->input('division_name_sort'); // Sorting order for divisionName
-
-            // Get search query from the request
+            $perPage = $request->input('per_page', 10);
+            $clubNameSortOrder = $request->input('club_name_sort');
+            $divisionNameSortOrder = $request->input('division_name_sort');
             $searchQuery = $request->input('search');
 
-            // Fetch all verified clubs with their verified managers and members
+            // Start building the base query
             $clubs = Club::where('isVerified', 1)
                 ->with(['clubManagers' => function ($query) {
                     $query->whereHas('user', function ($query) {
@@ -540,47 +538,58 @@ class ClubController extends Controller
                     $query->whereHas('user', function ($query) {
                         $query->where('is_verified', 1);
                     });
-                }, 'gsDivision']) // Include division relation
-                ->where(function ($query) use ($searchQuery) {
-                    // Apply search query if provided
-                    if ($searchQuery) {
-                        $query->where('clubName', 'like', "%$searchQuery%")
-                            ->orWhereHas('gsDivision', function ($query) use ($searchQuery) {
-                                $query->where('divisionName', 'like', "%$searchQuery%");
-                            })
-                            ->orWhereHas('clubManagers.user', function ($query) use ($searchQuery) {
-                                $query->where('firstName', 'like', "%$searchQuery%")
-                                    ->orWhere('lastName', 'like', "%$searchQuery%");
-                            })
-                            ->orWhereHas('members.user', function ($query) use ($searchQuery) {
-                                $query->where('firstName', 'like', "%$searchQuery%")
-                                    ->orWhere('lastName', 'like', "%$searchQuery%");
-                            });
-                    }
-                });
+                }, 'gsDivision']);
 
-            // Apply sorting based on provided parameters
+            // Apply search filters
+            if ($searchQuery) {
+                $clubs->where(function ($query) use ($searchQuery) {
+                    $query->where('clubName', 'like', "%$searchQuery%")
+                        ->orWhereHas('gsDivision', function ($query) use ($searchQuery) {
+                            $query->where('divisionName', 'like', "%$searchQuery%");
+                        })
+                        ->orWhereHas('clubManagers.user', function ($query) use ($searchQuery) {
+                            $query->where('firstName', 'like', "%$searchQuery%")
+                                ->orWhere('lastName', 'like', "%$searchQuery%");
+                        })
+                        ->orWhereHas('members.user', function ($query) use ($searchQuery) {
+                            $query->where('firstName', 'like', "%$searchQuery%")
+                                ->orWhere('lastName', 'like', "%$searchQuery%");
+                        });
+                });
+            }
+
+            // Apply sorting
             if ($clubNameSortOrder && !$divisionNameSortOrder) {
                 $clubs->orderBy('clubName', $clubNameSortOrder);
             } elseif ($divisionNameSortOrder && !$clubNameSortOrder) {
-                $clubs->orderBy(
-                    Gs_Division::select('divisionName')
-                        ->whereColumn('gs_divisions.id', 'clubs.gs_id'),
-                    $divisionNameSortOrder
-                );
+                $clubs->join('gs_divisions', 'clubs.gs_id', '=', 'gs_divisions.id')
+                    ->orderBy('gs_divisions.divisionName', $divisionNameSortOrder)
+                    ->select('clubs.*');
             }
 
-            // Apply pagination
-            $paginatedClubs = $clubs->paginate($perPage);
+            // Get total count before pagination
+            $totalCount = $clubs->count();
 
-            // Format the response to include pagination information
+            // Calculate last page
+            $lastPage = ceil($totalCount / $perPage);
+
+            // Adjust current page if it exceeds last page
+            $currentPage = $request->input('page', 1);
+            if ($currentPage > $lastPage && $lastPage > 0) {
+                $currentPage = $lastPage;
+            }
+
+            // Apply pagination with adjusted page
+            $paginatedClubs = $clubs->paginate($perPage, ['*'], 'page', $currentPage);
+
+            // Format the response
             $response = [
                 'data' => $paginatedClubs->items(),
                 'pagination' => [
-                    'total' => $paginatedClubs->total(),
-                    'per_page' => $paginatedClubs->perPage(),
-                    'current_page' => $paginatedClubs->currentPage(),
-                    'last_page' => $paginatedClubs->lastPage(),
+                    'total' => $totalCount,
+                    'per_page' => $perPage,
+                    'current_page' => $currentPage,
+                    'last_page' => $lastPage,
                     'from' => $paginatedClubs->firstItem(),
                     'to' => $paginatedClubs->lastItem(),
                 ]
@@ -588,7 +597,10 @@ class ClubController extends Controller
 
             return response()->json($response);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to fetch club details.', 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Failed to fetch club details.',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -602,8 +614,8 @@ class ClubController extends Controller
             'clubManagers' => function ($query) {
                 $query->whereHas('user', function ($userQuery) {
                     $userQuery->whereNull('deleted_at');
-                })->select('id', 'club_id', 'firstName', 'lastName', 'contactNo','gender', 'user_id');
-                    // ->with(['user:id,image']);
+                })->select('id', 'club_id', 'firstName', 'lastName', 'contactNo', 'gender', 'user_id');
+                // ->with(['user:id,image']);
             },
 
             // Fetch only required fields from clubSports and related relationships
@@ -619,9 +631,9 @@ class ClubController extends Controller
             'members' => function ($query) {
                 $query->whereHas('user', function ($userQuery) {
                     $userQuery->whereNull('deleted_at');
-                })->select('id', 'club_id', 'firstName', 'lastName', 'position','gender', 'contactNo', 'user_id')
-                ->orderBy('firstName', 'asc')
-                ->orderBy('lastName', 'asc');
+                })->select('id', 'club_id', 'firstName', 'lastName', 'position', 'gender', 'contactNo', 'user_id')
+                    ->orderBy('firstName', 'asc')
+                    ->orderBy('lastName', 'asc');
             }
         ])->findOrFail($id);
 
@@ -651,7 +663,7 @@ class ClubController extends Controller
             ->withCount([
                 'members as male_members' => function ($query) {
                     $query->where('gender', 'Male')
-                        ->whereHas('user', function($q) {
+                        ->whereHas('user', function ($q) {
                             $q->whereNull('deleted_at');
                         });
                 }
@@ -660,7 +672,7 @@ class ClubController extends Controller
             ->withCount([
                 'members as female_members' => function ($query) {
                     $query->where('gender', 'Female')
-                        ->whereHas('user', function($q) {
+                        ->whereHas('user', function ($q) {
                             $q->whereNull('deleted_at');
                         });
                 }
@@ -669,7 +681,7 @@ class ClubController extends Controller
             ->withCount([
                 'clubManagers as male_managers' => function ($query) {
                     $query->where('gender', 'Male')
-                        ->whereHas('user', function($q) {
+                        ->whereHas('user', function ($q) {
                             $q->whereNull('deleted_at');
                         });
                 }
@@ -678,7 +690,7 @@ class ClubController extends Controller
             ->withCount([
                 'clubManagers as female_managers' => function ($query) {
                     $query->where('gender', 'Female')
-                        ->whereHas('user', function($q) {
+                        ->whereHas('user', function ($q) {
                             $q->whereNull('deleted_at');
                         });
                 }
