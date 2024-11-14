@@ -45,6 +45,7 @@ const UpdateManagerProfile = ({
     nic: "",
     date_of_birth: "",
     divisionName: "",
+    gender: "", // Add gender here
   });
 
   useEffect(() => {
@@ -60,6 +61,7 @@ const UpdateManagerProfile = ({
         nic: managerDetails.nic || "",
         date_of_birth: managerDetails.date_of_birth || "",
         divisionName: managerDetails.gsDivision?.divisionName || "",
+        gender: managerDetails.gender || "",
         image: null,
       });
     }
@@ -123,7 +125,7 @@ const UpdateManagerProfile = ({
   return (
     <div className="w-auto">
       <form onSubmit={handleUpdateProfile} className="mt-0">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {[
             { id: "firstName", label: "First Name" },
             { id: "lastName", label: "Last Name" },
@@ -150,7 +152,24 @@ const UpdateManagerProfile = ({
             </div>
           ))}
 
-          <div className="relative my-2">
+          <div className="relative my-1">
+            <label htmlFor="gender" className={labelClassName}>
+              Gender
+            </label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              className="mt-1 p-2 w-full border rounded"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div className="relative my-1">
             <label htmlFor="divisionName" className={labelClassName}>
               Division Name
             </label>

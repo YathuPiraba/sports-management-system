@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef, Suspense, lazy } from "react";
-import { Button, Modal, Popconfirm } from "antd";
+import { Button, Modal, Popconfirm, Image } from "antd";
 import { useSingleManagerDetails } from "../../hooks/useSingleManagerData";
 import { useTheme } from "../../context/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserDetails } from "../../features/authslice";
 import GridLoader from "react-spinners/GridLoader";
+import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+import { IoIosClose } from "react-icons/io";
 import {
   deleteProfileAPI,
   updateManagerDetailsApi,
@@ -14,6 +17,7 @@ import {
   MdPermIdentity,
   MdOutlineDateRange,
   MdPhoneInTalk,
+  MdWc,
 } from "react-icons/md";
 import { CgRename } from "react-icons/cg";
 import { FaRegIdCard, FaMapMarkerAlt, FaBuilding } from "react-icons/fa";
@@ -27,6 +31,22 @@ const UpdateManagerProfile = lazy(() =>
   import("../../Components/settings/UpdateManagerProfile")
 );
 
+function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
+  return centerCrop(
+    makeAspectCrop(
+      {
+        unit: "%",
+        width: 90,
+      },
+      aspect,
+      mediaWidth,
+      mediaHeight
+    ),
+    mediaWidth,
+    mediaHeight
+  );
+}
+
 const ManagerSettings = () => {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
@@ -39,6 +59,12 @@ const ManagerSettings = () => {
   const { managerDetails, loading, refetchManagerDetails } =
     useSingleManagerDetails();
   const fileInputRef = useRef(null);
+  const imgRef = useRef(null);
+
+  // New state for crop functionality
+  const [imgSrc, setImgSrc] = useState("");
+  const [crop, setCrop] = useState();
+  const [showCropModal, setShowCropModal] = useState(false);
 
   const image = user?.image;
 
@@ -56,16 +82,63 @@ const ManagerSettings = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
+  const onSelectFile = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        setImgSrc(reader.result);
+        setShowCropModal(true);
+      });
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
+  function onImageLoad(e) {
+    const { width, height } = e.currentTarget;
+    setCrop(centerAspectCrop(width, height, 1));
+  }
+
+  const handleCropComplete = async (crop) => {
+    if (imgRef.current && crop.width && crop.height) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
+      const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
+
+      canvas.width = 200;
+      canvas.height = 200;
+
+      ctx.drawImage(
+        imgRef.current,
+        crop.x * scaleX,
+        crop.y * scaleY,
+        crop.width * scaleX,
+        crop.height * scaleY,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      const base64Image = canvas.toDataURL("image/jpeg");
+
+      // Convert base64 to blob
+      const res = await fetch(base64Image);
+      const blob = await res.blob();
+      const file = new File([blob], "profile-image.jpg", {
+        type: "image/jpeg",
+      });
+
+      // Upload cropped image
       const formData = new FormData();
       formData.append("image", file);
       setImageLoading(true);
+
       try {
         await updateManagerDetailsApi(user.userId, formData);
         toast.success("Profile picture updated successfully");
         fetchDetails();
+        setShowCropModal(false);
       } catch (error) {
         toast.error("Failed to update profile picture");
       } finally {
@@ -97,6 +170,11 @@ const ManagerSettings = () => {
       label: "Username",
       value: user.userName,
       icon: <MdPermIdentity size={19} className="mr-4" />,
+    },
+    {
+      label: "Gender",
+      value: managerDetails.gender || "N/A",
+      icon: <MdWc className="mr-5" />,
     },
     {
       label: "Email",
@@ -137,7 +215,7 @@ const ManagerSettings = () => {
 
   const cancel = (e) => {
     console.log(e);
-    message.error("Click on No");
+    toast.error("Action cancelled");
   };
 
   if (loading) {
@@ -156,7 +234,6 @@ const ManagerSettings = () => {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      {" "}
       <div>
         <div className="max-w-screen-xl mx-auto px-4 py-2 font-poppins">
           <h1 className="text-2xl font-bold mb-3">Manager profile</h1>
@@ -169,26 +246,27 @@ const ManagerSettings = () => {
           >
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="md:mr-8 mb-4 md:mb-0 flex flex-col items-center">
-                <img
+                <Image
                   src={
                     image
                       ? image
                       : "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
                   }
+                  preview={image ? true : false}
                   alt="User Profile"
                   className="w-44 h-44 rounded-full object-cover mb-3"
+                  width={200}
                 />
                 <input
                   type="file"
                   ref={fileInputRef}
-                  onChange={handleFileChange}
+                  onChange={onSelectFile}
                   style={{ display: "none" }}
                   accept="image/*"
                 />
                 <Button
                   onClick={handleChangePicture}
                   className="bg-indigo-900 text-white mb-2 w-full py-1"
-                  loading={imageLoading}
                 >
                   Change picture
                 </Button>
@@ -215,11 +293,11 @@ const ManagerSettings = () => {
                       key={index}
                       className="flex flex-col md:flex-row border-b border-gray-200 text-black py-1.5"
                     >
-                      <span className="font-medium w-full md:w-1/2  flex  items-center">
+                      <span className="font-medium w-full md:w-1/2 flex items-center">
                         {detail.icon}
                         {detail.label}
                       </span>
-                      <span className="w-full pl-[35px] md:pl-0 text-gray-700 ">
+                      <span className="w-full pl-[35px] md:pl-0 text-gray-700">
                         : &nbsp; {detail.value || "N/A"}
                       </span>
                     </li>
@@ -227,7 +305,65 @@ const ManagerSettings = () => {
                 </ul>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row  gap-3 mt-4">
+
+            {/* Crop Modal */}
+            {showCropModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                <div className="bg-white rounded-lg p-6 w-[500px] mx-auto relative">
+                  <button
+                    onClick={() => {
+                      setShowCropModal(false);
+                      setImgSrc("");
+                    }}
+                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                  >
+                    <IoIosClose size={24} />
+                  </button>
+
+                  <h3 className="text-lg font-medium mb-4">
+                    Crop Profile Image
+                  </h3>
+
+                  <div className="max-h-[400px] overflow-auto">
+                    <ReactCrop
+                      crop={crop}
+                      onChange={(c) => setCrop(c)}
+                      aspect={1}
+                      circularCrop
+                    >
+                      <img
+                        ref={imgRef}
+                        alt="Crop me"
+                        src={imgSrc}
+                        onLoad={onImageLoad}
+                        className="max-w-full"
+                      />
+                    </ReactCrop>
+                  </div>
+
+                  <div className="mt-4 flex justify-end space-x-2">
+                    <button
+                      onClick={() => {
+                        setShowCropModal(false);
+                        setImgSrc("");
+                      }}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                    >
+                      Cancel
+                    </button>
+                    <Button
+                      loading={imageLoading}
+                      onClick={() => handleCropComplete(crop)}
+                      className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md"
+                    >
+                      Apply
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col items-center justify-center md:flex-row lg:flex-row gap-3 mt-4">
               <Button
                 onClick={showPasswordModal}
                 className="h-10 px-4 text-base bg-emerald-500 text-white hover:bg-emerald-800"
