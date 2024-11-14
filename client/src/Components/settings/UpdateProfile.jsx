@@ -9,9 +9,6 @@ const UpdateProfile = ({ setIsModalOpen, user, fetchDetails }) => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchDetails();
-  }, []);
 
   const handleClear = (e) => {
     e.preventDefault();

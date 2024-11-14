@@ -149,7 +149,7 @@ const AdminSettings = () => {
 
   useEffect(() => {
     fetchDetails();
-  }, [dispatch]);
+  }, []);
 
   if (loading) {
     return (
@@ -183,7 +183,7 @@ const AdminSettings = () => {
               <div className="flex flex-col items-center md:flex-row lg:flex-row justify-center gap-3">
                 <span
                   className="relative inline-flex items-center justify-center rounded-full text-white overflow-hidden"
-                  style={{ width: 100, height: 100 }}
+                 
                 >
                   <Image
                     src={
@@ -195,6 +195,7 @@ const AdminSettings = () => {
                     alt="User Profile"
                     title="user profile"
                     className="w-full h-full object-cover"
+                    width={150}
                   />
                 </span>
                 <div className="w-28 mt-3">
