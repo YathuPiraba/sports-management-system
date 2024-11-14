@@ -204,9 +204,9 @@ const ClubMembers = () => {
                       )}
                       {column.key === "name" && (
                         <div className="text-blue-600 hover:text-blue-800">
-                          <Link to={`/club/member/${member.member_id}`}>
+                          {/* <Link to={`/club/member/${member.member_id}`}> */}
                             {member.firstName} {member.lastName}
-                          </Link>
+                          {/* </Link> */}
                         </div>
                       )}
                       {column.key === "role" && (

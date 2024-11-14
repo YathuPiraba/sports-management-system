@@ -469,16 +469,15 @@ class MemberController extends Controller
                 ], 400);
             }
 
-            // Get the page number, items per page, sort order, and sort column from the request, or use defaults
+            // Get request parameters with defaults
             $page = $request->input('page', 1);
             $perPage = $request->input('per_page', 12);
             $sort = $request->input('sort', 'asc');
             $sortBy = $request->input('sortBy', 'name');
             $search = $request->input('search', '');
 
-            // Find the club manager and associated manager_id
+            // Find the club manager
             $clubManager = Club_Manager::where('user_id', $userId)->first();
-
             if (!$clubManager) {
                 return response()->json([
                     'success' => false,
@@ -486,7 +485,7 @@ class MemberController extends Controller
                 ], 404);
             }
 
-            // Fetch both verified and soft-deleted members associated with the club manager
+            // Build base query
             $query = Member::with([
                 'memberSports.sport',
                 'memberSports.skills',
@@ -499,7 +498,7 @@ class MemberController extends Controller
                         ->withTrashed();
                 });
 
-            // Apply search filter if a search term is provided
+            // Apply search filter
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('firstName', 'like', "%{$search}%")
@@ -517,15 +516,19 @@ class MemberController extends Controller
                 $query->orderBy('created_at', $sort);
             }
 
-            // Paginate the results
-            $members = $query->paginate($perPage, ['*'], 'page', $page);
+            // Get total count after search but before pagination
+            $totalCount = $query->count();
 
-            if ($members->isEmpty()) {
-                return response()->json([
-                    'success' => true,
-                    'data' => [],
-                ], 200);
+            // Calculate last page
+            $lastPage = max(1, ceil($totalCount / $perPage));
+
+            // Adjust current page if it exceeds last page
+            if ($page > $lastPage) {
+                $page = $lastPage;
             }
+
+            // Apply pagination with adjusted page
+            $members = $query->paginate($perPage, ['*'], 'page', $page);
 
             // Transform the members data
             $membersWithSportsAndSkills = collect($members->items())->map(function ($member) {
@@ -547,16 +550,17 @@ class MemberController extends Controller
                 ];
             });
 
+            // Return response with adjusted pagination
             return response()->json([
                 'success' => true,
                 'data' => $membersWithSportsAndSkills,
                 'pagination' => [
-                    'total' => $members->total(),
-                    'per_page' => $members->perPage(),
-                    'current_page' => $members->currentPage(),
-                    'last_page' => $members->lastPage(),
-                    'from' => $members->firstItem(),
-                    'to' => $members->lastItem(),
+                    'total' => $totalCount,
+                    'per_page' => $perPage,
+                    'current_page' => $page,
+                    'last_page' => $lastPage,
+                    'from' => $members->firstItem() ?? 0,
+                    'to' => $members->lastItem() ?? 0,
                 ],
             ], 200);
         } catch (\Exception $e) {
@@ -1020,5 +1024,4 @@ class MemberController extends Controller
             ], 500);
         }
     }
-
 }
