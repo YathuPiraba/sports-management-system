@@ -116,8 +116,8 @@ const MemberSettings = () => {
       const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
       const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
 
-      canvas.width = 200;
-      canvas.height = 200;
+      canvas.width = crop.width * scaleX;
+      canvas.height = crop.height * scaleY;
 
       ctx.drawImage(
         imgRef.current,
@@ -131,7 +131,7 @@ const MemberSettings = () => {
         canvas.height
       );
 
-      const base64Image = canvas.toDataURL("image/jpeg");
+      const base64Image = canvas.toDataURL("image/jpeg", 0.9);
 
       // Convert base64 to blob
       const res = await fetch(base64Image);

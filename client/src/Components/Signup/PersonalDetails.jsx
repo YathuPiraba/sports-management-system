@@ -74,8 +74,8 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
       const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
       const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
 
-      canvas.width = 200;
-      canvas.height = 200;
+      canvas.width = crop.width * scaleX;
+      canvas.height = crop.height * scaleY;
 
       ctx.drawImage(
         imgRef.current,
@@ -89,7 +89,8 @@ const PersonalDetails = ({ details, handleChange, divisions, onNextStep }) => {
         canvas.height
       );
 
-      const base64Image = canvas.toDataURL("image/jpeg");
+      const base64Image = canvas.toDataURL("image/jpeg", 0.9);
+
       setImagePreview(base64Image);
 
       const res = await fetch(base64Image);
