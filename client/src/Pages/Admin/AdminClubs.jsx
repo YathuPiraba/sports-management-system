@@ -254,7 +254,7 @@ const AdminClubs = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 font-poppins">
+        <table className="min-w-full divide-y divide-gray-200 font-sans text-sm">
           <thead>
             <tr className={`text-black text-left`}>
               <th className="px-3 py-3 bg-gray-50">No</th>
@@ -294,7 +294,7 @@ const AdminClubs = () => {
             )}
             {clubs.map((club, index) => (
               <React.Fragment key={club.id}>
-                <tr className="font-poppins">
+                <tr className="">
                   <td className="px-3 py-4 whitespace-nowrap">
                     {(pagination.currentPage - 1) * pagination.perPage +
                       index +
@@ -323,7 +323,7 @@ const AdminClubs = () => {
                       <Button
                         size="small"
                         onClick={() => handleAllocateRegisterNo(club.id)}
-                        className="text-blue-500 border-blue-400"
+                        className="text-blue-500 border-blue-400 "
                       >
                         Allocate Register No
                       </Button>

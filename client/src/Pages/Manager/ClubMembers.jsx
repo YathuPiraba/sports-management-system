@@ -12,9 +12,9 @@ import { Link } from "react-router-dom";
 import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 import SortControls from "../../Components/Pagination_Sorting_Search/SortControls";
 import { PropagateLoader, GridLoader } from "react-spinners";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const ClubMembers = () => {
-  const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
@@ -26,6 +26,7 @@ const ClubMembers = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
+  const [expandedRows, setExpandedRows] = useState([]);
   const [sortConfig, setSortConfig] = useState({
     sortBy: "name",
     sort: "asc",
@@ -63,9 +64,17 @@ const ClubMembers = () => {
         sort,
         search
       );
-      setMembers(res.data.data);
-      setFilteredMembers(res.data.data);
+      setFilteredMembers(
+        res.data.data.map((member) => ({
+          ...member,
+          memberSports: member.sports.map((ms) => ({
+            id: ms.sports_id,
+            name: ms.sports_name,
+          })),
+        }))
+      );
       const paginationData = res.data.pagination;
+      console.log(res.data.data);
 
       setPagination({
         currentPage: paginationData.current_page,
@@ -95,6 +104,13 @@ const ClubMembers = () => {
     setSearchQuery(query);
   };
 
+  const toggleRow = (memberId) => {
+    setExpandedRows((prev) =>
+      prev.includes(memberId)
+        ? prev.filter((id) => id !== memberId)
+        : [...prev, memberId]
+    );
+  };
 
   const handleAction = async (memberUserId, isDeactivated) => {
     try {
@@ -176,87 +192,126 @@ const ClubMembers = () => {
             )}
             {filteredMembers.length > 0 ? (
               filteredMembers.map((member, index) => (
-                <tr key={member.member_id}>
-                  {columns.map((column) => (
-                    <td
-                      key={column.key}
-                      className="px-4 py-2 whitespace-nowrap text-sm"
-                    >
-                      {column.key === "no" && (
-                        <div className="text-gray-500">
-                          {(pagination.currentPage - 1) * pagination.perPage +
-                            index +
-                            1}
-                        </div>
-                      )}
-                      {column.key === "profile" && (
-                        <div className="flex items-center">
-                          <img
-                            src={
-                              member.user?.image ||
-                              "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
-                            }
-                            alt={`${member.firstName} ${member.lastName}`}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
-                        </div>
-                      )}
-                      {column.key === "name" && (
-                        <div className="text-blue-600 hover:text-blue-800">
-                          {/* <Link to={`/club/member/${member.member_id}`}> */}
+                <>
+                  <tr key={member.member_id}>
+                    {columns.map((column) => (
+                      <td
+                        key={column.key}
+                        className="px-4 py-2 whitespace-nowrap text-sm"
+                      >
+                        {column.key === "no" && (
+                          <div className="text-gray-500">
+                            {(pagination.currentPage - 1) * pagination.perPage +
+                              index +
+                              1}
+                          </div>
+                        )}
+                        {column.key === "profile" && (
+                          <div className="flex items-center">
+                            <img
+                              src={
+                                member.user?.image ||
+                                "https://res.cloudinary.com/dmonsn0ga/image/upload/v1724127326/zrrgghrkk0qfw3rgmmih.png"
+                              }
+                              alt={`${member.firstName} ${member.lastName}`}
+                              className="w-12 h-12 rounded-full object-cover"
+                            />
+                          </div>
+                        )}
+                        {column.key === "name" && (
+                          <div className="text-blue-600 hover:text-blue-800">
+                            {/* <Link to={`/club/member/${member.member_id}`}> */}
                             {member.firstName} {member.lastName}
-                          {/* </Link> */}
-                        </div>
-                      )}
-                      {column.key === "role" && (
-                        <div className="text-gray-500">{member.position}</div>
-                      )}
-                      {column.key === "age" && (
-                        <div className="text-gray-500">{member.age}</div>
-                      )}
-                      {column.key === "created_at" && (
-                        <div className="text-gray-500">{member.created_at}</div>
-                      )}
-                      {column.key === "contactNo" && (
-                        <div className="text-gray-500">{member.contactNo}</div>
-                      )}
-                      {column.key === "whatsappNo" && (
-                        <div className="text-gray-500">{member.whatsappNo}</div>
-                      )}
-                      {column.key === "actions" && (
-                        <div className="text-sm font-medium">
-                          <Popconfirm
-                            title={
-                              member.user.deleted_at
-                                ? "Are you sure you want to activate this user?"
-                                : "Are you sure you want to deactivate this user?"
-                            }
-                            onConfirm={() =>
-                              handleAction(
-                                member.user.id,
-                                !!member.user.deleted_at
-                              )
-                            }
-                            okText="Yes"
-                            cancelText="No"
-                          >
-                            <button
-                              className={
+                            {/* </Link> */}
+                          </div>
+                        )}
+                        {column.key === "role" && (
+                          <div className="text-gray-500">{member.position}</div>
+                        )}
+                        {column.key === "age" && (
+                          <div className="text-gray-500">{member.age}</div>
+                        )}
+                        {column.key === "created_at" && (
+                          <div className="text-gray-500">
+                            {member.created_at}
+                          </div>
+                        )}
+                        {column.key === "contactNo" && (
+                          <div className="text-gray-500">
+                            {member.contactNo}
+                          </div>
+                        )}
+                        {column.key === "whatsappNo" && (
+                          <div className="text-gray-500">
+                            {member.whatsappNo}
+                          </div>
+                        )}
+                        {column.key === "actions" && (
+                          <div className="flex justify-between">
+                            {/* Expand/Collapse Toggle */}
+                            {/* Activate/Deactivate User */}
+                            <Popconfirm
+                              title={
                                 member.user.deleted_at
-                                  ? "text-blue-600 hover:text-blue-900"
-                                  : "text-red-600 hover:text-red-900"
+                                  ? "Are you sure you want to activate this user?"
+                                  : "Are you sure you want to deactivate this user?"
+                              }
+                              onConfirm={() =>
+                                handleAction(
+                                  member.user.id,
+                                  !!member.user.deleted_at
+                                )
+                              }
+                              okText="Yes"
+                              cancelText="No"
+                            >
+                              <button
+                                className={`${
+                                  member.user.deleted_at
+                                    ? "text-blue-600 hover:text-blue-800"
+                                    : "text-red-600 hover:text-red-800"
+                                } focus:outline-none`}
+                              >
+                                {member.user.deleted_at
+                                  ? "Activate"
+                                  : "Deactivate"}
+                              </button>
+                            </Popconfirm>
+
+                            <button
+                              onClick={() => toggleRow(member.member_id)}
+                              className="text-blue-500 hover:text-blue-700 focus:outline-none"
+                              title={
+                                expandedRows.includes(member.member_id)
+                                  ? "Collapse"
+                                  : "Expand"
                               }
                             >
-                              {member.user.deleted_at
-                                ? "Activate"
-                                : "Deactivate"}
+                              {expandedRows.includes(member.member_id) ? (
+                                <FaChevronUp />
+                              ) : (
+                                <FaChevronDown />
+                              )}
                             </button>
-                          </Popconfirm>
+                          </div>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+
+                  {expandedRows.includes(member.member_id) && (
+                    <tr >
+                      <td colSpan={columns.length} className="px-4  py-2">
+                        <div className="text-sm text-gray-600 ml-5">
+                          <strong>Sports playing:</strong>{" "}
+                          {member.memberSports
+                            .map((sport) => sport.name)
+                            .join(", ")}
                         </div>
-                      )}
-                    </td>
-                  ))}
-                </tr>
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))
             ) : (
               <tr>

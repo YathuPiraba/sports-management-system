@@ -535,6 +535,14 @@ class MemberController extends Controller
                 $memberDivision = Gs_Division::where('id', $member->gs_id)->first();
                 $user = $member->user;
 
+                // Get sports details
+                $sports = $member->memberSports->map(function ($memberSport) {
+                    return [
+                        'sports_id' => $memberSport->sports_id,
+                        'sports_name' => $memberSport->sport->name,
+                    ];
+                });
+
                 return [
                     'member_id' => $member->id,
                     'firstName' => $member->firstName,
@@ -547,6 +555,7 @@ class MemberController extends Controller
                     'position' => $member->position,
                     'created_at' => $member->created_at->toDateString(),
                     'user' => $user ? $user->safeAttributes() : null,
+                    'sports' => $sports,  // Include sports details for each member
                 ];
             });
 
@@ -571,6 +580,7 @@ class MemberController extends Controller
             ], 500);
         }
     }
+
 
 
     // GET => http://127.0.0.1:8000/api/memberDetails/{memberId}
