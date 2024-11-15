@@ -59,16 +59,19 @@ export default function Sidebar() {
       >
         <div className="flex flex-col items-center gap-4 p-0">
           <span className=" custom-title flex flex-row items-center justify-start  w-full place-content-center rounded-lg font-acme font-medium tracking-wide">
-            <img src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png" className="logo-img" />
+            <img
+              src="https://res.cloudinary.com/dmonsn0ga/image/upload/v1723798132/logo2_qanauk.png"
+              className="logo-img"
+            />
             <span className="logo-name font-poppins">
               <span className="title">Club </span>
               <span className="title1">Connect</span>
             </span>
           </span>
         </div>
-        {role_id === 1 && <AdminSideBar />}
-        {role_id === 2 && <ManagerSideBar />}
-        {role_id === 3 && <MemberSideBar />}
+        {role_id === 1 && <AdminSideBar theme={theme} />}
+        {role_id === 2 && <ManagerSideBar theme={theme} />}
+        {role_id === 3 && <MemberSideBar theme={theme} />}
       </aside>
       <div
         className={`fixed top-0 bottom-0 left-0 right-0 z-30 bg-slate-900/20 transition-colors sm:hidden ${

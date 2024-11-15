@@ -1,106 +1,140 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { BiSolidReport, BiGroup, BiCategoryAlt } from "react-icons/bi";
-import { IoIosSettings } from "react-icons/io";
-import { MdEmojiEvents, MdApproval } from "react-icons/md";
+import { NavLink } from "react-router-dom";
+import { BiGroup } from "react-icons/bi";
 import { BsPeople } from "react-icons/bs";
+import { MdEmojiEvents, MdApproval } from "react-icons/md";
+import { IoIosSettings } from "react-icons/io";
 
-const ManagerSideBar = () => {
+const ManagerSideBar = ({ theme }) => {
   return (
     <nav
       aria-label="side navigation"
-      className="flex-1  overflow-y-scroll no-scrollbar"
+      className="flex-1 overflow-y-scroll no-scrollbar"
     >
       <div>
         <ul className="flex flex-1 flex-col gap-2 pt-0">
-          {/* <div className="list">
-            <li className="px-3 ">
-              <Link
-                to="/manager/dashboard"
-                className="flex items-center gap-3 rounded p-3 transition-colors"
+          {/* Club Link */}
+          <div className="list">
+            <li className="px-3">
+              <NavLink
+                to="/manager/club"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded p-3 transition-colors ${
+                    isActive
+                      ? theme === "light"
+                        ? "text-green-600 hover:text-white"
+                        : "text-green-600 hover:text-white"
+                      : ""
+                  }`
+                }
               >
                 <div className="flex items-center self-center">
-                  <BiCategoryAlt size={20} />
-                </div>
-                <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
-                  Dashboard
-                </div>
-              </Link>
-            </li>
-          </div> */}
-          <div className="list ">
-            <li className="px-3">
-              <Link
-                to="/manager/club"
-                className="flex items-center gap-3 rounded p-3 transition-colors"
-              >
-                <div className="flex items-center self-center ">
                   <BiGroup size={20} />
                 </div>
                 <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
                   Club
                 </div>
-              </Link>
+              </NavLink>
             </li>
           </div>
+
+          {/* Members Link */}
           <div className="list">
             <li className="px-3">
-              <Link
+              <NavLink
                 to="/manager/members"
-                className="flex items-center gap-3 rounded p-3 transition-colors"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded p-3 transition-colors ${
+                    isActive
+                      ? theme === "light"
+                        ? "text-green-600 hover:text-white"
+                        : "text-green-600 hover:text-white"
+                      : ""
+                  }`
+                }
               >
-                <div className="flex items-center self-center ">
+                <div className="flex items-center self-center">
                   <BsPeople size={20} />
                 </div>
                 <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
                   Members
                 </div>
-              </Link>
+              </NavLink>
             </li>
           </div>
+
+          {/* Events Link */}
           <div className="list">
             <li className="px-3">
-              <Link
+              <NavLink
                 to="/events"
-                className="flex items-center gap-3 rounded p-3 transition-color"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded p-3 transition-colors ${
+                    isActive
+                      ? theme === "light"
+                        ? "text-green-600 hover:text-white"
+                        : "text-green-600 hover:text-white"
+                      : ""
+                  }`
+                }
               >
-                <div className="flex items-center self-center ">
+                <div className="flex items-center self-center">
                   <MdEmojiEvents size={22} />
                 </div>
                 <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
                   Events
                 </div>
-              </Link>
+              </NavLink>
             </li>
           </div>
+
+          {/* Approvals Link */}
           <div className="list">
             <li className="px-3">
-              <Link
+              <NavLink
                 to="/manager/approvals"
-                className="flex items-center gap-3 rounded p-3 transition-colors"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded p-3 transition-colors ${
+                    isActive
+                      ? theme === "light"
+                        ? "text-green-600 hover:text-white"
+                        : "text-green-600 hover:text-white"
+                      : ""
+                  }`
+                }
               >
-                <div className="flex items-center self-center ">
+                <div className="flex items-center self-center">
                   <MdApproval size={20} />
                 </div>
                 <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
                   Approvals
                 </div>
-              </Link>
+              </NavLink>
             </li>
           </div>
+
+          {/* Settings Link */}
           <div className="list">
             <li className="px-3">
-              <Link
+              <NavLink
                 to="/manager/settings"
-                className="flex items-center gap-3 rounded p-3 transition-colors"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded p-3 transition-colors ${
+                    isActive
+                      ? theme === "light"
+                        ? "text-green-600 hover:text-white"
+                        : "text-green-600 hover:text-white"
+                      : ""
+                  }`
+                }
               >
-                <div className="flex items-center self-center ">
+                <div className="flex items-center self-center">
                   <IoIosSettings size={20} />
                 </div>
                 <div className="flex w-full flex-1 font-light tracking-wider flex-col items-start justify-center gap-0 overflow-hidden truncate text-sm">
                   Settings
                 </div>
-              </Link>
+              </NavLink>
             </li>
           </div>
         </ul>
