@@ -4,12 +4,19 @@ import {
   downloadClubDetailsAPI,
   updateClubDetailsApi,
   downloadAllClubDetailsAPI,
+  deleteClubRegNoAPI,
 } from "../../Services/apiServices";
 import Pagination from "../../Components/Pagination_Sorting_Search/Pagination";
 import { IoSearchCircleOutline } from "react-icons/io5";
 import { GridLoader, PropagateLoader } from "react-spinners";
-import { Button, Modal, Input, message } from "antd";
-import { FaChevronUp, FaChevronDown, FaFilePdf } from "react-icons/fa";
+import { Button, Modal, Input, message, Popconfirm } from "antd";
+import {
+  FaChevronUp,
+  FaChevronDown,
+  FaFilePdf,
+  FaEdit,
+  FaTrashAlt,
+} from "react-icons/fa";
 import { FaMobileRetro } from "react-icons/fa6";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -118,8 +125,9 @@ const AdminClubs = () => {
     }
   };
 
-  const handleAllocateRegisterNo = (clubId) => {
+  const handleAllocateRegisterNo = (clubId, regNo = "") => {
     setSelectedClubId(clubId);
+    setRegisterNoInput(regNo);
     setIsModalVisible(true);
   };
 
@@ -128,10 +136,10 @@ const AdminClubs = () => {
       const formData = new FormData();
       formData.append("regNo", registerNoInput);
       await updateClubDetailsApi(selectedClubId, formData);
-      message.success("Register Number allocated successfully");
+      message.success("Register Number updated successfully");
       fetchClubData(); // Refresh data
     } catch (error) {
-      message.error("Failed to allocate Register Number.");
+      message.error(error?.response.data?.message || "Failed to update Register Number.");
       console.error(error);
     } finally {
       setIsModalVisible(false);
@@ -159,6 +167,17 @@ const AdminClubs = () => {
       message.error("Error downloading club details");
     } finally {
       setClubDownloadLoading(false);
+    }
+  };
+
+  const handleDeleteRegNo = async (clubId) => {
+    try {
+      await deleteClubRegNoAPI(clubId);
+      message.success("Register Number deleted successfully");
+      fetchClubData(); // Refresh data
+    } catch (error) {
+      console.error("Error deleting register number:", error);
+      message.error("Failed to delete register number. Please try again.");
     }
   };
 
@@ -275,7 +294,7 @@ const AdminClubs = () => {
             )}
             {clubs.map((club, index) => (
               <React.Fragment key={club.id}>
-                <tr className="font-poppins"> 
+                <tr className="font-poppins">
                   <td className="px-3 py-4 whitespace-nowrap">
                     {(pagination.currentPage - 1) * pagination.perPage +
                       index +
@@ -283,7 +302,23 @@ const AdminClubs = () => {
                   </td>
                   <td className="px-3 py-4 whitespace-nowrap">
                     {club.regNo ? (
-                      club.regNo
+                      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-x-3">
+                        <span>{club.regNo}</span>
+                        <FaEdit
+                          className="text-blue-500 cursor-pointer"
+                          onClick={() =>
+                            handleAllocateRegisterNo(club.id, club.regNo)
+                          }
+                        />
+                        <Popconfirm
+                          title="Are you sure you want to delete this Register Number?"
+                          onConfirm={() => handleDeleteRegNo(club.id)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <FaTrashAlt className="text-red-500 cursor-pointer" />
+                        </Popconfirm>
+                      </div>
                     ) : (
                       <Button
                         size="small"
@@ -294,6 +329,7 @@ const AdminClubs = () => {
                       </Button>
                     )}
                   </td>
+
                   <td className="px-3 py-4 whitespace-nowrap">
                     {club.clubName}
                   </td>

@@ -70,6 +70,7 @@ Route::middleware('auth.token')->group(function () {
 });
 
 Route::put('/club/{id}', [ClubController::class, 'clubUpdate']);
+Route::delete('/club/regno/{id}', [ClubController::class, 'deleteRegNo']);
 
 
 Route::get('/download-club-details/{id}', [ClubController::class, 'downloadDetails']);

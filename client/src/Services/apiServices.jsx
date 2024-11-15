@@ -243,6 +243,10 @@ export const getAllClubsDetailsAPI = (
   return apiClient.get("/clubs/details", { params });
 };
 
+export const deleteClubRegNoAPI = (clubId) => {
+  return apiClient.delete(`/club/regno/${clubId}`);
+};
+
 // get all sports
 export const getAllSportsAPI = () => {
   return apiClient.get("/sports/list");

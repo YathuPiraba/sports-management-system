@@ -518,6 +518,26 @@ class ClubController extends Controller
         }
     }
 
+    public function deleteRegNo($id)
+    {
+        try {
+            // Find the club by ID
+            $club = Club::findOrFail($id);
+
+            // Set regNo to null to "delete" it
+            $club->regNo = null;
+
+            // Save the updated club data
+            $club->save();
+
+            return response()->json(['message' => 'Club registration number deleted successfully'], 200);
+        } catch (Exception $e) {
+            // Handle any errors that may occur
+            return response()->json(['error' => 'Failed to delete registration number', 'details' => $e->getMessage()], 500);
+        }
+    }
+
+
     //GET => http://127.0.0.1:8000/api/clubs/details
     public function getAllClubsDetails(Request $request)
     {
