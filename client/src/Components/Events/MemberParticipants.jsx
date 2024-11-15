@@ -122,20 +122,20 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-600">
                   {/* Duration */}
                   <div className="font-medium">Duration:</div>
-                  <div className="text-xs text-right">
+                  <div className="text-xs text-left">
                     {formatDate(event.start_date)} -{" "}
                     {formatDate(event.end_date)}
                   </div>
 
                   {/* Venue */}
                   <div className="font-medium">Venue:</div>
-                  <div className="capitalize text-right">{event.place}</div>
+                  <div className="capitalize text-left">{event.place}</div>
 
                   {/* Role */}
                   <div className="col-span-2 border-t pt-2 mt-2">
                     <div className="grid grid-cols-2">
                       <div className="font-medium">Role:</div>
-                      <div className="text-blue-600 font-medium text-right">
+                      <div className="text-blue-600 font-medium text-left">
                         {event.skill_name || "N/A"}
                       </div>
                     </div>
