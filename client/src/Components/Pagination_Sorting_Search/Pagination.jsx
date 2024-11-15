@@ -10,9 +10,9 @@ const Pagination = ({ currentPage, totalPages, goToPage }) => {
         {/* Previous Button */}
         <button
           onClick={() => goToPage(currentPage - 1)}
-          disabled={currentPage === 1}
+          disabled={currentPage == 1}
           className={`px-3 py-2 border rounded-md ${
-            currentPage === 1
+            currentPage == 1
               ? "bg-gray-200 text-black cursor-not-allowed"
               : "bg-blue-500 text-black"
           }`}
@@ -27,7 +27,7 @@ const Pagination = ({ currentPage, totalPages, goToPage }) => {
             onClick={() => goToPage(page)}
             disabled={page === currentPage}
             className={`px-4 py-2 border rounded-md ${
-              page === currentPage
+              page == currentPage
                 ? "bg-blue-500 text-white"
                 : "bg-white text-gray-700 hover:bg-blue-300 hover:text-black"
             }`}
@@ -39,9 +39,9 @@ const Pagination = ({ currentPage, totalPages, goToPage }) => {
         {/* Next Button */}
         <button
           onClick={() => goToPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage == totalPages}
           className={`px-3 py-2 border rounded-md ${
-            currentPage === totalPages
+            currentPage == totalPages
               ? "bg-gray-200 text-black cursor-not-allowed"
               : "bg-blue-500 text-black"
           }`}
