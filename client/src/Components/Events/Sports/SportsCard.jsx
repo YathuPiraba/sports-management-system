@@ -76,9 +76,19 @@ const SportsCard = ({
             {name}
           </p>
           {/* Display Start and End Date */}
-          <p className="text-white text-xs mb-1">Start Date: {start_date}</p>
-          <p className="text-white text-xs mb-1">End Date: {end_date}</p>
-          <p className="text-white text-xs mb-2">Place: {place}</p>
+          <div className="grid grid-cols-2 text-xs text-white gap-y-1 pl-2 mb-2">
+            {/* Start Date */}
+            <p className="font-medium">Start Date:</p>
+            <p>{start_date}</p>
+
+            {/* End Date */}
+            <p className="font-medium">End Date:</p>
+            <p>{end_date}</p>
+
+            {/* Place */}
+            <p className="font-medium">Place:</p>
+            <p>{place}</p>
+          </div>
           <div className="flex justify-center space-x-2">
             {role_id === 1 && (
               <>

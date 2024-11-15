@@ -119,23 +119,26 @@ const MemberParticipants = ({ eventId, userId, theme }) => {
                 <h3 className="text-base font-semibold text-gray-800 mb-2 line-clamp-1">
                   {event.name}
                 </h3>
-                <div className="space-y-1 text-sm text-gray-600">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Duration:</span>
-                    <span className="text-xs">
-                      {formatDate(event.start_date)} -{" "}
-                      {formatDate(event.end_date)}
-                    </span>
+                <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-600">
+                  {/* Duration */}
+                  <div className="font-medium">Duration:</div>
+                  <div className="text-xs text-right">
+                    {formatDate(event.start_date)} -{" "}
+                    {formatDate(event.end_date)}
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">Venue:</span>
-                    <span className="capitalize">{event.place}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-1 border-t mt-2">
-                    <span className="font-medium">Role:</span>
-                    <span className="text-blue-600 font-medium">
-                      {event.skill_name || "N/A"}
-                    </span>
+
+                  {/* Venue */}
+                  <div className="font-medium">Venue:</div>
+                  <div className="capitalize text-right">{event.place}</div>
+
+                  {/* Role */}
+                  <div className="col-span-2 border-t pt-2 mt-2">
+                    <div className="grid grid-cols-2">
+                      <div className="font-medium">Role:</div>
+                      <div className="text-blue-600 font-medium text-right">
+                        {event.skill_name || "N/A"}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
