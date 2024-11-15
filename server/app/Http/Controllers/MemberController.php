@@ -475,6 +475,7 @@ class MemberController extends Controller
             $sort = $request->input('sort', 'asc');
             $sortBy = $request->input('sortBy', 'name');
             $search = $request->input('search', '');
+            $gender = $request->input('gender');
 
             // Find the club manager
             $clubManager = Club_Manager::where('user_id', $userId)->first();
@@ -506,6 +507,10 @@ class MemberController extends Controller
                         ->orWhere('contactNo', 'like', "%{$search}%")
                         ->orWhere('whatsappNo', 'like', "%{$search}%");
                 });
+            }
+
+            if ($gender) {
+                $query->where('gender', $gender);
             }
 
             // Apply sorting

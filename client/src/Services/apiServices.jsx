@@ -111,20 +111,26 @@ export const fetchVerifiedMemberDataApi = (
   userId,
   page = 1,
   perPage = 5,
-  sortBy = "name", // Default sort by 'name'
+  sortBy = "name",
   sort = "asc",
-  search = ""
+  search = "",
+  gender = null // New gender parameter
 ) => {
-  return authApiClient.get("/queryMembers", {
-    params: {
-      userId: userId,
-      page: page,
-      per_page: perPage,
-      sortBy: sortBy,
-      sort: sort,
-      search: search,
-    },
-  });
+  const params = {
+    userId,
+    page,
+    per_page: perPage,
+    sortBy,
+    sort,
+    search,
+  };
+
+  // Only add gender to params if it's not null
+  if (gender) {
+    params.gender = gender;
+  }
+
+  return authApiClient.get("/queryMembers", { params });
 };
 
 // Fetch A member data

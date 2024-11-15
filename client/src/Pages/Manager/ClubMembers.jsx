@@ -17,6 +17,7 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 const ClubMembers = () => {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGender, setSelectedGender] = useState(null);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -52,7 +53,8 @@ const ClubMembers = () => {
     perPage = pagination.perPage,
     sortBy = sortConfig.sortBy,
     sort = sortConfig.sort,
-    search = searchQuery
+    search = searchQuery,
+    gender = selectedGender
   ) => {
     setLoading(true);
     try {
@@ -62,7 +64,8 @@ const ClubMembers = () => {
         perPage,
         sortBy,
         sort,
-        search
+        search,
+        gender
       );
       setFilteredMembers(
         res.data.data.map((member) => ({
@@ -93,7 +96,7 @@ const ClubMembers = () => {
 
   useEffect(() => {
     fetchMembers();
-  }, [sortConfig, searchQuery]);
+  }, [sortConfig, searchQuery, selectedGender]);
 
   const handleSortChange = (sortBy, sort) => {
     setSortConfig({ sortBy, sort });
@@ -102,6 +105,10 @@ const ClubMembers = () => {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
+  };
+
+  const handleGenderFilter = (gender) => {
+    setSelectedGender(selectedGender === gender ? null : gender);
   };
 
   const toggleRow = (memberId) => {
@@ -152,18 +159,43 @@ const ClubMembers = () => {
             sortConfig={sortConfig}
           />
         </div>
-        <div className="relative lg:ml-auto">
-          <input
-            type="search"
-            placeholder="Search Members..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="border border-blue-200 outline-none rounded-md py-1 text-sm pl-8  pr-2 w-full lg:w-64 hover:border-blue-400"
-          />
-          <IoSearchCircleOutline
-            size={22}
-            className="absolute top-0 left-2 mt-1 text-blue-500"
-          />
+        <div className="flex items-center gap-4">
+          {/* Gender Filter Buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleGenderFilter("Male")}
+              className={`px-4 py-1 rounded-md ${
+                selectedGender === "Male"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Male
+            </button>
+            <button
+              onClick={() => handleGenderFilter("Female")}
+              className={`px-4 py-1 rounded-md ${
+                selectedGender === "Female"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Female
+            </button>
+          </div>
+          <div className="relative">
+            <input
+              type="search"
+              placeholder="Search Members..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="border border-blue-200 outline-none rounded-md py-1 text-sm pl-8 pr-2 w-full lg:w-64 hover:border-blue-400"
+            />
+            <IoSearchCircleOutline
+              size={22}
+              className="absolute top-0 left-2 mt-1 text-blue-500"
+            />
+          </div>
         </div>
       </div>
       <div className="bg-white shadow-md rounded-lg overflow-x-auto">
@@ -300,7 +332,7 @@ const ClubMembers = () => {
                   </tr>
 
                   {expandedRows.includes(member.member_id) && (
-                    <tr >
+                    <tr>
                       <td colSpan={columns.length} className="px-4  py-2">
                         <div className="text-sm text-gray-600 ml-5">
                           <strong>Sports playing:</strong>{" "}
