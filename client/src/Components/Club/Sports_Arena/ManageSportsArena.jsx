@@ -5,7 +5,7 @@ import {
 } from "../../../Services/apiServices";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
-import { Tabs } from "antd";
+import { Popconfirm, Tabs } from "antd";
 import UpdateSportsArena from "./UpdateSportsArena";
 
 const ManageSportsArena = ({
@@ -93,12 +93,17 @@ const ManageSportsArena = ({
             Are you sure you want to delete this sports arena?
           </p>
           <div className="flex justify-center gap-5 space-x-4 mt-4">
-            <button
-              onClick={handleDelete}
-              className="bg-red-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            <Popconfirm
+              title="Are you sure you want to delete this item?"
+              onConfirm={handleDelete}
+              okText="Yes"
+              cancelText="No"
+              icon={<span className="text-red-600">⚠️</span>} // Optional icon
             >
-              Delete
-            </button>
+              <button className="bg-red-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                Delete
+              </button>
+            </Popconfirm>
             <button
               onClick={popClose}
               className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
@@ -130,8 +135,12 @@ const ManageSportsArena = ({
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
           <option value="">Select A Sport Arena</option>
-          {sports.map((sport) => (
-            <option key={sport.id} value={sport.sports_arena_id}>
+          {[
+            ...new Map(
+              sports.map((sport) => [sport.sports_arena_id, sport])
+            ).values(),
+          ].map((sport) => (
+            <option key={sport.sports_arena_id} value={sport.sports_arena_id}>
               {sport.sports_arena_name}
             </option>
           ))}
