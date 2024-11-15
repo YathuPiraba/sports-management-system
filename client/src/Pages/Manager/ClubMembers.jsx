@@ -205,7 +205,7 @@ const ClubMembers = () => {
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="pr-3 pl-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   {column.label}
                 </th>
@@ -229,7 +229,7 @@ const ClubMembers = () => {
                     {columns.map((column) => (
                       <td
                         key={column.key}
-                        className="px-4 py-2 whitespace-nowrap text-sm"
+                        className="pr-2 pl-4 py-2 whitespace-nowrap text-sm"
                       >
                         {column.key === "no" && (
                           <div className="text-gray-500">
