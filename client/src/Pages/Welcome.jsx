@@ -21,7 +21,7 @@ const Welcome = () => {
           navigate("/manager/club", { replace: true });
           break;
         case 3:
-          navigate("/member/dashboard", { replace: true });
+          navigate("/member/club", { replace: true });
           break;
         default:
           navigate("/", { replace: true });
