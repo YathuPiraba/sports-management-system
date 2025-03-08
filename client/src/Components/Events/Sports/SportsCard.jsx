@@ -65,66 +65,55 @@ const SportsCard = ({
 
   return (
     <div className="flex flex-col border bg-slate-100 rounded-md px-0.5">
-      <div className="w-44 h-40 bg-customPurple rounded-lg shadow-md flex items-center justify-center mx-4 mt-4 mb-2 overflow-hidden relative group">
+      <div className="w-44 h-40 bg-gray-200 rounded-lg shadow-md relative group overflow-hidden">
         <img
           src={image}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
-          <p className="text-sm text-center font-bold text-white mb-2">
-            {name}
-          </p>
-          {/* Display Start and End Date */}
-          <div className="grid grid-cols-2 text-xs text-white gap-y-1 pl-2 mb-2">
-            {/* Start Date */}
-            <p className="font-medium">Start Date:</p>
-            <p>{start_date}</p>
-
-            {/* End Date */}
-            <p className="font-medium">End Date:</p>
-            <p>{end_date}</p>
-
-            {/* Place */}
-            <p className="font-medium">Place:</p>
-            <p>{place}</p>
+        <div className="absolute inset-0 flex flex-col justify-between bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out">
+          {/* Top Section */}
+          <div className="p-1">
+            <p className="text-xs font-bold text-white text-center">{name}</p>
           </div>
-          <div className="flex justify-center space-x-2">
+
+          {/* Middle Section */}
+          <div className="px-2 flex-1">
+            <div className="grid grid-cols-[auto,1fr] gap-x-1 text-[10px] text-white">
+              <p className="font-medium whitespace-nowrap">Start:</p>
+              <p className="text-right">{start_date}</p>
+              <p className="font-medium whitespace-nowrap">End:</p>
+              <p className="text-right">{end_date}</p>
+              <p className="font-medium whitespace-nowrap">Place:</p>
+              <p className="text-right">{place}</p>
+            </div>
+          </div>
+
+          {/* Bottom Section - Actions */}
+          <div className="flex justify-center p-1 space-x-1">
             {role_id === 1 && (
-              <>
-                <div className="hover:bg-white rounded-sm">
-                  <Button
-                    icon={<EditOutlined className="hover:text-blue-400" />}
-                    onClick={onEdit}
-                    type="text"
-                    size="small"
-                    className="text-white border-none shadow-none"
-                  />
-                </div>
-                <div className="hover:bg-white rounded-sm">
-                  <Popconfirm
-                    title="Are you sure you want to delete this event-sport?"
-                    onConfirm={onDelete}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button
-                      icon={<DeleteOutlined className="hover:text-red-400" />}
-                      type="text"
-                      size="small"
-                      className="text-white border-none shadow-none"
-                    />
-                  </Popconfirm>
-                </div>
-              </>
+              <div className="flex space-x-1">
+                <button
+                  onClick={onEdit}
+                  className="p-1 rounded hover:bg-white/20 transition-colors"
+                >
+                  <EditOutlined className="h-3 w-3 text-white" />
+                </button>
+                <button
+                  onClick={onDelete}
+                  className="p-1 rounded hover:bg-white/20 transition-colors"
+                >
+                  <DeleteOutlined className="h-3 w-3 text-white" />
+                </button>
+              </div>
             )}
+
             {role_id === 2 && (
-              <div className="hover:bg-green-500 rounded-md">
-                {/* Apply Button Conditional Rendering */}
+              <div>
                 {isApplied ? (
                   <Button
-                    type="text"
-                    className="bg-gray-400 !text-white"
+                    variant="secondary"
+                    className="h-5 text-[10px] px-2 bg-gray-400 text-white"
                     disabled
                   >
                     Applied
@@ -132,10 +121,10 @@ const SportsCard = ({
                 ) : (
                   todayDate <= dueDate && (
                     <Button
-                      type="text"
-                      className="bg-green-400 !text-white"
+                      variant="secondary"
+                      className="h-5 text-[10px] px-2 bg-green-500 hover:bg-green-600 text-white"
                       onClick={() => setIsParticipantModalVisible(true)}
-                      loading={applyLoading}
+                      disabled={applyLoading}
                     >
                       Apply
                     </Button>
@@ -145,17 +134,6 @@ const SportsCard = ({
             )}
           </div>
         </div>
-        {role_id === 2 && (
-          <EventParticipantModal
-            open={isParticipantModalVisible}
-            sports_id={sports_id}
-            onCancel={handleParticipantModalCancel}
-            onOk={handleParticipantModalOk}
-            min_players={min_players}
-            name={name}
-            eventSportsId={eventSportsId}
-          />
-        )}
       </div>
       {/* Apply Due Date Outside the Image */}
       <p

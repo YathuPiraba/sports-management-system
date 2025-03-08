@@ -17,7 +17,7 @@ const Leaderboard = ({ stats, statsLoading }) => {
     );
   }
 
-  if (!stats || stats.sports_winners.length === 0) {
+  if (!stats || stats?.sports_winners?.length === 0) {
     return (
       <div className="flex justify-center items-center w-full h-[50vh]">
         <p className="text-gray-500">No stats are available for this event.</p>

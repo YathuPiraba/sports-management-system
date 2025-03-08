@@ -435,7 +435,7 @@ class MatchResultController extends Controller
                 return [
                     'club_id' => $stat['club_id'],
                     'club_name' => $stat['club_name'],
-                    'rank' => $tournamentEnded ? $stat['rank'] : null,
+                    'rank' => $tournamentEnded && isset($stat['rank']) ? $stat['rank'] : null,
                     'matches_played' => $stat['matches_played'],
                     'wins' => $stat['wins'],
                     'draws' => $stat['draws'],

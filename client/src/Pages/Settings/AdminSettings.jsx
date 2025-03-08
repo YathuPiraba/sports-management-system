@@ -209,7 +209,7 @@ const AdminSettings = () => {
                   <Button
                     onClick={handleChangePicture}
                     className="bg-indigo-900 text-white mb-2 w-full py-1"
-                    loading={imageLoading}
+                    // loading={imageLoading}
                   >
                     Change picture
                   </Button>
