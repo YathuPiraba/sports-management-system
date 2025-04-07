@@ -147,6 +147,17 @@ const SportsCard = ({
           ? `Apply Due Date: ${apply_due_date}`
           : `Apply Due Date Passed !!!`}
       </p>
+
+      {/* EventParticipantModal for applying */}
+      <EventParticipantModal
+        name={name}
+        open={isParticipantModalVisible}
+        onOk={handleParticipantModalOk}
+        onCancel={handleParticipantModalCancel}
+        eventSportsId={eventSportsId}
+        sports_id={sports_id}
+        min_players={min_players}
+      />
     </div>
   );
 };
