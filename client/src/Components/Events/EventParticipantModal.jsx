@@ -18,6 +18,7 @@ const EventParticipantModal = ({
   eventSportsId,
 }) => {
   const userId = useSelector((state) => state.auth.userdata.userId);
+  const roleID = useSelector((state) => state.auth.userdata.role_id);
   const [availableMembers, setAvailableMembers] = useState([]);
   const [addedParticipants, setAddedParticipants] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ const EventParticipantModal = ({
   };
 
   useEffect(() => {
-    fetchMembers();
+    roleID === 2 && fetchMembers();
   }, [userId, sports_id]);
 
   const handleCancel = () => {
